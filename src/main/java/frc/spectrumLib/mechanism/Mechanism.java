@@ -47,8 +47,9 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
     public Config config;
 
     Alert currentAlert = new Alert("", AlertType.kWarning);
-    Alert motorDisconnectedAlert =
+    Alert disconnectedAlert =
             new Alert(getName() + " motor " + config.getId() + " disconnected", AlertType.kWarning);
+    Alert unlicensedAlert = new Alert(getName() + " motor " + config.getId() + " unlicensed", AlertType.kWarning);
 
     private final CachedDouble cachedRotations;
     private final CachedDouble cachedPercentage;
@@ -350,12 +351,19 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
 
     protected void checkMotorOK(Supplier<StatusCode> motorRequest) {
         if (motorRequest.get().isOK()) {
-            motorDisconnectedAlert.set(false);
+            disconnectedAlert.set(false);
+            unlicensedAlert.set(false);
             return;
         }
 
-        if (!motorRequest.get().isOK()) {
-            motorDisconnectedAlert.set(true);
+        if (motorRequest.get().isOK()) {
+            return;
+        }
+
+        disconnectedAlert.set(true);
+
+        if (motorRequest.get().value == StatusCode.UnlicensedDevice.value) {
+                unlicensedAlert.set(true);
         }
     }
 
@@ -366,7 +374,7 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
      */
     protected void setMotorPosition(DoubleSupplier rotations) {
         if (!isAttached()) {
-            motorDisconnectedAlert.set(false);
+            disconnectedAlert.set(false);
             return;
         }
         checkMotorOK(() -> motor.setPosition(rotations.getAsDouble()));
