@@ -3,6 +3,7 @@ package frc.spectrumLib.questNav;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.FloatArraySubscriber;
 import edu.wpi.first.networktables.IntegerPublisher;
@@ -13,11 +14,16 @@ import lombok.Getter;
 import lombok.Setter;
 
 public class QuestNav {
-    // Configure Network Tables topics (oculus/...) to communicate with the Quest HMD
+    // Configure Network Tables topics (questnav/...) to communicate with the Quest HMD
     static NetworkTableInstance nt4Instance = NetworkTableInstance.getDefault();
-    static NetworkTable nt4Table = nt4Instance.getTable("oculus");
+    static NetworkTable nt4Table = nt4Instance.getTable("questnav");
     private static IntegerSubscriber questMiso = nt4Table.getIntegerTopic("miso").subscribe(0);
     private static IntegerPublisher questMosi = nt4Table.getIntegerTopic("mosi").publish();
+    private static DoubleArrayPublisher questOdometry =
+            nt4Table.getDoubleArrayTopic("odometry").publish();
+
+    private static DoubleArrayPublisher questOdometryOffset =
+            nt4Table.getDoubleArrayTopic("odometryOffset").publish();
 
     // Subscribe to the Network Tables oculus data topics
     @Getter
@@ -46,24 +52,28 @@ public class QuestNav {
             nt4Table.getDoubleTopic("batteryLevel").subscribe(0.0f);
 
     // Local heading helper variables
-    @Getter @Setter private static float yawOffset = 0.0f;
+    @Getter @Setter private static double yawOffset = 0.0f;
 
-    //     // Zero the relative robot heading
-    //   public void zeroHeading() {
-    //     float[] eulerAngles = questEulerAngles.get();
-    //     yaw_offset = eulerAngles[1];
-    //     angleSetpoint = 0.0;
-    //   }
+    private static Translation2d questPoseOffset = new Translation2d();
 
     //   // Zero the absolute 3D position of the robot (similar to long-pressing the quest logo)
-    //   public static void zeroPosition() {
+    //   public void zeroPosition() {
     //     resetOdometry(new Pose2d(new Translation2d(0, 0), new Rotation2d(0)));
     //     if (questMiso.get() != 99) {
     //       questMosi.set(1);
     //     }
     //   }
 
-    // Clean up oculus subroutine messages after processing on the headset
+    public static void resetQuestPose(Translation2d pose) {
+        questPoseOffset = getQuestNavRawPosition().minus(pose);
+    }
+
+    public static void resetHeading(double angleDegrees) {
+        float[] eulerAngles = questEulerAngles.get();
+        yawOffset = eulerAngles[1] + angleDegrees;
+    }
+
+    // Clean up QuestNav subroutine messages after processing on the headset
     public static void cleanUpMessages() {
         if (questMiso.get() == 99) {
             questMosi.set(0);
@@ -81,9 +91,9 @@ public class QuestNav {
     }
 
     // Get the yaw Euler angle of the headset
-    public static float getQuestNavYaw() {
+    public static double getQuestNavYaw() {
         float[] eulerAngles = questEulerAngles.get();
-        var ret = eulerAngles[1] - yawOffset;
+        double ret = eulerAngles[1] - yawOffset;
         ret %= 360;
         if (ret < 0) {
             ret += 360;
@@ -91,14 +101,26 @@ public class QuestNav {
         return ret;
     }
 
+    public static Translation2d getQuestNavRawPosition() {
+        float[] questNavPosition = questPosition.get();
+        return new Translation2d(questNavPosition[2], -questNavPosition[0]);
+    }
+
     public static Translation2d getQuestNavPosition() {
-        float[] oculusPosition = questPosition.get();
-        return new Translation2d(oculusPosition[2], -oculusPosition[0]);
+        return getQuestNavRawPosition().minus(questPoseOffset);
     }
 
     public static Pose2d getQuestNavPose() {
-        var oculousPositionCompensated =
-                getQuestNavPosition().minus(new Translation2d(0, 0.1651)); // 6.5
-        return new Pose2d(oculousPositionCompensated, Rotation2d.fromDegrees(getQuestNavYaw()));
+        Translation2d questPositionCompensated = getQuestNavRawPosition().minus(questPoseOffset);
+        return new Pose2d(questPositionCompensated, Rotation2d.fromDegrees(getQuestNavYaw()));
+    }
+
+    public static void publishOdometry() {
+        Pose2d pose = getQuestNavPose();
+        double[] odometry = {pose.getX(), pose.getY(), pose.getRotation().getDegrees()};
+        questOdometry.set(odometry);
+
+        double[] odometryOffset = {questPoseOffset.getX(), questPoseOffset.getY(), yawOffset};
+        questOdometryOffset.set(odometryOffset);
     }
 }

@@ -6,7 +6,6 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.sim.CANcoderSimState;
@@ -141,8 +140,7 @@ public class Pivot extends Mechanism {
             cancoderConfigs.MagnetSensor.MagnetOffset = config.getCANcoderOffset();
             cancoderConfigs.MagnetSensor.SensorDirection =
                     SensorDirectionValue.CounterClockwise_Positive;
-            cancoderConfigs.MagnetSensor.AbsoluteSensorRange =
-                    AbsoluteSensorRangeValue.Unsigned_0To1;
+            cancoderConfigs.MagnetSensor.withAbsoluteSensorDiscontinuityPoint(1);
             checkCANcoderResponse(m_CANcoder.getConfigurator().apply(cancoderConfigs));
         }
 

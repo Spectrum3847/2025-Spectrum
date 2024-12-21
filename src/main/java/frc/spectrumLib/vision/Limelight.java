@@ -223,8 +223,7 @@ public class Limelight {
     }
 
     /**
-     * Returns the latency of the pose estimation from the Limelight camera.
-     *
+     * @deprecated Returns the latency of the pose estimation from the Limelight camera.
      * @return The latency of the pose estimation in seconds.
      */
     @Deprecated(forRemoval = true)

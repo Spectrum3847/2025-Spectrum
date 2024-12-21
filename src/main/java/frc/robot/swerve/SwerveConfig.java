@@ -111,6 +111,7 @@ public class SwerveConfig {
     @Getter @Setter private boolean steerMotorReversed = true;
     @Getter @Setter private boolean invertLeftSide = false;
     @Getter @Setter private boolean invertRightSide = true;
+    @Getter @Setter private boolean invertCancoder = false;
 
     @Getter @Setter private CANBus canBus = new CANBus("*", "./logs/spectrum.hoot");
     @Getter private int pigeonId = 0;
@@ -218,7 +219,8 @@ public class SwerveConfig {
                         frontLeftXPos,
                         frontLeftYPos,
                         invertLeftSide,
-                        steerMotorReversed);
+                        steerMotorReversed,
+                        invertCancoder);
 
         frontRight =
                 constantCreator.createModuleConstants(
@@ -229,7 +231,8 @@ public class SwerveConfig {
                         frontRightXPos,
                         frontRightYPos,
                         invertRightSide,
-                        steerMotorReversed);
+                        steerMotorReversed,
+                        invertCancoder);
 
         backLeft =
                 constantCreator.createModuleConstants(
@@ -240,7 +243,8 @@ public class SwerveConfig {
                         backLeftXPos,
                         backLeftYPos,
                         invertLeftSide,
-                        steerMotorReversed);
+                        steerMotorReversed,
+                        invertCancoder);
 
         backRight =
                 constantCreator.createModuleConstants(
@@ -251,7 +255,8 @@ public class SwerveConfig {
                         backRightXPos,
                         backRightYPos,
                         invertRightSide,
-                        steerMotorReversed);
+                        steerMotorReversed,
+                        invertCancoder);
 
         return this;
     }

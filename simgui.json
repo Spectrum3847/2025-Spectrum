@@ -19,6 +19,7 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Alerts": "Alerts",
       "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/LeftView": "Mechanism2d",
       "/SmartDashboard/Scheduler": "Scheduler",

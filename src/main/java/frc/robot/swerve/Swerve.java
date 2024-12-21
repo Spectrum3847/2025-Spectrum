@@ -35,6 +35,7 @@ import frc.crescendo.Field;
 import frc.robot.Robot;
 import frc.spectrumLib.SpectrumSubsystem;
 import frc.spectrumLib.Telemetry;
+import frc.spectrumLib.questNav.QuestNav;
 import frc.spectrumLib.util.Util;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -75,6 +76,8 @@ public class Swerve extends SwerveDrivetrain implements SpectrumSubsystem, NTSen
         super(config.getDrivetrainConstants(), config.getModules());
         // this.robotConfig = robotConfig;
         this.config = config;
+        // Seed robot to mid field at start (Paths will change this starting position)
+        setIntialPose();
         configurePathPlanner();
 
         rotationController = new RotationController(config);
@@ -82,6 +85,9 @@ public class Swerve extends SwerveDrivetrain implements SpectrumSubsystem, NTSen
         if (Utils.isSimulation()) {
             startSimThread();
         }
+
+        QuestNav.resetQuestPose(getState().Pose.getTranslation());
+        QuestNav.resetHeading(getRotation().getDegrees());
 
         SendableRegistry.add(this, "Swerve");
         SmartDashboard.putData(this);
@@ -102,6 +108,7 @@ public class Swerve extends SwerveDrivetrain implements SpectrumSubsystem, NTSen
     @Override
     public void periodic() {
         setPilotPerspective();
+        QuestNav.publishOdometry();
     }
 
     public void setupStates() {
@@ -133,6 +140,16 @@ public class Swerve extends SwerveDrivetrain implements SpectrumSubsystem, NTSen
                         addModuleProperties(builder, "Back Right", 3);
 
                         builder.addDoubleProperty("Robot Angle", () -> getRotationRadians(), null);
+
+                        builder.addDoubleArrayProperty(
+                                "Odometry",
+                                () -> {
+                                    Pose2d pose = getRobotPose();
+                                    return new double[] {
+                                        pose.getX(), pose.getY(), pose.getRotation().getDegrees()
+                                    };
+                                },
+                                null);
                     }
                 });
     }
@@ -157,6 +174,14 @@ public class Swerve extends SwerveDrivetrain implements SpectrumSubsystem, NTSen
     public Pose2d getRobotPose() {
         Pose2d pose = getState().Pose;
         return keepPoseOnField(pose);
+    }
+
+    private void setIntialPose() {
+        resetPose(
+                new Pose2d(
+                        Units.feetToMeters(27.0),
+                        Units.feetToMeters(27.0 / 2.0),
+                        config.getBlueAlliancePerspectiveRotation()));
     }
 
     // Keep the robot on the field
@@ -241,11 +266,9 @@ public class Swerve extends SwerveDrivetrain implements SpectrumSubsystem, NTSen
     }
 
     protected void reorient(double angleDegrees) {
-        resetPose(
-                new Pose2d(
-                        getRobotPose().getX(),
-                        getRobotPose().getY(),
-                        Rotation2d.fromDegrees(angleDegrees)));
+        resetRotation(Rotation2d.fromDegrees(angleDegrees));
+        QuestNav.resetHeading(angleDegrees);
+        QuestNav.resetQuestPose(getState().Pose.getTranslation()); // TODO: Remove after testing
     }
 
     protected Command reorientPilotAngle(double angleDegrees) {
@@ -322,12 +345,6 @@ public class Swerve extends SwerveDrivetrain implements SpectrumSubsystem, NTSen
     // Path Planner
     // --------------------------------------------------------------------------------
     private void configurePathPlanner() {
-        // Seed robot to mid field at start (Paths will change this starting position)
-        resetPose(
-                new Pose2d(
-                        Units.feetToMeters(27.0),
-                        Units.feetToMeters(27.0 / 2.0),
-                        config.getBlueAlliancePerspectiveRotation()));
         double driveBaseRadius = .4;
         for (var moduleLocation : getModuleLocations()) {
             driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
@@ -346,7 +363,6 @@ public class Swerve extends SwerveDrivetrain implements SpectrumSubsystem, NTSen
                         Units.lbsToKilograms(150),
                         1,
                         moduleConfig,
-                        Units.inchesToMeters(26),
                         Units.inchesToMeters(
                                 26)); // TODO Fix this line and line above with real numbers
         AutoBuilder.configure(
