@@ -10,17 +10,22 @@ import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
 import lombok.Getter;
 import lombok.Setter;
 
 public class QuestNav {
     // Configure Network Tables topics (questnav/...) to communicate with the Quest HMD
-    static NetworkTableInstance nt4Instance = NetworkTableInstance.getDefault();
-    static NetworkTable nt4Table = nt4Instance.getTable("questnav");
+    private static NetworkTableInstance nt4Instance = NetworkTableInstance.getDefault();
+    private static NetworkTable nt4Table = nt4Instance.getTable("questnav");
     private static IntegerSubscriber questMiso = nt4Table.getIntegerTopic("miso").subscribe(0);
     private static IntegerPublisher questMosi = nt4Table.getIntegerTopic("mosi").publish();
     private static DoubleArrayPublisher questOdometry =
             nt4Table.getDoubleArrayTopic("odometry").publish();
+    private static StructPublisher<Pose2d> questOdometryStruct =
+            NetworkTableInstance.getDefault()
+                    .getStructTopic("QuestOdometry", Pose2d.struct)
+                    .publish();
 
     private static DoubleArrayPublisher questOdometryOffset =
             nt4Table.getDoubleArrayTopic("odometryOffset").publish();
@@ -65,7 +70,10 @@ public class QuestNav {
     //   }
 
     public static void resetQuestPose(Translation2d pose) {
-        questPoseOffset = getQuestNavRawPosition().minus(pose);
+        if (questMiso.get() != 99) {
+            questMosi.set(1);
+        }
+        questPoseOffset = pose;
     }
 
     public static void resetHeading(double angleDegrees) {
@@ -98,7 +106,7 @@ public class QuestNav {
         if (ret < 0) {
             ret += 360;
         }
-        return ret;
+        return 360 - ret;
     }
 
     public static Translation2d getQuestNavRawPosition() {
@@ -107,18 +115,18 @@ public class QuestNav {
     }
 
     public static Translation2d getQuestNavPosition() {
-        return getQuestNavRawPosition().minus(questPoseOffset);
+        return getQuestNavRawPosition().plus(questPoseOffset);
     }
 
     public static Pose2d getQuestNavPose() {
-        Translation2d questPositionCompensated = getQuestNavRawPosition().minus(questPoseOffset);
-        return new Pose2d(questPositionCompensated, Rotation2d.fromDegrees(getQuestNavYaw()));
+        return new Pose2d(getQuestNavPosition(), Rotation2d.fromDegrees(getQuestNavYaw()));
     }
 
     public static void publishOdometry() {
         Pose2d pose = getQuestNavPose();
         double[] odometry = {pose.getX(), pose.getY(), pose.getRotation().getDegrees()};
         questOdometry.set(odometry);
+        questOdometryStruct.set(pose);
 
         double[] odometryOffset = {questPoseOffset.getX(), questPoseOffset.getY(), yawOffset};
         questOdometryOffset.set(odometryOffset);

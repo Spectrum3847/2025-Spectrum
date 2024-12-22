@@ -21,6 +21,7 @@ import edu.wpi.first.networktables.NTSendable;
 import edu.wpi.first.networktables.NTSendableBuilder;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.util.sendable.SendableRegistry;
@@ -37,6 +38,8 @@ import frc.spectrumLib.SpectrumSubsystem;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.questNav.QuestNav;
 import frc.spectrumLib.util.Util;
+import frc.spectrumLib.vision.LimelightHelpers;
+import frc.spectrumLib.vision.LimelightHelpers.PoseEstimate;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import lombok.Getter;
@@ -65,6 +68,15 @@ public class Swerve extends SwerveDrivetrain implements SpectrumSubsystem, NTSen
             NetworkTableInstance.getDefault()
                     .getStructArrayTopic("SwerveStates", SwerveModuleState.struct)
                     .publish();
+    StructPublisher<Pose2d> odometryStruct =
+            NetworkTableInstance.getDefault()
+                    .getStructTopic("SwerveOdometry", Pose2d.struct)
+                    .publish();
+    StructPublisher<Pose2d> limelightStruct =
+            NetworkTableInstance.getDefault()
+                    .getStructTopic("LimelightPose", Pose2d.struct)
+                    .publish();
+    String limelightName = "limelight-front";
 
     /**
      * Constructs a new Swerve drive subsystem.
@@ -108,7 +120,16 @@ public class Swerve extends SwerveDrivetrain implements SpectrumSubsystem, NTSen
     @Override
     public void periodic() {
         setPilotPerspective();
+        odometryStruct.set(getRobotPose());
+        PoseEstimate poseEstimate =
+                LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
+        if (poseEstimate != null && poseEstimate.tagCount > 0) {
+            limelightStruct.set(poseEstimate.pose);
+        } else {
+            limelightStruct.set(new Pose2d());
+        }
         QuestNav.publishOdometry();
+        QuestNav.cleanUpMessages();
     }
 
     public void setupStates() {
@@ -140,16 +161,6 @@ public class Swerve extends SwerveDrivetrain implements SpectrumSubsystem, NTSen
                         addModuleProperties(builder, "Back Right", 3);
 
                         builder.addDoubleProperty("Robot Angle", () -> getRotationRadians(), null);
-
-                        builder.addDoubleArrayProperty(
-                                "Odometry",
-                                () -> {
-                                    Pose2d pose = getRobotPose();
-                                    return new double[] {
-                                        pose.getX(), pose.getY(), pose.getRotation().getDegrees()
-                                    };
-                                },
-                                null);
                     }
                 });
     }
@@ -266,9 +277,17 @@ public class Swerve extends SwerveDrivetrain implements SpectrumSubsystem, NTSen
     }
 
     protected void reorient(double angleDegrees) {
-        resetRotation(Rotation2d.fromDegrees(angleDegrees));
-        QuestNav.resetHeading(angleDegrees);
-        QuestNav.resetQuestPose(getState().Pose.getTranslation()); // TODO: Remove after testing
+        PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
+        if (estimate != null && estimate.tagCount > 0) {
+            Pose2d pose = estimate.pose;
+            resetPose(pose);
+            QuestNav.resetHeading(pose.getRotation().getDegrees());
+            QuestNav.resetQuestPose(pose.getTranslation());
+        } else {
+            resetRotation(Rotation2d.fromDegrees(angleDegrees));
+            QuestNav.resetHeading(angleDegrees);
+            QuestNav.resetQuestPose(getState().Pose.getTranslation()); // TODO: Remove after testing
+        }
     }
 
     protected Command reorientPilotAngle(double angleDegrees) {
