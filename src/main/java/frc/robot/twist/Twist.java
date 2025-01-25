@@ -5,12 +5,18 @@ import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.CANcoderSimState;
+import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.networktables.NTSendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import frc.robot.Robot;
+import frc.robot.RobotSim;
 import frc.spectrumLib.Rio;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.mechanism.Mechanism;
+import frc.spectrumLib.sim.ArmConfig;
+import frc.spectrumLib.sim.ArmSim;
 import lombok.*;
 
 public class Twist extends Mechanism {
@@ -82,7 +88,7 @@ public class Twist extends Mechanism {
 
     private TwistConfig config;
     private CANcoder m_CANcoder;
-    // @Getter private TwistSim sim;
+    @Getter private TwistSim sim;
     CANcoderSimState canCoderSim;
 
     public Twist(TwistConfig config) {
@@ -182,37 +188,37 @@ public class Twist extends Mechanism {
     // --------------------------------------------------------------------------------
     private void simulationInit() {
         if (isAttached()) {
-            // sim = new TwistSim(motor.getSimState(), RobotSim.leftView);
+            sim = new TwistSim(motor.getSimState(), RobotSim.leftView);
 
-            // // m_CANcoder.setPosition(0);
+            // m_CANcoder.setPosition(0);
         }
     }
 
     @Override
     public void simulationPeriodic() {
-        // if (isAttached()) {
-        //     sim.simulationPeriodic();
-        //     // m_CANcoder.getSimState().setRawPosition(sim.getAngleRads() / 0.202);
-        // }
+        if (isAttached()) {
+            sim.simulationPeriodic();
+            m_CANcoder.getSimState().setRawPosition(sim.getAngleRads() / 0.202);
+        }
     }
 
-    // class TwistSim extends ArmSim {
-    //     public TwistSim(TalonFXSimState twistMotorSim, Mechanism2d mech) {
-    //         super(
-    //                 new ArmConfig(
-    //                                 config.twistX,
-    //                                 config.twistY,
-    //                                 config.simRatio,
-    //                                 config.length,
-    //                                 225 - Units.rotationsToDegrees(config.getMaxRotations()) -
-    // 90,
-    //                                 225 - Units.rotationsToDegrees(config.getMinRotations()) -
-    // 90,
-    //                                 -45 - 90)
-    //                         .setMount(Robot.getElevator().getSim(), false),
-    //                 mech,
-    //                 twistMotorSim,
-    //                 "3" + config.getName()); // added 3 to the name to create it third
-    //     }
-    // }
+    class TwistSim extends ArmSim {
+        public TwistSim(TalonFXSimState twistMotorSim, Mechanism2d mech) {
+            super(
+                    new ArmConfig(
+                                    config.twistX,
+                                    config.twistY,
+                                    config.simRatio,
+                                    config.length,
+                                    // 225 - Units.rotationsToDegrees(config.getMaxRotations()) -
+                                    90,
+                                    // 225 - Units.rotationsToDegrees(config.getMinRotations()) -
+                                    90,
+                                    -45 - 90)
+                            .setMount(Robot.getElevator().getSim(), false),
+                    mech,
+                    twistMotorSim,
+                    "3" + config.getName()); // added 3 to the name to create it third
+        }
+    }
 }
