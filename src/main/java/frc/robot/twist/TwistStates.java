@@ -20,6 +20,11 @@ public class TwistStates {
     public static void setStates() {
         coastMode.onTrue(log(coastMode()));
         coastMode.onFalse(log(ensureBrakeMode()));
+        L2Algae.whileTrue(log(L2Algae()));
+        // L3Algae.whileTrue(log(L3Algae()));
+        // L2Coral.whileTrue(log(L2Coral()));
+        // L3Coral.whileTrue(log(L3Coral()));
+        // L4Coral.whileTrue(log(L4Coral()));
     }
 
     public static Command runTwist(DoubleSupplier speed) {
@@ -37,6 +42,7 @@ public class TwistStates {
     /* Scoring positions */
 
     public static Command L2Algae() {
+        System.out.println("TwistStates.L2Algae");
         return twist.moveToPercentage(config::getL2Algae).withName("Twist.L2Algae");
     }
 

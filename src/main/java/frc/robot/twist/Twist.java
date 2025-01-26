@@ -55,10 +55,10 @@ public class Twist extends Mechanism {
         // Removed implementation of tree map
 
         /* Sim properties */
-        @Getter private double twistX = 0.8;
-        @Getter private double twistY = 0.7;
+        @Getter private double twistX = 0.6 + 0.41; // 0.8;
+        @Getter private double twistY = 0.4 + 0.59;
         @Getter @Setter private double simRatio = 172.8; // TODO: Set this to actual twist ratio
-        @Getter private double length = 0.3;
+        @Getter private double length = 0.1;
 
         public TwistConfig() {
             super("Twist", 42, Rio.RIO_CANBUS); // Rio.CANIVORE); // TODO: update ID
@@ -198,7 +198,7 @@ public class Twist extends Mechanism {
     public void simulationPeriodic() {
         if (isAttached()) {
             sim.simulationPeriodic();
-            m_CANcoder.getSimState().setRawPosition(sim.getAngleRads() / 0.202);
+            // m_CANcoder.getSimState().setRawPosition(sim.getAngleRads() / 0.202);
         }
     }
 

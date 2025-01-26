@@ -43,12 +43,12 @@
     },
     "###/SmartDashboard/LeftView": {
       "Collapsed": "0",
-      "Pos": "1726,640",
-      "Size": "527,547"
+      "Pos": "1589,638",
+      "Size": "651,721"
     },
     "###/SmartDashboard/Scheduler": {
       "Collapsed": "0",
-      "Pos": "1351,641",
+      "Pos": "1221,634",
       "Size": "372,548"
     },
     "###/SmartDashboard/Swerve Field": {
@@ -69,7 +69,7 @@
     "###FMS": {
       "Collapsed": "0",
       "Pos": "720,36",
-      "Size": "336,158"
+      "Size": "202,214"
     },
     "###Joysticks": {
       "Collapsed": "0",
