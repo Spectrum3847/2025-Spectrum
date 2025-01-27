@@ -74,7 +74,7 @@ public class LedStates {
 
     static void elevatorHomeLED(Trigger trigger, int priority) {
         ledCommand("right.ElevatorHome", right, right.blink(Color.kPurple, 2), priority, trigger);
-        ledCommand("left.ElevatorUp", left, left.blink(Color.kPurple, 2), priority, trigger);
+        ledCommand("left.ElevatorHome", left, left.blink(Color.kPurple, 2), priority, trigger);
     }
 
     // Log Command
