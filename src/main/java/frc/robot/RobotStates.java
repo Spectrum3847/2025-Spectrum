@@ -39,7 +39,7 @@ public class RobotStates {
     public static final Trigger climbPrep = pilot.climbPrep_RDP;
     public static final Trigger climbFinish = pilot.climbRoutine_start;
 
-    // mechanism preset Triggers (Wrist, Elevator, etc.)
+    // mechanism preset Triggers (Twist, Elevator, etc.)
     public static final Trigger algaeFloor = pilot.algaeFloorA.or(autonGorundIntake);
     public static final Trigger L2Algae = pilot.L2Algae_fB.or(autonLowAlgae);
     public static final Trigger L3Algae = pilot.L3Algae_fX.or(autonHighAlgae);

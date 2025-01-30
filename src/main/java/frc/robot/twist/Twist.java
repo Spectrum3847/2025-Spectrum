@@ -26,6 +26,7 @@ import frc.spectrumLib.mechanism.Mechanism;
 import frc.spectrumLib.sim.Mount;
 import frc.spectrumLib.sim.Mount.MountType;
 import frc.spectrumLib.sim.Mountable;
+import java.util.function.DoubleSupplier;
 import lombok.*;
 
 public class Twist extends Mechanism {
@@ -33,19 +34,21 @@ public class Twist extends Mechanism {
     public static class TwistConfig extends Config {
 
         // Positions set as percentage of Twist
-        @Getter private final int initializedPosition = 20;
+        @Getter private final int initializedPosition = 0;
 
-        /* twist positions in percentage of max rotation || 0 is horizontal */
+        /* twist positions in percentage of max rotation || 0 is vertical */
         // @Getter private final double score = 100 - 65;
         // @Getter private final double home = 100 - 1;
+        @Getter private final double coralLeft = 50;
+        @Getter private final double algaeLeft = -50;
         @Getter private final double coralIntake = 0;
         @Getter private final double floorIntake = 0;
-        @Getter private final double l1Coral = 50;
+        @Getter private final double l1Coral = 0;
         @Getter private final double l2Algae = 50;
         @Getter private final double l3Algae = 50;
         @Getter private final double l2Coral = 50;
         @Getter private final double l3Coral = 50;
-        @Getter private final double l4Coral = 100;
+        @Getter private final double l4Coral = 50;
         @Getter private final double barge = 100;
         @Getter @Setter private double tuneTwist = 0;
 
@@ -128,10 +131,7 @@ public class Twist extends Mechanism {
     public void initSendable(NTSendableBuilder builder) {
         if (isAttached()) {
             builder.addDoubleProperty("Position", this::getPositionRotations, null);
-            builder.addDoubleProperty(
-                    "Position Percent",
-                    () -> (getPositionRotations() / config.getMaxRotations()) * 100,
-                    null);
+            builder.addDoubleProperty("Position Percent", this::getPositionPercentage, null);
             builder.addDoubleProperty("Velocity", this::getVelocityRPM, null);
             builder.addDoubleProperty(
                     "Motor Voltage", this.motor.getSimState()::getMotorVoltage, null);
@@ -190,6 +190,20 @@ public class Twist extends Mechanism {
             return getPositionRotations() > config.getMaxRotations();
         }
         return false;
+    }
+
+    public double getClosestPosition(DoubleSupplier position1, DoubleSupplier position2) {
+        double currentPosition = getPositionPercentage();
+        Telemetry.print(
+                "POSITION 1 DISTANCE " + Math.abs(position1.getAsDouble() - currentPosition));
+        Telemetry.print(
+                "POSITION 2 DISTANCE " + Math.abs(position2.getAsDouble() - currentPosition));
+        if (Math.abs(position1.getAsDouble() - currentPosition)
+                < Math.abs(position2.getAsDouble() - currentPosition)) {
+            return position1.getAsDouble();
+        } else {
+            return position2.getAsDouble();
+        }
     }
 
     // --------------------------------------------------------------------------------

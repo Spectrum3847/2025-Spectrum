@@ -19,8 +19,8 @@ public class TwistStates {
 
     public static void setStates() {
         intaking.whileTrue(log(coralIntake()));
-        // algaeFloor.whileTrue(tuneTwist());
-        algaeFloor.whileTrue(log(floorIntake()));
+        algaeFloor.whileTrue(tuneTwist());
+        // algaeFloor.whileTrue(log(floorIntake()));
         L2Algae.whileTrue(log(l2Algae()));
         L3Algae.whileTrue(log(l3Algae()));
         L2Coral.whileTrue(log(l2Coral()));
@@ -45,11 +45,15 @@ public class TwistStates {
     /* Scoring positions */
 
     public static Command l2Algae() {
-        return twist.moveToPercentage(config::getL2Algae).withName("Twist.l2Algae");
+        return twist.moveToPercentage(
+            () -> twist.getClosestPosition(config::getCoralLeft, config::getAlgaeLeft))
+                .withName("Twist.l2Algae");
     }
 
     public static Command l3Algae() {
-        return twist.moveToPercentage(config::getL3Algae).withName("Twist.l3Algae");
+        return twist.moveToPercentage(
+            () -> twist.getClosestPosition(config::getCoralLeft, config::getAlgaeLeft))
+                .withName("Twist.l3Algae");
     }
 
     public static Command l1Coral() {
@@ -57,15 +61,27 @@ public class TwistStates {
     }
 
     public static Command l2Coral() {
-        return twist.moveToPercentage(config::getL2Coral).withName("Twist.l2Coral");
+        return twist.moveToPercentage(
+                        () -> twist.getClosestPosition(config::getCoralLeft, config::getAlgaeLeft))
+                .withName("Twist.l2Coral");
     }
 
     public static Command l3Coral() {
-        return twist.moveToPercentage(config::getL3Coral).withName("Twist.l3Coral");
+        return twist.moveToPercentage(
+            () -> twist.getClosestPosition(config::getCoralLeft, config::getAlgaeLeft))
+                .withName("Twist.l3Coral");
     }
 
     public static Command l4Coral() {
-        return twist.moveToPercentage(config::getL4Coral).withName("Twist.l4Coral");
+        return twist.moveToPercentage(
+            () -> twist.getClosestPosition(config::getCoralLeft, config::getAlgaeLeft))
+                .withName("Twist.l4Coral");
+    }
+
+    public static Command barge() {
+        return twist.moveToPercentage(
+            () -> twist.getClosestPosition(config::getBarge, () -> -1 * config.getBarge()))
+                .withName("Twist.barge");
     }
 
     public static Command floorIntake() {
