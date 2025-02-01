@@ -72,7 +72,6 @@ public class Field {
         public static final List<Map<ReefHeight, Pose3d>> branchPositions =
                 new ArrayList<>(); // Starting at the right branch facing the driver station in
         // clockwise
-
         static {
             // Initialize faces
             centerFaces[0] =
@@ -272,9 +271,28 @@ public class Field {
         return yCoordinate;
     }
 
+    // ALl in inches:
+    // R0 (144.003, 158.500) = 14.497 ; Y CONSTANT 
+    // R1 (160.373, 186.857) = 26.484 ; R5 (160.375, 130.144) = 30.231; 
+    // R3 (209.489, 158.502) = 50.987 ; Y CONSTANT
+    // R4 (193.118, 130.145) = 62.973 ; R2 (193.116, 186.858) =  39.237; 
+    /*
+    Dimensions (left to right):
+    left x= 144 y-length=37.04     139.98> y  >177.02
+    
+
+    
+    */ 
     public static boolean poseOutOfField(Pose2d pose2D) {
         double x = pose2D.getX();
         double y = pose2D.getY();
+        /*
+         * if (x = 144.003 && (y > 158.500 || y < 186.857)) { 
+         * return false;
+         * }
+         * else if (
+         *          */
+
         return (x <= 0 || x >= fieldLength) || (y <= 0 || y >= fieldWidth);
     }
 
