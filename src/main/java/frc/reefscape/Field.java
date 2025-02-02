@@ -278,8 +278,13 @@ public class Field {
     // R4 (193.118, 130.145) = 62.973 ; R2 (193.116, 186.858) =  39.237; 
     /*
     Dimensions (left to right):
-    left x= 144 y-length=37.04     139.98> y  >177.02
-    
+    left:               x= 144 y-length=37.04     139.98> y >177.02
+    left-bottom         x= 144 m = 1/2 y-left= 177.02 y-right = 139.98                                
+    left-top:           x= 144 m = -1/2 y-left = 139.98 y-right = 186.857
+
+    right-bottom:       x= 190.75 m = 1/2 y-left= 130.145  y-right= 177.02
+    right-top:          x= 190.75 m = -1/2 y-left= 186.857 y-right= 139.98
+    right:              x= 209.489 y-length=37.04  139.98 > y > 177.02
 
     
     */ 
@@ -287,10 +292,13 @@ public class Field {
         double x = pose2D.getX();
         double y = pose2D.getY();
         /*
-         * if (x = 144.003 && (y > 158.500 || y < 186.857)) { 
+         * if (x = 144.003 && (y > 139.98 && y < 177.02)) { 
          * return false;
          * }
-         * else if (
+         * else if (y = -(1/2) * x + 177.02 && y > (1/2) * x + 139.98) {
+         * return false;
+         * }
+         * else if (y = (1/2) * x +  && y < -(1/2) * x + 139.98) {
          *          */
 
         return (x <= 0 || x >= fieldLength) || (y <= 0 || y >= fieldWidth);
