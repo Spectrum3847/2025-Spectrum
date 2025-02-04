@@ -272,27 +272,35 @@ public class Field {
     }
 
     // ALl in inches:
-    // R0 (144.003, 158.500) = 14.497 ; Y CONSTANT 
-    // R1 (160.373, 186.857) = 26.484 ; R5 (160.375, 130.144) = 30.231; 
+    // R0 (144.003, 158.500) = 14.497 ; Y CONSTANT
+    // R1 (160.373, 186.857) = 26.484 ; R5 (160.375, 130.144) = 30.231;
     // R3 (209.489, 158.502) = 50.987 ; Y CONSTANT
-    // R4 (193.118, 130.145) = 62.973 ; R2 (193.116, 186.858) =  39.237; 
+    // R4 (193.118, 130.145) = 62.973 ; R2 (193.116, 186.858) =  39.237;
     /*
     Dimensions (left to right):
     left:               x= 144 y-length=37.04     139.98> y >177.02
-    left-bottom         x= 144 m = 1/2 y-left= 177.02 y-right = 139.98                                
+    left-bottom         x= 144 m = 1/2 y-left= 177.02 y-right = 139.98
     left-top:           x= 144 m = -1/2 y-left = 139.98 y-right = 186.857
 
     right-bottom:       x= 190.75 m = 1/2 y-left= 130.145  y-right= 177.02
     right-top:          x= 190.75 m = -1/2 y-left= 186.857 y-right= 139.98
     right:              x= 209.489 y-length=37.04  139.98 > y > 177.02
 
-    
-    */ 
+
+    */
+
+    public static boolean withinReef(Pose2d pose2D) {
+        double x = pose2D.getX();
+        double y = pose2D.getY();
+        return (x >= Units.inchesToMeters(144.003) && x <= Units.inchesToMeters(209.489))
+                && (y >= Units.inchesToMeters(130.145) && y <= Units.inchesToMeters(186.857));
+    }
+
     public static boolean poseOutOfField(Pose2d pose2D) {
         double x = pose2D.getX();
         double y = pose2D.getY();
         /*
-         * if (x = 144.003 && (y > 139.98 && y < 177.02)) { 
+         * if (x = 144.003 && (y > 139.98 && y < 177.02)) {
          * return false;
          * }
          * else if (y = -(1/2) * x + 177.02 && y > (1/2) * x + 139.98) {
@@ -301,7 +309,7 @@ public class Field {
          * else if (y = (1/2) * x +  && y < -(1/2) * x + 139.98) {
          *          */
 
-        return (x <= 0 || x >= fieldLength) || (y <= 0 || y >= fieldWidth);
+        return (x <= 0 || x >= fieldLength) || (y <= 0 || y >= fieldWidth) || withinReef(pose2D);
     }
 
     public static boolean poseOutOfField(Pose3d pose3D) {

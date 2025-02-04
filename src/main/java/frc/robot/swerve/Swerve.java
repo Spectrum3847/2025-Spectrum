@@ -165,19 +165,40 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
         return keepPoseOnField(pose);
     }
 
-    // Keep the robot on the field
     private Pose2d keepPoseOnField(Pose2d pose) {
         double halfRobot = config.getRobotLength() / 2;
         double x = pose.getX();
         double y = pose.getY();
 
+        // Ensure the robot stays within the field
         double newX = Util.limit(x, halfRobot, Field.getFieldLength() - halfRobot);
         double newY = Util.limit(y, halfRobot, Field.getFieldWidth() - halfRobot);
 
+        // If position changed, update the pose and reset
         if (x != newX || y != newY) {
             pose = new Pose2d(new Translation2d(newX, newY), pose.getRotation());
             resetPose(pose);
         }
+
+        double minX = Units.inchesToMeters(144.003);
+        double maxX = Units.inchesToMeters(209.489);
+        double minY = Units.inchesToMeters(130.145);
+        double maxY = Units.inchesToMeters(186.857);
+
+        // If the robot is inside the forbidden zone, push it out
+        if (newX >= minX && newX <= maxX && newY >= minY && newY <= maxY) {
+            // Move the robot to the closest valid boundary
+            if (x < minX) newX = minX - halfRobot; // Push left
+            if (x > maxX) newX = maxX + halfRobot; // Push right
+            if (y < minY) newY = minY - halfRobot; // Push down
+            if (y > maxY) newY = maxY + halfRobot; // Push up
+        }
+
+        if (x != newX && y != newY) {
+            pose = new Pose2d(new Translation2d(newX, newY), pose.getRotation());
+            resetPose(pose);
+        }
+
         return pose;
     }
 
