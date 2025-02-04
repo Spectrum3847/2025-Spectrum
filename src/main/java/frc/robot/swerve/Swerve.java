@@ -180,6 +180,9 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
             resetPose(pose);
         }
 
+        //176.746 half the length of the reef 
+        //y=(
+
         double minX = Units.inchesToMeters(144.003);
         double maxX = Units.inchesToMeters(209.489);
         double minY = Units.inchesToMeters(130.145);
@@ -192,8 +195,8 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
             if (x > maxX) newX = maxX + halfRobot; // Push right
             if (y < minY) newY = minY - halfRobot; // Push down
             if (y > maxY) newY = maxY + halfRobot; // Push up
-        }
-
+        } 
+ 
         if (x != newX && y != newY) {
             pose = new Pose2d(new Translation2d(newX, newY), pose.getRotation());
             resetPose(pose);

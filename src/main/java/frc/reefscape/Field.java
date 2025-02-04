@@ -279,11 +279,11 @@ public class Field {
     /*
     Dimensions (left to right):
     left:               x= 144 y-length=37.04     139.98> y >177.02
-    left-bottom         x= 144 m = 1/2 y-left= 177.02 y-right = 139.98
-    left-top:           x= 144 m = -1/2 y-left = 139.98 y-right = 186.857
+    left-bottom         x= 144 m = 1 y-left= 177.02 y-right = 139.98
+    left-top:           x= 144 m = -1 y-left = 139.98 y-right = 186.857
 
-    right-bottom:       x= 190.75 m = 1/2 y-left= 130.145  y-right= 177.02
-    right-top:          x= 190.75 m = -1/2 y-left= 186.857 y-right= 139.98
+    right-bottom:       x= 190.75 m = 1  y-left= 130.145  y-right= 177.02
+    right-top:          x= 190.75 m = -1 y-left= 186.857 y-right= 139.98
     right:              x= 209.489 y-length=37.04  139.98 > y > 177.02
 
 
