@@ -52,7 +52,11 @@ public class ElevatorStates {
         return elevator.runPercentage(speed).withName("Elevator.runElevator");
     }
 
-    private static Command holdPosition() {
+    public static DoubleSupplier getPosition() {
+        return () -> elevator.getPositionRotations();
+    }
+
+    public static Command holdPosition() {
         return elevator.holdPosition().withName("Elevator.holdPosition");
     }
 

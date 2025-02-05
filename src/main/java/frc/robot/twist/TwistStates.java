@@ -18,8 +18,8 @@ public class TwistStates {
     }
 
     public static void setStates() {
-        homeAll.whileTrue(log(home()));
-        intaking.whileTrue(log(coralIntake()));
+        stationIntaking.whileTrue(log(coralIntake()));
+        // algaeFloor.whileTrue(tuneTwist());
         algaeFloorIntake.whileTrue(log(floorIntake()));
         L2Algae.whileTrue(log(l2Algae()));
         L3Algae.whileTrue(log(l3Algae()));
@@ -27,6 +27,7 @@ public class TwistStates {
         L3Coral.whileTrue(log(l3Coral()));
         L4Coral.whileTrue(log(l4Coral()));
         barge.whileTrue(log(barge()));
+        homeAll.whileTrue(log(home()));
         coastMode.onTrue(log(coastMode()));
         coastMode.onFalse(log(ensureBrakeMode()));
     }

@@ -20,7 +20,7 @@ public class ElbowStates {
     public static void setStates() {
         coastMode.onTrue(log(coastMode()));
         coastMode.onFalse(log(ensureBrakeMode()));
-        intaking.whileTrue(log(coralIntake()));
+        stationIntaking.whileTrue(log(coralIntake()));
         algaeFloorIntake.whileTrue(log(floorIntake()));
         L2Algae.whileTrue(log(l2Algae()));
         L3Algae.whileTrue(log(l3Algae()));

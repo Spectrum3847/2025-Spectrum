@@ -20,7 +20,7 @@ public class ShoulderStates {
     public static void setStates() {
         coastMode.onTrue(log(coastMode()).ignoringDisable(true));
         coastMode.onFalse(log(ensureBrakeMode()));
-        intaking.whileTrue(log(coralIntake())); // using intake button to test
+        stationIntaking.whileTrue(log(coralIntake())); // using intake button to test
         score.whileTrue(home());
         algaeFloorIntake.whileTrue(log(floorIntake()));
         L2Algae.whileTrue(log(l2Algae()));
