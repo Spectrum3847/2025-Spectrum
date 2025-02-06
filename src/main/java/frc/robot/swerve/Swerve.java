@@ -180,14 +180,22 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
             resetPose(pose);
         }
 
-        //176.746 half the length of the reef 
-        //y=(
+        // 176.746 half the length of the reef
+        double reefLength = Units.inchesToMeters(37.02);
 
         double minX = Units.inchesToMeters(144.003);
         double maxX = Units.inchesToMeters(209.489);
         double minY = Units.inchesToMeters(130.145);
         double maxY = Units.inchesToMeters(186.857);
+        double midX = Units.inchesToMeters(190.75);
 
+        double reefX = Util.limit(x, halfRobot, reefLength - halfRobot);
+        double reefY = Util.limit(y, halfRobot, reefLength - halfRobot);
+
+        if ((x == minX) && (y == reefY)) {
+            pose = new Pose2d(new Translation2d(reefX, reefY), pose.getRotation());
+            resetPose(pose);
+        }
         // If the robot is inside the forbidden zone, push it out
         if (newX >= minX && newX <= maxX && newY >= minY && newY <= maxY) {
             // Move the robot to the closest valid boundary
@@ -195,12 +203,16 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
             if (x > maxX) newX = maxX + halfRobot; // Push right
             if (y < minY) newY = minY - halfRobot; // Push down
             if (y > maxY) newY = maxY + halfRobot; // Push up
-        } 
- 
-        if (x != newX && y != newY) {
+        }
+        if ((x >= minX && x <= midX) && (y <= newX + 46.747 && newY >= 320.895 - x)) {
             pose = new Pose2d(new Translation2d(newX, newY), pose.getRotation());
             resetPose(pose);
         }
+
+        // if (x != newX && y != newY) {
+        //     pose = new Pose2d(new Translation2d(newX, newY), pose.getRotation());
+        //     resetPose(pose);
+        // }
 
         return pose;
     }
