@@ -1,15 +1,15 @@
-package frc.robot.algaeIntake;
+package frc.robot.groundIntake;
 
 import static frc.robot.RobotStates.*;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
-import frc.robot.algaeIntake.AlgaeIntake.AlgaeIntakeConfig;
+import frc.robot.groundIntake.GroundIntake.GroundIntakeConfig;
 import frc.spectrumLib.Telemetry;
 
-public class AlgaeIntakeStates {
-    private static AlgaeIntake algaeIntake = Robot.getAlgaeIntake();
-    private static AlgaeIntakeConfig config = Robot.getConfig().algaeIntake;
+public class GroundIntakeStates {
+    private static GroundIntake groundIntake = Robot.getGroundIntake();
+    private static GroundIntakeConfig config = Robot.getConfig().groundIntake;
 
     public static void setupDefaultCommand() {
         // intake.setDefaultCommand(
@@ -17,8 +17,8 @@ public class AlgaeIntakeStates {
         //                 intake.runVelocity(() -> config.getSlowIntake())
         //                         .ignoringDisable(false)
         //                         .withName("Intake.default")));
-        algaeIntake.setDefaultCommand(
-                log(algaeIntake.runStop().ignoringDisable(true).withName("AlgaeIntake.default")));
+        groundIntake.setDefaultCommand(
+                log(groundIntake.runStop().ignoringDisable(true).withName("GroundIntake.default")));
     }
 
     public static void setStates() {
@@ -32,19 +32,19 @@ public class AlgaeIntakeStates {
     }
 
     private static Command intake() {
-        return algaeIntake.runVelocityTcFocRpm(config::getIntake).withName("AlgaeIntake.intake");
+        return groundIntake.runVelocityTcFocRpm(config::getIntake).withName("GroundIntake.intake");
     }
 
     private static Command eject() {
-        return algaeIntake.runVelocityTcFocRpm(config::getEject).withName("AlgaeIntake.eject");
+        return groundIntake.runVelocityTcFocRpm(config::getEject).withName("GroundIntake.eject");
     }
 
     private static Command coastMode() {
-        return algaeIntake.coastMode();
+        return groundIntake.coastMode();
     }
 
     private static Command ensureBrakeMode() {
-        return algaeIntake.ensureBrakeMode();
+        return groundIntake.ensureBrakeMode();
     }
 
     // Log Command

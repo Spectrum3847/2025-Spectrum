@@ -1,4 +1,4 @@
-package frc.robot.climber;
+package frc.robot.inClimb;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
@@ -19,35 +19,42 @@ import frc.spectrumLib.sim.ArmConfig;
 import frc.spectrumLib.sim.ArmSim;
 import lombok.*;
 
-public class Climber extends Mechanism {
+public class InClimb extends Mechanism {
 
-    public static class ClimberConfig extends Config {
-        /* Climber positions in percentage of max rotation || 0 is horizontal */
+    public static class InClimbConfig extends Config {
+        /* InClimb positions in percentage of max rotation || 0 is horizontal */
         @Getter private final double home = 0;
-        @Getter private final double prepClimber = 100;
-        @Getter private final double finishClimb = 50;
-        @Getter @Setter private double tuneClimber = 0;
+        @Getter private final double intake = 35.5;
+        @Getter private final double floorIntake = 70;
+        @Getter @Setter private double tuneInClimb = 0;
+        @Getter private final double prepClimber = 50;
+        @Getter private final double coralIntake = 95;
+        @Getter private final double processorScore = 65;
 
-        /* Climber config settings */
-        // TODO: None of these values are even remotely close
+        /* InClimb config settings */
         @Getter private final double zeroSpeed = -0.1;
+
         @Getter private final double currentLimit = 30;
         @Getter private final double torqueCurrentLimit = 100;
         @Getter private final double velocityKp = .4; // 186; // 200 w/ 0.013 good
         @Getter private final double velocityKv = 0.018;
         @Getter private final double velocityKs = 0;
 
+        // Need to add auto launching positions when auton is added
+
+        // Removed implementation of tree map
+
         /* Sim properties */
-        @Getter private double climberX = 1.3; // 1.0;
-        @Getter private double climberY = 0.35;
+        @Getter private double InClimbX = 0.95; // 1.0;
+        @Getter private double InClimbY = 0.55;
 
         @Getter @Setter
         private double simRatio = 1; // TODO: Set to number of rotations per mech revolution
 
         @Getter private double length = 0.4;
 
-        public ClimberConfig() {
-            super("Climber", 53, Rio.RIO_CANBUS); // Rio.CANIVORE);
+        public InClimbConfig() {
+            super("InClimb", 55, Rio.RIO_CANBUS); // Rio.CANIVORE);
             configPIDGains(0, velocityKp, 0, 0);
             configFeedForwardGains(velocityKs, velocityKv, 0, 0);
             configMotionMagic(54.6, 60, 0); // 147000, 161000, 0);
@@ -55,15 +62,15 @@ public class Climber extends Mechanism {
             configSupplyCurrentLimit(currentLimit, true);
             configForwardTorqueCurrentLimit(torqueCurrentLimit);
             configReverseTorqueCurrentLimit(torqueCurrentLimit);
-            configMinMaxRotations(-7.714285714, 7.714285714); // TODO: find minmax rotations
+            configMinMaxRotations(0, 7.714285714); // TODO: find minmax rotations
             configReverseSoftLimit(getMinRotations(), true);
             configForwardSoftLimit(getMaxRotations(), true);
             configNeutralBrakeMode(true);
             configClockwise_Positive();
-            setSimRatio(15.429);
+            setSimRatio(14);
         }
 
-        public ClimberConfig modifyMotorConfig(TalonFX motor) {
+        public InClimbConfig modifyMotorConfig(TalonFX motor) {
             TalonFXConfigurator configurator = motor.getConfigurator();
             TalonFXConfiguration talonConfigMod = getTalonConfig();
 
@@ -73,12 +80,12 @@ public class Climber extends Mechanism {
         }
     }
 
-    private ClimberConfig config;
+    private InClimbConfig config;
     private CANcoder m_CANcoder;
-    @Getter private ClimberSim sim;
+    @Getter private InClimbSim sim;
     CANcoderSimState canCoderSim;
 
-    public Climber(ClimberConfig config) {
+    public InClimb(InClimbConfig config) {
         super(config);
         this.config = config;
 
@@ -91,11 +98,11 @@ public class Climber extends Mechanism {
     public void periodic() {}
 
     public void setupStates() {
-        ClimberStates.setStates();
+        InClimbStates.setStates();
     }
 
     public void setupDefaultCommand() {
-        ClimberStates.setupDefaultCommand();
+        InClimbStates.setupDefaultCommand();
     }
 
     /*-------------------
@@ -114,7 +121,7 @@ public class Climber extends Mechanism {
             builder.addDoubleProperty(
                     "Motor Voltage", this.motor.getSimState()::getMotorVoltage, null);
             builder.addDoubleProperty(
-                    "#Tune Position Percent", config::getTuneClimber, config::setTuneClimber);
+                    "#Tune Position Percent", config::getTuneInClimb, config::setTuneInClimb);
         }
     }
 
@@ -122,16 +129,14 @@ public class Climber extends Mechanism {
     // Custom Commands
     // --------------------------------------------------------------------------------
 
-    // TODO: Pivot hold position run commands needed
-
-    public Command runHoldClimber() {
+    public Command runHoldInClimb() {
         return new Command() {
             double holdPosition = 0; // rotations
 
             // constructor
             {
-                setName("Climber.holdPosition");
-                addRequirements(Climber.this);
+                setName("Pivot.holdPosition");
+                addRequirements(InClimb.this);
             }
 
             @Override
@@ -156,7 +161,7 @@ public class Climber extends Mechanism {
     // --------------------------------------------------------------------------------
     private void simulationInit() {
         if (isAttached()) {
-            sim = new ClimberSim(motor.getSimState(), RobotSim.frontView);
+            sim = new InClimbSim(motor.getSimState(), RobotSim.frontView);
 
             // m_CANcoder.setPosition(0);
         }
@@ -170,24 +175,24 @@ public class Climber extends Mechanism {
         }
     }
 
-    class ClimberSim extends ArmSim {
-        public ClimberSim(TalonFXSimState climberMotorSim, Mechanism2d mech) {
+    class InClimbSim extends ArmSim {
+        public InClimbSim(TalonFXSimState InClimbMotorSim, Mechanism2d mech) {
             super(
                     new ArmConfig(
-                                    config.climberX,
-                                    config.climberY,
+                                    config.InClimbX,
+                                    config.InClimbY,
                                     config.simRatio,
                                     config.length,
-                                    0,
+                                    -30,
                                     // 180 - 45 +
                                     // Units.rotationsToDegrees(config.getMinRotations()),
                                     180,
                                     // 180 - 45 +
                                     // Units.rotationsToDegrees(config.getMaxRotations()),
                                     180)
-                            .setColor(new Color8Bit(Color.kBlueViolet)),
+                            .setColor(new Color8Bit(Color.kBrown)),
                     mech,
-                    climberMotorSim,
+                    InClimbMotorSim,
                     config.getName());
         }
     }

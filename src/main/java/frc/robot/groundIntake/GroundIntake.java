@@ -1,4 +1,4 @@
-package frc.robot.algaeIntake;
+package frc.robot.groundIntake;
 
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.networktables.NTSendableBuilder;
@@ -12,9 +12,9 @@ import frc.spectrumLib.sim.RollerConfig;
 import frc.spectrumLib.sim.RollerSim;
 import lombok.Getter;
 
-public class AlgaeIntake extends Mechanism {
+public class GroundIntake extends Mechanism {
 
-    public static class AlgaeIntakeConfig extends Config {
+    public static class GroundIntakeConfig extends Config {
 
         /* Revolutions per min Intake Output */
         @Getter private double maxSpeed = 5000;
@@ -33,12 +33,12 @@ public class AlgaeIntake extends Mechanism {
         @Getter private double velocityKs = 14;
 
         /* Sim Configs */
-        @Getter private double intakeX = 0.6; // relative to algaePivot at 0 degrees
+        @Getter private double intakeX = 0.45; // relative to algaePivot at 0 degrees
         @Getter private double intakeY = 0.55; // relative to algaePivot at 0 degrees
         @Getter private double wheelDiameter = 5.0;
 
-        public AlgaeIntakeConfig() {
-            super("AlgaeIntake", 56, Rio.RIO_CANBUS);
+        public GroundIntakeConfig() {
+            super("GroundIntake", 56, Rio.RIO_CANBUS);
             configPIDGains(0, velocityKp, 0, 0);
             configFeedForwardGains(velocityKs, velocityKv, 0, 0);
             configGearRatio(12.0 / 30.0);
@@ -52,10 +52,10 @@ public class AlgaeIntake extends Mechanism {
         }
     }
 
-    private AlgaeIntakeConfig config;
-    @Getter private AlgaeIntakeSim sim;
+    private GroundIntakeConfig config;
+    @Getter private GroundIntakeSim sim;
 
-    public AlgaeIntake(AlgaeIntakeConfig config) {
+    public GroundIntake(GroundIntakeConfig config) {
         super(config);
         this.config = config;
 
@@ -68,11 +68,11 @@ public class AlgaeIntake extends Mechanism {
     public void periodic() {}
 
     public void setupStates() {
-        AlgaeIntakeStates.setStates();
+        GroundIntakeStates.setStates();
     }
 
     public void setupDefaultCommand() {
-        AlgaeIntakeStates.setupDefaultCommand();
+        GroundIntakeStates.setupDefaultCommand();
     }
 
     /*-------------------
@@ -99,8 +99,9 @@ public class AlgaeIntake extends Mechanism {
 
     public void simulationInit() {
         if (isAttached()) {
-            // Create a new RollerSim with the left view, the motor's sim state, and a 6 in diameter
-            sim = new AlgaeIntakeSim(RobotSim.leftView, motor.getSimState());
+            // Create a new RollerSim with the front view, the motor's sim state, and a 6 in
+            // diameter
+            sim = new GroundIntakeSim(RobotSim.frontView, motor.getSimState());
         }
     }
 
@@ -113,14 +114,14 @@ public class AlgaeIntake extends Mechanism {
         }
     }
 
-    class AlgaeIntakeSim extends RollerSim {
-        public AlgaeIntakeSim(Mechanism2d mech, TalonFXSimState algaeRollerMotorSim) {
+    class GroundIntakeSim extends RollerSim {
+        public GroundIntakeSim(Mechanism2d mech, TalonFXSimState inClimbRollerMotorSim) {
             super(
                     new RollerConfig(config.wheelDiameter)
                             .setPosition(config.intakeX, config.intakeY)
-                            .setMount(Robot.getAlgaePivot().getSim()),
+                            .setMount(Robot.getInClimb().getSim()),
                     mech,
-                    algaeRollerMotorSim,
+                    inClimbRollerMotorSim,
                     config.getName());
         }
     }
