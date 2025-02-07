@@ -205,7 +205,8 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
         //     pose = new Pose2d(new Translation2d(newX, newY), pose.getRotation());
         //     resetPose(pose);
         // }
-        HexagonalPoseArea reef = new HexagonalPoseArea(new Translation2d(), new Length(37.02));
+        HexagonalPoseArea reef =
+                new HexagonalPoseArea(new Translation2d(190.75, 158.8), new Length(37.02));
         OptionalInt inside = reef.contains(position);
 
         if (!inside.isEmpty()) {

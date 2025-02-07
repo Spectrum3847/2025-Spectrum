@@ -1,7 +1,7 @@
 {
   "Docking": {
     "Data": [
-      "DockNode  ID=0x00000001 Pos=10,419 Size=1023,316 Selected=0x2D9B9756"
+      "DockNode  ID=0x00000001 Pos=1091,297 Size=1023,316 Selected=0x2D9B9756"
     ]
   },
   "MainWindow": {
@@ -9,12 +9,12 @@
       "font": "Proggy Dotted",
       "fps": "120",
       "height": "1081",
-      "maximized": "0",
+      "maximized": "1",
       "style": "0",
       "userScale": "2",
       "width": "956",
-      "xpos": "962",
-      "ypos": "45"
+      "xpos": "0",
+      "ypos": "34"
     }
   },
   "Table": {
@@ -90,7 +90,7 @@
     "###NetworkTables Info": {
       "Collapsed": "0",
       "DockId": "0x00000001,1",
-      "Pos": "10,419",
+      "Pos": "1091,297",
       "Size": "1023,316"
     },
     "###Other Devices": {
