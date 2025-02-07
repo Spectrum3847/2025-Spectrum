@@ -35,7 +35,10 @@ import frc.reefscape.Field;
 import frc.robot.Robot;
 import frc.spectrumLib.SpectrumSubsystem;
 import frc.spectrumLib.Telemetry;
+import frc.spectrumLib.sim.HexagonalPoseArea;
+import frc.spectrumLib.sim.Length;
 import frc.spectrumLib.util.Util;
+import java.util.OptionalInt;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import lombok.Getter;
@@ -169,6 +172,7 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
         double halfRobot = config.getRobotLength() / 2;
         double x = pose.getX();
         double y = pose.getY();
+        Translation2d position = new Translation2d(x, y);
 
         // Ensure the robot stays within the field
         double newX = Util.limit(x, halfRobot, Field.getFieldLength() - halfRobot);
@@ -180,24 +184,32 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
             resetPose(pose);
         }
 
-        //176.746 half the length of the reef 
-        //y=(
+        // 176.746 half the length of the reef
+        // y=(
 
-        double minX = Units.inchesToMeters(144.003);
-        double maxX = Units.inchesToMeters(209.489);
-        double minY = Units.inchesToMeters(130.145);
-        double maxY = Units.inchesToMeters(186.857);
+        // double minX = Units.inchesToMeters(144.003);
+        // double maxX = Units.inchesToMeters(209.489);
+        // double minY = Units.inchesToMeters(130.145);
+        // double maxY = Units.inchesToMeters(186.857);
 
-        // If the robot is inside the forbidden zone, push it out
-        if (newX >= minX && newX <= maxX && newY >= minY && newY <= maxY) {
-            // Move the robot to the closest valid boundary
-            if (x < minX) newX = minX - halfRobot; // Push left
-            if (x > maxX) newX = maxX + halfRobot; // Push right
-            if (y < minY) newY = minY - halfRobot; // Push down
-            if (y > maxY) newY = maxY + halfRobot; // Push up
-        } 
- 
-        if (x != newX && y != newY) {
+        // // If the robot is inside the forbidden zone, push it out
+        // if (newX >= minX && newX <= maxX && newY >= minY && newY <= maxY) {
+        //     // Move the robot to the closest valid boundary
+        //     if (x < minX) newX = minX - halfRobot; // Push left
+        //     if (x > maxX) newX = maxX + halfRobot; // Push right
+        //     if (y < minY) newY = minY - halfRobot; // Push down
+        //     if (y > maxY) newY = maxY + halfRobot; // Push up
+        // }
+
+        // if (x != newX && y != newY) {
+        //     pose = new Pose2d(new Translation2d(newX, newY), pose.getRotation());
+        //     resetPose(pose);
+        // }
+        HexagonalPoseArea reef = new HexagonalPoseArea(new Translation2d(), new Length(37.02));
+        OptionalInt inside = reef.contains(position);
+
+        if (!inside.isEmpty()) {
+            Telemetry.print("Inside Reef");
             pose = new Pose2d(new Translation2d(newX, newY), pose.getRotation());
             resetPose(pose);
         }
