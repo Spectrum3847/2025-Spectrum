@@ -1,7 +1,7 @@
 {
   "Docking": {
     "Data": [
-      "DockNode  ID=0x00000001 Pos=1091,297 Size=1023,316 Selected=0x2D9B9756"
+      "DockNode  ID=0x00000001 Pos=937,297 Size=1023,316 Selected=0x2D9B9756"
     ]
   },
   "MainWindow": {
@@ -9,12 +9,12 @@
       "font": "Proggy Dotted",
       "fps": "120",
       "height": "1081",
-      "maximized": "1",
+      "maximized": "0",
       "style": "0",
       "userScale": "2",
       "width": "956",
-      "xpos": "0",
-      "ypos": "34"
+      "xpos": "962",
+      "ypos": "45"
     }
   },
   "Table": {
@@ -38,17 +38,17 @@
     },
     "###/SmartDashboard/Auto Visualizer": {
       "Collapsed": "0",
-      "Pos": "225,764",
-      "Size": "668,354"
+      "Pos": "225,498",
+      "Size": "668,464"
     },
     "###/SmartDashboard/LeftView": {
       "Collapsed": "0",
-      "Pos": "937,641",
+      "Pos": "937,498",
       "Size": "527,547"
     },
     "###/SmartDashboard/Scheduler": {
       "Collapsed": "0",
-      "Pos": "937,741",
+      "Pos": "937,498",
       "Size": "372,548"
     },
     "###/SmartDashboard/Swerve Field": {
@@ -58,8 +58,8 @@
     },
     "###/SmartDashboard/VisionSystemSim-main/Sim Field": {
       "Collapsed": "0",
-      "Pos": "46,393",
-      "Size": "1219,610"
+      "Pos": "169,375",
+      "Size": "1219,697"
     },
     "###Addressable LEDs": {
       "Collapsed": "0",
@@ -90,7 +90,7 @@
     "###NetworkTables Info": {
       "Collapsed": "0",
       "DockId": "0x00000001,1",
-      "Pos": "1091,297",
+      "Pos": "937,297",
       "Size": "1023,316"
     },
     "###Other Devices": {

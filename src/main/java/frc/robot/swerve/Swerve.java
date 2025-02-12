@@ -38,7 +38,6 @@ import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.sim.HexagonalPoseArea;
 import frc.spectrumLib.sim.Length;
 import frc.spectrumLib.util.Util;
-import java.util.OptionalInt;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import lombok.Getter;
@@ -206,10 +205,12 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
         //     resetPose(pose);
         // }
         HexagonalPoseArea reef =
-                new HexagonalPoseArea(new Translation2d(190.75, 158.8), new Length(37.02));
-        OptionalInt inside = reef.contains(position);
+                new HexagonalPoseArea(
+                        new Translation2d(
+                                Units.inchesToMeters(176.746), Units.inchesToMeters(158.501)),
+                        new Length(37.04 + Units.metersToInches(config.getRobotLength())));
 
-        if (!inside.isEmpty()) {
+        if (reef.contains(position).isPresent()) {
             Telemetry.print("Inside Reef");
             pose = new Pose2d(new Translation2d(newX, newY), pose.getRotation());
             resetPose(pose);
