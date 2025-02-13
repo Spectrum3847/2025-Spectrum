@@ -204,6 +204,8 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
         //     pose = new Pose2d(new Translation2d(newX, newY), pose.getRotation());
         //     resetPose(pose);
         // }
+
+        // If robot is touching reef, push it back
         HexagonalPoseArea reef =
                 new HexagonalPoseArea(
                         new Translation2d(
@@ -211,8 +213,10 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
                         new Length(37.04 + Units.metersToInches(config.getRobotLength())));
 
         if (reef.contains(position).isPresent()) {
-            Telemetry.print("Inside Reef");
-            pose = new Pose2d(new Translation2d(newX, newY), pose.getRotation());
+            double reefX =
+                    Util.limit(x, halfRobot, Units.inchesToMeters(position.getX()) - halfRobot);
+            Telemetry.print("Touching Reef");
+            pose = new Pose2d(new Translation2d(reefX, y), pose.getRotation());
             resetPose(pose);
         }
 
