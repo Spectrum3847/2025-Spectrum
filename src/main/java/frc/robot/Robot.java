@@ -43,6 +43,9 @@ import frc.spectrumLib.SpectrumRobot;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.Telemetry.PrintPriority;
 import frc.spectrumLib.util.CrashTracker;
+
+import static frc.robot.RobotStates.L4Coral;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +63,7 @@ public class Robot extends SpectrumRobot {
 
     public void setupTriggers() {
         stateChooser.setDefaultOption("Nothing", new Trigger(() -> false));
+        stateChooser.addOption("L4Coral Operator", L4Coral);
         SmartDashboard.putData("Robot States Choosers", stateChooser);
     }
 
