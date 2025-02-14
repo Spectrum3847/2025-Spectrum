@@ -48,7 +48,7 @@
     },
     "###/SmartDashboard/Robot States Choosers": {
       "Collapsed": "0",
-      "Pos": "642,263",
+      "Pos": "635,263",
       "Size": "367,60"
     },
     "###/SmartDashboard/Scheduler": {
@@ -79,7 +79,7 @@
     "###FMS": {
       "Collapsed": "0",
       "Pos": "720,36",
-      "Size": "336,158"
+      "Size": "202,214"
     },
     "###Joysticks": {
       "Collapsed": "0",

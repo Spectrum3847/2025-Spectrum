@@ -43,9 +43,6 @@ import frc.spectrumLib.SpectrumRobot;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.Telemetry.PrintPriority;
 import frc.spectrumLib.util.CrashTracker;
-
-import static frc.robot.RobotStates.L4Coral;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +60,8 @@ public class Robot extends SpectrumRobot {
 
     public void setupTriggers() {
         stateChooser.setDefaultOption("Nothing", new Trigger(() -> false));
-        stateChooser.addOption("L4Coral Operator", L4Coral);
+        stateChooser.addOption("Coral-Pre-Score", operator.operatorCoralStage);
+        stateChooser.addOption("Algae-Pre-Score", operator.operatorAlgaeStage);
         SmartDashboard.putData("Robot States Choosers", stateChooser);
     }
 
@@ -194,6 +192,15 @@ public class Robot extends SpectrumRobot {
         SmartDashboard.putData("Auto Visualizer", m_field);
     }
 
+    public Trigger getSelectedStateTrigger() {
+        Trigger selected = stateChooser.getSelectedTrigger();
+        if (selected != null) {
+            return selected;
+        } else {
+            return new Trigger(() -> false);
+        }
+    }
+
     @Override // Deprecated
     public void robotInit() {
         setupAutoVisualizer();
@@ -218,6 +225,9 @@ public class Robot extends SpectrumRobot {
             CommandScheduler.getInstance().run();
 
             SmartDashboard.putNumber("MatchTime", DriverStation.getMatchTime());
+
+            Trigger selectedTrigger = stateChooser.getSelectedTrigger();
+
         } catch (Throwable t) {
             // intercept error and log it
             CrashTracker.logThrowableCrash(t);
@@ -309,6 +319,7 @@ public class Robot extends SpectrumRobot {
         try {
             Telemetry.print("!!! Teleop Init Starting !!! ");
             resetCommandsAndButtons();
+            setupTriggers();
 
             Telemetry.print("!!! Teleop Init Complete !!! ");
         } catch (Throwable t) {
