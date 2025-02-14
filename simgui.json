@@ -21,6 +21,7 @@
       "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/Auto Visualizer": "Field2d",
       "/SmartDashboard/LeftView": "Mechanism2d",
+      "/SmartDashboard/Robot States Choosers": "String Chooser",
       "/SmartDashboard/Scheduler": "Scheduler",
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d",
       "/SmartDashboard/frontView": "Mechanism2d"
@@ -61,6 +62,11 @@
         }
       },
       "/SmartDashboard/LeftView": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Robot States Choosers": {
         "window": {
           "visible": true
         }
