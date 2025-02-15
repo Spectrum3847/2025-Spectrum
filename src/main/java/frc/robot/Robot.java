@@ -38,7 +38,7 @@ import frc.robot.twist.Twist;
 import frc.robot.twist.Twist.TwistConfig;
 import frc.robot.vision.VisionSystem;
 import frc.spectrumLib.Rio;
-import frc.spectrumLib.SendableChooserTrigger;
+import frc.spectrumLib.SendableChooserTrigger2;
 import frc.spectrumLib.SpectrumRobot;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.Telemetry.PrintPriority;
@@ -56,7 +56,7 @@ public class Robot extends SpectrumRobot {
     private static Telemetry telemetry = new Telemetry();
     private final Field2d m_field = new Field2d();
 
-    private final SendableChooserTrigger stateChooser = new SendableChooserTrigger();
+    private final SendableChooserTrigger2 stateChooser = new SendableChooserTrigger2();
 
     public void setupTriggers() {
         stateChooser.setDefaultOption("Nothing", new Trigger(() -> false));
@@ -192,15 +192,6 @@ public class Robot extends SpectrumRobot {
         SmartDashboard.putData("Auto Visualizer", m_field);
     }
 
-    public Trigger getSelectedStateTrigger() {
-        Trigger selected = stateChooser.getSelectedTrigger();
-        if (selected != null) {
-            return selected;
-        } else {
-            return new Trigger(() -> false);
-        }
-    }
-
     @Override // Deprecated
     public void robotInit() {
         setupAutoVisualizer();
@@ -226,7 +217,7 @@ public class Robot extends SpectrumRobot {
 
             SmartDashboard.putNumber("MatchTime", DriverStation.getMatchTime());
 
-            Trigger selectedTrigger = stateChooser.getSelectedTrigger();
+            stateChooser.getSelectedTriggerState();
 
         } catch (Throwable t) {
             // intercept error and log it
@@ -319,7 +310,6 @@ public class Robot extends SpectrumRobot {
         try {
             Telemetry.print("!!! Teleop Init Starting !!! ");
             resetCommandsAndButtons();
-            setupTriggers();
 
             Telemetry.print("!!! Teleop Init Complete !!! ");
         } catch (Throwable t) {
