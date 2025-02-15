@@ -150,6 +150,7 @@ public class Robot extends SpectrumRobot {
 
             // Setup Default Commands for all subsystems
             setupDefaultCommands();
+
             setupTriggers();
 
             Telemetry.print("--- Robot Init Complete ---");
