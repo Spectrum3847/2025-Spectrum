@@ -24,10 +24,8 @@ public class SendableChooserTrigger2 implements Sendable {
      * @param name The name displayed on SmartDashboard.
      * @param trigger The {@link Trigger} associated with this option.
      */
-    public void addOption(String name, Trigger trigger) {
-        SpectrumState newSpectrumState = new SpectrumState(name);
-        stateChooser.addOption(name, newSpectrumState);
-        trigger = trigger.or(newSpectrumState);
+    public void addOption(String name, SpectrumState state) {
+        stateChooser.addOption(name, state);
     }
 
     /**
@@ -36,10 +34,8 @@ public class SendableChooserTrigger2 implements Sendable {
      * @param name The default option name.
      * @param trigger The default {@link Trigger}.
      */
-    public void setDefaultOption(String name, Trigger trigger) {
-        SpectrumState newSpectrumState = new SpectrumState(name);
-        stateChooser.setDefaultOption(name, newSpectrumState);
-        trigger = trigger.or(newSpectrumState);
+    public void setDefaultOption(String name, SpectrumState state) {
+        stateChooser.setDefaultOption(name, state);
     }
 
     /**
@@ -48,12 +44,12 @@ public class SendableChooserTrigger2 implements Sendable {
      * @return True if the selected Trigger is active, otherwise false.
      */
     public void getSelectedTriggerState() {
-        if (previousState != null) {
-            previousState.setFalse();
-        }
         SpectrumState selectedState = stateChooser.getSelected();
-        if (selectedState != null) {
-            selectedState.setTrue();
+        if (selectedState != null && selectedState != previousState) {
+            if (previousState != null) {
+                previousState.setFalse().schedule();
+            }
+            selectedState.setTrue().schedule();
             previousState = selectedState;
         }
     }

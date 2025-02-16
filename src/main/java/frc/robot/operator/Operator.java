@@ -2,6 +2,7 @@ package frc.robot.operator;
 
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
+import frc.spectrumLib.SpectrumState;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.gamepads.Gamepad;
 
@@ -17,8 +18,11 @@ public class Operator extends Gamepad {
 
     public final Trigger climbPrep_start = start.and(noFn, teleop);
 
-    public final Trigger operatorCoralStage = leftBumper.and(teleop);
-    public final Trigger operatorAlgaeStage = rightBumper.and(teleop);
+    public final SpectrumState coralStageSelector = new SpectrumState("coral stage");
+    public final SpectrumState algaeStageSelector = new SpectrumState("algae stage");
+
+    public final Trigger operatorCoralStage = leftBumper.and(teleop).or(coralStageSelector);
+    public final Trigger operatorAlgaeStage = rightBumper.and(teleop).or(algaeStageSelector);
     public final Trigger homeState = operatorCoralStage.not().and(operatorAlgaeStage.not());
 
     public final Trigger L1Coral_A = A.and(operatorCoralStage);

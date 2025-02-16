@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.auton.Auton;
 import frc.robot.configs.AM2025;
 import frc.robot.configs.FM20235;
@@ -40,6 +39,7 @@ import frc.robot.vision.VisionSystem;
 import frc.spectrumLib.Rio;
 import frc.spectrumLib.SendableChooserTrigger2;
 import frc.spectrumLib.SpectrumRobot;
+import frc.spectrumLib.SpectrumState;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.Telemetry.PrintPriority;
 import frc.spectrumLib.util.CrashTracker;
@@ -56,12 +56,13 @@ public class Robot extends SpectrumRobot {
     private static Telemetry telemetry = new Telemetry();
     private final Field2d m_field = new Field2d();
 
-    private final SendableChooserTrigger2 stateChooser = new SendableChooserTrigger2();
+    @Getter
+    private static final SendableChooserTrigger2 stateChooser = new SendableChooserTrigger2();
 
     public void setupTriggers() {
-        stateChooser.setDefaultOption("Nothing", new Trigger(() -> false));
-        stateChooser.addOption("Coral-Pre-Score", operator.operatorCoralStage);
-        stateChooser.addOption("Algae-Pre-Score", operator.operatorAlgaeStage);
+        stateChooser.setDefaultOption("Nothing", new SpectrumState("nothing"));
+        stateChooser.addOption("Coral-Pre-Score", operator.coralStageSelector);
+        stateChooser.addOption("Algae-Pre-Score", operator.algaeStageSelector);
         SmartDashboard.putData("Robot States Choosers", stateChooser);
     }
 
@@ -153,6 +154,9 @@ public class Robot extends SpectrumRobot {
 
             setupTriggers();
 
+            // System.out.println("algaestage: " + operator.operatorAlgaeStage);
+            // System.out.println("coralstage: " + operator.operatorCoralStage);
+
             Telemetry.print("--- Robot Init Complete ---");
 
         } catch (Throwable t) {
@@ -178,6 +182,7 @@ public class Robot extends SpectrumRobot {
         // Bind Triggers for all subsystems
         setupStates();
         RobotStates.setupStates();
+        setupTriggers();
     }
 
     public void clearCommandsAndButtons() {
@@ -187,6 +192,7 @@ public class Robot extends SpectrumRobot {
         // Bind Triggers for all subsystems
         setupStates();
         RobotStates.setupStates();
+        setupTriggers();
     }
 
     public void setupAutoVisualizer() {
