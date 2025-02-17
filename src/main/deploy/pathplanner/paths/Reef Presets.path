@@ -3,44 +3,44 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.78,
-        "y": 5.25
+        "x": 3.68,
+        "y": 5.44
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.125790856026933,
-        "y": 5.449642443810461
+        "x": 4.0257908560269335,
+        "y": 5.6396424438104615
       },
       "isLocked": false,
       "linkedName": "Reef KL"
     },
     {
       "anchor": {
-        "x": 5.2,
-        "y": 5.225
+        "x": 5.315941011235955,
+        "y": 5.44
       },
       "prevControl": {
-        "x": 4.7669872981077805,
-        "y": 5.475
+        "x": 4.882928309343735,
+        "y": 5.69
       },
       "nextControl": {
-        "x": 5.63301270189222,
-        "y": 4.975
+        "x": 5.7489537131281745,
+        "y": 5.19
       },
       "isLocked": false,
       "linkedName": "Reef IJ"
     },
     {
       "anchor": {
-        "x": 5.88,
+        "x": 6.13,
         "y": 4.0
       },
       "prevControl": {
-        "x": 5.88,
+        "x": 6.13,
         "y": 4.5
       },
       "nextControl": {
-        "x": 5.88,
+        "x": 6.13,
         "y": 3.5
       },
       "isLocked": false,
@@ -48,43 +48,43 @@
     },
     {
       "anchor": {
-        "x": 5.19,
-        "y": 2.81
+        "x": 5.315941011235955,
+        "y": 2.6
       },
       "prevControl": {
-        "x": 5.62301270189222,
-        "y": 3.06
+        "x": 5.7489537131281745,
+        "y": 2.85
       },
       "nextControl": {
-        "x": 4.756987298107781,
-        "y": 2.56
+        "x": 4.882928309343735,
+        "y": 2.35
       },
       "isLocked": false,
       "linkedName": "Reef EF"
     },
     {
       "anchor": {
-        "x": 3.8,
-        "y": 2.81
+        "x": 3.68,
+        "y": 2.6
       },
       "prevControl": {
-        "x": 4.2330127018922195,
-        "y": 2.560000000000001
+        "x": 4.11301270189222,
+        "y": 2.350000000000001
       },
       "nextControl": {
-        "x": 3.3669872981077806,
-        "y": 3.06
+        "x": 3.246987298107781,
+        "y": 2.85
       },
       "isLocked": false,
       "linkedName": "Reef CD"
     },
     {
       "anchor": {
-        "x": 3.08,
+        "x": 2.83,
         "y": 4.0
       },
       "prevControl": {
-        "x": 3.08,
+        "x": 2.83,
         "y": 3.5
       },
       "nextControl": null,
@@ -126,7 +126,7 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Possible Paths",
+  "folder": "Config Paths",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -59.99999999999999

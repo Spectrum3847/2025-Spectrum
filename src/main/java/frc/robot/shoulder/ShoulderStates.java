@@ -122,7 +122,8 @@ public class ShoulderStates {
     }
 
     public static Command coralExtendedIntake() {
-        return shoulder.moveToPercentage(config::getCoralExtendedIntake)
+        return shoulder.moveToPercentage(
+                        () -> shoulder.checkReversed(config::getCoralExtendedIntake))
                 .withName("Shoulder.coralExtendedIntake");
     }
 

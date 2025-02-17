@@ -3,54 +3,59 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.71,
-        "y": 5.6
+        "x": 5.85,
+        "y": 4.19
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.54863276047279,
-        "y": 5.797932875944241
+        "x": 6.547276520549593,
+        "y": 4.809505908290663
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.39810393258427,
-        "y": 5.783286516853933
+        "x": 5.99,
+        "y": 6.49
       },
       "prevControl": {
-        "x": 5.900975310499799,
-        "y": 5.8488538579681535
+        "x": 6.556119466262604,
+        "y": 5.790350980906466
       },
       "nextControl": {
-        "x": 4.899211476315595,
-        "y": 5.718237971050688
+        "x": 5.360978370819329,
+        "y": 7.267387798992816
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.78,
-        "y": 5.2
+        "x": 1.38,
+        "y": 7.16
       },
       "prevControl": {
-        "x": 4.28119382022472,
-        "y": 5.6436797752809
+        "x": 2.3827247191011236,
+        "y": 7.245786516853932
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": 0.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 6.0,
-    "maxAcceleration": 6.0,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -58,13 +63,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": -53.5
   },
   "reversed": false,
-  "folder": "Middle Algae Rush",
+  "folder": "Photon",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

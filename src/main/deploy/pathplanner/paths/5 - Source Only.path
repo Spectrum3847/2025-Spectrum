@@ -3,35 +3,42 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.68,
-        "y": 7.37
+        "x": 1.24,
+        "y": 7.05
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8831064966741773,
-        "y": 7.196261512218465
+        "x": 2.0821673459809134,
+        "y": 6.5039298112275405
       },
       "isLocked": false,
-      "linkedName": "Clean Side Source"
+      "linkedName": "Coral Station"
     },
     {
       "anchor": {
-        "x": 3.08,
-        "y": 4.0
+        "x": 3.68,
+        "y": 5.44
       },
       "prevControl": {
-        "x": 2.9433958939833094,
-        "y": 4.235206181831333
+        "x": 3.3187578265603506,
+        "y": 5.683619972814588
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Reef AB"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "rightL4",
+      "waypointRelativePos": 0.5,
+      "endWaypointRelativePos": 1.0,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 6.0,
     "maxAcceleration": 6.0,
@@ -42,10 +49,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -59.99999999999999
   },
   "reversed": false,
-  "folder": "Clean Side Source Only 5High",
+  "folder": "Blue Left Source",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -53.5

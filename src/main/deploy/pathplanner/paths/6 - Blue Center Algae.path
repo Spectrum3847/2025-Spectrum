@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.676123595505618,
-        "y": 7.369030898876405
+        "x": 5.316,
+        "y": 2.6
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3531680208124586,
-        "y": 6.952835948983562
+        "x": 6.68806179775281,
+        "y": 2.8311516853932583
       },
       "isLocked": false,
-      "linkedName": "Clean Side Source"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.2,
-        "y": 5.225
+        "x": 7.45,
+        "y": 5.6
       },
       "prevControl": {
-        "x": 4.493876245195985,
-        "y": 5.657842022037012
+        "x": 6.622331460674157,
+        "y": 5.232794943820225
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -119.99999999999999
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Clean Side Source Only 5High",
+  "folder": "Blue Center Algae Rush",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -53.5
+    "rotation": -59.99999999999999
   },
   "useDefaultConstraints": true
 }

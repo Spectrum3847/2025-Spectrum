@@ -80,7 +80,7 @@ public class RobotStates {
     public static final Trigger L1Coral = operator.L1Coral_A;
     public static final Trigger L2Coral = operator.L2Coral_B;
     public static final Trigger L3Coral = operator.L3Coral_X;
-    public static final Trigger L4Coral = operator.L4Coral_Y.or(autonL4);
+    public static final Trigger L4Coral = operator.L4Coral_Y;
 
     public static final Trigger algaeHandoff = operator.algaeHandoff_X;
     public static final Trigger coralHandoff = operator.coralHandoff_Y;

@@ -60,6 +60,7 @@ public class Limelight {
     /* Debug */
     private final DecimalFormat df = new DecimalFormat();
     private LimelightConfig config;
+    @Getter @Setter private boolean isIntegrating;
     @Getter @Setter private String logStatus = "";
     @Getter @Setter private String tagStatus = "";
 
@@ -77,6 +78,12 @@ public class Limelight {
 
     public Limelight(String cameraName, int pipeline) {
         this(cameraName);
+        setLimelightPipeline(pipeline);
+    }
+
+    public Limelight(String name, int pipeline, LimelightConfig config) {
+        this(name);
+        this.config = config;
         setLimelightPipeline(pipeline);
     }
 
@@ -256,11 +263,13 @@ public class Limelight {
 
     public void sendValidStatus(String message) {
         config.isIntegrating = true;
+        this.isIntegrating = config.isIntegrating;
         logStatus = message;
     }
 
     public void sendInvalidStatus(String message) {
         config.isIntegrating = false;
+        this.isIntegrating = config.isIntegrating;
         logStatus = message;
     }
 

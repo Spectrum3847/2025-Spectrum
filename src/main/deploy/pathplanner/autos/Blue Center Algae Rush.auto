@@ -1,0 +1,49 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "1 - Blue Center Algae"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "2 - Blue Center Algae"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3 - Blue Center Algae"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "4 - Blue Center Algae"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "5 - Blue Center Algae"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "6 - Blue Center Algae"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Blue Center Origin",
+  "choreoAuto": false
+}

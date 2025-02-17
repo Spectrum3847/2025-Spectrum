@@ -3,41 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.71,
-        "y": 5.2
+        "x": 1.38,
+        "y": 7.16
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.506896337623104,
-        "y": 5.054229967657642
+        "x": 3.2372191011235953,
+        "y": 7.1718398876404486
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.713,
-        "y": 3.893539325842697
+        "x": 5.33,
+        "y": 5.12
       },
       "prevControl": {
-        "x": 7.284650848072167,
-        "y": 4.468284989568138
-      },
-      "nextControl": {
-        "x": 6.354464996819769,
-        "y": 3.533063278152813
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 5.19,
-        "y": 2.85
-      },
-      "prevControl": {
-        "x": 5.583985754339202,
-        "y": 3.0157351542580595
+        "x": 5.858216292134831,
+        "y": 6.185884831460674
       },
       "nextControl": null,
       "isLocked": false,
@@ -49,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 6.0,
-    "maxAcceleration": 6.0,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -58,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -59.99999999999999
+    "rotation": 59.99999999999999
   },
   "reversed": false,
-  "folder": "Middle Algae Rush",
+  "folder": "Photon",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -53.5
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

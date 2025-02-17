@@ -7,67 +7,67 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1 - Algae Rush"
+            "pathName": "1 - Source Only"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "2 - Algae Rush"
+            "pathName": "2 - Source Only"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3 - Algae Rush"
+            "pathName": "3 - Source Only"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "4 - Algae Rush"
+            "pathName": "4 - Source Only"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "5 - Algae Rush"
+            "pathName": "5 - Source Only"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "6 - Algae Rush"
+            "pathName": "6 - Source Only"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "7 - Algae Rush"
+            "pathName": "7 - Source Only"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "8 - Algae Rush"
+            "pathName": "8 - Source Only"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "9 - Algae Rush"
+            "pathName": "9 - Source Only"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "10 - Algae Rush"
+            "pathName": "10 - Source Only"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Possible Autos",
+  "folder": "Blue Left Origin",
   "choreoAuto": false
 }

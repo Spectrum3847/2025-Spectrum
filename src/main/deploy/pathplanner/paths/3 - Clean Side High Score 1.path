@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.793539325842697,
-        "y": 5.783286516853933
+        "x": 3.240911801010091,
+        "y": 5.661047815297559
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.78,
-        "y": 5.25
+        "x": 3.68,
+        "y": 5.44
       },
       "prevControl": {
-        "x": 3.0646769662921343,
-        "y": 5.709339887640449
+        "x": 2.5111575894449834,
+        "y": 5.6842784700032825
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "L4",
+      "name": "leftL4",
       "waypointRelativePos": 0.0,
       "endWaypointRelativePos": null,
       "command": null
@@ -49,10 +49,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": -59.99999999999999
   },
   "reversed": false,
-  "folder": " Clean Side Preload-Source 5High ",
+  "folder": "Blue Left Preload-Source ",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

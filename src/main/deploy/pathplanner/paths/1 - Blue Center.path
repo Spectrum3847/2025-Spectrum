@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.83,
-        "y": 3.86
+        "x": 7.15,
+        "y": 4.5
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.830009574637272,
-        "y": 4.109999999816653
+        "x": 6.737359550561797,
+        "y": 4.181109550561798
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.83,
-        "y": 4.02
+        "x": 5.85,
+        "y": 4.19
       },
       "prevControl": {
-        "x": 5.830151303930076,
-        "y": 3.7700000457857623
+        "x": 6.218062707411108,
+        "y": 4.19
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 6.0,
-    "maxAcceleration": 6.0,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -45,10 +45,10 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Middle Algae Rush",
+  "folder": "Photon",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

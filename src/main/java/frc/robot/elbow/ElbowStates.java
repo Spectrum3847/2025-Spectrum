@@ -30,9 +30,9 @@ public class ElbowStates {
         scoreState.and(L2Coral).and(backwardMode.not()).onTrue(log(score2()));
         scoreState.and(L2Coral).and(backwardMode).onTrue(log(reverse(score2())));
         scoreState.and(L3Coral).and(backwardMode.not()).onTrue(log(score3()));
-        scoreState.and(L3Coral).and(backwardMode).onTrue(log(score3()));
+        scoreState.and(L3Coral).and(backwardMode).onTrue(log(reverse(score3())));
         scoreState.and(L4Coral).and(backwardMode.not()).onTrue(log(score4()));
-        scoreState.and(L4Coral).and(backwardMode).onTrue(log(score4()));
+        scoreState.and(L4Coral).and(backwardMode).onTrue(log(reverse(score4())));
 
         L2Algae.and(backwardMode.not()).whileTrue(log(l2Algae()));
         L2Algae.and(backwardMode).whileTrue(log(reverse(l2Algae())));

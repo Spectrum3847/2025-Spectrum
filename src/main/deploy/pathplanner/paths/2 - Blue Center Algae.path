@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.2,
-        "y": 5.225
+        "x": 6.13,
+        "y": 4.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.499827524744137,
-        "y": 5.654814331099088
+        "x": 6.77690817818693,
+        "y": 4.383459818238302
       },
       "isLocked": false,
-      "linkedName": "Reef IJ"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.676123595505618,
-        "y": 7.369030898876405
+        "x": 7.45,
+        "y": 4.8
       },
       "prevControl": {
-        "x": 3.013883677963821,
-        "y": 6.437219237836566
+        "x": 6.860724636264104,
+        "y": 4.442812073805411
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -53.5
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Clean Side Source Only 5High",
+  "folder": "Blue Center Algae Rush",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -119.99999999999999
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.15,
-        "y": 4.0
+        "x": 1.24,
+        "y": 7.05
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.885853545276572,
-        "y": 3.974751958528015
+        "x": 2.7442415730337073,
+        "y": 6.818539325842696
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.83,
-        "y": 3.86
+        "x": 2.85,
+        "y": 4.02
       },
       "prevControl": {
-        "x": 6.102442153833793,
-        "y": 3.8866855895788577
+        "x": 2.47310393258427,
+        "y": 4.411165730337078
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,7 +31,14 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "leftL4",
+      "waypointRelativePos": 0.5,
+      "endWaypointRelativePos": 1.0,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 6.0,
     "maxAcceleration": 6.0,
@@ -45,10 +52,10 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Middle Algae Rush",
+  "folder": "Blue Left Source",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -53.5
   },
   "useDefaultConstraints": true
 }
