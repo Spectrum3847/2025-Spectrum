@@ -36,7 +36,7 @@ public class InClimb extends Mechanism {
         /* InClimb config settings */
         @Getter private final double zeroSpeed = -0.1;
 
-        @Getter private final double currentLimit = 30;
+        @Getter private final double currentLimit = 10;
         @Getter private final double torqueCurrentLimit = 100;
         @Getter private final double velocityKp = .4; // 186; // 200 w/ 0.013 good
         @Getter private final double velocityKv = 0.018;
@@ -56,7 +56,7 @@ public class InClimb extends Mechanism {
         @Getter private double length = 0.4;
 
         public InClimbConfig() {
-            super("InClimb", 55, Rio.RIO_CANBUS); // Rio.CANIVORE);
+            super("InClimbTop", 50, Rio.RIO_CANBUS); // Rio.CANIVORE);
             configPIDGains(0, velocityKp, 0, 0);
             configFeedForwardGains(velocityKs, velocityKv, 0, 0);
             configMotionMagic(54.6, 60, 0); // 147000, 161000, 0);
@@ -70,6 +70,7 @@ public class InClimb extends Mechanism {
             configNeutralBrakeMode(true);
             configClockwise_Positive();
             setSimRatio(14);
+            setFollowerConfigs(new FollowerConfig("InClimbBottom", 51, Rio.CANIVORE,true));
         }
 
         public InClimbConfig modifyMotorConfig(TalonFX motor) {

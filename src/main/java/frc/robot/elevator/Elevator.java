@@ -56,7 +56,7 @@ public class Elevator extends Mechanism {
         @Getter private double movingLength = 50;
 
         public ElevatorConfig() {
-            super("Elevator", 40, Rio.CANIVORE);
+            super("ElevatorLeft", 40, Rio.CANIVORE);
             configMinMaxRotations(minRotations, maxRotations);
             configPIDGains(0, positionKp, 0, 0);
             configFeedForwardGains(0, positionKv, 0, 0);
@@ -69,6 +69,7 @@ public class Elevator extends Mechanism {
             configReverseSoftLimit(minRotations, true);
             configNeutralBrakeMode(true);
             configCounterClockwise_Positive();
+            setFollowerConfigs(new FollowerConfig("ElevatorRight", 41, Rio.CANIVORE,true));
         }
 
         /** Use these method to set the config for the mechanism on each robot */
