@@ -17,8 +17,8 @@ public class GroundIntakeStates {
     }
 
     public static void setStates() {
-        //groundAlgae.whileTrue(log(intake()));
-        //groundCoral.whileTrue(log(intake()));
+        // groundAlgae.whileTrue(log(intake()));
+        // groundCoral.whileTrue(log(intake()));
 
         coastMode.onTrue(log(coastMode()));
         coastMode.onFalse(log(ensureBrakeMode()));

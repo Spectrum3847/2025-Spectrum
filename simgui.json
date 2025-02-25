@@ -22,6 +22,7 @@
       "/SmartDashboard/Auto Visualizer": "Field2d",
       "/SmartDashboard/LeftView": "Mechanism2d",
       "/SmartDashboard/Scheduler": "Scheduler",
+      "/SmartDashboard/States": "Alerts",
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d",
       "/SmartDashboard/frontView": "Mechanism2d"
     },

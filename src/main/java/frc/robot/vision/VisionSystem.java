@@ -15,14 +15,19 @@ import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 
 public class VisionSystem extends SubsystemBase {
-    private final PhotonCamera camera = new PhotonCamera("cameraName");
+    private final PhotonCamera frontLL = new PhotonCamera("frontLL");
+    private final PhotonCamera backLL = new PhotonCamera("backLL");
     private final VisionSystemSim visionSim = new VisionSystemSim("main");
     private final Pose2dSupplier getSimPose;
 
-    Transform3d robotToCamera =
+    Transform3d robotToFrontCamera =
             new Transform3d(
                     new Translation3d(0, 0, 0.5), // Centered on the robot, 0.5m up
                     new Rotation3d(0, Math.toRadians(-15), 0)); // Pitched 15 deg up
+    Transform3d robotToBackCamera =
+            new Transform3d(
+                    new Translation3d(0, 0, 0.5),
+                    new Rotation3d(0, Math.toRadians(-15), Math.toRadians(180)));
 
     @FunctionalInterface
     public interface Pose2dSupplier {
@@ -40,12 +45,15 @@ public class VisionSystem extends SubsystemBase {
         props.setLatencyStdDevMs(5.0);
 
         // Setup simulated camera
-        PhotonCameraSim cameraSim = new PhotonCameraSim(camera, props);
+        PhotonCameraSim frontCameraSim = new PhotonCameraSim(frontLL, props);
+        PhotonCameraSim backCameraSim = new PhotonCameraSim(backLL, props);
         // Draw field wireframe in simulated camera view
-        cameraSim.enableDrawWireframe(true);
+        frontCameraSim.enableDrawWireframe(true);
+        backCameraSim.enableDrawWireframe(true);
 
         // Add simulated camera to vision sim
-        visionSim.addCamera(cameraSim, robotToCamera);
+        visionSim.addCamera(frontCameraSim, robotToFrontCamera);
+        visionSim.addCamera(backCameraSim, robotToBackCamera);
 
         // Add AprilTags to vision sim
         try {
