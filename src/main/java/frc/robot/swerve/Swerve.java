@@ -363,10 +363,6 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
                         Units.feetToMeters(27.0),
                         Units.feetToMeters(27.0 / 2.0),
                         config.getBlueAlliancePerspectiveRotation()));
-        double driveBaseRadius = .4;
-        for (var moduleLocation : getModuleLocations()) {
-            driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
-        }
 
         RobotConfig robotConfig = null; // Initialize with null in case of exception
         try {
@@ -386,7 +382,9 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
                                 AutoRequest.withSpeeds(
                                         speeds)), // Consumer of ChassisSpeeds to drive the robot
                 new PPHolonomicDriveController(
-                        new PIDConstants(1, 0, 0), new PIDConstants(5, 0, 0), Robot.kDefaultPeriod),
+                        new PIDConstants(10, 0, .55),
+                        new PIDConstants(5, 0, 0),
+                        Robot.kDefaultPeriod),
                 robotConfig,
                 () ->
                         DriverStation.getAlliance().orElse(Alliance.Blue)

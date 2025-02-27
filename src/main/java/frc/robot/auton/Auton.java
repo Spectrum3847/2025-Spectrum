@@ -52,15 +52,16 @@ public class Auton {
 
         pathChooser.addOption("Source 3 Test", SpectrumAuton("Source 3", false));
 
-        pathChooser.addOption("Left - Source", SpectrumAuton("Blue Left - Source", false));
-        pathChooser.addOption("Right - Source", SpectrumAuton("Blue Left - Source", true));
+        pathChooser.addOption("3847 | Left - Source", SpectrumAuton("Blue Left - Source", false));
+        pathChooser.addOption("3847 | Right - Source", SpectrumAuton("Blue Left - Source", true));
 
-        pathChooser.addOption("Left - Preplace", SpectrumAuton("Blue Left - Preplace", false));
-        pathChooser.addOption("Right - Preplace", SpectrumAuton("Blue Left - Preplace", true));
+        // pathChooser.addOption("Left - Preplace", SpectrumAuton("Blue Left - Preplace", false));
+        // pathChooser.addOption("Right - Preplace", SpectrumAuton("Blue Left - Preplace", true));
 
-        pathChooser.addOption("Center - Algae", SpectrumAuton("Blue Center Algae Rush", false));
+        // pathChooser.addOption("Center - Algae", SpectrumAuton("Blue Center Algae Rush", false));
 
-        pathChooser.addOption("Center - Photon", SpectrumAuton("Photon Blue Center", false));
+        pathChooser.addOption("8515 | Center - Photon", SpectrumAuton("Photon Blue Center", false));
+        pathChooser.addOption("8515 | Left - Photon", SpectrumAuton("Photon Blue Left", false));
 
         SmartDashboard.putData("Auto Chooser", pathChooser);
     }

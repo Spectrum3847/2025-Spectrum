@@ -36,8 +36,8 @@
         "y": 7.16
       },
       "prevControl": {
-        "x": 2.3827247191011236,
-        "y": 7.245786516853932
+        "x": 2.3991573033707865,
+        "y": 7.1718398876404486
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,8 +46,8 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1.0,
-      "rotationDegrees": 0.0
+      "waypointRelativePos": 0.47799593771157745,
+      "rotationDegrees": 180.0
     }
   ],
   "constraintZones": [],
@@ -69,7 +69,7 @@
   "folder": "Photon",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": false
 }

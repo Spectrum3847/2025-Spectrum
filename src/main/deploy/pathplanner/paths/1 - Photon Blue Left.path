@@ -3,36 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.38,
-        "y": 7.16
+        "x": 7.15,
+        "y": 7.54
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.2372191011235953,
-        "y": 7.1718398876404486
+        "x": 6.588483554061408,
+        "y": 6.7133878611343665
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.33,
-        "y": 5.12
+        "x": 5.28,
+        "y": 5.1
       },
       "prevControl": {
-        "x": 5.858216292134831,
-        "y": 6.185884831460674
+        "x": 5.793164972058358,
+        "y": 5.903037204013855
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.6343940419769809,
+      "rotationDegrees": -119.99999999999999
+    }
+  ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.7432590855803082,
+      "minWaypointRelativePos": 0.893317702227432,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 1.0,
@@ -62,7 +67,7 @@
   "folder": "Photon",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -53.5
+    "rotation": 180.0
   },
   "useDefaultConstraints": false
 }

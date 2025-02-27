@@ -93,14 +93,14 @@ public class SwerveConfig {
 
     // Theoretical free speed (m/s) at 12v applied output;
     // This needs to be tuned to your individual robot
-    @Getter @Setter private LinearVelocity speedAt12Volts = MetersPerSecond.of(4.70);
+    @Getter @Setter private LinearVelocity speedAt12Volts = MetersPerSecond.of(4.70); //TODO: put on blocks and find max rps from phoenix tuner
 
     // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
     // This may need to be tuned to your individual robot
     @Getter private double coupleRatio = 3.125 * 14.0 / 13.0; // copied from 254-2024
 
     @Getter @Setter
-    private double driveGearRatio = (50.0 / 16.0) * (16.0 / 28.0) * (45.0 / 15.0); // 7.363636364;
+    private double driveGearRatio = (50.0 / 14.0) * (17.0 / 27.0) * (45.0 / 15.0); // 6.74603174603;
 
     @Getter @Setter private double steerGearRatio = 21.428571428571427; // 12.8;
 

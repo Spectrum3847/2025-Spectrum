@@ -3,7 +3,32 @@
   "command": {
     "type": "sequential",
     "data": {
-      "commands": []
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "1 - Photon Blue Left"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "2 - Photon Blue Left"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3 - Photon Blue Left"
+          }
+        }
+      ]
     }
   },
   "resetOdom": true,
