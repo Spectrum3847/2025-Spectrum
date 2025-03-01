@@ -72,11 +72,13 @@ public class Vision extends SubsystemBase {
                     VisionConfig.frontTagPipeline,
                     VisionConfig.FRONT_CONFIG);
 
-    public final LimelightLogger leftLLogger = new LimelightLogger("front", frontLL);
+    public final LimelightLogger frontLogger = new LimelightLogger("front", frontLL);
 
     public final Limelight backLL =
             new Limelight(
                     VisionConfig.BACK_LL, VisionConfig.backTagPipeline, VisionConfig.BACK_CONFIG);
+
+    public final LimeLightLogger backLogger = new LimelightLogger("back", backLL);
 
     public final Limelight[] allLimelights = {frontLL, backLL};
 
@@ -124,11 +126,15 @@ public class Vision extends SubsystemBase {
                 // choose LL with best view of tags and integrate from only that camera
                 Limelight bestLimelight = getBestLimelight();
                 for (Limelight limelight : allLimelights) {
+                    LimeLightLogger logger = new LimeLightLogger(limelight.name, limelight);
                     if (limelight.getCameraName() == bestLimelight.getCameraName()) {
                         addFilteredVisionInput(bestLimelight);
                     } else {
                         limelight.sendInvalidStatus("not best rejection");
                     }
+                    logger.getMegaPose();
+                    logger.getPose();
+                    logger.getLogStatus();
                     isIntegrating |= limelight.isIntegrating();
                 }
                 getDistanceToReefFromRobot();
@@ -162,77 +168,77 @@ public class Vision extends SubsystemBase {
                             .getTranslation()
                             .getDistance(botpose.getTranslation());
 
-            /* rejections */
-            // reject pose if individual tag ambiguity is too high
-            ll.setTagStatus("");
-            for (RawFiducial tag : tags) {
-                // search for highest ambiguity tag for later checks
-                if (highestAmbiguity == 2) {
-                    highestAmbiguity = tag.ambiguity;
-                } else if (tag.ambiguity > highestAmbiguity) {
-                    highestAmbiguity = tag.ambiguity;
-                }
-                // log ambiguities
-                ll.setTagStatus("Tag " + tag.id + ": " + tag.ambiguity);
-                // ambiguity rejection check
-                if (tag.ambiguity > 0.9) {
-                    ll.sendInvalidStatus("ambiguity rejection");
-                    return;
-                }
-            }
-            if (Field.poseOutOfField(botpose3D)) {
-                // reject if pose is out of the field
-                ll.sendInvalidStatus("bound rejection");
-                return;
-            } else if (Math.abs(robotSpeed.omegaRadiansPerSecond) >= 1.6) {
-                // reject if we are rotating more than 0.5 rad/s
-                ll.sendInvalidStatus("rotation rejection");
-                return;
-            } else if (Math.abs(botpose3D.getZ()) > 0.25) {
-                // reject if pose is .25 meters in the air
-                ll.sendInvalidStatus("height rejection");
-                return;
-            } else if (Math.abs(botpose3D.getRotation().getX()) > 5
-                    || Math.abs(botpose3D.getRotation().getY()) > 5) {
-                // reject if pose is 5 degrees titled in roll or pitch
-                ll.sendInvalidStatus("roll/pitch rejection");
-                return;
-            } else if (targetSize <= 0.025) {
-                ll.sendInvalidStatus("size rejection");
-                return;
-            }
-            /* integrations */
-            // if almost stationary and extremely close to tag
-            else if (robotSpeed.vxMetersPerSecond + robotSpeed.vyMetersPerSecond <= 0.2
-                    && targetSize > 0.4) {
-                ll.sendValidStatus("Stationary close integration");
-                xyStds = 0.1;
-                degStds = 0.1;
-            } else if (multiTags && targetSize > 0.05) {
-                ll.sendValidStatus("Multi integration");
-                xyStds = 0.25;
-                degStds = 8;
-                if (targetSize > 0.09) {
-                    ll.sendValidStatus("Strong Multi integration");
-                    xyStds = 0.1;
-                    degStds = 0.1;
-                }
-            } else if (targetSize > 0.8 && poseDifference < 0.5) {
-                ll.sendValidStatus("Close integration");
-                xyStds = 0.5;
-                degStds = 16;
-            } else if (targetSize > 0.1 && poseDifference < 0.3) {
-                ll.sendValidStatus("Proximity integration");
-                xyStds = 2.0;
-                degStds = 999999;
-            } else if (highestAmbiguity < 0.25 && targetSize >= 0.03) {
-                ll.sendValidStatus("Stable integration");
-                xyStds = 0.5;
-                degStds = 999999;
-            } else {
-                ll.sendInvalidStatus("catch rejection: " + df.format(poseDifference) + " poseDiff");
-                return;
-            }
+            // /* rejections */
+            // // reject pose if individual tag ambiguity is too high
+            // ll.setTagStatus("");
+            // for (RawFiducial tag : tags) {
+            //     // search for highest ambiguity tag for later checks
+            //     if (highestAmbiguity == 2) {
+            //         highestAmbiguity = tag.ambiguity;
+            //     } else if (tag.ambiguity > highestAmbiguity) {
+            //         highestAmbiguity = tag.ambiguity;
+            //     }
+            //     // log ambiguities
+            //     ll.setTagStatus("Tag " + tag.id + ": " + tag.ambiguity);
+            //     // ambiguity rejection check
+            //     if (tag.ambiguity > 0.9) {
+            //         ll.sendInvalidStatus("ambiguity rejection");
+            //         return;
+            //     }
+            // }
+            // if (Field.poseOutOfField(botpose3D)) {
+            //     // reject if pose is out of the field
+            //     ll.sendInvalidStatus("bound rejection");
+            //     return;
+            // } else if (Math.abs(robotSpeed.omegaRadiansPerSecond) >= 1.6) {
+            //     // reject if we are rotating more than 0.5 rad/s
+            //     ll.sendInvalidStatus("rotation rejection");
+            //     return;
+            // } else if (Math.abs(botpose3D.getZ()) > 0.25) {
+            //     // reject if pose is .25 meters in the air
+            //     ll.sendInvalidStatus("height rejection");
+            //     return;
+            // } else if (Math.abs(botpose3D.getRotation().getX()) > 5
+            //         || Math.abs(botpose3D.getRotation().getY()) > 5) {
+            //     // reject if pose is 5 degrees titled in roll or pitch
+            //     ll.sendInvalidStatus("roll/pitch rejection");
+            //     return;
+            // } else if (targetSize <= 0.025) {
+            //     ll.sendInvalidStatus("size rejection");
+            //     return;
+            // }
+            // /* integrations */
+            // // if almost stationary and extremely close to tag
+            // else if (robotSpeed.vxMetersPerSecond + robotSpeed.vyMetersPerSecond <= 0.2
+            //         && targetSize > 0.4) {
+            //     ll.sendValidStatus("Stationary close integration");
+            //     xyStds = 0.1;
+            //     degStds = 0.1;
+            // } else if (multiTags && targetSize > 0.05) {
+            //     ll.sendValidStatus("Multi integration");
+            //     xyStds = 0.25;
+            //     degStds = 8;
+            //     if (targetSize > 0.09) {
+            //         ll.sendValidStatus("Strong Multi integration");
+            //         xyStds = 0.1;
+            //         degStds = 0.1;
+            //     }
+            // } else if (targetSize > 0.8 && poseDifference < 0.5) {
+            //     ll.sendValidStatus("Close integration");
+            //     xyStds = 0.5;
+            //     degStds = 16;
+            // } else if (targetSize > 0.1 && poseDifference < 0.3) {
+            //     ll.sendValidStatus("Proximity integration");
+            //     xyStds = 2.0;
+            //     degStds = 999999;
+            // } else if (highestAmbiguity < 0.25 && targetSize >= 0.03) {
+            //     ll.sendValidStatus("Stable integration");
+            //     xyStds = 0.5;
+            //     degStds = 999999;
+            // } else {
+            //     ll.sendInvalidStatus("catch rejection: " + df.format(poseDifference) + " poseDiff");
+            //     return;
+            // }
 
             // strict with degree std and ambiguity and rotation because this is megatag1
             if (highestAmbiguity > 0.5) {
