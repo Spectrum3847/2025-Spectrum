@@ -70,6 +70,7 @@ public class Auton {
         pathChooser.addOption("8515 | L4 Leave", SpectrumAuton("L4 Leave", false));
         pathChooser.addOption("8515 | 3 coral defunct", SpectrumAuton("3 coral defunct", false));
         pathChooser.addOption("8515 | 4 coral defunct", SpectrumAuton("4 coral defunct", false));
+        pathChooser.addOption("8515 | Left Side Rush", SpectrumAuton("Left Side Rush", false));
         // pathChooser.addOption("8515 | Center - Photon", SpectrumAuton("Photon Blue Center",
         // false));
         // pathChooser.addOption("8515 | Left - Photon", SpectrumAuton("Photon Blue Left", false));
