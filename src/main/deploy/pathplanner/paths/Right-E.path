@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.204610655737704,
+        "y": 1.8732069672131149
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.7267556179775285,
+        "y": 2.488553370786517
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.192696629213483,
+        "y": 2.792556179775281
+      },
+      "prevControl": {
+        "x": 5.587078651685394,
+        "y": 2.4392556179775284
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 6.0,
+    "maxAcceleration": 6.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 117.80145877993421
+  },
+  "reversed": false,
+  "folder": "Paths by E (don't use)-right side rush",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 178.36342295838338
+  },
+  "useDefaultConstraints": true
+}

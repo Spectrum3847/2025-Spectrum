@@ -3,17 +3,20 @@
   "robotLength": 0.91,
   "holonomicMode": true,
   "pathFolders": [
+    "Blue Center Algae Rush",
     "Blue Left Preload-Source ",
     "Blue Left Source",
     "Config Paths",
-    "Blue Center Algae Rush",
+    "Paths by E (don't use)-right side rush",
+    "Paths by E (don't use)-Center right side rush",
     "Photon"
   ],
   "autoFolders": [
+    "Blue Center Origin",
     "Blue Left Origin",
     "Blue Right Origin",
     "Config Autos",
-    "Blue Center Origin",
+    "E's Autos (don't use)",
     "Photon"
   ],
   "defaultMaxVel": 6.0,

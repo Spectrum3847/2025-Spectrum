@@ -1,0 +1,91 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right-E"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "leftL4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "E-Source"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.5
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Source-C"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "leftL4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "C-Source"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.5
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Source-D"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "score"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "C-Source"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.5
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Copy of E-Source"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "E's Autos (don't use)",
+  "choreoAuto": false
+}
