@@ -195,7 +195,7 @@ public class SwerveConfig {
         updateConfig();
     }
 
-    public SwerveConfig  updateConfig() {
+    public SwerveConfig updateConfig() {
         drivetrainConstants =
                 new SwerveDrivetrainConstants()
                         .withCANBusName(canBus.getName())
