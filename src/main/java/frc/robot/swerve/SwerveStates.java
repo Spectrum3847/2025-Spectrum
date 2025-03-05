@@ -57,6 +57,7 @@ public class SwerveStates {
 
         // // vision aim
         pilot.visionAim_Y.whileTrue(log(reefAimDrive()));
+        pilot.visionAim_Y_fn.whileTrue(log(feederAimDrive()));
     }
 
     /** Pilot Commands ************************************************************************ */
@@ -90,6 +91,13 @@ public class SwerveStates {
         return 0;
     }
 
+    protected static Command feederAimDrive() {
+        return drive(
+                        pilot::getDriveFwdPositive,
+                        pilot::getDriveLeftPositive,
+                        pilot::chooseCardinalDirections)
+                .withName("Swerve.feederAimDrive");
+    }
     protected static Command snapSteerDrive() {
         return drive(
                         pilot::getDriveFwdPositive,
