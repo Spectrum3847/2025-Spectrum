@@ -75,6 +75,22 @@ public class SwerveStates {
                 .withName("Swerve.reefAimDrive");
     }
 
+    protected static Command visionReefDrive() {
+        return aimDrive(
+                        pilot::getDriveFwdPositive,
+                        pilot::getDriveLeftPositive,
+                        () -> Robot.getVision().getAdjustedThetaToReefFace())
+                .withName("Swerve.VisionDrive");
+    }
+
+    protected static Command feederAimDrive() {
+        return drive(
+                        pilot::getDriveFwdPositive,
+                        pilot::getDriveLeftPositive,
+                        Robot.getVision()::getReefTagAngle)
+                .withName("Swerve.feederAimDrive");
+    }
+
     private static double getTagTxVelocity() {
         if (Robot.getVision().frontLL.targetInView()) {
             return swerve.calculateTagCenterAlignController(
@@ -91,13 +107,7 @@ public class SwerveStates {
         return 0;
     }
 
-    protected static Command feederAimDrive() {
-        return drive(
-                        pilot::getDriveFwdPositive,
-                        pilot::getDriveLeftPositive,
-                        pilot::chooseCardinalDirections)
-                .withName("Swerve.feederAimDrive");
-    }
+
     protected static Command snapSteerDrive() {
         return drive(
                         pilot::getDriveFwdPositive,
@@ -122,13 +132,6 @@ public class SwerveStates {
                 .withName("Swerve.PilotFPVDrive");
     }
 
-    protected static Command visionReefDrive() {
-        return aimDrive(
-                        pilot::getDriveFwdPositive,
-                        pilot::getDriveLeftPositive,
-                        () -> Robot.getVision().getAdjustedThetaToReefFace())
-                .withName("Swerve.VisionDrive");
-    }
 
     protected static Command pilotAimDrive(DoubleSupplier targetDegrees) {
         return aimDrive(pilot::getDriveFwdPositive, pilot::getDriveLeftPositive, targetDegrees)
