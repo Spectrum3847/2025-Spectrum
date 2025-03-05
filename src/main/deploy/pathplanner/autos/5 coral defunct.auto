@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Center Start"
+            "pathName": "Right-E"
           }
         },
         {
@@ -19,19 +19,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "H-Source"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "sourceIntake"
+            "pathName": "E-Source"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.75
+            "waitTime": 0.25
           }
         },
         {
@@ -43,7 +37,7 @@
         {
           "type": "named",
           "data": {
-            "name": "L1"
+            "name": "score"
           }
         },
         {
@@ -53,15 +47,33 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.4
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "source-B"
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "sourceIntake"
+            "name": "leftL4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "B-Source"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.75
+            "waitTime": 0.4
           }
         },
         {
@@ -73,13 +85,25 @@
         {
           "type": "named",
           "data": {
-            "name": "L1"
+            "name": "score"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Up top"
+            "pathName": "C-Source"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.4
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Copy of E-Source"
           }
         }
       ]
