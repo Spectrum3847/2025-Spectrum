@@ -37,7 +37,7 @@
         {
           "type": "named",
           "data": {
-            "name": "score"
+            "name": "leftL4"
           }
         },
         {
@@ -61,7 +61,7 @@
         {
           "type": "named",
           "data": {
-            "name": "leftL4"
+            "name": "rightL4"
           }
         },
         {
@@ -85,7 +85,7 @@
         {
           "type": "named",
           "data": {
-            "name": "score"
+            "name": "rightL4"
           }
         },
         {
