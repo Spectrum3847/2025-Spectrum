@@ -405,6 +405,11 @@ public class Vision extends SubsystemBase implements NTSendable {
     //     //runs closestReefFace to get the closest reef face id
     // }
 
+    /**
+     * Returns the angle to the reef face in radians
+     * Uses the front limelight only
+     * @return
+     */
     public double getReefTagAngle() {
         double[][] reefAngles = {
             {17, 60}, {18, 0}, {19, -60}, {20, -120}, {21, 180}, {22, 120},
@@ -421,6 +426,29 @@ public class Vision extends SubsystemBase implements NTSendable {
 
         // Return current angle if no tag is found
         return Robot.getSwerve().getRobotPose().getRotation().getRadians();
+    }
+
+    /**
+     * Returns the angle to the feeder tag in radians
+     * Uses the front limelight only
+     * @return
+     */
+    public double getFeederTagAngle() {
+        double[][] feederAngles = {
+            {1, -54}, {2, 54}, //Blue tags
+            {12, -126}, {13, 126} //Red tags
+            };
+        
+        int closestTag = (int) frontLL.getClosestTagID();
+
+        for(int i = 0; i < feederAngles.length; i++) {
+            if(closestTag == feederAngles[i][0]) {
+                return Math.toRadians(feederAngles[i][1]);
+            }
+        }
+
+        //Return current angle if no tag is found
+        return Robot.getSwerve().getRobotPose().getRotation().getRadians(); 
     }
 
     public double getAdjustedThetaToReefFace() {
