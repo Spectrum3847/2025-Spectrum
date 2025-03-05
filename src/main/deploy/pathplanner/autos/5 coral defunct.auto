@@ -29,6 +29,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "sourceIntake"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Source-C"
@@ -50,6 +56,12 @@
           "type": "wait",
           "data": {
             "waitTime": 0.4
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "sourceIntake"
           }
         },
         {
@@ -77,6 +89,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "sourceIntake"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Source-D"
@@ -101,9 +119,21 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "sourceIntake"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Copy of E-Source"
+            "pathName": "Source-E"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "rightL4"
           }
         }
       ]

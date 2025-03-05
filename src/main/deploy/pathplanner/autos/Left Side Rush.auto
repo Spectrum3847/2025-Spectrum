@@ -29,6 +29,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "sourceIntake"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Source-K"
@@ -44,6 +50,12 @@
           "type": "path",
           "data": {
             "pathName": "K-Source"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "sourceIntake"
           }
         },
         {
@@ -71,6 +83,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "sourceIntake"
+          }
+        },
+        {
           "type": "wait",
           "data": {
             "waitTime": 0.75
@@ -80,6 +98,12 @@
           "type": "path",
           "data": {
             "pathName": "Source-J"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "score"
           }
         }
       ]
