@@ -75,19 +75,11 @@ public class SwerveStates {
                 .withName("Swerve.reefAimDrive");
     }
 
-    protected static Command visionReefDrive() {
-        return aimDrive(
-                        pilot::getDriveFwdPositive,
-                        pilot::getDriveLeftPositive,
-                        () -> Robot.getVision().getAdjustedThetaToReefFace())
-                .withName("Swerve.VisionDrive");
-    }
-
     protected static Command feederAimDrive() {
         return drive(
                         pilot::getDriveFwdPositive,
                         pilot::getDriveLeftPositive,
-                        Robot.getVision()::getReefTagAngle)
+                        Robot.getVision()::getFeederTagAngle)
                 .withName("Swerve.feederAimDrive");
     }
 
