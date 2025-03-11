@@ -405,6 +405,56 @@ public class Vision extends SubsystemBase implements NTSendable {
     //     //runs closestReefFace to get the closest reef face id
     // }
 
+    public double crossProduct(double[] p1, double[] p2, double[] p) {
+        return (p2[0] - p1[0]) * (p[1] - p1[1]) - (p2[1] - p1[1]) * (p[0] - p1[0]);
+    }
+
+    public boolean isPointInReefZone(double[] p1, double[] p2, double[] p3, double[] p4, double[] point) {
+        double cross1 = crossProduct(p1, p2, point);
+        double cross2 = crossProduct(p2, p3, point);
+        double cross3 = crossProduct(p3, p4, point);
+        double cross4 = crossProduct(p4, p1, point);
+
+        if ((cross1 >= 0 && cross2 >= 0 && cross3 >= 0 && cross4 >= 0) || (cross1 <= 0 && cross2 <= 0 && cross3 <= 0 && cross4 <= 0)) {
+            return true;
+        }
+        return false;
+    }
+
+    public double getReefFaceAngle() {
+        double[][] reefAngles = {
+            {17, 60}, {18, 0}, {19, -60}, {20, -120}, {21, 180}, {22, 120},
+            {6, 120}, {7, 180}, {8, -120}, {9, -60}, {10, 0}, {11, 60}
+        };
+
+        if (isPointInReefZone()) {
+            
+        }
+
+        if (isPointInReefZone()) {
+            
+        }
+
+        if (isPointInReefZone()) {
+            
+        }
+
+        if (isPointInReefZone()) {
+            
+        }
+        if (isPointInReefZone()) {
+            
+        }
+
+        if (isPointInReefZone()) {
+            
+        }
+
+        // Return current angle if no tag is found
+        return Robot.getSwerve().getRobotPose().getRotation().getRadians();
+    }
+
+
     public double getReefTagAngle() {
         double[][] reefAngles = {
             {17, 60}, {18, 0}, {19, -60}, {20, -120}, {21, 180}, {22, 120},
