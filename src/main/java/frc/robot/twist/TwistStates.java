@@ -30,6 +30,8 @@ public class TwistStates {
         algae.or(groundAlgae, stagedAlgae)
                 .whileTrue(twist.moveToDegrees(config::getAlgaeIntake).withName("Twist.Algae"));
 
+        algae.onFalse(twist.moveToDegrees(config::getRightCoral).withName("Twist.HomeAlgae"));
+
         Robot.getPilot()
                 .groundAlgae_RT
                 .whileTrue(

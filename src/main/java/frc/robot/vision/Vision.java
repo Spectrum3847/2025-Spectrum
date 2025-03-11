@@ -366,7 +366,7 @@ public class Vision extends SubsystemBase implements NTSendable {
             limelight.setLimelightPipeline(pipeline);
         }
     }
-    
+
     // ------------------------------------------------------------------------------
     // Calculation Functions
     // ------------------------------------------------------------------------------
@@ -458,8 +458,6 @@ public class Vision extends SubsystemBase implements NTSendable {
         return -1; // no reef tag found
     }
 
-
-
     /** Returns the distance from the reef in meters, adjusted for the robot's movement. */
     public double[] getDistanceToReefFromRobot() {
         RawFiducial[] frontTags = frontLL.getRawFiducial();
@@ -505,7 +503,9 @@ public class Vision extends SubsystemBase implements NTSendable {
      */
     public Translation2d getAdjustedReefPos() {
 
-        int reefID = (int) frontLL.getClosestTagID(); // must call closestReefFace before this method gets passed
+        int reefID =
+                (int) frontLL.getClosestTagID(); // must call closestReefFace before this method
+        // gets passed
         Pose2d[] reefFaces = Field.Reef.getCenterFaces();
         double NORM_FUDGE = 0.075;
         // double tunableNoteVelocity = 1;

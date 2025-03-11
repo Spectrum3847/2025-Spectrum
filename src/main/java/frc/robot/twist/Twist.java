@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 import frc.robot.RobotSim;
+import frc.robot.intake.IntakeStates;
 import frc.spectrumLib.Rio;
 import frc.spectrumLib.SpectrumCANcoder;
 import frc.spectrumLib.Telemetry;
@@ -248,8 +249,8 @@ public class Twist extends Mechanism {
     public Command twistHome() {
         return run(
                 () -> {
-                    if (algae.getAsBoolean()) {
-                        setDegrees(config::getAlgaeIntake);
+                    if (algae.getAsBoolean() || IntakeStates.hasAlgae.getAsBoolean()) {
+                        setDegrees(config::getRightCoral);
                     } else if (coral.getAsBoolean()) {
                         setDegrees(config::getLeftCoral);
                     } else {

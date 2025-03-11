@@ -39,6 +39,7 @@ public class RobotStates {
     public static final SpectrumState rightScore = new SpectrumState("rightScore");
     public static final SpectrumState reverse = new SpectrumState("reverse");
     public static final SpectrumState actionPrepState = new SpectrumState("actionPrepState");
+    public static final SpectrumState algaeAfterAction = new SpectrumState("algaeAfterAction");
     public static final SpectrumState actionState = new SpectrumState("actionState");
     public static final SpectrumState homeAll = new SpectrumState("homeAll");
     public static final SpectrumState autonStationIntake = new SpectrumState("autonStationIntake");
