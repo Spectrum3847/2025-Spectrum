@@ -54,6 +54,7 @@ public class Pilot extends Gamepad {
     public final Trigger coastOn_dB = disabled.and(B);
     public final Trigger coastOff_dA = disabled.and(A);
     public final Trigger reZero_start = disabled.and(leftBumper, rightBumper, start);
+    public final Trigger visionPoseReset_LB_Select = disabled.and(leftBumper, select);
 
     // TEST TRIGGERS
     public final Trigger testTune_tB = testMode.and(B);
@@ -78,7 +79,7 @@ public class Pilot extends Gamepad {
 
             setLeftStickDeadzone(deadzone);
             setLeftStickExp(3);
-            setLeftStickScalor(4.572);
+            // Set Scalor in Constructor from Swerve Config
 
             setRightStickDeadzone(deadzone);
             setRightStickExp(3.0);
@@ -99,6 +100,11 @@ public class Pilot extends Gamepad {
     public Pilot(PilotConfig config) {
         super(config);
         this.config = config;
+
+        // Set Left stick Scalor from Swerve Config
+        config.setLeftStickScalor(Robot.getConfig().swerve.getSpeedAt12Volts().magnitude());
+        leftStickCurve.setScalar(config.getLeftStickScalor());
+
         Robot.add(this);
         Telemetry.print("Pilot Subsystem Initialized: ");
     }

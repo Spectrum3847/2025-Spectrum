@@ -15,6 +15,12 @@ public class VisionStates {
 
     public static void setStates() {}
 
+    public static Command resetVisionPose() {
+        return vision.runOnce(vision::resetPoseToVision)
+                .withName("VisionStates.resetPoseToVision")
+                .ignoringDisable(true);
+    }
+
     public static Command blinkLimelights() {
         return vision.blinkLimelights().withName("VisionStates.blinkLimelights");
     }

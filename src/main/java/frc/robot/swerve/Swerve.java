@@ -64,12 +64,12 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
     private final SwerveRequest.ApplyRobotSpeeds AutoRequest = new SwerveRequest.ApplyRobotSpeeds();
 
     // Logging publisher
-    StructArrayPublisher<SwerveModuleState> publisher =
+    StructArrayPublisher<SwerveModuleState> moduleStatePublisher =
             NetworkTableInstance.getDefault()
                     .getStructArrayTopic("SwerveStates", SwerveModuleState.struct)
                     .publish();
     StructPublisher<Pose2d> posePublisher =
-            NetworkTableInstance.getDefault().getStructTopic("MyPose", Pose2d.struct).publish();
+            NetworkTableInstance.getDefault().getStructTopic("SwervePose", Pose2d.struct).publish();
 
     /**
      * Constructs a new Swerve drive subsystem.
@@ -105,7 +105,7 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
     }
 
     protected void log(SwerveDriveState state) {
-        publisher.set(state.ModuleStates);
+        moduleStatePublisher.set(state.ModuleStates);
     }
 
     /**

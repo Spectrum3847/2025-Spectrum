@@ -3,6 +3,7 @@ package frc.robot.pilot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Robot;
+import frc.robot.vision.VisionStates;
 import frc.robot.intake.IntakeStates;
 import frc.spectrumLib.Telemetry;
 
@@ -17,6 +18,8 @@ public class PilotStates {
 
     /** Set the states for the pilot controller */
     public static void setStates() {
+
+        pilot.visionPoseReset_LB_Select.onTrue(VisionStates.resetVisionPose());
         // Rumble whenever we reorient
         pilot.upReorient
                 .or(pilot.downReorient, pilot.leftReorient, pilot.rightReorient)

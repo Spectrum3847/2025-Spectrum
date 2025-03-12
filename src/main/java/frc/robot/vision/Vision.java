@@ -1,17 +1,18 @@
 package frc.robot.vision;
 
-import edu.wpi.first.math.MathUtil;
+import com.ctre.phoenix6.Utils;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.NTSendable;
 import edu.wpi.first.networktables.NTSendableBuilder;
 import edu.wpi.first.util.sendable.SendableRegistry;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -50,18 +51,12 @@ public class Vision extends SubsystemBase implements NTSendable {
 
         /* Pose Estimation Constants */
 
-        // Increase these numbers to trust global measurements from vision less. (uses a matrix)
-        public static final double VISION_REJECT_Distance = 1.8;
-
         public static double VISION_STD_DEV_X = 0.5;
         public static double VISION_STD_DEV_Y = 0.5;
-        public static double VISION_STD_DEV_THETA = 99999999;
+        public static double VISION_STD_DEV_THETA = 0.5;
 
         public static final Matrix<N3, N1> visionStdMatrix =
                 VecBuilder.fill(VISION_STD_DEV_X, VISION_STD_DEV_Y, VISION_STD_DEV_THETA);
-
-        /* Vision Command Configs */
-        // TODO: alignToTag vision etc.
     }
 
     /** Limelights */
@@ -131,30 +126,39 @@ public class Vision extends SubsystemBase implements NTSendable {
         // try {
         //     isIntegrating = false;
         //     // Will NOT run in auto
-        //     if (DriverStation.isTeleopEnabled()) {
-
-        //         // choose LL with best view of tags and integrate from only that camera
-        //         Limelight bestLimelight = getBestLimelight();
-        //         VisionLogger limelightLogger = getBestVisionLogger(bestLimelight);
-        //         double[] distance = new double[2];
+        //     if (DriverStation.isTeleopEnabled()
+        //             || DriverStation.isTestEnabled()
+        //             || DriverStation.isDisabled()) {
         //         for (Limelight limelight : allLimelights) {
-        //             if (limelight.getCameraName()
-        //                     == bestLimelight.getCameraName()) { // this is not running
-        //                 addFilteredVisionInput(bestLimelight);
-        //                 // limelightLogger.getCameraConnection();
-        //                 // limelightLogger.getPose();
-        //                 // limelightLogger.getMegaPose();
-        //                 distance = getDistanceToReefFromRobot();
-        //             } // else {
-        //             //     limelight.sendInvalidStatus("not best rejection");
-        //             // }
+        //             addMegaTag1_VisionInput(limelight);
+        //             // addMegaTag2_VisionInput(limelight);
         //             isIntegrating |= limelight.isIntegrating();
         //         }
         //     }
-
         // } catch (Exception e) {
         //     Telemetry.print("Vision pose not present but tried to access it");
         // }
+
+        addMegaTag1_VisionInput(backLL);
+        addMegaTag2_VisionInput(backLL);
+        addMegaTag1_VisionInput(frontLL);
+        addMegaTag2_VisionInput(frontLL);
+
+        System.out.println(
+                "Util TimeStamp: "
+                        + Utils.getCurrentTimeSeconds()
+                        + " LL Timestamp:"
+                        + Utils.fpgaToCurrentTime(frontLL.getMegaTag1PoseTimestamp())
+                        + " FPGA TimeStamp: "
+                        + Timer.getFPGATimestamp());
+        // Robot.getSwerve()
+        //         .addVisionMeasurement(
+        //                 new Pose2d(),
+        //                 Utils.getCurrentTimeSeconds(),
+        //                 VecBuilder.fill(
+        //                         VisionConfig.VISION_STD_DEV_X,
+        //                         VisionConfig.VISION_STD_DEV_Y,
+        //                         VisionConfig.VISION_STD_DEV_THETA));
     }
 
     /*-------------------
@@ -164,37 +168,38 @@ public class Vision extends SubsystemBase implements NTSendable {
 
     @Override
     public void initSendable(NTSendableBuilder builder) {
-        // builder.setSmartDashboardType("VisionTargetValues");
+        builder.setSmartDashboardType("VisionTargetValues");
         builder.addDoubleProperty("FrontTX", frontLL::getTagTx, null);
         builder.addDoubleProperty("FrontTY", frontLL::getTagTA, null);
         builder.addDoubleProperty("FrontRotation", frontLL::getTagRotationDegrees, null);
     }
 
-    private void addFilteredVisionInput(Limelight ll) {
+    private void addMegaTag1_VisionInput(Limelight ll) {
         double xyStds = 1000;
         double degStds = 1000;
+
+        boolean mt1_reject = false;
 
         // integrate vision
         if (ll.targetInView()) {
             boolean multiTags = ll.multipleTagsInView();
-            double timeStamp = ll.getRawPoseTimestamp();
+            double timeStamp = ll.getMegaTag1PoseTimestamp();
             double targetSize = ll.getTargetSize();
-            Pose3d botpose3D = ll.getRawPose3d();
-            Pose2d botpose = botpose3D.toPose2d();
-            Pose2d megaPose2d = ll.getMegaPose2d();
+            Pose3d megaTag1_3d = ll.getMegaTag1_Pose3d();
+            Pose2d megaTag1_2d = megaTag1_3d.toPose2d();
             RawFiducial[] tags = ll.getRawFiducial();
             double highestAmbiguity = 2;
             ChassisSpeeds robotSpeed = Robot.getSwerve().getCurrentRobotChassisSpeeds();
 
-            // distance from current pose to vision estimated pose
-            double poseDifference =
+            // distance from current pose to vision estimated MT2 pose
+            double mt1_poseDifference =
                     Robot.getSwerve()
                             .getRobotPose()
                             .getTranslation()
-                            .getDistance(botpose.getTranslation());
+                            .getDistance(megaTag1_2d.getTranslation());
 
             /* rejections */
-            // reject pose if individual tag ambiguity is too high
+            // reject mt1 pose if individual tag ambiguity is too high
             ll.setTagStatus("");
             for (RawFiducial tag : tags) {
                 // search for highest ambiguity tag for later checks
@@ -204,12 +209,79 @@ public class Vision extends SubsystemBase implements NTSendable {
                     highestAmbiguity = tag.ambiguity;
                 }
                 // log ambiguities
-                ll.setTagStatus("Tag " + tag.id + ": " + tag.ambiguity);
+                // ll.setTagStatus("Tag " + tag.id + ": " + tag.ambiguity);
                 // ambiguity rejection check
                 if (tag.ambiguity > 0.9) {
-                    ll.sendInvalidStatus("ambiguity rejection");
-                    return;
+                    // ll.sendInvalidStatus("ambiguity rejection");
+                    mt1_reject = true;
                 }
+            }
+
+            if (Field.poseOutOfField(megaTag1_3d)) {
+                // reject if pose is out of the field
+                mt1_reject = true;
+                ll.sendInvalidStatus("bound rejection");
+            }
+
+            if (Math.abs(robotSpeed.omegaRadiansPerSecond) >= 1.6) {
+                // reject if we are rotating more than 0.5 rad/s
+                ll.sendInvalidStatus("rotation rejection");
+                mt1_reject = true;
+            }
+
+            if (Math.abs(megaTag1_3d.getZ()) > 0.25) {
+                // reject if pose is .25 meters in the air
+                ll.sendInvalidStatus("height rejection");
+                mt1_reject = true;
+            }
+
+            if (Math.abs(megaTag1_3d.getRotation().getX()) > 5
+                    || Math.abs(megaTag1_3d.getRotation().getY()) > 5) {
+                // reject if pose is 5 degrees titled in roll or pitch
+                ll.sendInvalidStatus("roll/pitch rejection");
+                mt1_reject = true;
+            }
+
+            if (targetSize <= 0.025) {
+                ll.sendInvalidStatus("size rejection");
+                mt1_reject = true;
+            }
+
+            /* integrations */
+            // if almost stationary and extremely close to tag
+            if (robotSpeed.vxMetersPerSecond + robotSpeed.vyMetersPerSecond <= 0.2
+                    && targetSize > 0.4) {
+                ll.sendValidStatus("Stationary close integration");
+                xyStds = 0.1;
+                degStds = 0.1;
+            } else if (multiTags && targetSize > 0.1) {
+                ll.sendValidStatus("Multi integration");
+                xyStds = 0.25;
+                degStds = 8;
+                if (targetSize > 2) {
+                    ll.sendValidStatus("Strong Multi integration");
+                    xyStds = 0.1;
+                    degStds = 0.1;
+                }
+            } else if (targetSize > 0.8
+                    && (mt1_poseDifference < 0.5 || DriverStation.isDisabled())) {
+                // Integrate if the target is very big and we are close to pose or disabled
+                ll.sendValidStatus("Close integration");
+                xyStds = 4.5;
+                degStds = 999999;
+            } else if (targetSize > 0.1
+                    && (mt1_poseDifference < 0.25 || DriverStation.isDisabled())) {
+                // Integrate if we are very close to pose or disabled and target is large enough
+                ll.sendValidStatus("Proximity integration");
+                xyStds = 8.0;
+                degStds = 999999;
+            } else if (highestAmbiguity < 0.25 && targetSize >= 0.03) {
+                ll.sendValidStatus("Stable integration");
+                xyStds = 4.5;
+                degStds = 999999;
+            } else {
+                // Shouldn't integrate
+                return;
             }
 
             // strict with degree std and ambiguity and rotation because this is megatag1
@@ -218,7 +290,11 @@ public class Vision extends SubsystemBase implements NTSendable {
             }
 
             if (robotSpeed.omegaRadiansPerSecond >= 0.5) {
-                degStds = 15;
+                degStds = 50;
+            }
+
+            if (mt1_reject) {
+                degStds = 999999;
             }
 
             // track STDs
@@ -233,22 +309,123 @@ public class Vision extends SubsystemBase implements NTSendable {
                                     VisionConfig.VISION_STD_DEV_Y,
                                     VisionConfig.VISION_STD_DEV_THETA));
 
-            Pose2d integratedPose = new Pose2d(megaPose2d.getTranslation(), botpose.getRotation());
-            Robot.getSwerve().addVisionMeasurement(integratedPose, timeStamp);
+            System.out.println("Trying to integrate vision, XY: " + xyStds + " Deg: " + degStds);
+            Pose2d integratedPose =
+                    new Pose2d(megaTag1_2d.getTranslation(), megaTag1_2d.getRotation());
+            Robot.getSwerve()
+                    .addVisionMeasurement(integratedPose, Utils.fpgaToCurrentTime(timeStamp));
         } else {
             ll.setTagStatus("no tags");
             ll.sendInvalidStatus("no tag found rejection");
         }
     }
 
-    // TODO:Auton Reset pose to Vision method
+    private void addMegaTag2_VisionInput(Limelight ll) {
+        double xyStds = 1000;
+        double degStds = 1000;
 
-    public void resetPoseToVision() {
-        Limelight ll = getBestLimelight();
-        resetPoseToVision(
-                ll.targetInView(), ll.getRawPose3d(), ll.getMegaPose2d(), ll.getRawPoseTimestamp());
+        boolean mt2_reject = false;
+
+        // integrate vision
+        if (ll.targetInView()) {
+            boolean multiTags = ll.multipleTagsInView();
+            double timeStamp = ll.getMegaTag2PoseTimestamp();
+            double targetSize = ll.getTargetSize();
+            Pose2d megaTag2_2d = ll.getMegaTag2_Pose2d();
+            RawFiducial[] tags = ll.getRawFiducial();
+            double highestAmbiguity = 2;
+            ChassisSpeeds robotSpeed = Robot.getSwerve().getCurrentRobotChassisSpeeds();
+
+            // distance from current pose to vision estimated MT2 pose
+            double mt2_poseDifference =
+                    Robot.getSwerve()
+                            .getRobotPose()
+                            .getTranslation()
+                            .getDistance(megaTag2_2d.getTranslation());
+
+            /* rejections */
+            if (Field.poseOutOfField(megaTag2_2d)) {
+                // reject if pose is out of the field
+                mt2_reject = true;
+                ll.sendInvalidStatus("bound rejection");
+            }
+
+            if (Math.abs(robotSpeed.omegaRadiansPerSecond) >= 1.6) {
+                // reject if we are rotating more than 0.5 rad/s
+                ll.sendInvalidStatus("rotation rejection");
+                mt2_reject = true;
+            }
+
+            if (targetSize <= 0.025) {
+                ll.sendInvalidStatus("size rejection");
+                mt2_reject = true;
+            }
+
+            /* integrations */
+            // if almost stationary and extremely close to tag
+            if (robotSpeed.vxMetersPerSecond + robotSpeed.vyMetersPerSecond <= 0.2
+                    && targetSize > 0.4) {
+                ll.sendValidStatus("Stationary close integration");
+                xyStds = 0.1;
+            } else if (multiTags && targetSize > 0.1) {
+                ll.sendValidStatus("Multi integration");
+                xyStds = 0.25;
+                if (targetSize > 2) {
+                    ll.sendValidStatus("Strong Multi integration");
+                    xyStds = 0.1;
+                }
+            } else if (targetSize > 0.8
+                    && (mt2_poseDifference < 0.5 || DriverStation.isDisabled())) {
+                // Integrate if the target is very big and we are close to pose or disabled
+                ll.sendValidStatus("Close integration");
+                xyStds = 0.5;
+            } else if (targetSize > 0.1
+                    && (mt2_poseDifference < 0.25 || DriverStation.isDisabled())) {
+                // Integrate if we are very close to pose or disabled and target is large enough
+                ll.sendValidStatus("Proximity integration");
+                xyStds = 0.0;
+            } else if (highestAmbiguity < 0.25 && targetSize >= 0.03) {
+                ll.sendValidStatus("Stable integration");
+                xyStds = 0.5;
+            } else {
+                // Shouldn't integrate
+                return;
+            }
+
+            // track STDs
+            VisionConfig.VISION_STD_DEV_X = xyStds;
+            VisionConfig.VISION_STD_DEV_Y = xyStds;
+            VisionConfig.VISION_STD_DEV_THETA = degStds;
+
+            Robot.getSwerve()
+                    .setVisionMeasurementStdDevs(
+                            VecBuilder.fill(
+                                    VisionConfig.VISION_STD_DEV_X,
+                                    VisionConfig.VISION_STD_DEV_Y,
+                                    VisionConfig.VISION_STD_DEV_THETA));
+
+            System.out.println("Trying to integrate vision, XY: " + xyStds + " Deg: " + degStds);
+            Pose2d integratedPose =
+                    new Pose2d(megaTag2_2d.getTranslation(), megaTag2_2d.getRotation());
+            Robot.getSwerve()
+                    .addVisionMeasurement(
+                            integratedPose,
+                            Utils.fpgaToCurrentTime(timeStamp),
+                            VecBuilder.fill(
+                                    VisionConfig.VISION_STD_DEV_X,
+                                    VisionConfig.VISION_STD_DEV_Y,
+                                    VisionConfig.VISION_STD_DEV_THETA));
+        } else {
+            ll.setTagStatus("no tags");
+            ll.sendInvalidStatus("no tag found rejection");
+        }
     }
 
+    /**
+     * Choose the limelight with the best view of multiple tags
+     *
+     * @return
+     */
     public Limelight getBestLimelight() {
         Limelight bestLimelight = frontLL;
         double bestScore = 0;
@@ -266,15 +443,14 @@ public class Vision extends SubsystemBase implements NTSendable {
         return bestLimelight;
     }
 
-    public VisionLogger getBestVisionLogger(Limelight limelight) {
-        String name = limelight.getCameraName();
-        VisionLogger Logger = backLLLogger;
-        for (VisionLogger logger : allLimelightLoggers) {
-            if (logger.getName() == name) {
-                Logger = logger;
-            }
-        }
-        return Logger;
+    /** reset pose to the best limelight's vision pose */
+    public void resetPoseToVision() {
+        Limelight ll = getBestLimelight();
+        resetPoseToVision(
+                ll.targetInView(),
+                ll.getMegaTag1_Pose3d(),
+                ll.getMegaTag2_Pose2d(),
+                ll.getMegaTag1PoseTimestamp());
     }
 
     /**
@@ -284,18 +460,14 @@ public class Vision extends SubsystemBase implements NTSendable {
      */
     public boolean resetPoseToVision(
             boolean targetInView, Pose3d botpose3D, Pose2d megaPose, double poseTimestamp) {
+
         boolean reject = false;
         if (targetInView) {
             // replace botpose with this.pose
             Pose2d botpose = botpose3D.toPose2d();
             Pose2d pose = Robot.getSwerve().getRobotPose();
-            if (Field.poseOutOfField(botpose3D)
-                    || Math.abs(botpose3D.getZ()) > 0.25
-                    || (Math.abs(botpose3D.getRotation().getX()) > 5
-                            || Math.abs(botpose3D.getRotation().getY()) > 5)) { // when has bad
-                Telemetry.log("Pose bad", reject);
-                reject = true;
-            }
+
+            // Check if the vision pose is bad and don't trust it
             if (Field.poseOutOfField(botpose3D)) { // pose out of field
                 Telemetry.log("Pose out of field", reject);
                 reject = true;
@@ -315,32 +487,27 @@ public class Vision extends SubsystemBase implements NTSendable {
             }
 
             // track STDs
-            VisionConfig.VISION_STD_DEV_X = 0.001;
-            VisionConfig.VISION_STD_DEV_Y = 0.001;
-            VisionConfig.VISION_STD_DEV_THETA = 0.001;
+            double VISION_STD_DEV_X = 0.00001;
+            double VISION_STD_DEV_Y = 0.00001;
+            double VISION_STD_DEV_THETA = 0.00001;
 
             // Posts Current X,Y, and Angle (Theta) values
             double[] visionPose = {
                 botpose.getX(), botpose.getY(), botpose.getRotation().getDegrees()
             };
-            Telemetry.log("Vision Pose", visionPose);
-            // Telemetry.log("Vision X: ", botpose.getX());
-            // Telemetry.log("Vision Y: ", botpose.getY());
-            // Telemetry.log("Vision Theta: ", botpose.getRotation().getDegrees());
+            Telemetry.log("Current Vision Pose: ", visionPose);
 
             Robot.getSwerve()
                     .setVisionMeasurementStdDevs(
                             VecBuilder.fill(
-                                    VisionConfig.VISION_STD_DEV_X,
-                                    VisionConfig.VISION_STD_DEV_Y,
-                                    VisionConfig.VISION_STD_DEV_THETA));
+                                    VISION_STD_DEV_X, VISION_STD_DEV_Y, VISION_STD_DEV_THETA));
 
             Pose2d integratedPose = new Pose2d(megaPose.getTranslation(), botpose.getRotation());
             Robot.getSwerve().addVisionMeasurement(integratedPose, poseTimestamp);
             pose = Robot.getSwerve().getRobotPose();
             // Gets updated pose of x, y, and theta values
             visionPose = new double[] {pose.getX(), pose.getY(), pose.getRotation().getDegrees()};
-            Telemetry.log("Vision Pose", visionPose);
+            Telemetry.log("Vision Pose Reset To: ", visionPose);
 
             // print "success"
             return true;
@@ -372,50 +539,37 @@ public class Vision extends SubsystemBase implements NTSendable {
     // ------------------------------------------------------------------------------
 
     /**
-     * REQUIRES ACCURATE POSE ESTIMATION. Uses trigonometric functions to calculate the angle
-     * between the robot heading and the angle required to face coral faces.
+     * Get the angle the robot should turn to based on the id the limelight is seeing.
      *
-     * @return angle between robot heading and the closest reef face in degrees
+     * @return
      */
-    private int fieldReefID;
-
-    // public double getThetaToReefFace() {
-    //     double closestReefFace = closestReefFace();
-    //     Translation2d robot2d = Robot.getSwerve().getRobotPose().getTranslation();
-    //     fieldReefID = -1;
-    //     for(int i = 18; i<23; i++){
-    //         if(closestReefFace == i){
-    //             fieldReefID = i;
-    //         } else if(closestReefFace == 17 ){
-    //             fieldReefID = 5;
-    //         }
-    //     }
-    //     if (fieldReefID == -1) {
-    //         return -1;
-    //     }
-
-    //     Translation2d reefFace = Field.Reef.centerFaces[fieldReefID].getTranslation();
-
-    //     double angleBetweenRobotandReefFace =
-    //         MathUtil.angleModulus(
-    //             reefFace.minus(robot2d).getAngle().getRadians());
-
-    //     return angleBetweenRobotandReefFace;
-
-    //     //runs closestReefFace to get the closest reef face id
-    // }
-
     public double getReefTagAngle() {
-        double[][] reefAngles = {
+        double[][] reefFrontAngles = {
             {17, 60}, {18, 0}, {19, -60}, {20, -120}, {21, 180}, {22, 120},
             {6, 120}, {7, 180}, {8, -120}, {9, -60}, {10, 0}, {11, 60}
         };
 
-        int closetTag = (int) frontLL.getClosestTagID();
+        int closetFrontTag = (int) frontLL.getClosestTagID();
+        int closetRearTag = (int) backLL.getClosestTagID();
+        int closetTag = closetFrontTag;
+        boolean rearTag = false;
 
-        for (int i = 0; i < reefAngles.length; i++) {
-            if (closetTag == reefAngles[i][0]) {
-                return Math.toRadians(reefAngles[i][1]);
+        if (closetTag == -1) {
+            closetTag = closetRearTag;
+            rearTag = true;
+        }
+
+        if (closetTag == -1) {
+            // Return current angle if no tag seen before going throught the array
+            return Robot.getSwerve().getRobotPose().getRotation().getRadians();
+        }
+
+        for (int i = 0; i < reefFrontAngles.length; i++) {
+            if (closetTag == reefFrontAngles[i][0]) {
+                if (rearTag) {
+                    return Math.toRadians(reefFrontAngles[i][1] + 180);
+                }
+                return Math.toRadians(reefFrontAngles[i][1]);
             }
         }
 
