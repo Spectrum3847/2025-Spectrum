@@ -45,11 +45,11 @@ public class TwistStates {
 
         branch.and(rightScore)
                 .whileTrue(
-                        twist.moveToDegrees(config::getRightCoral, true)
+                        twist.moveToDegrees(config::getRightCoral, false)
                                 .withName("Twist.rightCoral"));
         branch.and(rightScore.not())
                 .whileTrue(
-                        twist.moveToDegrees(config::getLeftCoral, false)
+                        twist.moveToDegrees(config::getLeftCoral, true)
                                 .withName("Twist.leftCoral"));
     }
 
