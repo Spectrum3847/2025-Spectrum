@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.reefscape.Field;
+import frc.reefscape.Field.Reef;
 import frc.robot.Robot;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.Telemetry.PrintPriority;
@@ -405,49 +406,78 @@ public class Vision extends SubsystemBase implements NTSendable {
     //     //runs closestReefFace to get the closest reef face id
     // }
 
+    /**
+     * Cross product of two vectors
+     * @param p1 
+     * @param p2  
+     * @param p point of the robot
+     * @return
+     */
     public double crossProduct(double[] p1, double[] p2, double[] p) {
         return (p2[0] - p1[0]) * (p[1] - p1[1]) - (p2[1] - p1[1]) * (p[0] - p1[0]);
     }
 
-    public boolean isPointInReefZone(double[] p1, double[] p2, double[] p3, double[] p4, double[] point) {
+    /**
+     * Finds the average value of two points (x,y)
+     * @param p1
+     * @param p2
+     * @return
+     */
+    public double[] averageValue(double[] p1, double[] p2) {
+        double[] average = new double[2];
+        average[0] = (p1[0] + p2[0]) / 2;
+        average[1] = (p1[1] + p2[1]) / 2;
+        return average;
+    }
+
+
+
+    /**
+     * Confirms the robot is in a given reef face zone 
+     * by checking the cross product of the robot's position
+     * with the reef face points
+     * 
+     * @param p1 of the center of the entire reef
+     * @param p2 furthest point clockwise of the reef
+     * @param p3 furthest point counterclockwise of the reef
+     * @param point of the actual robot
+     * @return
+     */
+    public boolean isPointInReefZone(double[] p1, double[] p2, double[] p3, double[] point) {
         double cross1 = crossProduct(p1, p2, point);
         double cross2 = crossProduct(p2, p3, point);
-        double cross3 = crossProduct(p3, p4, point);
-        double cross4 = crossProduct(p4, p1, point);
+        double cross3 = crossProduct(p3, p1, point);
 
-        if ((cross1 >= 0 && cross2 >= 0 && cross3 >= 0 && cross4 >= 0) || (cross1 <= 0 && cross2 <= 0 && cross3 <= 0 && cross4 <= 0)) {
+        if ((cross1 >= 0 && cross2 >= 0 && cross3 >= 0 ) 
+        || (cross1 <= 0 && cross2 <= 0 && cross3 <= 0 )) {
             return true;
         }
         return false;
     }
 
+    /**
+     * Checks the reef face points of each reef face to the position of the robot
+     * @return
+     */
     public double getReefFaceAngle() {
-        double[][] reefAngles = {
-            {17, 60}, {18, 0}, {19, -60}, {20, -120}, {21, 180}, {22, 120},
-            {6, 120}, {7, 180}, {8, -120}, {9, -60}, {10, 0}, {11, 60}
+        int[][] reefAngles = {
+            {17, 60}, {18, 0}, {19, -60}, {20, -120}, {21, 180}, {22, 120}, //blue reef tags
+            {6, 120}, {7, 180}, {8, -120}, {9, -60}, {10, 0}, {11, 60} //red reef tags
         };
 
-        if (isPointInReefZone()) {
-            
-        }
+        double[] robotPos = 
+        {Robot.getSwerve().getRobotPose().getTranslation().getX(), 
+            Robot.getSwerve().getRobotPose().getTranslation().getY()}; //(x,y) position of robot on 2d field
 
-        if (isPointInReefZone()) {
-            
-        }
+        double[] reefCenter = {Field.Reef.center.getX(), Field.Reef.center.getY()}; // (x,y) position of reef center on 2d field
 
-        if (isPointInReefZone()) {
+        for(int i = 0; reefAngles.length - 1 > i; i++){
+            double[] reefFace1 = {Field.Reef.centerFaces[reefAngles[i][0]].getX(), Field.Reef.centerFaces[reefAngles[i][0]].getY()};
+            double[] reefFace2 = {Field.Reef.centerFaces[reefAngles[i+1][0]].getX(), Field.Reef.centerFaces[reefAngles[i+1][0]].getY()};
             
-        }
-
-        if (isPointInReefZone()) {
-            
-        }
-        if (isPointInReefZone()) {
-            
-        }
-
-        if (isPointInReefZone()) {
-            
+            if(isPointInReefZone(reefCenter, reefFace1, reefFace2, robotPos)){
+                return Math.toRadians(reefAngles[i][1]);
+            }
         }
 
         // Return current angle if no tag is found
@@ -455,6 +485,14 @@ public class Vision extends SubsystemBase implements NTSendable {
     }
 
 
+
+
+    /**
+     * Uses front limelight tag to determine the angle 
+     * between the robot heading and the angle of the reef it sees
+     * if the there is a valid reef tag seen, the angle of the robot heading turns toward the reef
+     * @return
+     */
     public double getReefTagAngle() {
         double[][] reefAngles = {
             {17, 60}, {18, 0}, {19, -60}, {20, -120}, {21, 180}, {22, 120},
@@ -472,6 +510,9 @@ public class Vision extends SubsystemBase implements NTSendable {
         // Return current angle if no tag is found
         return Robot.getSwerve().getRobotPose().getRotation().getRadians();
     }
+
+
+
 
     public double getAdjustedThetaToReefFace() {
         int closestReefFace = (int) frontLL.getClosestTagID();
