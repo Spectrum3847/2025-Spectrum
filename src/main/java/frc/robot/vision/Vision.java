@@ -490,12 +490,6 @@ public class Vision extends SubsystemBase implements NTSendable {
     // Calculation Functions
     // ------------------------------------------------------------------------------
 
-    /**
-     * Get the angle the robot should turn to based on the id the limelight is seeing.
-     *
-     * @return
-     */
-
 
     public double getTagTA() {
         if (frontLL.targetInView()) {
