@@ -13,6 +13,7 @@ import frc.robot.operator.Operator;
 import frc.robot.pilot.Pilot;
 import frc.robot.shoulder.ShoulderStates;
 import frc.robot.swerve.Swerve;
+import frc.robot.vision.Vision;
 import frc.spectrumLib.Rio;
 import frc.spectrumLib.SpectrumState;
 import frc.spectrumLib.util.Util;
@@ -175,6 +176,16 @@ public class RobotStates {
         pilot.l3AlgaeRemoval.onTrue(
                 algae.setTrue(), coral.setFalse(), l3.setTrue(), actionPrepState.setTrue());
         pilot.l3AlgaeRemoval.onFalse(l3.setFalse(), actionPrepState.setFalse());
+
+        if(Robot.getVision().isL3Algae()) {
+            pilot.algaeRemovalAfterScore.onTrue(
+                    algae.setTrue(), coral.setFalse(), l3.setTrue(), actionPrepState.setTrue());
+            pilot.algaeRemovalAfterScore.onFalse(l3.setFalse(), actionPrepState.setFalse());
+        } else {
+            pilot.algaeRemovalAfterScore.onTrue(
+                    algae.setTrue(), coral.setFalse(), l2.setTrue(), actionPrepState.setTrue());
+            pilot.algaeRemovalAfterScore.onFalse(l2.setFalse(), actionPrepState.setFalse());
+        }
 
         // **********************************
         // Staging and Scoring

@@ -29,6 +29,7 @@ public class Pilot extends Gamepad {
 
     public final Trigger l2AlgaeRemoval = X.and(teleop);
     public final Trigger l3AlgaeRemoval = Y.and(teleop);
+    public final Trigger algaeRemovalAfterScore = B.and(teleop);
     public final Trigger photonRemoveL3Algae = groundCoral_LB_RT.and(photon);
 
     public final Trigger climbRoutine_start = start.and(noFn, teleop);
