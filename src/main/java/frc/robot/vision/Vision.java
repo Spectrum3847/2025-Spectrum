@@ -578,6 +578,38 @@ public class Vision extends SubsystemBase implements NTSendable {
         }
     }
 
+    public boolean isL3Algae() {
+        int frontTag = (int) frontLL.getClosestTagID();
+        int backTag = (int) backLL.getClosestTagID();
+        boolean isL3 = false;
+
+        if (Field.isBlue()) {
+            if (frontTag == 22
+                    || frontTag == 20
+                    || frontTag == 18
+                    || backTag == 22
+                    || backTag == 20
+                    || backTag == 18) {
+                isL3 = true;
+            } else {
+                isL3 = false;
+            }
+        } else {
+            if (frontTag == 11
+                    || frontTag == 9
+                    || frontTag == 7
+                    || backTag == 11
+                    || backTag == 9
+                    || backTag == 7) {
+                isL3 = true;
+            } else {
+                isL3 = false;
+            }
+        }
+
+        return isL3;
+    }
+
     // ------------------------------------------------------------------------------
     // VisionStates Commands
     // ------------------------------------------------------------------------------
