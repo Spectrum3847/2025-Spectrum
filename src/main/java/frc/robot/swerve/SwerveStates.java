@@ -28,6 +28,17 @@ public class SwerveStates {
     static SpectrumState steeringLock = new SpectrumState("SteeringLock");
 
     protected static void setupDefaultCommand() {
+        // TODO: change this back
+        /*
+        if (Rio.id == Rio.PHOTON_2024) {
+            // Use this to set a different command based on robotType
+            // Robot.swerve.setDefaultCommand(PhotonPilotCommands.pilotDrive());
+            // return;
+            // swerve.setDefaultCommand(pilotSteerCommand);
+        } else {
+            swerve.setDefaultCommand(pilotSteerCommand);
+        }
+        */
         swerve.setDefaultCommand(pilotSteerCommand);
     }
 
@@ -76,7 +87,7 @@ public class SwerveStates {
                                 new PrintCommand("! clearing align !"),
                                 new WaitCommand(alignTime),
                                 new InstantCommand(
-                                        PPHolonomicDriveController::clearFeedbackOverrides),
+                                        () -> PPHolonomicDriveController.clearFeedbackOverrides()),
                                 new PrintCommand("! cleared align !")))
                 .withName("autonAlign")
                 .alongWith(new PrintCommand("!! autonAlign Ran !!"));
@@ -90,57 +101,20 @@ public class SwerveStates {
                 .withName("Swerve.reefAimDrive");
     }
 
-    public static Command alignToXDrive(DoubleSupplier xGoalMeters) {
-        return drive(
-                () -> getAlignToX(xGoalMeters),
-                pilot::getDriveLeftPositive,
-                pilot::getDriveCCWPositive);
-    }
-
-    public static Command alignToYDrive(DoubleSupplier yGoalMeters) {
-        return drive(
-                pilot::getDriveFwdPositive,
-                () -> getAlignToY(yGoalMeters),
-                pilot::getDriveCCWPositive);
-    }
-
-    public static Command alignXYDrive(DoubleSupplier xGoalMeters, DoubleSupplier yGoalMeters) {
-        return drive(
-                () -> getAlignToX(xGoalMeters),
-                () -> getAlignToY(yGoalMeters),
-                pilot::getDriveCCWPositive);
-    }
-
-    public static Command alignDrive(
-            DoubleSupplier xGoalMeters, DoubleSupplier yGoalMeters, DoubleSupplier headingRadians) {
-        return drive(
-                () -> getAlignToX(xGoalMeters),
-                () -> getAlignToY(yGoalMeters),
-                () -> getAlignHeading(headingRadians));
-    }
-
     private static double getTagTxVelocity() {
-        if (Robot.getVision().tagsInView()) {
+        if (Robot.getVision().frontLL.targetInView()) {
             return swerve.calculateTagCenterAlignController(
-                    () -> 0, () -> Robot.getVision().getTagTX());
+                    () -> 0, () -> Robot.getVision().frontLL.getTagTx());
         }
         return 0;
     }
 
     private static double getTagDistanceVelocity() {
-        return swerve.calculateTagDistanceAlignController(() -> config.getHomeLlAimTAgoal());
-    }
-
-    private static double getAlignToX(DoubleSupplier xGoalMeters) {
-        return swerve.calculateXController(xGoalMeters);
-    }
-
-    private static double getAlignToY(DoubleSupplier yGoalMeters) {
-        return swerve.calculateYController(yGoalMeters);
-    }
-
-    private static double getAlignHeading(DoubleSupplier headingRadians) {
-        return swerve.calculateRotationController(headingRadians);
+        if (Robot.getVision().frontLL.targetInView()) {
+            return swerve.calculateTagDistanceAlignController(
+                    () -> config.getHomeLlAimTAgoal(), () -> Robot.getVision().frontLL.getTagTA());
+        }
+        return 0;
     }
 
     protected static Command snapSteerDrive() {
@@ -167,18 +141,22 @@ public class SwerveStates {
                 .withName("Swerve.PilotFPVDrive");
     }
 
+    protected static Command visionReefDrive() {
+        return aimDrive(
+                        pilot::getDriveFwdPositive,
+                        pilot::getDriveLeftPositive,
+                        () -> Robot.getVision().getAdjustedThetaToReefFace())
+                .withName("Swerve.VisionDrive");
+    }
+
     protected static Command pilotAimDrive(DoubleSupplier targetDegrees) {
         return aimDrive(pilot::getDriveFwdPositive, pilot::getDriveLeftPositive, targetDegrees)
                 .withName("Swerve.PilotAimDrive");
     }
 
-    protected static Command snakeDrive() {
-        return aimDrive(
-                        pilot::getDriveFwdPositive,
-                        pilot::getDriveLeftPositive,
-                        pilot::getPilotStickAngle)
-                .withName("Swerve.SnakeDrive");
-    }
+    // TODO: Snake Drive, where the robot moves in the direction of the left stick, but the
+    // orientation is controlled by the direction the left stick is pointing, so intake is always
+    // pointing where the robot is moving
 
     protected static Command headingLockDrive() {
         return headingLock(pilot::getDriveFwdPositive, pilot::getDriveLeftPositive)
@@ -250,7 +228,11 @@ public class SwerveStates {
     protected static Command fpvAimDrive(
             DoubleSupplier velocityX, DoubleSupplier velocityY, DoubleSupplier targetRadians) {
         return resetTurnController()
-                .andThen(fpvDrive(velocityX, velocityY, () -> getAlignHeading(targetRadians)))
+                .andThen(
+                        fpvDrive(
+                                velocityX,
+                                velocityY,
+                                () -> swerve.calculateRotationController(targetRadians)))
                 .withName("Swerve.fpvAimDrive");
     }
 
@@ -261,7 +243,11 @@ public class SwerveStates {
     protected static Command aimDrive(
             DoubleSupplier velocityX, DoubleSupplier velocityY, DoubleSupplier targetRadians) {
         return resetTurnController()
-                .andThen(drive(velocityX, velocityY, () -> getAlignHeading(targetRadians)))
+                .andThen(
+                        drive(
+                                velocityX,
+                                velocityY,
+                                () -> swerve.calculateRotationController(targetRadians)))
                 .withName("Swerve.aimDrive");
     }
 
@@ -315,7 +301,7 @@ public class SwerveStates {
                     && Math.abs(velocityY.getAsDouble()) < 0.5) {
                 return 0;
             } else {
-                return getAlignHeading(heading::getAsDouble);
+                return swerve.calculateRotationController(heading::getAsDouble);
             }
         };
     }
