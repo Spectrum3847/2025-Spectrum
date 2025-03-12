@@ -140,7 +140,10 @@ public class SwerveConfig {
 
     @Getter private SwerveDrivetrainConstants drivetrainConstants;
 
-    @Getter private SwerveModuleConstantsFactory constantCreator;
+    @Getter
+    private SwerveModuleConstantsFactory<
+                    TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
+            constantCreator;
 
     private final double wheelBaseInches = 21.5;
     private final double trackWidthInches = 18.5;
@@ -197,12 +200,21 @@ public class SwerveConfig {
     private SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
             backRight;
 
-    // Used in commands
     @Getter @Setter private double targetHeading = 0;
 
+    private SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
+                    []
+            modules;
+
+    @SuppressWarnings("unchecked")
     public SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
             [] getModules() {
-        return new SwerveModuleConstants[] {frontLeft, frontRight, backLeft, backRight};
+        if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
+            modules = new SwerveModuleConstants[] {frontLeft, frontRight, backLeft, backRight};
+        } else {
+            throw new IllegalStateException("One or more SwerveModuleConstants are null");
+        }
+        return modules;
     }
 
     public SwerveConfig() {
@@ -217,7 +229,8 @@ public class SwerveConfig {
                         .withPigeon2Configs(pigeonConfigs);
 
         constantCreator =
-                new SwerveModuleConstantsFactory()
+                new SwerveModuleConstantsFactory<
+                                TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>()
                         .withDriveMotorGearRatio(driveGearRatio)
                         .withSteerMotorGearRatio(steerGearRatio)
                         .withWheelRadius(wheelRadius)

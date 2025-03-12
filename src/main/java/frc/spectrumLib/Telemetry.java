@@ -40,7 +40,6 @@ public class Telemetry extends DogLog implements Subsystem {
     public Telemetry() {
         super();
         register();
-        // DogLog.setEnabled(false);
     }
 
     @Override

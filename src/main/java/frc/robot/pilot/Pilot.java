@@ -1,7 +1,5 @@
 package frc.robot.pilot;
 
-import static frc.robot.RobotStates.photon;
-
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.spectrumLib.Rio;
@@ -34,7 +32,7 @@ public class Pilot extends Gamepad {
 
     public final Trigger climbRoutine_start = start.and(noFn, teleop);
 
-    public final Trigger actionReady = rightBumper.and(teleop);
+    public final Trigger actionReady_RB = rightBumper.and(teleop);
 
     // vision Drive
     public final Trigger visionAim_A = A.and(teleop);
@@ -73,22 +71,22 @@ public class Pilot extends Gamepad {
         @Getter @Setter private double slowModeScalor = 0.45;
         @Getter @Setter private double defaultTurnScalor = 0.6;
         @Getter @Setter private double turboModeScalor = 1;
-        private double deadzone = 0.001;
+        private double deadzone = 0.05;
 
         public PilotConfig() {
             super("Pilot", 0);
 
             setLeftStickDeadzone(deadzone);
             setLeftStickExp(3);
-            // Set Scalor in Constructor from Swerve Config
+            // Set Scalar in Constructor from Swerve Config
 
             setRightStickDeadzone(deadzone);
             setRightStickExp(3.0);
-            setRightStickScalor(3 * Math.PI);
+            setRightStickScalar(3 * Math.PI);
 
             setTriggersDeadzone(deadzone);
             setTriggersExp(1);
-            setTriggersScalor(1);
+            setTriggersScalar(1);
         }
     }
 
@@ -102,9 +100,9 @@ public class Pilot extends Gamepad {
         super(config);
         this.config = config;
 
-        // Set Left stick Scalor from Swerve Config
-        config.setLeftStickScalor(Robot.getConfig().swerve.getSpeedAt12Volts().magnitude());
-        leftStickCurve.setScalar(config.getLeftStickScalor());
+        // Set Left stick Scalar from Swerve Config
+        config.setLeftStickScalar(Robot.getConfig().swerve.getSpeedAt12Volts().magnitude());
+        leftStickCurve.setScalar(config.getLeftStickScalar());
 
         Robot.add(this);
         Telemetry.print("Pilot Subsystem Initialized: ");

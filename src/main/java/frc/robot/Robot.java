@@ -22,8 +22,6 @@ import frc.robot.elbow.Elbow;
 import frc.robot.elbow.Elbow.ElbowConfig;
 import frc.robot.elevator.Elevator;
 import frc.robot.elevator.Elevator.ElevatorConfig;
-import frc.robot.groundIntake.GroundIntake;
-import frc.robot.groundIntake.GroundIntake.GroundIntakeConfig;
 import frc.robot.intake.Intake;
 import frc.robot.intake.Intake.IntakeConfig;
 import frc.robot.leds.LedFull;
@@ -55,7 +53,7 @@ import org.json.simple.parser.ParseException;
 public class Robot extends SpectrumRobot {
     @Getter private static RobotSim robotSim;
     @Getter private static Config config;
-    private static Telemetry telemetry = new Telemetry();
+    static Telemetry telemetry = new Telemetry();
     private final Field2d m_field = new Field2d();
 
     // TODO: Create robot faults
@@ -71,7 +69,6 @@ public class Robot extends SpectrumRobot {
         public ElevatorConfig elevator = new ElevatorConfig();
         public ShoulderConfig shoulder = new ShoulderConfig();
 
-        public GroundIntakeConfig groundIntake = new GroundIntakeConfig();
         public IntakeConfig intake = new IntakeConfig();
         public LedFullConfig leds = new LedFullConfig();
         public ClimbConfig climb = new ClimbConfig();
@@ -81,7 +78,6 @@ public class Robot extends SpectrumRobot {
 
     @Getter private static Swerve swerve;
     @Getter private static Elevator elevator;
-    @Getter private static GroundIntake groundIntake;
     @Getter private static Intake intake;
     @Getter private static LedFull leds;
     @Getter private static Operator operator;
@@ -133,8 +129,6 @@ public class Robot extends SpectrumRobot {
             elevator = new Elevator(config.elevator);
             Timer.delay(canInitDelay);
             climb = new Climb(config.climb);
-            Timer.delay(canInitDelay);
-            groundIntake = new GroundIntake(config.groundIntake);
             Timer.delay(canInitDelay);
             shoulder = new Shoulder(config.shoulder);
             Timer.delay(canInitDelay);
@@ -239,16 +233,14 @@ public class Robot extends SpectrumRobot {
         String newAutoName;
         List<PathPlannerPath> pathPlannerPaths = new ArrayList<>();
         newAutoName = (auton.getAutonomousCommand()).getName();
-        if (autoName != newAutoName) {
+        if (!autoName.equals(newAutoName)) {
             autoName = newAutoName;
             if (AutoBuilder.getAllAutoNames().contains(autoName)) {
                 try {
                     pathPlannerPaths = PathPlannerAuto.getPathGroupFromAutoFile(autoName);
-                } catch (IOException a) {
-                } catch (ParseException b) {
-                } finally {
+                } catch (IOException | ParseException e) {
+                    Telemetry.print("Could not load path planner paths");
                 }
-                ;
                 List<Pose2d> poses = new ArrayList<>();
                 for (PathPlannerPath path : pathPlannerPaths) {
                     poses.addAll(

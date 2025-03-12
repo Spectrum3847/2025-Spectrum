@@ -68,6 +68,7 @@ public class Operator extends Gamepad {
         }
     }
 
+    @SuppressWarnings("unused")
     private OperatorConfig config;
 
     public Operator(OperatorConfig config) {

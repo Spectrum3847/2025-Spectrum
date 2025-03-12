@@ -163,7 +163,7 @@ public class Intake extends Mechanism {
                         setTorqueCurrentFoc(torque);
                     }
                 },
-                (b) -> {},
+                bool -> {},
                 () -> false,
                 this);
     }
@@ -182,7 +182,7 @@ public class Intake extends Mechanism {
                         setTorqueCurrentFoc(() -> -1 * torque.getAsDouble());
                     }
                 },
-                (b) -> {},
+                bool -> {},
                 () -> false,
                 this);
     }

@@ -18,6 +18,5 @@ public class FM2025 extends Config {
         twist.setAttached(true);
         intake.setAttached(true);
         climb.setAttached(true);
-        groundIntake.setAttached(false);
     }
 }

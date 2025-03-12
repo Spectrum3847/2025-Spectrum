@@ -144,10 +144,10 @@ public class RobotStates {
 
         // *********************************
         // ActionPrep and ActionState
-        pilot.actionReady.onFalse(actionPrepState.setFalse());
+        pilot.actionReady_RB.onFalse(actionPrepState.setFalse());
         autonActionOff.onTrue(actionPrepState.setFalse());
 
-        (pilot.actionReady.and(coral.or(algae)))
+        (pilot.actionReady_RB.and(coral.or(algae)))
                 .or(autonActionOn)
                 .onTrue(actionPrepState.setTrue(), actionState.setFalse());
 

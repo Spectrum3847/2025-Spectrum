@@ -413,10 +413,23 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
         tagDistanceAlignController.reset(currentMeters);
     }
 
-    double calculateTagDistanceAlignController(
-            DoubleSupplier targetArea, DoubleSupplier currentArea) {
-        return tagDistanceAlignController.calculate(
-                targetArea.getAsDouble(), currentArea.getAsDouble());
+    double calculateTagDistanceAlignController(DoubleSupplier targetArea) {
+        boolean front = true;
+        if (Robot.getVision().frontLL.targetInView()) {
+            front = true;
+        } else if (Robot.getVision().backLL.targetInView()) {
+            front = false;
+        }
+
+        double output =
+                tagDistanceAlignController.calculate(
+                        targetArea.getAsDouble(), Robot.getVision().getTagTA());
+
+        if (Robot.getVision().tagsInView()) {
+            return front ? output : -output;
+        } else {
+            return 0;
+        }
     }
 
     // --------------------------------------------------------------------------------

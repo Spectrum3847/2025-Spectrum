@@ -85,7 +85,7 @@ public class SwerveStates {
                                 new PrintCommand("! clearing align !"),
                                 new WaitCommand(alignTime),
                                 new InstantCommand(
-                                        () -> PPHolonomicDriveController.clearFeedbackOverrides()),
+                                        PPHolonomicDriveController::clearFeedbackOverrides),
                                 new PrintCommand("! cleared align !")))
                 .withName("autonAlign")
                 .alongWith(new PrintCommand("!! autonAlign Ran !!"));
@@ -100,19 +100,15 @@ public class SwerveStates {
     }
 
     private static double getTagTxVelocity() {
-        if (Robot.getVision().frontLL.targetInView()) {
+        if (Robot.getVision().tagsInView()) {
             return swerve.calculateTagCenterAlignController(
-                    () -> 0, () -> Robot.getVision().frontLL.getTagTx());
+                    () -> 0, () -> Robot.getVision().getTagTX());
         }
         return 0;
     }
 
     private static double getTagDistanceVelocity() {
-        if (Robot.getVision().frontLL.targetInView()) {
-            return swerve.calculateTagDistanceAlignController(
-                    () -> config.getHomeLlAimTAgoal(), () -> Robot.getVision().frontLL.getTagTA());
-        }
-        return 0;
+        return swerve.calculateTagDistanceAlignController(() -> config.getHomeLlAimTAgoal());
     }
 
     protected static Command snapSteerDrive() {
