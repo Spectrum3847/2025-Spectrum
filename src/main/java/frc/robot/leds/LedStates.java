@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
+import frc.robot.RobotStates;
+import frc.robot.climb.ClimbStates;
 import frc.robot.elevator.ElevatorStates;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.leds.SpectrumLEDs;
@@ -22,8 +24,15 @@ public class LedStates {
         autoPattern(Util.autoMode.and(Util.dsAttached));
         testModePattern(Util.testMode.and(Util.dsAttached));
 
+        // Coral and Algae Led Commands
+        coralModeLED(RobotStates.coral, 6);
+        algaeModeLED(RobotStates.algae, 6);
+
         // Elevator Led Commands
         elevatorUpLED(ElevatorStates.isUp.and(Util.teleop), 6);
+
+        // Climb Led Commands
+        climbReadyLED(ClimbStates.isLatched.and(RobotStates.climbPrep, Util.teleop), 6);
     }
 
     /** Default LED commands for each mode */
@@ -69,6 +78,21 @@ public class LedStates {
     static void elevatorUpLED(Trigger trigger, int priority) {
         ledCommand("right.ElevatorUp", right, right.blink(Color.kBlue, 0.25), priority, trigger);
         ledCommand("left.ElevatorUp", left, left.blink(Color.kBlue, 0.25), priority, trigger);
+    }
+
+    static void climbReadyLED(Trigger trigger, int priority) {
+        ledCommand("right.ClimbReady", right, right.scrollingRainbow(), priority, trigger);
+        ledCommand("left.ClimbReady", left, left.scrollingRainbow(), priority, trigger);
+    }
+
+    static void coralModeLED(Trigger trigger, int priority) {
+        ledCommand("right.CoralMode", right, right.solid(Color.kWhite), priority, trigger);
+        ledCommand("left.CoralMode", left, left.solid(Color.kWhite), priority, trigger);
+    }
+
+    static void algaeModeLED(Trigger trigger, int priority) {
+        ledCommand("right.AlgaeMode", right, right.solid(Color.kGreen), priority, trigger);
+        ledCommand("left.AlgaeMode", left, left.solid(Color.kGreen), priority, trigger);
     }
 
     // Log Command

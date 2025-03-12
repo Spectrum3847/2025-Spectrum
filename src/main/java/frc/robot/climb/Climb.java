@@ -1,4 +1,4 @@
-package frc.robot.inClimb;
+package frc.robot.climb;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.RobotSim;
 import frc.spectrumLib.Rio;
 import frc.spectrumLib.SpectrumServo;
+import frc.spectrumLib.SpectrumState;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.mechanism.Mechanism;
 import frc.spectrumLib.sim.ArmConfig;
@@ -21,77 +22,70 @@ import frc.spectrumLib.sim.ArmSim;
 import java.util.function.DoubleSupplier;
 import lombok.*;
 
-public class InClimb extends Mechanism {
+public class Climb extends Mechanism {
 
-    public static class InClimbConfig extends Config {
+    public static class ClimbConfig extends Config {
 
-        @Getter private final double maxRotations = 0.26; // TODO: find max rotations
+        @Getter private final double maxRotations = 0.34; // 0.36;
         @Getter private final double minRotations = -0.085;
-        /* InClimb positions in degrees || 0 is horizontal */
+        /* Climb positions in degrees || 0 is horizontal */
         @Getter private final double home = 90;
         @Getter private final double intake = 0;
         @Getter private final double algaeFloorIntake = 30;
-        @Getter @Setter private double tuneInClimb = 0;
-        @Getter private final double prepClimber = -10;
+        @Getter private final double prepClimber = 0;
         @Getter private final double finishClimb = 100;
         @Getter private final double coralFloorIntake = -10;
         @Getter private final double processorScore = 60;
-        @Getter private final double latchOpen = 0;
-        @Getter private final double latchClosed = 1;
+        @Getter private final double latchOpen = 1;
+        @Getter private final double latchClosed = 0;
 
         @Getter private final double offsetConstant = -90;
 
-        /* InClimb config settings */
+        /* Climb config settings */
         @Getter private final double zeroSpeed = -0.1;
         @Getter private final double holdMaxSpeedRPM = 18;
 
-        @Getter private final double currentLimit = 30;
-        @Getter private final double torqueCurrentLimit = 120;
+        @Getter private final double currentLimit = 60; // 60
+        @Getter private final double torqueCurrentLimit = 180; // 180
         @Getter private final double positionKp = 190;
         @Getter private final double positionKd = 40;
         @Getter private final double positionKv = 0;
         @Getter private final double positionKs = 0.3;
         @Getter private final double positionKa = 0.001;
         @Getter private final double positionKg = 2.9;
-        @Getter private final double mmCruiseVelocity = 4;
-        @Getter private final double mmAcceleration = 40;
+        @Getter private final double mmCruiseVelocity = 1;
+        @Getter private final double mmAcceleration = 10;
         @Getter private final double mmJerk = 0;
 
-        // Need to add auto launching positions when auton is added
-
-        // Removed implementation of tree map
-
         /* Sim properties */
-        @Getter private double InClimbX = 0.95; // 1.0;
-        @Getter private double InClimbY = 0.55;
+        @Getter private double climbX = 0.95; // 1.0;
+        @Getter private double climbY = 0.55;
 
-        @Getter @Setter
-        private double simRatio = 14; // TODO: Set to number of rotations per mech revolution
+        @Getter @Setter private double simRatio = 74.6666666667;
 
         @Getter private double length = 0.4;
 
-        public InClimbConfig() {
-            super("InClimbTop", 55, Rio.CANIVORE);
+        public ClimbConfig() {
+            super("ClimbTop", 55, Rio.CANIVORE);
             configPIDGains(0, positionKp, 0, positionKd);
             configFeedForwardGains(positionKs, positionKv, positionKa, positionKg);
             configMotionMagic(mmCruiseVelocity, mmAcceleration, mmJerk);
-            configGearRatio(99.5555555555);
+            configGearRatio(74.6666666667); // 9t = 99.5555555555); 12t - 74.6666666667;
             configSupplyCurrentLimit(currentLimit, true);
             configStatorCurrentLimit(torqueCurrentLimit, true);
             configForwardTorqueCurrentLimit(torqueCurrentLimit);
             configReverseTorqueCurrentLimit(-1 * torqueCurrentLimit);
             configMinMaxRotations(getMinRotations(), getMaxRotations());
             configReverseSoftLimit(getMinRotations(), true);
-            configForwardSoftLimit(
-                    getMaxRotations(), true); // TODO: increase soft limit (used .35 in testing)
+            configForwardSoftLimit(getMaxRotations(), true);
             configNeutralBrakeMode(true);
             configCounterClockwise_Positive();
             configGravityType(true);
             setSimRatio(simRatio);
-            setFollowerConfigs(new FollowerConfig("InClimbBottom", 56, Rio.CANIVORE, false));
+            setFollowerConfigs(new FollowerConfig("ClimbBottom", 56, Rio.CANIVORE, false));
         }
 
-        public InClimbConfig modifyMotorConfig(TalonFX motor) {
+        public ClimbConfig modifyMotorConfig(TalonFX motor) {
             TalonFXConfigurator configurator = motor.getConfigurator();
             TalonFXConfiguration talonConfigMod = getTalonConfig();
 
@@ -101,15 +95,16 @@ public class InClimb extends Mechanism {
         }
     }
 
-    private InClimbConfig config;
+    private ClimbConfig config;
     private SpectrumServo latchServo = new SpectrumServo(9);
-    @Getter private InClimbSim sim;
+    @Getter private SpectrumState latched = new SpectrumState("ClimbLatched");
+    @Getter private ClimbSim sim;
 
-    public InClimb(InClimbConfig config) {
+    public Climb(ClimbConfig config) {
         super(config);
         this.config = config;
 
-        setIntialPosition();
+        setInitialPosition();
         setLatchOpen();
 
         simulationInit();
@@ -121,11 +116,11 @@ public class InClimb extends Mechanism {
     public void periodic() {}
 
     public void setupStates() {
-        InClimbStates.setStates();
+        ClimbStates.setStates();
     }
 
     public void setupDefaultCommand() {
-        InClimbStates.setupDefaultCommand();
+        ClimbStates.setupDefaultCommand();
     }
 
     /*-------------------
@@ -135,16 +130,17 @@ public class InClimb extends Mechanism {
     @Override
     public void initSendable(NTSendableBuilder builder) {
         if (isAttached()) {
+            builder.addStringProperty("CurrentCommand", this::getCurrentCommandName, null);
+            builder.addDoubleProperty(
+                    "Position Rotations", () -> (this.getPositionRotations()), null);
             builder.addDoubleProperty("Position Degrees", () -> (this.getPositionDegrees()), null);
-            builder.addDoubleProperty("Velocity", this::getVelocityRPM, null);
-            builder.addDoubleProperty(
-                    "Motor Voltage", this.motor.getSimState()::getMotorVoltage, null);
-            builder.addDoubleProperty(
-                    "#Tune Position Percent", config::getTuneInClimb, config::setTuneInClimb);
+            // builder.addDoubleProperty("Velocity", this::getVelocityRPM, null);
+            builder.addDoubleProperty("Motor Voltage", this::getVoltage, null);
+            builder.addDoubleProperty("StatorCurrent", this::getStatorCurrent, null);
         }
     }
 
-    private void setIntialPosition() {
+    private void setInitialPosition() {
         if (config.isAttached()) {
             motor.setPosition(0.25); // TODO: Remove once mechanism does this for everything
             followerMotors[0].setPosition(0.25);
@@ -163,18 +159,20 @@ public class InClimb extends Mechanism {
     // Custom Commands
     // --------------------------------------------------------------------------------
 
-    public Command resetToIntialPos() {
-        return run(() -> setIntialPosition());
+    public Command resetToInitialPos() {
+        return runOnce(this::setInitialPosition)
+                .ignoringDisable(true)
+                .withName("Climb.ResetToInitialPos");
     }
 
-    public Command runHoldInClimb() {
+    public Command runHoldClimb() {
         return new Command() {
             double holdPosition = 0; // rotations
 
             // constructor
             {
-                setName("Pivot.holdPosition");
-                addRequirements(InClimb.this);
+                setName("Climb.holdPosition");
+                addRequirements(Climb.this);
             }
 
             @Override
@@ -204,7 +202,7 @@ public class InClimb extends Mechanism {
         };
     }
 
-    public Command zeroInClimbRoutine() {
+    public Command zeroClimbRoutine() {
         return new FunctionalCommand(
                         () -> toggleReverseSoftLimit(false), // init
                         () -> setPercentOutput(config::getZeroSpeed), // execute
@@ -214,7 +212,7 @@ public class InClimb extends Mechanism {
                         },
                         () -> false, // isFinished
                         this) // requirement
-                .withName("Elevator.zeroElevatorRoutine");
+                .withName("Climb.zeroRoutine");
     }
 
     @Override
@@ -226,18 +224,16 @@ public class InClimb extends Mechanism {
         return () -> (position.getAsDouble() + config.getOffsetConstant());
     }
 
-    // TODO: remove after testing
-    public Command setInClimbMMPositionFOC(DoubleSupplier rotations) {
-        return run(() -> setMMPositionFoc(rotations)).withName("InClimb Set MM Position");
-    }
-
     public Command openLatch() {
-        return new RunCommand(() -> setLatchOpen(), latchServo).withName("InClimbLatch.openLatch");
+        return new RunCommand(this::setLatchOpen, latchServo)
+                .alongWith(latched.setFalse())
+                .withName("ClimbLatch.openLatch");
     }
 
     public Command closeLatch() {
-        return new RunCommand(() -> setLatchClosed(), latchServo)
-                .withName("InClimbLatch.closeLatch");
+        return new RunCommand(this::setLatchClosed, latchServo)
+                .alongWith(latched.setTrue())
+                .withName("ClimbLatch.closeLatch");
     }
 
     // --------------------------------------------------------------------------------
@@ -245,7 +241,7 @@ public class InClimb extends Mechanism {
     // --------------------------------------------------------------------------------
     private void simulationInit() {
         if (isAttached()) {
-            sim = new InClimbSim(motor.getSimState(), RobotSim.frontView);
+            sim = new ClimbSim(motor.getSimState(), RobotSim.frontView);
         }
     }
 
@@ -256,20 +252,20 @@ public class InClimb extends Mechanism {
         }
     }
 
-    class InClimbSim extends ArmSim {
-        public InClimbSim(TalonFXSimState InClimbMotorSim, Mechanism2d mech) {
+    class ClimbSim extends ArmSim {
+        public ClimbSim(TalonFXSimState climbMotorSim, Mechanism2d mech) {
             super(
                     new ArmConfig(
-                                    config.InClimbX,
-                                    config.InClimbY,
+                                    config.climbX,
+                                    config.climbY,
                                     config.simRatio,
                                     config.length,
                                     -30,
                                     180,
-                                    180)
+                                    90)
                             .setColor(new Color8Bit(Color.kBrown)),
                     mech,
-                    InClimbMotorSim,
+                    climbMotorSim,
                     config.getName());
         }
     }

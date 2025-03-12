@@ -6,51 +6,58 @@ import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.gamepads.Gamepad;
 
 public class Operator extends Gamepad {
+
+    private static double climberScalerDown = 0.15;
+    private static double climberScalerUp = 0.35;
+
     // Triggers, these would be robot states such as intake, visionAim, etc.
     // If triggers need any of the config values set them in the constructor
     /*  A, B, X, Y, Left Bumper, Right Bumper = Buttons 1 to 6 in simulation */
+
+    public final Trigger enabled = teleop.or(testMode); // works for both teleop and testMode
     public final Trigger fn = leftBumper;
     public final Trigger noFn = fn.not();
+    public final Trigger home_select = select.or(leftStickClick);
 
-    public final Trigger leftScore_Dpad = leftDpad.and(noFn, teleop);
-    public final Trigger rightScore_Dpad = rightDpad.and(noFn, teleop);
+    public final Trigger climbPrep_start = start.and(noFn, enabled);
 
-    public final Trigger climbPrep_start = start.and(noFn, teleop);
+    public final Trigger coralStage = leftBumper.and(enabled);
+    public final Trigger algaeStage = rightBumper.and(enabled);
+    public final Trigger staged = coralStage.or(algaeStage);
+    public final Trigger nothingStaged = coralStage.not().and(algaeStage.not());
 
-    public final Trigger operatorCoralStage = leftBumper.and(teleop);
-    public final Trigger operatorAlgaeStage = rightBumper.and(teleop);
-    public final Trigger notStage = operatorCoralStage.not().and(operatorAlgaeStage.not());
+    public final Trigger L1 = A.and(staged);
+    public final Trigger L2 = B.and(staged);
+    public final Trigger L3 = X.and(staged);
+    public final Trigger L4 = Y.and(staged);
 
-    public final Trigger L1Coral_A = A.and(operatorCoralStage);
-    public final Trigger L2Coral_B = B.and(operatorCoralStage);
-    public final Trigger L3Coral_X = X.and(operatorCoralStage);
-    public final Trigger L4Coral_Y = Y.and(operatorCoralStage);
+    public final Trigger leftScore = leftDpad.and(staged);
+    public final Trigger rightScore = rightDpad.and(staged);
 
-    public final Trigger L2Algae_B = B.and(operatorAlgaeStage);
-    public final Trigger L3Algae_X = X.and(operatorAlgaeStage);
-    public final Trigger barge_Y = Y.and(operatorAlgaeStage);
+    public final Trigger latchOpen_startUp = climbPrep_start.and(upDpad);
+    public final Trigger latchCloser_startDown = climbPrep_start.and(downDpad);
 
-    public final Trigger homeElevator_A = A.and(notStage, teleop);
-    public final Trigger homeInClimb_B = B.and(notStage, teleop);
+    public final Trigger homeElevator_A = A.and(nothingStaged, teleop);
 
-    public final Trigger algaeHandoff_X = X.and(notStage, teleop);
-    public final Trigger coralHandoff_Y = Y.and(notStage, teleop);
+    // TODO: Removed until we are ready to implement
+    // public final Trigger algaeHandoff_X = X.and(nothingStaged, teleop);
+    // public final Trigger coralHandoff_Y = Y.and(nothingStaged, teleop);
 
     // DISABLED TRIGGERS
     public final Trigger coastOn_dB = disabled.and(B);
     public final Trigger coastOff_dA = disabled.and(A);
 
     // TEST TRIGGERS
-    public final Trigger testOperatorCoralStage = leftBumper.and(testMode);
-    public final Trigger testOperatorAlgaeStage = rightBumper.and(testMode);
-    public final Trigger test_tA = A.and(testOperatorCoralStage);
-    public final Trigger test_tB = B.and(testOperatorCoralStage);
-    public final Trigger test_tX = X.and(testOperatorCoralStage);
-    public final Trigger test_tY = Y.and(testOperatorCoralStage);
-    public final Trigger test_A = A.and(testOperatorAlgaeStage);
-    public final Trigger test_B = B.and(testOperatorAlgaeStage);
-    public final Trigger test_X = X.and(testOperatorAlgaeStage);
-    public final Trigger test_Y = Y.and(testMode);
+    // public final Trigger testOperatorCoralStage = leftBumper.and(testMode);
+    // public final Trigger testOperatorAlgaeStage = rightBumper.and(testMode);
+    // public final Trigger test_tA = A.and(testOperatorCoralStage);
+    // public final Trigger test_tB = B.and(testOperatorCoralStage);
+    // public final Trigger test_tX = X.and(testOperatorCoralStage);
+    // public final Trigger test_tY = Y.and(testOperatorCoralStage);
+    // public final Trigger test_A = A.and(testOperatorAlgaeStage);
+    // public final Trigger test_B = B.and(testOperatorAlgaeStage);
+    // public final Trigger test_X = X.and(testOperatorAlgaeStage);
+    // public final Trigger test_Y = Y.and(testMode);
     //  TODO: move reef scoring/intaking to operator
 
     public static class OperatorConfig extends Config {
@@ -61,6 +68,7 @@ public class Operator extends Gamepad {
         }
     }
 
+    @SuppressWarnings("unused")
     private OperatorConfig config;
 
     public Operator(OperatorConfig config) {
@@ -79,11 +87,8 @@ public class Operator extends Gamepad {
         OperatorStates.setupDefaultCommand();
     }
 
-    public double getElevatorOverride() {
-        return getLeftY();
-    }
-
-    public double getClimberOverride() {
-        return getRightY();
+    public double getClimberTriggerAxis() {
+        return ((getRightTriggerAxis() * climberScalerUp)
+                - (getLeftTriggerAxis() * climberScalerDown));
     }
 }

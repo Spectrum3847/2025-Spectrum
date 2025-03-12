@@ -13,9 +13,8 @@ public class AM2025 extends Config {
         // Attached Mechanisms
         pilot.setAttached(true);
         operator.setAttached(true);
-        groundIntake.setAttached(true);
-        coralIntake.setAttached(true);
-        inClimb.setAttached(true);
+        intake.setAttached(true);
+        climb.setAttached(true);
         shoulder.setAttached(true);
         elbow.setAttached(true);
         twist.setAttached(true);

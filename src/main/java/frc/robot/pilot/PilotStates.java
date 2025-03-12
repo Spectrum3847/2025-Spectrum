@@ -3,6 +3,7 @@ package frc.robot.pilot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Robot;
+import frc.robot.vision.VisionStates;
 import frc.spectrumLib.Telemetry;
 
 /** This class should have any command calls that directly call the Pilot */
@@ -16,6 +17,9 @@ public class PilotStates {
 
     /** Set the states for the pilot controller */
     public static void setStates() {
+
+        pilot.actionReady_RB.whileTrue(slowMode());
+        pilot.visionPoseReset_LB_Select.onTrue(VisionStates.resetVisionPose());
         // Rumble whenever we reorient
         pilot.upReorient
                 .or(pilot.downReorient, pilot.leftReorient, pilot.rightReorient)
@@ -33,7 +37,8 @@ public class PilotStates {
      */
     public static Command slowMode() {
         return Commands.startEnd(
-                        () -> pilot.getSlowMode().setTrue(), () -> pilot.getSlowMode().setFalse())
+                        () -> pilot.getSlowMode().setState(true),
+                        () -> pilot.getSlowMode().setState(false))
                 .withName("Pilot.setSlowMode");
     }
 
@@ -43,7 +48,8 @@ public class PilotStates {
      */
     public static Command turboMode() {
         return Commands.startEnd(
-                        () -> pilot.getTurboMode().setTrue(), () -> pilot.getTurboMode().setFalse())
+                        () -> pilot.getTurboMode().setState(true),
+                        () -> pilot.getTurboMode().setState(false))
                 .withName("Pilot.setTurboMode");
     }
 

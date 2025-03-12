@@ -66,7 +66,20 @@
     }
   ],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "leftL4",
+      "waypointRelativePos": 1.400939702427578,
+      "endWaypointRelativePos": 2.0,
+      "command": null
+    },
+    {
+      "name": "score",
+      "waypointRelativePos": 1.4980422866092422,
+      "endWaypointRelativePos": 2.0,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,

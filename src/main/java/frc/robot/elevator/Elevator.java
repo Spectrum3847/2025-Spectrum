@@ -6,8 +6,8 @@ import edu.wpi.first.networktables.NTSendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.RobotSim;
+import frc.robot.RobotStates;
 import frc.spectrumLib.Rio;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.mechanism.Mechanism;
@@ -19,50 +19,50 @@ import lombok.*;
 public class Elevator extends Mechanism {
 
     public static class ElevatorConfig extends Config {
-        /* Elevator constants in rotations */
-        @Getter private double maxRotations = 20.5; // TODO: Reset to 21.1;
+        @Getter @Setter private boolean isPhoton = false;
 
-        @Getter
-        private double minRotations = 0.3; // This is to prevent it from driving to zero too hard
+        /* Elevator constants in rotations */
+        @Getter @Setter private double maxRotations = 21.1;
+
+        @Getter @Setter private double minRotations = 0.3;
 
         /* Elevator positions in rotations */
         // TODO: Find elevator positions
         @Getter @Setter private double fullExtend = maxRotations * .999;
-        @Getter private double home = 0.3;
+        @Getter @Setter private double home = 0;
 
-        @Getter private final double algaeLollipop = 0.3; // TODO: find real value
-        @Getter private final double coralLollipop = 0.3; // TODO: find real value
+        @Getter @Setter private double clawGroundAlgaeIntake = 0;
+        @Getter @Setter private double clawGroundCoralIntake = 0;
 
-        @Getter private final double clawGroundAlgaeIntake = 0.3; // TODO: find real value
-        @Getter private final double clawGroundCoralIntake = 0.3; // TODO: find real value
+        @Getter @Setter private double stationIntake = 0;
+        @Getter @Setter private double stationExtendedIntake = 0;
 
-        @Getter private final double stationIntake = 2.7;
-        @Getter private final double stationExtendedIntake = 6.5;
+        @Getter @Setter private double processorAlgae = 0.3;
+        @Getter @Setter private double l2Algae = 1;
+        @Getter @Setter private double l3Algae = 12;
+        @Getter @Setter private double netAlgae = fullExtend;
 
-        @Getter private final double photonStationIntake = 9.67; // 10.67
-        @Getter private final double photonStationExtendedIntake = 9.67;
+        @Getter @Setter private double l1Coral = 0;
+        @Getter @Setter private double l2Coral = 8.6; // 0.68;
+        @Getter @Setter private double l2Score = 6.2; // l2Coral;
+        @Getter @Setter private double l3Coral = 20; // 12.8; // 10.7;
+        @Getter @Setter private double l3Score = 17.6; // l3Coral - 1;
+        @Getter @Setter private double l4Coral = fullExtend;
+        @Getter @Setter private double l4Score = l4Coral - 3;
 
-        @Getter private final double handOff = 5.5; // TODO: check if this works
-
-        @Getter private final double l2Algae = 0.3;
-        @Getter private final double l3Algae = 12.5;
-
-        @Getter private final double l1Coral = 0.3;
-        @Getter private final double l2Coral = 7.15;
-        @Getter private final double l3Coral = 17.5;
-        @Getter private final double l4Coral = 18.86;
-
-        @Getter private final double photonL2Coral = 0;
-        @Getter private final double photonL3Coral = 10.333008;
-        @Getter private final double photonL4Coral = 20.929199;
-
-        @Getter private final double barge = 20;
+        @Getter @Setter private double exl1Coral = 0.3;
+        @Getter @Setter private double exl2Coral = 8.6; // 1
+        @Getter @Setter private double exl2Score = 6.2; // 0.3;
+        @Getter @Setter private double exl3Coral = 20; // 12.8;
+        @Getter @Setter private double exl3Score = 17.6; // 11.8;
+        @Getter @Setter private double exl4Coral = fullExtend;
+        @Getter @Setter private double exl4Score = exl4Coral - 3;
 
         @Getter private double triggerTolerance = 0.95;
         @Getter private double elevatorIsUpHeight = 5;
         @Getter private double elevatorIsHighHeight = 10;
         @Getter private double initPosition = 0;
-        @Getter private double holdMaxSpeedRPM = 10000;
+        @Getter private double holdMaxSpeedRPM = 1000;
 
         /* Elevator config settings */
         @Getter private final double zeroSpeed = -0.2;
@@ -145,11 +145,11 @@ public class Elevator extends Mechanism {
     @Override
     public void initSendable(NTSendableBuilder builder) {
         if (isAttached()) {
-            builder.addDoubleProperty("Position Percentage", this::getPositionPercentage, null);
+            builder.addStringProperty("CurrentCommand", this::getCurrentCommandName, null);
             builder.addDoubleProperty("Rotations", this::getPositionRotations, null);
-            builder.addDoubleProperty("Velocity", this::getVelocityRPM, null);
-            builder.addDoubleProperty("StatorCurrent", this::getCurrent, null);
-            builder.addDoubleProperty("#FullExtend", config::getFullExtend, config::setFullExtend);
+            // builder.addDoubleProperty("Velocity", this::getVelocityRPM, null);
+            builder.addDoubleProperty("StatorCurrent", this::getStatorCurrent, null);
+            builder.addDoubleProperty("MotorVoltage", this::getVoltage, null);
         }
     }
 
@@ -180,6 +180,11 @@ public class Elevator extends Mechanism {
             }
 
             @Override
+            public boolean runsWhenDisabled() {
+                return true;
+            }
+
+            @Override
             public void initialize() {
                 holdPosition = getPositionRotations();
                 stop();
@@ -188,8 +193,8 @@ public class Elevator extends Mechanism {
             @Override
             public void execute() {
                 double currentPosition = getPositionRotations();
-                if (Math.abs(holdPosition)
-                        < 0.05) { // Added so it doesn't try to hold when all the way down
+                if (Math.abs(currentPosition)
+                        < 0.3) { // Added so it doesn't try to hold when all the way down
                     stop();
                 } else if (Math.abs(getVelocityRPM()) > config.holdMaxSpeedRPM) {
                     stop(); // Don't hold if moving too fast
@@ -206,6 +211,17 @@ public class Elevator extends Mechanism {
         };
     }
 
+    public Command move(DoubleSupplier rotations, DoubleSupplier exRotations) {
+        return run(
+                () -> {
+                    if (RobotStates.extended.getAsBoolean()) {
+                        setMMPositionFoc(exRotations);
+                    } else {
+                        setMMPositionFoc(rotations);
+                    }
+                });
+    }
+
     public Command zeroElevatorRoutine() {
         return new FunctionalCommand(
                         () -> toggleReverseSoftLimit(false), // init
@@ -217,31 +233,6 @@ public class Elevator extends Mechanism {
                         () -> false, // isFinished
                         this) // requirement
                 .withName("Elevator.zeroElevatorRoutine");
-    }
-
-    public Command moveToRotations(DoubleSupplier rotations) {
-        return run(() -> stop())
-                .withName("Elevator.waitForElbow")
-                .until(
-                        () ->
-                                (ElevatorStates.getElbowShoulderPos().getAsDouble() < 50.0)
-                                        || ElevatorStates.getPosition().getAsDouble()
-                                                < rotations.getAsDouble()
-                                        || ElevatorStates.getPosition().getAsDouble()
-                                                > config.getL2Coral())
-                .andThen(
-                        run(() -> setMMPositionFoc(rotations))
-                                .withName("Elevator.moveToRotations"));
-    }
-
-    // TODO: remove after testing
-    public Command setElevatorMMPositionFOC(DoubleSupplier rotations) {
-        return run(() -> setMMPositionFoc(rotations)).withName("Elevator Set MM Position");
-    }
-
-    public Command moveToRelativePosition(DoubleSupplier position) {
-        return new InstantCommand(
-                () -> setMMPositionFoc(() -> getPositionRotations() + position.getAsDouble()));
     }
 
     // --------------------------------------------------------------------------------

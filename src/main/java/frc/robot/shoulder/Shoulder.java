@@ -9,8 +9,10 @@ import edu.wpi.first.networktables.NTSendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.RobotSim;
+import frc.robot.RobotStates;
 import frc.spectrumLib.Rio;
 import frc.spectrumLib.SpectrumCANcoder;
 import frc.spectrumLib.Telemetry;
@@ -23,60 +25,67 @@ import lombok.*;
 public class Shoulder extends Mechanism {
 
     public static class ShoulderConfig extends Config {
-        @Getter @Setter private boolean reversed = false;
+        @Getter @Setter private boolean isPhoton = false;
 
         // Positions set as degrees of rotation || 0 is vertical down
         @Getter private final int initializedPosition = 0;
 
+        @Getter private final double scoreDelay = 0.3;
+
         /* Shoulder positions in degrees || 0 is vertical down || positions should be towards front of robot */
-        // TODO: Find shoulder positions
-        @Getter private final double score = 117;
-        @Getter private final double climbHome = 180;
-        @Getter private final double handAlgae = -144; // TODO: find this value
-        @Getter private final double home = 0;
 
-        @Getter private final double algaeLollipop = 0;
-        @Getter private final double coralLollipop = -157; // TODO: find this value
-        @Getter private final double stationIntake = 0;
-        @Getter private final double stationExtendedIntake = 172; // TODO: find this value
-        @Getter private final double clawGroundAlgaeIntake = -164; // TODO: find this value
-        @Getter private final double clawGroundCoralIntake = -164; // TODO: find this value
-        @Getter private final double handOff = 180;
+        @Getter @Setter private double climbPrep = -56.7;;
+        @Getter @Setter private double home = 0;
 
-        @Getter private final double l2Algae = 43.07;
-        @Getter private final double l3Algae = 43.07;
+        @Getter @Setter private double stationIntake = 9.2;
+        @Getter @Setter private double stationExtendedIntake = 23.6;
+        @Getter @Setter private double groundAlgaeIntake = 0;
+        @Getter @Setter private double groundCoralIntake = -4;
 
-        @Getter private final double l1Coral = 14;
-        @Getter private final double l2Coral = 34;
-        @Getter private final double l3Coral = 34;
-        @Getter private final double l4Coral = -210;
+        @Getter @Setter private double processorAlgae = 55;
+        @Getter @Setter private double l2Algae = 160; // -32;
+        @Getter @Setter private double l3Algae = 160; // -32;
+        @Getter @Setter private double netAlgae = 180;
 
-        @Getter private final double barge = 180; // TODO: find this value
-        @Getter @Setter private double tuneShoulder = 0;
+        @Getter @Setter private double l1Coral = 51.5;
+        @Getter @Setter private double l2Coral = 15.3;
+        @Getter @Setter private double l2Score = 70; // 26
+        @Getter @Setter private double l3Coral = 11.1; // -8
+        @Getter @Setter private double l3Score = 70; // 26;
+        @Getter @Setter private double l4Coral = 170; // 158.5;
+        @Getter @Setter private double l4CoralScore = 128; // 117;
 
-        @Getter private final double tolerance = 0.95;
+        @Getter @Setter private double exl1Coral = 16.9;
+        @Getter @Setter private double exl2Coral = -13.4; // -27;
+        @Getter @Setter private double exl2Score = 30;
+        @Getter @Setter private double exl3Coral = -12.8; // -27;
+        @Getter @Setter private double exl3Score = 30;
+        @Getter @Setter private double exl4Coral = 199.3; // 179;
+        @Getter @Setter private double exl4Score = 145.8; // 133;
 
-        @Getter private final double offset = -90;
-        @Getter private final double initPosition = 0;
+        @Getter @Setter private double tolerance = 0.95;
+
+        @Getter @Setter private double offset = -90;
+        @Getter @Setter private double initPosition = 0;
 
         /* Shoulder config settings */
-        @Getter private final double zeroSpeed = -0.1;
-        @Getter private final double holdMaxSpeedRPM = 18;
+        @Getter @Setter private double zeroSpeed = -0.1;
+        @Getter @Setter private double holdMaxSpeedRPM = 18;
 
-        @Getter private final double currentLimit = 20;
-        @Getter private final double torqueCurrentLimit = 100;
-        @Getter private final double positionKp = 1500;
-        @Getter private final double positionKd = 140;
-        @Getter private final double positionKv = 0;
-        @Getter private final double positionKs = 0.06;
-        @Getter private final double positionKa = 0.001;
-        @Getter private final double positionKg = 12.5;
-        @Getter private final double mmCruiseVelocity = 10;
-        @Getter private final double mmAcceleration = 50;
-        @Getter private final double mmJerk = 0;
+        @Getter @Setter private double currentLimit = 20;
+        @Getter @Setter private double torqueCurrentLimit = 100;
+        @Getter @Setter private double positionKp = 1500;
+        @Getter @Setter private double positionKd = 140;
+        @Getter @Setter private double positionKv = 0;
+        @Getter @Setter private double positionKs = 0.06;
+        @Getter @Setter private double positionKa = 0.001;
+        @Getter @Setter private double positionKg = 12.5;
+        @Getter @Setter private double mmCruiseVelocity = 10;
+        @Getter @Setter private double mmAcceleration = 50;
+        @Getter @Setter private double mmJerk = 0;
 
         /* Cancoder config settings */
-        @Getter private final double CANcoderGearRatio = 30 / 36;
+        @Getter private final double CANcoderGearRatio = 30.0 / 36.0;
         @Getter private double CANcoderOffset = 0;
         @Getter private boolean isCANcoderAttached = false;
 
@@ -120,8 +129,8 @@ public class Shoulder extends Mechanism {
         }
     }
 
-    private ShoulderConfig config;
-    private SpectrumCANcoder canCoder;
+    protected ShoulderConfig config;
+    protected SpectrumCANcoder canCoder;
     @Getter private ShoulderSim sim;
     CANcoderSimState canCoderSim;
 
@@ -130,11 +139,11 @@ public class Shoulder extends Mechanism {
         this.config = config;
 
         if (isAttached()) {
-            canCoder =
-                    new SpectrumCANcoder(42, motor, config)
-                            .setGearRatio(config.getCANcoderGearRatio())
-                            .setOffset(config.getCANcoderOffset())
-                            .setAttached(false);
+            // canCoder =
+            //         new SpectrumCANcoder(42, motor, config)
+            //                 .setGearRatio(config.getCANcoderGearRatio())
+            //                 .setOffset(config.getCANcoderOffset())
+            //                 .setAttached(false);
             setInitialPosition();
         }
 
@@ -161,28 +170,55 @@ public class Shoulder extends Mechanism {
     @Override
     public void initSendable(NTSendableBuilder builder) {
         if (isAttached()) {
+            builder.addStringProperty("CurrentCommand", this::getCurrentCommandName, null);
             builder.addDoubleProperty(
                     "Position Degrees", () -> (this.getPositionDegrees() - config.offset), null);
-            builder.addDoubleProperty("Velocity", this::getVelocityRPM, null);
-            builder.addDoubleProperty(
-                    "Motor Voltage", this.motor.getSimState()::getMotorVoltage, null);
-            builder.addDoubleProperty(
-                    "#Tune Position Percent", config::getTuneShoulder, config::setTuneShoulder);
+            // builder.addDoubleProperty("Velocity", this::getVelocityRPM, null);
+            builder.addDoubleProperty("MotorVoltage", this::getVoltage, null);
+            builder.addDoubleProperty("StatorCurrent", this::getStatorCurrent, null);
         }
     }
 
-    private void setInitialPosition() {
-        if (canCoder.isAttached()) {
-            motor.setPosition(
-                    canCoder.getCanCoder().getAbsolutePosition().getValueAsDouble()
-                            * config.getGearRatio());
-        } else {
-            motor.setPosition(degreesToRotations(offsetPosition(() -> config.getInitPosition())));
-        }
+    void setInitialPosition() {
+        // if (canCoder != null) {
+        //     if (canCoder.isAttached()) {
+        //         motor.setPosition(
+        //                 canCoder.getCanCoder().getAbsolutePosition().getValueAsDouble()
+        //                         * config.getGearRatio());
+        //     }
+        // } else {
+        motor.setPosition(degreesToRotations(offsetPosition(() -> config.getInitPosition())));
+        // }
     }
 
     public Command resetToIntialPos() {
-        return run(() -> setInitialPosition());
+        return runOnce(this::setInitialPosition)
+                .ignoringDisable(true)
+                .withName("Reset to Initial position");
+    }
+
+    @Override
+    public Trigger belowDegrees(DoubleSupplier degrees, DoubleSupplier tolerance) {
+        return new Trigger(
+                () ->
+                        (getPositionDegrees() + config.getOffset())
+                                < (degrees.getAsDouble() - tolerance.getAsDouble()));
+    }
+
+    @Override
+    public Trigger aboveDegrees(DoubleSupplier degrees, DoubleSupplier tolerance) {
+        return new Trigger(
+                () ->
+                        (getPositionDegrees() + config.getOffset())
+                                > (degrees.getAsDouble() + tolerance.getAsDouble()));
+    }
+
+    @Override
+    public Trigger atDegrees(DoubleSupplier degrees, DoubleSupplier tolerance) {
+        return new Trigger(
+                () ->
+                        Math.abs(getPositionDegrees() + config.getOffset() - degrees.getAsDouble())
+                                < tolerance.getAsDouble());
     }
 
     // --------------------------------------------------------------------------------
@@ -211,6 +247,11 @@ public class Shoulder extends Mechanism {
             {
                 setName("Shoulder.holdPosition");
                 addRequirements(Robot.getShoulder());
+            }
+
+            @Override
+            public boolean runsWhenDisabled() {
+                return true;
             }
 
             @Override
@@ -245,38 +286,32 @@ public class Shoulder extends Mechanism {
         };
     }
 
-    public boolean ShoulderHasError() {
-        if (isAttached()) {
-            return getPositionRotations() > config.getMaxRotations();
-        }
-        return false;
-    }
-
-    public double checkReversed(DoubleSupplier position) {
-        if (!config.isReversed()) {
-            return position.getAsDouble();
-        }
-
-        return position.getAsDouble() * -1;
-    }
-
     @Override
     public Command moveToDegrees(DoubleSupplier degrees) {
         return super.moveToDegrees(offsetPosition(degrees)).withName(getName() + ".runPoseDegrees");
+    }
+
+    public Command move(DoubleSupplier degrees, DoubleSupplier exDegrees) {
+        return run(
+                () -> {
+                    // TODO: add a check for reversed and negate values when we do double sided
+                    // scoring.
+                    if (RobotStates.extended.getAsBoolean()) {
+                        setMMPositionFoc(() -> degreesToRotations(offsetPosition(exDegrees)));
+                    } else {
+                        setMMPositionFoc(() -> degreesToRotations(offsetPosition(degrees)));
+                    }
+                });
     }
 
     public DoubleSupplier offsetPosition(DoubleSupplier position) {
         return () -> (position.getAsDouble() + config.getOffset());
     }
 
-    public Command moveToDegreesAndCheckReversed(DoubleSupplier degrees) {
-        return moveToDegrees(() -> checkReversed(degrees));
-    }
-
     // --------------------------------------------------------------------------------
     // Simulation
     // --------------------------------------------------------------------------------
-    private void simulationInit() {
+    void simulationInit() {
         if (isAttached()) {
             sim = new ShoulderSim(motor.getSimState(), RobotSim.leftView);
             // m_CANcoder.setPosition(0);

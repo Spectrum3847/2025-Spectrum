@@ -7,61 +7,61 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1 - Source Only"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.2
+            "pathName": "1 - L4 Trough Rush"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "2 - Source Only"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.2
+            "pathName": "2 - L4 Trough Rush"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3 - Source Only"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.2
+            "pathName": "3 - L4 Trough Rush"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "4 - Source Only"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
+            "pathName": "4 - L4 Trough Rush"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "5 - Source Only"
+            "pathName": "3 - L4 Trough Rush"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "4 - L4 Trough Rush"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3 - L4 Trough Rush"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "4 - L4 Trough Rush"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3 - L4 Trough Rush"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Blue Left Origin",
+  "folder": "Blue Center Origin",
   "choreoAuto": false
 }

@@ -22,8 +22,10 @@
       "/SmartDashboard/Auto Visualizer": "Field2d",
       "/SmartDashboard/LeftView": "Mechanism2d",
       "/SmartDashboard/Scheduler": "Scheduler",
+      "/SmartDashboard/States": "Alerts",
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d",
-      "/SmartDashboard/frontView": "Mechanism2d"
+      "/SmartDashboard/frontView": "Mechanism2d",
+      "/SmartDashboard/vision": "Subsystem"
     },
     "windows": {
       "/SmartDashboard/Alerts": {
@@ -70,6 +72,11 @@
           "visible": true
         }
       },
+      "/SmartDashboard/States": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/VisionSystemSim-main/Sim Field": {
         "Robot": {
           "arrowColor": [
@@ -84,8 +91,8 @@
             0.7215189933776855,
             255.0
           ],
-          "length": 0.8500000238418579,
-          "width": 0.8500000238418579
+          "length": 0.9100000262260437,
+          "width": 0.9100000262260437
         },
         "apriltag": {
           "image": "./images/tag-blue.png"

@@ -1,5 +1,8 @@
 package frc.robot.twist;
 
+import static frc.robot.RobotStates.algae;
+import static frc.robot.RobotStates.coral;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -16,7 +19,6 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.Robot;
 import frc.robot.RobotSim;
 import frc.spectrumLib.Rio;
@@ -40,23 +42,14 @@ public class Twist extends Mechanism {
         /* twist positions in percentage of max rotation || 0 is horizontal */
 
         @Getter private final double home = 0;
-        @Getter private final double algaeLollipop = 180; // TODO: find this
-        @Getter private final double coralLollipop = 90; // TODO: find this
-        @Getter private final double stationIntake = 179;
-        @Getter private final double clawGroundAlgaeIntake = 180; // TODO: find this
-        @Getter private final double clawGroundCoralIntake = 0; // TODO: find this
-        @Getter private final double leftCoral = -90;
-        @Getter private final double rightCoral = 90;
-        @Getter private final double l1Coral = 179;
-        @Getter private final double l2Algae = 0;
-        @Getter private final double l3Algae = 0;
-        @Getter private final double l2Coral = 90;
-        @Getter private final double l3Coral = 90;
-        @Getter private final double l4Coral = 90;
-        @Getter private final double barge = 180; // TODO: find this
-        @Getter private final double handAlgae = -180; // TODO: doublecheck
-        @Getter private final double handCoral = -90; // TODO: find this
-        @Getter @Setter private double tuneTwist = 0;
+        @Getter private final double coralLollipop = 90;
+        @Getter private final double stationIntake = 179.9;
+        @Getter private final double algaeIntake = stationIntake;
+        @Getter private final double groundCoralIntake = 0;
+        @Getter private final double leftCoral = 90;
+        @Getter private final double rightCoral = -90;
+        @Getter private final double l1Coral = 0;
+        @Getter private final double net = algaeIntake;
 
         @Getter private final double initPosition = 0;
 
@@ -101,22 +94,19 @@ public class Twist extends Mechanism {
             configPIDGains(0, positionKp, 0, positionKd);
             configFeedForwardGains(positionKs, positionKv, positionKa, positionKg);
             configMotionMagic(mmCruiseVelocity, mmAcceleration, mmJerk);
-            configMotionMagic(
-                    mmCruiseVelocity,
-                    mmAcceleration,
-                    mmJerk); // 73500, 80500, 0); // 147000, 161000, 0);
+            configMotionMagic(mmCruiseVelocity, mmAcceleration, mmJerk);
             configGearRatio(22.4);
             configSupplyCurrentLimit(currentLimit, true);
             configStatorCurrentLimit(torqueCurrentLimit, true);
             configForwardTorqueCurrentLimit(torqueCurrentLimit);
             configReverseTorqueCurrentLimit(torqueCurrentLimit);
-            configMinMaxRotations(0, 0.499); // Calculated to be 22.4
+            configMinMaxRotations(-.25, 0.5);
             configReverseSoftLimit(getMinRotations(), true);
             configForwardSoftLimit(getMaxRotations(), true);
             configNeutralBrakeMode(true);
-            configContinuousWrap(true);
+            configContinuousWrap(false);
             configGravityType(true);
-            configClockwise_Positive(); // TODO: switch to clockwise
+            configClockwise_Positive();
         }
 
         public TwistConfig modifyMotorConfig(TalonFX motor) {
@@ -145,7 +135,7 @@ public class Twist extends Mechanism {
                             .setOffset(config.getCANcoderOffset())
                             .setAttached(false);
 
-            setIntialPosition();
+            setInitialPosition();
         }
 
         simulationInit();
@@ -171,20 +161,21 @@ public class Twist extends Mechanism {
     @Override
     public void initSendable(NTSendableBuilder builder) {
         if (isAttached()) {
-            builder.addDoubleProperty("Position", this::getPositionRotations, null);
-            builder.addDoubleProperty(
-                    "Position Percent",
-                    () -> (getPositionRotations() / config.getMaxRotations()) * 100,
-                    null);
-            builder.addDoubleProperty("Velocity", this::getVelocityRPM, null);
-            builder.addDoubleProperty(
-                    "Motor Voltage", this.motor.getSimState()::getMotorVoltage, null);
-            builder.addDoubleProperty(
-                    "#Tune Position Percent", config::getTuneTwist, config::setTuneTwist);
+            builder.addStringProperty("CurrentCommand", this::getCurrentCommandName, null);
+            builder.addDoubleProperty("Degrees", this::getPositionDegrees, null);
+            // builder.addDoubleProperty("Velocity", this::getVelocityRPM, null);
+            builder.addDoubleProperty("Motor Voltage", this::getVoltage, null);
+            builder.addDoubleProperty("StatorCurrent", this::getStatorCurrent, null);
+            // builder.addDoubleProperty("Front-TX", Robot.getVision().frontLL::getTagTx, null);
+            // builder.addDoubleProperty("Front-TA", Robot.getVision().frontLL::getTagTA, null);
+            // builder.addDoubleProperty(
+            //        "Front-Rotation", Robot.getVision().frontLL::getTagRotationDegrees, null);
+            // builder.addDoubleProperty(
+            //        "Front-ClosestTag", Robot.getVision().frontLL::getClosestTagID, null);
         }
     }
 
-    private void setIntialPosition() {
+    private void setInitialPosition() {
         if (canCoder.isAttached()) {
             motor.setPosition(
                     canCoder.getCanCoder().getAbsolutePosition().getValueAsDouble()
@@ -194,26 +185,13 @@ public class Twist extends Mechanism {
         }
     }
 
-    public Command resetToIntialPos() {
-        return run(() -> setIntialPosition());
+    public Command resetToInitialPos() {
+        return run(this::setInitialPosition);
     }
 
     // --------------------------------------------------------------------------------
     // Custom Commands
     // --------------------------------------------------------------------------------
-
-    public Command zeroTwistRoutine() {
-        return new FunctionalCommand(
-                        () -> toggleReverseSoftLimit(false), // init
-                        () -> setPercentOutput(config::getZeroSpeed), // execute
-                        b -> {
-                            canCoder.getCanCoder().setPosition(0);
-                            toggleReverseSoftLimit(true); // end
-                        },
-                        () -> false, // isFinished
-                        this) // requirement
-                .withName("Twist.zeroTwistRoutine");
-    }
 
     /** Holds the position of the Twist. */
     public Command runHoldTwist() {
@@ -224,6 +202,11 @@ public class Twist extends Mechanism {
             {
                 setName("Twist.holdPosition");
                 addRequirements(Twist.this);
+            }
+
+            @Override
+            public boolean runsWhenDisabled() {
+                return true;
             }
 
             @Override
@@ -253,32 +236,27 @@ public class Twist extends Mechanism {
         };
     }
 
-    public boolean TwistHasError() {
-        if (isAttached()) {
-            return getPositionRotations() > config.getMaxRotations();
-        }
-        return false;
-    }
-
-    public double checkReversed(DoubleSupplier position) {
-        if (!config.isReversed()) {
-            return position.getAsDouble();
-        }
-
-        if (position.getAsDouble() < 0) {
-            return position.getAsDouble() + 100;
-        }
-        return position.getAsDouble() - 100;
-    }
-
     @Override
     public Command moveToDegrees(DoubleSupplier degrees) {
         return super.moveToDegrees(degrees).withName(getName() + ".runPoseDegrees");
     }
 
-    // public Command moveToDegreesAvoidElevator(DoubleSupplier degrees) {
+    private void setDegrees(DoubleSupplier degrees) {
+        setMMPositionFoc(() -> degreesToRotations(degrees));
+    }
 
-    // }
+    public Command twistHome() {
+        return run(
+                () -> {
+                    if (algae.getAsBoolean()) {
+                        setDegrees(config::getAlgaeIntake);
+                    } else if (coral.getAsBoolean()) {
+                        setDegrees(config::getLeftCoral);
+                    } else {
+                        setDegrees(config::getHome);
+                    }
+                });
+    }
 
     // --------------------------------------------------------------------------------
     // Simulation

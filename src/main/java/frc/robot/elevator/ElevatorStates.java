@@ -3,14 +3,10 @@ package frc.robot.elevator;
 import static frc.robot.RobotStates.*;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
-import frc.robot.elbow.ElbowStates;
 import frc.robot.elevator.Elevator.ElevatorConfig;
-import frc.robot.shoulder.ShoulderStates;
 import frc.spectrumLib.Telemetry;
-import frc.spectrumLib.TuneValue;
 import java.util.function.DoubleSupplier;
 
 public class ElevatorStates {
@@ -37,202 +33,81 @@ public class ElevatorStates {
     }
 
     public static void setStates() {
-        // Elevator Extends when the climber is at mid climb
-        // Test Mode Buttons
         coastMode.onTrue(log(coastMode()));
         coastMode.onFalse(log(ensureBrakeMode()));
+        homeAll.whileTrue(home());
 
-        // TODO: Reenable other states
-        // scoreState.onTrue(score());
+        stationIntaking.whileTrue(
+                move(
+                        config::getStationIntake,
+                        config::getStationExtendedIntake,
+                        "Elevator.stationIntake"));
+        stationIntaking.onFalse(home());
 
-        // algaeHandoff.whileTrue(handOff());
-        // coralHandoff.whileTrue(handOff());
+        Robot.getPilot()
+                .photonRemoveL2Algae
+                .whileTrue(move(config::getL2Algae, "Elevator.L2Algae"));
+        Robot.getPilot()
+                .photonRemoveL3Algae
+                .whileTrue(move(config::getL3Algae, "Elevator.L3Algae"));
+        Robot.getPilot()
+                .photonRemoveL2Algae
+                .or(Robot.getPilot().photonRemoveL3Algae)
+                .onFalse(home());
 
-        // stationIntaking.whileTrue(stationIntake());
-        // stationIntaking.whileTrue(elevator.setElevatorMMPositionFOC((config::getStationIntake)));
-        // stationExtendedIntake.whileTrue(stationExtendedIntake());
-        // L2Algae.whileTrue(l1());
-        // L3Algae.whileTrue(l1());
-        // barge.whileTrue(l1());
+        (stagedCoral.or(stagedAlgae))
+                .and(actionState.not())
+                .whileTrue(move(config::getHome, "Elevator.Stage"));
 
-        // L1Coral.whileTrue(l1());
-        // L2Coral.whileTrue(l1());
-        // L2Coral.and(actionPrepState)
-        //         .whileTrue(elevator.setElevatorMMPositionFOC(config::getL2Coral));
-        // L2Coral.and(scoreState)
-        //         .whileTrue(elevator.setElevatorMMPositionFOC(() -> config.getL2Coral() - 2));
+        L1Coral.and(actionPrepState)
+                .whileTrue(move(config::getL1Coral, config::getExl1Coral, "Elevator.L1Coral"));
+        L2Coral.and(actionPrepState)
+                .whileTrue(move(config::getL2Coral, config::getExl2Coral, "Elevator.L2Coral"));
+        L2Coral.and(actionState)
+                .whileTrue(move(config::getL2Score, config::getExl2Score, "Elevator.L2CoralScore"));
+        L3Coral.and(actionPrepState)
+                .whileTrue(move(config::getL3Coral, config::getExl3Coral, "Elevator.L3Coral"));
+        L3Coral.and(actionState)
+                .whileTrue(move(config::getL3Score, config::getExl3Score, "Elevator.L3CoralScore"));
+        L4Coral.and(actionPrepState)
+                .whileTrue(move(config::getL4Coral, config::getExl4Coral, "Elevator.L4Coral"));
+        L4Coral.and(actionState)
+                .whileTrue(move(config::getL4Score, config::getExl4Score, "Elevator.L4CoralScore"));
 
-        // L3Coral.and(actionPrepState)
-        //         .whileTrue(elevator.setElevatorMMPositionFOC(config::getL3Coral));
-        // L3Coral.and(scoreState)
-        //         .whileTrue(elevator.setElevatorMMPositionFOC(() -> config.getL3Coral() - 2));
+        processorAlgae
+                .and(actionPrepState)
+                .whileTrue(move(config::getProcessorAlgae, "Elevator.processorAlgae"));
+        L2Algae.and(actionPrepState).whileTrue(move(config::getL2Algae, "Elevator.L2Algae"));
+        L2Algae.and(actionState).whileTrue(move(config::getHome, "Elevator.L2AlgaeHome"));
+        L3Algae.and(actionPrepState).whileTrue(move(config::getL3Algae, "Elevator.L3Algae"));
+        L3Algae.and(actionState).whileTrue(move(config::getHome, "Elevator.L3AlgaeHome"));
+        netAlgae.and(actionPrepState).whileTrue(move(config::getNetAlgae, "Elevator.NetAlgae"));
 
-        // L4Coral.and(actionPrepState)
-        //         .whileTrue(elevator.setElevatorMMPositionFOC(config::getL4Coral));
-        // L4Coral.and(scoreState)
-        //         .whileTrue(elevator.setElevatorMMPositionFOC(() -> config.getL4Coral() - 2));
-        // L3Coral.whileTrue(l1());
-        // L4Coral.whileTrue(l1());
-
-        // actionPrepState.and(L1Coral).whileTrue(l1());
-        // actionPrepState
-        //         .and(L2Coral.not())
-        //         .whileTrue(l2Coral()); // TODO: Remove not used for twisting
-        // actionPrepState.and(L3Coral).whileTrue(l3Coral());
-        // actionPrepState.and(L4Coral).whileTrue(l4());
-
-        // actionPrepState.and(L2Algae).whileTrue(l2Algae());
-        // actionPrepState.and(L3Algae).whileTrue(l3Algae());
-        // actionPrepState.and(barge).whileTrue(barge());
-
-        // homeAll.whileTrue(home());
-        // homeElevator.whileTrue(zero());
-
-        // // TODO: For Testing
-        // Robot.getPilot()
-        //         .testTune_tA
-        //         .whileTrue(elevator.setElevatorMMPositionFOC((config::getStationIntake)));
-        // // Robot.getPilot()
-        // //         .testTune_tB
-        // //         .whileTrue(elevator.setElevatorMMPositionFOC(config::getL3Algae));
-        // //
-        // Robot.getPilot().testTune_tX.whileTrue(elevator.setElevatorMMPositionFOC(config::getHome));
-        // // Robot.getPilot()
-        // //         .testTune_tY
-        // //         .whileTrue(elevator.setElevatorMMPositionFOC(config::getL2Coral));
-        // Robot.getPilot().reZero_start.onTrue(elevator.resetToInitialPos());
-        // // Robot.getPilot()
-        // //         .testTriggersTrigger
-        // //         .whileTrue(runElevator(() -> Robot.getPilot().getTestTriggersAxis()));
-        // Robot.getOperator()
-        //         .test_tA
-        //         .whileTrue(elevator.setElevatorMMPositionFOC(config::getL1Coral));
-        // Robot.getOperator()
-        //         .test_tB
-        //         .whileTrue(elevator.setElevatorMMPositionFOC(config::getL2Coral));
-        // Robot.getOperator()
-        //         .test_tX
-        //         .whileTrue(elevator.setElevatorMMPositionFOC(config::getL3Coral));
-        // Robot.getOperator()
-        //         .test_tY
-        //         .whileTrue(elevator.setElevatorMMPositionFOC(config::getL4Coral));
-        // Robot.getOperator().test_X.whileTrue(elevator.setElevatorMMPositionFOC(config::getBarge));
-        // Robot.getOperator().test_A.whileTrue(elevator.setElevatorMMPositionFOC(config::getL2Algae));
-        // Robot.getOperator().test_B.whileTrue(elevator.setElevatorMMPositionFOC(config::getL3Algae));
-        // homeAll.whileTrue(home());
-
-        Robot.getPhotonPilot()
-                .testTune_tA
-                .whileTrue(elevator.setElevatorMMPositionFOC(config::getPhotonStationIntake));
-        Robot.getPhotonPilot()
-                .testTune_tB
-                .whileTrue(elevator.setElevatorMMPositionFOC(config::getHome));
-    }
-
-    private static Command runElevator(DoubleSupplier speed) {
-        return elevator.runPercentage(speed).withName("Elevator.runElevator");
+        Robot.getPilot()
+                .reZero_start
+                .onTrue(elevator.resetToInitialPos()); // TODO: check if this works
+        // Robot.getOperator().climbPrep_start.whileTrue(move(config::getClimbPrep,
+        // "Elbow.climbPrep"));
     }
 
     public static DoubleSupplier getPosition() {
         return () -> elevator.getPositionRotations();
     }
 
-    public static DoubleSupplier getElbowShoulderPos() {
-        double eToSratio = 2.0; // get actual elbow to shoulder length ratio
-        double e = Math.abs(ElbowStates.getPosition().getAsDouble());
-        double s = 100 - Math.abs(ShoulderStates.getPosition().getAsDouble());
-        return () -> (eToSratio * e + s) / 3;
+    public static Command move(DoubleSupplier rotations, String name) {
+        return elevator.move(rotations, rotations).withName(name);
     }
 
-    public static boolean allowedPosition() {
-        if ((getPosition().getAsDouble() * 100 / config.getL4Coral() + 10)
-                        - getElbowShoulderPos().getAsDouble()
-                > 0) {
-            return true;
-        } else {
-            return false;
-        }
+    public static Command move(DoubleSupplier rotations, DoubleSupplier exRotaitons, String name) {
+        return elevator.move(rotations, exRotaitons).withName(name);
     }
 
     private static Command holdPosition() {
         return elevator.holdPosition().withName("Elevator.holdPosition");
     }
 
-    private static Command fullExtend() {
-        return elevator.setElevatorMMPositionFOC(config::getFullExtend)
-                .withName("Elevator.fullExtend");
-    }
-
-    private static Command score() {
-        return elevator.moveToRelativePosition(() -> -2).withName("Elbow.score");
-    }
-
     private static Command home() {
-        // System.out.println("position1 is: " + getPosition().getAsDouble());
-        // if (getPosition().getAsDouble() > config.getL2Coral()) {
-        //     System.out.println("position is: " + getPosition().getAsDouble());
-        //     return elevator.holdPosition()
-        //             .until(
-        //                     () ->
-        //                             (Math.abs(ElbowStates.getPosition().getAsDouble()) > 170)
-        //                                     &&
-        // (Math.abs(ShoulderStates.getPosition().getAsDouble())
-        //                                             < 10))
-        //             .andThen(
-        //                     elevator.setElevatorMMPositionFOC(config::getHome)
-        //                             .alongWith(elevator.checkMaxCurrent(() -> 100))
-        //                             .withName("Elevator.home"));
-        // }
-        return elevator.setElevatorMMPositionFOC(config::getHome)
-                .alongWith(elevator.checkMaxCurrent(() -> 100))
-                .alongWith(new PrintCommand("pos is: " + getPosition().getAsDouble()))
-                .withName("Elevator.home");
-    }
-
-    private static Command handOff() {
-        return elevator.setElevatorMMPositionFOC(config::getHandOff).withName("Elevator.handOff");
-    }
-
-    private static Command l2Algae() {
-        return elevator.setElevatorMMPositionFOC(config::getL2Algae).withName("Elevator.l2Algae");
-    }
-
-    private static Command l3Algae() {
-        return elevator.setElevatorMMPositionFOC(config::getL3Algae).withName("Elevator.l3Algae");
-    }
-
-    private static Command l1() {
-        return elevator.setElevatorMMPositionFOC(config::getL1Coral).withName("Elevator.l1");
-    }
-
-    private static Command l2Coral() {
-        return elevator.setElevatorMMPositionFOC(config::getL2Coral).withName("Elevator.l2Coral");
-    }
-
-    private static Command l3Coral() {
-        return elevator.setElevatorMMPositionFOC(config::getL3Coral).withName("Elevator.l3Coral");
-    }
-
-    private static Command l4() {
-        return elevator.setElevatorMMPositionFOC(config::getL4Coral).withName("Elevator.l4");
-    }
-
-    private static Command barge() {
-        return elevator.setElevatorMMPositionFOC(config::getBarge).withName("Elevator.barge");
-    }
-
-    private static Command stationIntake() {
-        return elevator.setElevatorMMPositionFOC(config::getStationIntake)
-                .withName("Elevator.stationIntake");
-    }
-
-    private static Command stationExtendedIntake() {
-        return elevator.setElevatorMMPositionFOC(config::getStationExtendedIntake)
-                .withName("Elevator.stationExtendedIntake");
-    }
-
-    private static Command zero() {
-        return elevator.zeroElevatorRoutine().withName("Zero Elevator");
+        return move(config::getHome, "Elevator.home");
     }
 
     private static Command coastMode() {
@@ -241,12 +116,6 @@ public class ElevatorStates {
 
     private static Command ensureBrakeMode() {
         return elevator.ensureBrakeMode().withName("Elevator.BrakeMode");
-    }
-
-    // Example of a TuneValue that is used to tune a single value in the code
-    private static Command tuneElevator() {
-        return elevator.setElevatorMMPositionFOC(new TuneValue("Tune Elevator", 0).getSupplier())
-                .withName("Elevator.Tune");
     }
 
     // Log Command

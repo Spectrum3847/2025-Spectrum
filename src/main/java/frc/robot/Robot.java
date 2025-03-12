@@ -13,32 +13,23 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.auton.Auton;
-import frc.robot.configs.AM2025;
-import frc.robot.configs.FM20235;
+import frc.robot.climb.Climb;
+import frc.robot.climb.Climb.ClimbConfig;
+import frc.robot.configs.FM2025;
 import frc.robot.configs.PHOTON2025;
 import frc.robot.configs.PM2025;
-import frc.robot.coralIntake.CoralIntake;
-import frc.robot.coralIntake.CoralIntake.CoralIntakeConfig;
 import frc.robot.elbow.Elbow;
 import frc.robot.elbow.Elbow.ElbowConfig;
 import frc.robot.elevator.Elevator;
 import frc.robot.elevator.Elevator.ElevatorConfig;
-import frc.robot.groundIntake.GroundIntake;
-import frc.robot.groundIntake.GroundIntake.GroundIntakeConfig;
-import frc.robot.inClimb.InClimb;
-import frc.robot.inClimb.InClimb.InClimbConfig;
+import frc.robot.intake.Intake;
+import frc.robot.intake.Intake.IntakeConfig;
 import frc.robot.leds.LedFull;
 import frc.robot.leds.LedFull.LedFullConfig;
 import frc.robot.operator.Operator;
 import frc.robot.operator.Operator.OperatorConfig;
-import frc.robot.operator.PhotonOperator;
-import frc.robot.operator.PhotonOperator.PhotonOperatorConfig;
-import frc.robot.pilot.PhotonPilot;
-import frc.robot.pilot.PhotonPilot.PhotonPilotConfig;
 import frc.robot.pilot.Pilot;
 import frc.robot.pilot.Pilot.PilotConfig;
-import frc.robot.shoulder.PhotonShoulder;
-import frc.robot.shoulder.PhotonShoulder.PhotonShoulderConfig;
 import frc.robot.shoulder.Shoulder;
 import frc.robot.shoulder.Shoulder.ShoulderConfig;
 import frc.robot.swerve.Swerve;
@@ -62,7 +53,7 @@ import org.json.simple.parser.ParseException;
 public class Robot extends SpectrumRobot {
     @Getter private static RobotSim robotSim;
     @Getter private static Config config;
-    private static Telemetry telemetry = new Telemetry();
+    static Telemetry telemetry = new Telemetry();
     private final Field2d m_field = new Field2d();
 
     // TODO: Create robot faults
@@ -72,35 +63,29 @@ public class Robot extends SpectrumRobot {
 
     public static class Config {
         public SwerveConfig swerve = new SwerveConfig();
-        public GroundIntakeConfig groundIntake = new GroundIntakeConfig();
-        public CoralIntakeConfig coralIntake = new CoralIntakeConfig();
-        public ElevatorConfig elevator = new ElevatorConfig();
-        public LedFullConfig leds = new LedFullConfig();
+
         public PilotConfig pilot = new PilotConfig();
-        public PhotonPilotConfig photonPilot = new PhotonPilotConfig();
         public OperatorConfig operator = new OperatorConfig();
-        public PhotonOperatorConfig photonOperator = new PhotonOperatorConfig();
-        public InClimbConfig inClimb = new InClimbConfig();
-        public ElbowConfig elbow = new ElbowConfig();
-        public PhotonShoulderConfig photonShoulder = new PhotonShoulderConfig();
+        public ElevatorConfig elevator = new ElevatorConfig();
         public ShoulderConfig shoulder = new ShoulderConfig();
+
+        public IntakeConfig intake = new IntakeConfig();
+        public LedFullConfig leds = new LedFullConfig();
+        public ClimbConfig climb = new ClimbConfig();
+        public ElbowConfig elbow = new ElbowConfig();
         public TwistConfig twist = new TwistConfig();
     }
 
     @Getter private static Swerve swerve;
     @Getter private static Elevator elevator;
-    @Getter private static GroundIntake groundIntake;
-    @Getter private static CoralIntake coralIntake;
+    @Getter private static Intake intake;
     @Getter private static LedFull leds;
     @Getter private static Operator operator;
-    @Getter private static PhotonOperator photonOperator;
     @Getter private static Pilot pilot;
-    @Getter private static PhotonPilot photonPilot;
-    @Getter private static PhotonShoulder photonShoulder;
     @Getter private static VisionSystem visionSystem;
     @Getter private static Vision vision;
     @Getter private static Auton auton;
-    @Getter private static InClimb inClimb;
+    @Getter private static Climb climb;
     @Getter private static Elbow elbow;
     @Getter private static Shoulder shoulder;
     @Getter private static Twist twist;
@@ -115,20 +100,17 @@ public class Robot extends SpectrumRobot {
 
             /** Set up the config */
             switch (Rio.id) {
-                case AM_2025:
-                    config = new AM2025();
-                    break;
-                case FM_20235:
-                    config = new FM20235();
-                    break;
                 case PHOTON_2025:
                     config = new PHOTON2025();
                     break;
                 case PM_2025:
                     config = new PM2025();
                     break;
+                case FM_2025:
+                    config = new FM2025();
+                    break;
                 default: // SIM and UNKNOWN
-                    config = new PM2025();
+                    config = new FM2025();
                     break;
             }
 
@@ -141,29 +123,24 @@ public class Robot extends SpectrumRobot {
 
             leds = new LedFull(config.leds);
             operator = new Operator(config.operator);
-            photonOperator = new PhotonOperator(config.photonOperator);
             pilot = new Pilot(config.pilot);
-            photonPilot = new PhotonPilot(config.photonPilot);
-            photonShoulder = new PhotonShoulder(config.photonShoulder);
             swerve = new Swerve(config.swerve);
             Timer.delay(canInitDelay);
             elevator = new Elevator(config.elevator);
             Timer.delay(canInitDelay);
-            inClimb = new InClimb(config.inClimb);
-            Timer.delay(canInitDelay);
-            groundIntake = new GroundIntake(config.groundIntake);
+            climb = new Climb(config.climb);
             Timer.delay(canInitDelay);
             shoulder = new Shoulder(config.shoulder);
             Timer.delay(canInitDelay);
             elbow = new Elbow(config.elbow);
             Timer.delay(canInitDelay);
-            twist = new Twist(config.twist);
+            intake = new Intake(config.intake);
             Timer.delay(canInitDelay);
-            coralIntake = new CoralIntake(config.coralIntake);
-            Timer.delay(canInitDelay);
-            auton = new Auton();
-            visionSystem = new VisionSystem(swerve::getRobotPose);
             vision = new Vision();
+            visionSystem = new VisionSystem(swerve::getRobotPose);
+            Timer.delay(canInitDelay);
+            twist = new Twist(config.twist);
+            auton = new Auton();
 
             // Setup Default Commands for all subsystems
             setupDefaultCommands();
@@ -193,6 +170,7 @@ public class Robot extends SpectrumRobot {
         // Bind Triggers for all subsystems
         setupStates();
         RobotStates.setupStates();
+        RobotStates.clearStates().schedule();
     }
 
     public void clearCommandsAndButtons() {
@@ -202,6 +180,7 @@ public class Robot extends SpectrumRobot {
         // Bind Triggers for all subsystems
         setupStates();
         RobotStates.setupStates();
+        RobotStates.clearStates().schedule();
     }
 
     public void setupAutoVisualizer() {
@@ -254,16 +233,14 @@ public class Robot extends SpectrumRobot {
         String newAutoName;
         List<PathPlannerPath> pathPlannerPaths = new ArrayList<>();
         newAutoName = (auton.getAutonomousCommand()).getName();
-        if (autoName != newAutoName) {
+        if (!autoName.equals(newAutoName)) {
             autoName = newAutoName;
             if (AutoBuilder.getAllAutoNames().contains(autoName)) {
                 try {
                     pathPlannerPaths = PathPlannerAuto.getPathGroupFromAutoFile(autoName);
-                } catch (IOException a) {
-                } catch (ParseException b) {
-                } finally {
+                } catch (IOException | ParseException e) {
+                    Telemetry.print("Could not load path planner paths");
                 }
-                ;
                 List<Pose2d> poses = new ArrayList<>();
                 for (PathPlannerPath path : pathPlannerPaths) {
                     poses.addAll(

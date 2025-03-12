@@ -1,12 +1,13 @@
 {
-  "robotWidth": 0.91,
-  "robotLength": 0.91,
+  "robotWidth": 0.927,
+  "robotLength": 0.927,
   "holonomicMode": true,
   "pathFolders": [
+    "Blue Center Algae Rush",
     "Blue Left Preload-Source ",
     "Blue Left Source",
     "Config Paths",
-    "Blue Center Algae Rush",
+    "Blue Left L4 Trough Rush",
     "Photon"
   ],
   "autoFolders": [
@@ -16,8 +17,8 @@
     "Blue Center Origin",
     "Photon"
   ],
-  "defaultMaxVel": 6.0,
-  "defaultMaxAccel": 6.0,
+  "defaultMaxVel": 2.5,
+  "defaultMaxAccel": 2.5,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 12.0,
@@ -28,7 +29,7 @@
   "driveGearing": 6.746,
   "maxDriveSpeed": 4.5,
   "driveMotorType": "krakenX60FOC",
-  "driveCurrentLimit": 60.0,
+  "driveCurrentLimit": 40.0,
   "wheelCOF": 1.9,
   "flModuleX": 0.302,
   "flModuleY": 0.302,
@@ -51,7 +52,7 @@
     "{\"name\":\"Line\",\"type\":\"line\",\"data\":{\"start\":{\"x\":0.14,\"y\":-0.35},\"end\":{\"x\":0.15,\"y\":-0.04},\"strokeWidth\":0.01}}",
     "{\"name\":\"Line\",\"type\":\"line\",\"data\":{\"start\":{\"x\":0.09,\"y\":-0.35},\"end\":{\"x\":0.15,\"y\":-0.04},\"strokeWidth\":0.01}}",
     "{\"name\":\"Line\",\"type\":\"line\",\"data\":{\"start\":{\"x\":0.03,\"y\":-0.35},\"end\":{\"x\":0.15,\"y\":-0.04},\"strokeWidth\":0.01}}",
-    "{\"name\":\"Arm Front\",\"type\":\"line\",\"data\":{\"start\":{\"x\":0.46,\"y\":0.0},\"end\":{\"x\":0.754,\"y\":0.0},\"strokeWidth\":0.075}}",
-    "{\"name\":\"Arm Back\",\"type\":\"line\",\"data\":{\"start\":{\"x\":-0.754,\"y\":0.0},\"end\":{\"x\":-0.46,\"y\":0.0},\"strokeWidth\":0.075}}"
+    "{\"name\":\"Arm Front\",\"type\":\"line\",\"data\":{\"start\":{\"x\":0.46,\"y\":0.0},\"end\":{\"x\":0.5743,\"y\":0.0},\"strokeWidth\":0.075}}",
+    "{\"name\":\"Arm Back\",\"type\":\"line\",\"data\":{\"start\":{\"x\":-0.5740000000000001,\"y\":0.0},\"end\":{\"x\":-0.46,\"y\":0.0},\"strokeWidth\":0.075}}"
   ]
 }

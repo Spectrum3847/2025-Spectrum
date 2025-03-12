@@ -108,13 +108,13 @@ public class Trigger implements BooleanSupplier {
     }
 
     /**
-     * Starts the given command whenever the condition changes from `false` to `true`.
+     * Starts the given commands whenever the condition changes from `false` to `true`.
      *
      * @param command the command to start
      * @return this trigger, so calls can be chained
      */
-    public Trigger onTrue(Command command, Command command1) {
-        requireNonNullParam(command, "command", "onTrue");
+    public Trigger onTrue(Command... commands) {
+        requireNonNullParam(commands, "command", "onTrue");
         m_loop.bind(
                 new Runnable() {
                     private boolean m_pressedLast = false;
@@ -124,8 +124,9 @@ public class Trigger implements BooleanSupplier {
                         boolean pressed = m_condition.getAsBoolean();
 
                         if (!m_pressedLast && pressed) {
-                            command.schedule();
-                            command1.schedule();
+                            for (Command command : commands) {
+                                command.schedule();
+                            }
                         }
 
                         m_pressedLast = pressed;
@@ -152,6 +153,28 @@ public class Trigger implements BooleanSupplier {
 
                         if (m_pressedLast && !pressed) {
                             command.schedule();
+                        }
+
+                        m_pressedLast = pressed;
+                    }
+                });
+        return this;
+    }
+
+    public Trigger onFalse(Command... commands) {
+        requireNonNullParam(commands, "command", "onFalse");
+        m_loop.bind(
+                new Runnable() {
+                    private boolean m_pressedLast = true;
+
+                    @Override
+                    public void run() {
+                        boolean pressed = m_condition.getAsBoolean();
+
+                        if (m_pressedLast && !pressed) {
+                            for (Command command : commands) {
+                                command.schedule();
+                            }
                         }
 
                         m_pressedLast = pressed;
@@ -247,6 +270,40 @@ public class Trigger implements BooleanSupplier {
     }
 
     /**
+     * Starts the given command when the condition changes to `true` and cancels it when the
+     * condition changes to `false`.
+     *
+     * <p>Doesn't re-start the command if it ends while the condition is still `true`. If the
+     * command should restart, see {@link edu.wpi.first.wpilibj2.command.RepeatCommand}.
+     *
+     * @param command the command to start
+     * @return this trigger, so calls can be chained
+     */
+    public Trigger whileTrue(Command... commands) {
+        requireNonNullParam(commands, "command", "whileTrue");
+        m_loop.bind(
+                new Runnable() {
+                    private boolean m_pressedLast = false;
+
+                    @Override
+                    public void run() {
+                        boolean pressed = m_condition.getAsBoolean();
+
+                        for (Command command : commands) {
+                            if (!m_pressedLast && pressed) {
+                                command.schedule();
+                            } else if (m_pressedLast && !pressed) {
+                                command.cancel();
+                            }
+                        }
+
+                        m_pressedLast = pressed;
+                    }
+                });
+        return this;
+    }
+
+    /**
      * Starts the given command when the condition changes to `false` and cancels it when the
      * condition changes to `true`.
      *
@@ -270,6 +327,30 @@ public class Trigger implements BooleanSupplier {
                             command.schedule();
                         } else if (!m_pressedLast && pressed) {
                             command.cancel();
+                        }
+
+                        m_pressedLast = pressed;
+                    }
+                });
+        return this;
+    }
+
+    public Trigger whileFalse(Command... commands) {
+        requireNonNullParam(commands, "command", "whileFalse");
+        m_loop.bind(
+                new Runnable() {
+                    private boolean m_pressedLast = true;
+
+                    @Override
+                    public void run() {
+                        boolean pressed = m_condition.getAsBoolean();
+
+                        for (Command command : commands) {
+                            if (m_pressedLast && !pressed) {
+                                command.schedule();
+                            } else if (!m_pressedLast && pressed) {
+                                command.cancel();
+                            }
                         }
 
                         m_pressedLast = pressed;

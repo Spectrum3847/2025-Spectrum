@@ -2,6 +2,7 @@ package frc.spectrumLib;
 
 import dev.doglog.DogLog;
 import dev.doglog.DogLogOptions;
+import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.Timer;
@@ -39,7 +40,6 @@ public class Telemetry extends DogLog implements Subsystem {
     public Telemetry() {
         super();
         register();
-        // DogLog.setEnabled(false);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class Telemetry extends DogLog implements Subsystem {
         Telemetry.setOptions(
                 new DogLogOptions()
                         .withNtPublish(ntPublish)
-                        .withCaptureDs(false)
+                        .withCaptureDs(true)
                         .withCaptureNt(captureNt)
                         .withCaptureConsole(false)
                         .withLogExtras(false));
@@ -72,6 +72,23 @@ public class Telemetry extends DogLog implements Subsystem {
                                 () -> log("Commands", "End: " + cmd.getName())))
                 .ignoringDisable(cmd.runsWhenDisabled())
                 .withName(cmd.getName());
+    }
+
+    // Boolean logger
+    public static void log(String key, Boolean value) {
+        var now = HALUtil.getFPGATime();
+        logger.queueLog(now, key, value);
+    }
+
+    // double logger
+    public static void log(String key, double value) {
+        var now = HALUtil.getFPGATime();
+        logger.queueLog(now, key, value);
+    }
+
+    public static void log(String key, double[] value) {
+        var now = HALUtil.getFPGATime();
+        logger.queueLog(now, key, value);
     }
 
     /** Print a statement if they are enabled */
