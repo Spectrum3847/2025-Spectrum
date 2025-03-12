@@ -417,20 +417,6 @@ public class Vision extends SubsystemBase implements NTSendable {
         return (p2[0] - p1[0]) * (p[1] - p1[1]) - (p2[1] - p1[1]) * (p[0] - p1[0]);
     }
 
-    /**
-     * Finds the average value of two points (x,y)
-     * @param p1
-     * @param p2
-     * @return
-     */
-    public double[] averageValue(double[] p1, double[] p2) {
-        double[] average = new double[2];
-        average[0] = (p1[0] + p2[0]) / 2;
-        average[1] = (p1[1] + p2[1]) / 2;
-        return average;
-    }
-
-
 
     /**
      * Confirms the robot is in a given reef face zone 
@@ -457,31 +443,45 @@ public class Vision extends SubsystemBase implements NTSendable {
 
     /**
      * Checks the reef face points of each reef face to the position of the robot
+     * to determine the angle between the robot heading and the reef face
+     * with a triangle formed by the reef face points and the center of the reef
      * @return
      */
     public double getReefFaceAngle() {
-        int[][] reefAngles = {
-            {17, 60}, {18, 0}, {19, -60}, {20, -120}, {21, 180}, {22, 120}, //blue reef tags
-            {6, 120}, {7, 180}, {8, -120}, {9, -60}, {10, 0}, {11, 60} //red reef tags
+        double[][] reefAngles = { //reef angles for actual reef heading 
+            {17, -120}, {18, 180}, {19, 120}, {20, 60}, {21, 0}, {22, -60}, //blue reef tags
+            {6, -60}, {7, 0}, {8, 60}, {9, 120}, {10, 180}, {11, -120} //red reef tags
         };
 
         double[] robotPos = 
         {Robot.getSwerve().getRobotPose().getTranslation().getX(), 
             Robot.getSwerve().getRobotPose().getTranslation().getY()}; //(x,y) position of robot on 2d field
 
-        double[] reefCenter = {Field.Reef.center.getX(), Field.Reef.center.getY()}; // (x,y) position of reef center on 2d field
+        // (x,y) position of reef center on 2d field
+        double[] reefCenter = {Field.Reef.center.getX(), Field.Reef.center.getY()}; 
 
-        for(int i = 0; reefAngles.length - 1 > i; i++){
-            double[] reefFace1 = {Field.Reef.centerFaces[reefAngles[i][0]].getX(), Field.Reef.centerFaces[reefAngles[i][0]].getY()};
-            double[] reefFace2 = {Field.Reef.centerFaces[reefAngles[i+1][0]].getX(), Field.Reef.centerFaces[reefAngles[i+1][0]].getY()};
-            
-            if(isPointInReefZone(reefCenter, reefFace1, reefFace2, robotPos)){
-                return Math.toRadians(reefAngles[i][1]);
+
+        /**
+         * Formula used
+         * (rcos(theta) + 30, rsin(theta) + 30) = point1
+         * (rocos(theta) - 30, rsin(theta) - 30) = point2
+         */
+        for(int i = 0; reefAngles.length> i; i++){
+            double distanceFactor = 88; //distance factor to adjust the distance of the reef face points
+
+            double[] point1 = {distanceFactor * (Math.cos(reefAngles[i][1] + 30)) + reefCenter[0], // x position of point 1
+                distanceFactor * (Math.sin(reefAngles[i][1] + 30)) + reefCenter[1]}; // y position of point 1
+
+            double[] point2 = {distanceFactor * (Math.cos(reefAngles[i][1] - 30)) + reefCenter[0], // x position of point 2
+                distanceFactor * (Math.sin(reefAngles[i][1] - 30)) + reefCenter[1]};  // y position of point 2
+
+            if(isPointInReefZone(reefCenter, point1, point2, robotPos)){
+                return reefAngles[i][0];
             }
         }
 
-        // Return current angle if no tag is found
-        return Robot.getSwerve().getRobotPose().getRotation().getRadians();
+        // Return no tag is found
+        return -1;
     }
 
 
@@ -494,10 +494,10 @@ public class Vision extends SubsystemBase implements NTSendable {
      * @return
      */
     public double getReefTagAngle() {
-        double[][] reefAngles = {
+        double[][] reefAngles = { //reef angles for robot heading to turn to
             {17, 60}, {18, 0}, {19, -60}, {20, -120}, {21, 180}, {22, 120},
             {6, 120}, {7, 180}, {8, -120}, {9, -60}, {10, 0}, {11, 60}
-        };
+        }; 
 
         int closetTag = (int) frontLL.getClosestTagID();
 
