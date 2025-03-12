@@ -37,13 +37,13 @@ public class VisionLogger {
     }
 
     public Pose2d getPose() {
-        Telemetry.log("Vision " + name + " Pose", limelight.getRawPose3d().toPose2d());
-        return limelight.getRawPose3d().toPose2d();
+        Telemetry.log("Vision " + name + " Pose", limelight.getMegaTag1_Pose3d().toPose2d());
+        return limelight.getMegaTag1_Pose3d().toPose2d();
     }
 
     public Pose2d getMegaPose() {
-        Telemetry.log("Vision " + name + " MegaPose", limelight.getMegaPose2d());
-        return limelight.getMegaPose2d();
+        Telemetry.log("Vision " + name + " MegaPose", limelight.getMegaTag2_Pose2d());
+        return limelight.getMegaTag2_Pose2d();
     }
 
     public double getPoseX() {

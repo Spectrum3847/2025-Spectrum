@@ -14,6 +14,7 @@ import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 
 public class VisionSystem extends SubsystemBase {
+    @SuppressWarnings("unused")
     private final PhotonCamera camera = new PhotonCamera("cameraName");
     // private final PhotonCamera frontCam = new PhotonCamera(VisionConfig.FRONT_LL);
     // private final PhotonCamera backCam = new PhotonCamera(VisionConfig.RIGHT_LL);

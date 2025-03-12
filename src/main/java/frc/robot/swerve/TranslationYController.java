@@ -1,34 +1,29 @@
 package frc.robot.swerve;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import frc.robot.Robot;
 
 /**
  * Uses a profiled PID Controller to quickly turn the robot to a specified angle. Once the robot is
  * within a certain tolerance of the goal angle, a PID controller is used to hold the robot at that
  * angle.
  */
-public class TagCenterAlignController {
+public class TranslationYController {
     Swerve swerve;
     SwerveConfig config;
     ProfiledPIDController controller;
-    Constraints constraints;
 
     double calculatedValue = 0;
 
-    public TagCenterAlignController(SwerveConfig config) {
+    public TranslationYController(SwerveConfig config) {
         this.config = config;
-        double maxVelocity = Robot.getConfig().swerve.getSpeedAt12Volts().baseUnitMagnitude();
-        constraints = new Constraints(maxVelocity / 4, maxVelocity / 40);
         controller =
                 new ProfiledPIDController(
-                        config.getKPTagCenterController(),
-                        config.getKITagCenterController(),
-                        config.getKDTagController(),
-                        constraints);
+                        config.getKPTranslationController(),
+                        config.getKITranslationController(),
+                        config.getKDTranslationController(),
+                        config.getTranslationConstraints());
 
-        controller.setTolerance(config.getTagCenterTolerance());
+        controller.setTolerance(config.getTranslationTolerance());
     }
 
     public double calculate(double goalMeters, double currentMeters) {

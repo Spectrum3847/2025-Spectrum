@@ -117,11 +117,6 @@ public class IntakeStates {
         return intake.runVoltageCurrentLimits(voltage, supplyCurrent, torqueCurrent);
     }
 
-    private static Command runGroundIntake() {
-        return intake.runTCcurrentLimits(
-                config::getCoralGroundTorqueCurrent, config::getCoralGroundSupplyCurrent);
-    }
-
     // Log Command
     protected static Command log(Command cmd) {
         return Telemetry.log(cmd);

@@ -37,6 +37,7 @@ public class RobotSim {
     private void addReef() {
         MechanismRoot2d reefBase = leftView.getRoot("Reef Base", 2, 0.35);
 
+        @SuppressWarnings("unused")
         MechanismLigament2d mainReef =
                 reefBase.append(
                         new MechanismLigament2d(

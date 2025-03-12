@@ -354,8 +354,8 @@ public class Elbow extends Mechanism {
                                     config.elbowY,
                                     config.simRatio,
                                     config.length,
-                                    90 - 360,
-                                    360 - 90,
+                                    90.0 - 360.0,
+                                    360.0 - 90.0,
                                     180 - config.getStartingAngle())
                             .setColor(new Color8Bit(Color.kAqua))
                             .setMount(Robot.getShoulder().getSim(), true),

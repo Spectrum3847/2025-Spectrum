@@ -13,7 +13,6 @@ public class FM20235 extends Config {
         // Attached Mechanisms
         pilot.setAttached(true);
         operator.setAttached(true);
-        groundIntake.setAttached(true);
         shoulder.setAttached(true);
         elbow.setAttached(true);
 

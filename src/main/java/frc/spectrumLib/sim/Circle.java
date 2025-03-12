@@ -12,7 +12,10 @@ import lombok.Setter;
 public class Circle {
 
     private MechanismRoot2d rollerAxle;
+
+    @SuppressWarnings("unused")
     private MechanismLigament2d rollerViz;
+
     @Getter private MechanismLigament2d[] circleBackground;
     @Getter private int backgroundLines;
     private double diameterInches;
@@ -53,7 +56,7 @@ public class Circle {
                             new MechanismLigament2d(
                                     name + " Background " + i,
                                     Units.inchesToMeters(diameterInches) / 2.0,
-                                    (360 / backgroundLines) * i,
+                                    (360.0 / backgroundLines) * i,
                                     diameterInches,
                                     color));
         }
