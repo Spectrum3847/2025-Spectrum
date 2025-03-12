@@ -149,22 +149,6 @@ public class Intake extends Mechanism {
                 && Math.abs(motorCurrent) > config.hasGamePieceCurrent);
     }
 
-    public boolean hasCoral() {
-        double motorOutput = getVelocityRPM();
-        double motorCurrent = getStatorCurrent();
-        double motorVoltage = getVoltage();
-        return (Math.abs(motorOutput) < config.hasGamePieceVelocity
-                && Math.abs(motorCurrent) > config.hasGamePieceCurrent) && motorVoltage > 0;
-    }
-
-    public boolean hasAlgae() {
-        double motorOutput = getVelocityRPM();
-        double motorCurrent = getStatorCurrent();
-        double motorVoltage = getVoltage();
-        return (Math.abs(motorOutput) < config.hasGamePieceVelocity
-                && Math.abs(motorCurrent) > config.hasGamePieceCurrent) && motorVoltage < 0;
-    }
-
     public Command intakeCoral(DoubleSupplier torque, DoubleSupplier current) {
         return new FunctionalCommand(
                 () -> setCurrentLimits(current, torque),

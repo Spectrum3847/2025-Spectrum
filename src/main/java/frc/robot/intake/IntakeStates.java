@@ -20,8 +20,8 @@ public class IntakeStates {
                     .and(photon);
 
     public static final Trigger hasGamePiece = new Trigger(intake::hasIntakeGamePiece);
-    public static final Trigger hasCoral = new Trigger(intake::hasCoral);
-    public static final Trigger hasAlgae = new Trigger(intake::hasAlgae);
+    public static final Trigger hasCoral = hasGamePiece.and(intake.aboveVelocityRPM(() -> 0, () -> 0));
+    public static final Trigger hasAlgae = hasGamePiece.and(intake.belowVelocityRPM(() -> 0, () -> 0));
 
     public static void setupDefaultCommand() {
         intake.setDefaultCommand(
