@@ -1,0 +1,21 @@
+{
+  "name": "3847 - Gamma Ray",
+  "sourceUrl": "",
+  "rotations": [
+    {
+      "axis": "x",
+      "degrees": 90
+    },
+    {
+      "axis": "z",
+      "degrees": 90
+    } 	
+  ],
+  "position": [
+    0,
+    0,
+    0.04
+  ],
+  "cameras": [],
+  "components": []
+}

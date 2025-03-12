@@ -8,8 +8,6 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
-import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj.util.Color8Bit;
 import lombok.Getter;
 
 public class ArmSim implements Mount, Mountable {
@@ -33,7 +31,7 @@ public class ArmSim implements Mount, Mountable {
                         config.getSimCGLength(),
                         config.getMinAngle(),
                         config.getMaxAngle(),
-                        true, // Simulate gravity
+                        false, // Simulate gravity (change back to true)
                         config.getStartingAngle());
 
         armPivot = mech.getRoot(name + " Arm Pivot", config.getPivotX(), config.getPivotY());
@@ -44,7 +42,7 @@ public class ArmSim implements Mount, Mountable {
                                 config.getLength(),
                                 config.getMinAngle(),
                                 5.0,
-                                new Color8Bit(Color.kBlue)));
+                                config.getColor()));
     }
 
     public void simulationPeriodic() {
@@ -70,9 +68,13 @@ public class ArmSim implements Mount, Mountable {
         if (config.isMounted()) {
             config.setPivotX(getUpdatedX(config));
             config.setPivotY(getUpdatedY(config));
-            armMech2d.setAngle(
-                    Math.toDegrees(armSim.getAngleRads())
-                            + Math.toDegrees(config.getMount().getAngle()));
+            if (config.isAbsAngle()) {
+                armMech2d.setAngle(Math.toDegrees(armSim.getAngleRads()));
+            } else {
+                armMech2d.setAngle(
+                        Math.toDegrees(armSim.getAngleRads())
+                                + Math.toDegrees(config.getMount().getAngle()));
+            }
         } else {
             armMech2d.setAngle(Math.toDegrees(armSim.getAngleRads()));
         }
@@ -94,7 +96,11 @@ public class ArmSim implements Mount, Mountable {
 
     public double getAngle() {
         if (config.isMounted()) {
-            return getAngleRads() + config.getMount().getAngle();
+            if (config.isAbsAngle()) {
+                return getAngleRads(); // + config.getMount().getAngle();
+            } else {
+                return getAngleRads() + config.getMount().getAngle();
+            }
         }
         return getAngleRads();
     }

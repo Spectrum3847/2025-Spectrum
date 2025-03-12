@@ -1,0 +1,23 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+<<<<<<<< HEAD:src/main/deploy/pathplanner/autos/Drive Forward.auto
+            "pathName": "Drive Forward"
+========
+            "pathName": "2 Algae + 3 High"
+>>>>>>>> origin/auton:src/main/deploy/pathplanner/autos/Co-op + 3 High.auto
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Possible Autos",
+  "choreoAuto": false
+}

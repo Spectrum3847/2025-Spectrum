@@ -1,6 +1,7 @@
 package frc.spectrumLib.util;
 
 import edu.wpi.first.wpilibj.RobotBase;
+import frc.spectrumLib.Telemetry;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -53,10 +54,10 @@ public class CrashTracker {
         } catch (IOException e) {
             if (e instanceof FileNotFoundException) {
                 if (RobotBase.isSimulation()) {
-                    System.out.println(
+                    Telemetry.print(
                             "CrashTracker failed to save crash file to robot: running in simulation mode");
                 } else {
-                    System.out.println(
+                    Telemetry.print(
                             "CrashTracker failed to save crash file to robot: path `/home/lvuser/crash_tracking.txt` not found");
                 }
             } else {

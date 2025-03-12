@@ -1,17 +1,22 @@
 package frc.spectrumLib;
 
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import java.util.HashMap;
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 public class SpectrumState extends Trigger {
 
     private static final HashMap<String, Boolean> stateConditions = new HashMap<>();
     private String name;
     private boolean value = false;
+    private Alert alert;
 
     /**
      * Create a new EventTrigger. This will run on the EventScheduler's event loop, which will be
@@ -22,6 +27,7 @@ public class SpectrumState extends Trigger {
     public SpectrumState(String name) {
         super(pollCondition(name));
         this.name = name;
+        alert = new Alert("States", name, AlertType.kInfo);
     }
 
     /**
@@ -35,28 +41,87 @@ public class SpectrumState extends Trigger {
         super(eventLoop, pollCondition(name));
     }
 
+    /**
+     * Directly set the spectrum state to the specified value
+     *
+     * @param value The value to set the state to
+     */
+    public void setState(boolean value) {
+        this.value = value;
+        alert.set(value);
+        setCondition(name, value);
+    }
+
+    /**
+     * Create a command that will set the state to true while the command is running Then it will
+     * set to false once it is cancelled
+     *
+     * @return the command
+     */
+    public Command setTrueWhileRunning() {
+        return Commands.startEnd(() -> setState(true), () -> setState(false))
+                .ignoringDisable(true)
+                .withName(name + " state: TrueWhileRunning");
+    }
+
+    public Command setTrueForTime(DoubleSupplier time) {
+        return Commands.runOnce(() -> setState(true))
+                .alongWith(new WaitCommand(time.getAsDouble()))
+                .andThen(() -> setState(false))
+                .ignoringDisable(true)
+                .withName(name + " state: SetTrueForTime->" + time.getAsDouble());
+    }
+
+    /**
+     * Command to set state to false, and then to true, ensuring your state will trigger actions
+     *
+     * @return the command
+     */
+    public Command toggleToTrue() {
+        return setFalse()
+                .andThen(new WaitCommand(0.005), setTrue())
+                .ignoringDisable(true)
+                .withName(name + " state: ToggleToTrue");
+    }
+
+    /**
+     * Command to set state to true, and then to false, ensuring your state will trigger change to
+     * false actions
+     *
+     * @return
+     */
+    public Command toggleToFalse() {
+        return setTrue()
+                .andThen(setFalse())
+                .ignoringDisable(true)
+                .withName(name + " state: ToggleToFalse");
+    }
+
+    /**
+     * @param value
+     * @return
+     */
     public Command set(boolean value) {
-        return Commands.runOnce(
-                () -> {
-                    this.value = value;
-                    setCondition(name, value);
-                });
+        return Commands.runOnce(() -> setState(value)).ignoringDisable(true);
     }
 
     public Command setTrue() {
-        return set(true);
+        return set(true).withName(name + " state: SetTrue");
     }
 
     public Command setFalse() {
-        return set(false);
+        return set(false).withName(name + " state: SetFalse");
     }
 
     public Command toggle() {
         return Commands.runOnce(
-                () -> {
-                    this.value = !this.value;
-                    setCondition(name, value);
-                });
+                        () -> {
+                            value = !value;
+                            alert.set(value);
+                            setCondition(name, value);
+                        })
+                .ignoringDisable(true)
+                .withName(name + " state: Toggle");
     }
 
     /**

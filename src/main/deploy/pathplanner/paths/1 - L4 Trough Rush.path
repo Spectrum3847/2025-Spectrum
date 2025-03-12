@@ -1,0 +1,73 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.14817415730337,
+        "y": 4.493328651685394
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.34436599135804,
+        "y": 4.104054635671623
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.13,
+        "y": 4.0
+      },
+      "prevControl": {
+        "x": 6.360271323481238,
+        "y": 4.113782787166375
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "leftL4",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": 1.0,
+      "command": null
+    },
+    {
+      "name": "prescore",
+      "waypointRelativePos": 0.14134690681284476,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "score",
+      "waypointRelativePos": 0.8962411902897494,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 2.5,
+    "maxAcceleration": 2.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "reversed": false,
+  "folder": "Blue Left L4 Trough Rush",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "useDefaultConstraints": true
+}

@@ -3,10 +3,11 @@
 package frc.robot.swerve;
 
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -15,10 +16,14 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NTSendable;
 import edu.wpi.first.networktables.NTSendableBuilder;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -27,10 +32,10 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.crescendo.Field;
+import frc.reefscape.Field;
 import frc.robot.Robot;
-import frc.robot.RobotTelemetry;
 import frc.spectrumLib.SpectrumSubsystem;
+import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.util.Util;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -40,11 +45,14 @@ import lombok.Getter;
  * Class that extends the Phoenix SwerveDrivetrain class and implements subsystem so it can be used
  * in command-based projects easily.
  */
-public class Swerve extends SwerveDrivetrain implements SpectrumSubsystem, NTSendable {
-    private SwerveConfig config;
+public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
+        implements SpectrumSubsystem, NTSendable {
+    @Getter private SwerveConfig config;
     private Notifier simNotifier = null;
     private double lastSimTime;
     private RotationController rotationController;
+    private TagCenterAlignController tagCenterAlignController;
+    private TagDistanceAlignController tagDistanceAlignController;
 
     @Getter
     protected SwerveModuleState[] setpoints =
@@ -55,6 +63,14 @@ public class Swerve extends SwerveDrivetrain implements SpectrumSubsystem, NTSen
 
     private final SwerveRequest.ApplyRobotSpeeds AutoRequest = new SwerveRequest.ApplyRobotSpeeds();
 
+    // Logging publisher
+    StructArrayPublisher<SwerveModuleState> moduleStatePublisher =
+            NetworkTableInstance.getDefault()
+                    .getStructArrayTopic("SwerveStates", SwerveModuleState.struct)
+                    .publish();
+    StructPublisher<Pose2d> posePublisher =
+            NetworkTableInstance.getDefault().getStructTopic("SwervePose", Pose2d.struct).publish();
+
     /**
      * Constructs a new Swerve drive subsystem.
      *
@@ -62,22 +78,34 @@ public class Swerve extends SwerveDrivetrain implements SpectrumSubsystem, NTSen
      *     configurations.
      */
     public Swerve(SwerveConfig config) {
-        super(config.getDrivetrainConstants(), config.getModules());
+        super(
+                TalonFX::new,
+                TalonFX::new,
+                CANcoder::new,
+                config.getDrivetrainConstants(),
+                config.getModules());
         // this.robotConfig = robotConfig;
         this.config = config;
         configurePathPlanner();
 
         rotationController = new RotationController(config);
+        tagCenterAlignController = new TagCenterAlignController(config);
+        tagDistanceAlignController = new TagDistanceAlignController(config);
 
         if (Utils.isSimulation()) {
             startSimThread();
         }
 
-        SendableRegistry.add(this, "SwerveDrive");
+        SendableRegistry.add(this, "Swerve");
         SmartDashboard.putData(this);
         Robot.add(this);
         this.register();
-        RobotTelemetry.print(getName() + " Subsystem Initialized: ");
+        registerTelemetry(this::log);
+        Telemetry.print(getName() + " Subsystem Initialized: ");
+    }
+
+    protected void log(SwerveDriveState state) {
+        moduleStatePublisher.set(state.ModuleStates);
     }
 
     /**
@@ -86,6 +114,7 @@ public class Swerve extends SwerveDrivetrain implements SpectrumSubsystem, NTSen
      */
     @Override
     public void periodic() {
+        posePublisher.set(getRobotPose());
         setPilotPerspective();
     }
 
@@ -105,20 +134,24 @@ public class Swerve extends SwerveDrivetrain implements SpectrumSubsystem, NTSen
      */
     @Override
     public void initSendable(NTSendableBuilder builder) {
-        builder.setSmartDashboardType("SwerveDrive");
-        builder.addDoubleProperty("Position", () -> 2, null);
-        builder.addDoubleProperty("Velocity", () -> 4, null);
+        SmartDashboard.putData(
+                "Swerve Drive",
+                new Sendable() {
+                    @Override
+                    public void initSendable(SendableBuilder builder) {
+                        builder.setSmartDashboardType("SwerveDrive");
 
-        addModuleProperties(builder, "Front Left", 0);
-        addModuleProperties(builder, "Front Right", 1);
-        addModuleProperties(builder, "Back Left", 2);
-        addModuleProperties(builder, "Back Right", 3);
+                        addModuleProperties(builder, "Front Left", 0);
+                        addModuleProperties(builder, "Front Right", 1);
+                        addModuleProperties(builder, "Back Left", 2);
+                        addModuleProperties(builder, "Back Right", 3);
 
-        builder.addDoubleProperty("Robot Angle", this::getRotationRadians, null);
+                        builder.addDoubleProperty("Robot Angle", () -> getRotationRadians(), null);
+                    }
+                });
     }
 
-    private void addModuleProperties(
-            NTSendableBuilder builder, String moduleName, int moduleNumber) {
+    private void addModuleProperties(SendableBuilder builder, String moduleName, int moduleNumber) {
         builder.addDoubleProperty(
                 moduleName + " Angle",
                 () -> getModule(moduleNumber).getCurrentState().angle.getRadians(),
@@ -198,7 +231,7 @@ public class Swerve extends SwerveDrivetrain implements SpectrumSubsystem, NTSen
         return run(() -> this.setControl(requestSupplier.get())).ignoringDisable(true);
     }
 
-    private ChassisSpeeds getCurrentRobotChassisSpeeds() {
+    public ChassisSpeeds getCurrentRobotChassisSpeeds() {
         return getKinematics().toChassisSpeeds(getState().ModuleStates);
     }
 
@@ -268,12 +301,73 @@ public class Swerve extends SwerveDrivetrain implements SpectrumSubsystem, NTSen
         return Rotation2d.fromDegrees(closest45Degrees).getRadians();
     }
 
+    protected double getClosestFieldAngle() {
+        // Step 1: Read the angle in radians
+        double angleRadians = getRotation().getRadians();
+
+        // Step 2: Convert the angle from radians to degrees
+        double angleDegrees = Math.toDegrees(angleRadians);
+
+        // Step 3: Define a table of angles in degrees
+        double[] angleTable = {0, 180, 126, -126, 54, -54, 60, -60, 120, -120, 90, -90};
+
+        // Step 4: Find the nearest angle from the table
+        double closestAngle = angleTable[0];
+        double minDifference = getAngleDifference(angleDegrees, closestAngle);
+
+        for (double angle : angleTable) {
+            double difference = getAngleDifference(angleDegrees, angle);
+            if (difference < minDifference) {
+                minDifference = difference;
+                closestAngle = angle;
+            }
+        }
+
+        // Step 5: Return the nearest angle in Radians
+        return Math.toRadians(closestAngle);
+    }
+
+    // Helper method to calculate the shortest angle difference
+    private double getAngleDifference(double angle1, double angle2) {
+        double diff = Math.abs(angle1 - angle2) % 360;
+        return diff > 180 ? 360 - diff : diff;
+    }
+
     protected Command cardinalReorient() {
         return runOnce(
                 () -> {
                     double angleDegrees = getClosestCardinal();
                     reorient(angleDegrees);
                 });
+    }
+
+    public boolean frontClosestToAngle(double angleDegrees) {
+        double heading = getRotation().getDegrees();
+        double flippedHeading;
+        if (heading > 0) {
+            flippedHeading = heading - 180;
+        } else {
+            flippedHeading = heading + 180;
+        }
+        double frontDifference = getMinDegreesDifference(heading, angleDegrees);
+        double flippedDifference = getMinDegreesDifference(flippedHeading, angleDegrees);
+
+        if (frontDifference < flippedDifference) {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected double getMinDegreesDifference(
+            double currentAngleDegrees, double targetAngleDegrees) {
+        double difference = Math.abs(currentAngleDegrees - targetAngleDegrees);
+
+        if ((360 - difference < difference) && (360 - difference >= 0)) {
+            difference = 360 - difference;
+        }
+
+        return difference;
     }
 
     // --------------------------------------------------------------------------------
@@ -300,6 +394,45 @@ public class Swerve extends SwerveDrivetrain implements SpectrumSubsystem, NTSen
     }
 
     // --------------------------------------------------------------------------------
+    // Tag Center Align Controller
+    // --------------------------------------------------------------------------------
+    void resetTagCenterAlignController(double currentMeters) {
+        tagCenterAlignController.reset(currentMeters);
+    }
+
+    double calculateTagCenterAlignController(
+            DoubleSupplier targetMeters, DoubleSupplier currentMeters) {
+        return tagCenterAlignController.calculate(
+                targetMeters.getAsDouble(), currentMeters.getAsDouble());
+    }
+
+    // --------------------------------------------------------------------------------
+    // Tag Distance Align Controller
+    // --------------------------------------------------------------------------------
+    void resetTagDistanceAlignController(double currentMeters) {
+        tagDistanceAlignController.reset(currentMeters);
+    }
+
+    double calculateTagDistanceAlignController(DoubleSupplier targetArea) {
+        boolean front = true;
+        if (Robot.getVision().frontLL.targetInView()) {
+            front = true;
+        } else if (Robot.getVision().backLL.targetInView()) {
+            front = false;
+        }
+
+        double output =
+                tagDistanceAlignController.calculate(
+                        targetArea.getAsDouble(), Robot.getVision().getTagTA());
+
+        if (Robot.getVision().tagsInView()) {
+            return front ? output : -output;
+        } else {
+            return 0;
+        }
+    }
+
+    // --------------------------------------------------------------------------------
     // Path Planner
     // --------------------------------------------------------------------------------
     private void configurePathPlanner() {
@@ -309,27 +442,16 @@ public class Swerve extends SwerveDrivetrain implements SpectrumSubsystem, NTSen
                         Units.feetToMeters(27.0),
                         Units.feetToMeters(27.0 / 2.0),
                         config.getBlueAlliancePerspectiveRotation()));
-        double driveBaseRadius = .4;
-        for (var moduleLocation : getModuleLocations()) {
-            driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
+
+        RobotConfig robotConfig = null; // Initialize with null in case of exception
+        try {
+            robotConfig =
+                    RobotConfig.fromGUISettings(); // Takes config from Robot Config on Pathplanner
+            // Settings
+        } catch (Exception e) {
+            e.printStackTrace(); // Fallback to a default configuration
         }
 
-        ModuleConfig moduleConfig =
-                new ModuleConfig(
-                        config.getWheelRadius(),
-                        config.getSpeedAt12Volts(),
-                        1,
-                        DCMotor.getKrakenX60(1),
-                        config.getSlipCurrent(),
-                        1);
-        RobotConfig robotConfig = // Have directly call this to avoid name space problem
-                new RobotConfig(
-                        Units.lbsToKilograms(150),
-                        1,
-                        moduleConfig,
-                        Units.inchesToMeters(26),
-                        Units.inchesToMeters(
-                                26)); // TODO Fix this line and line above with real numbers
         AutoBuilder.configure(
                 () -> this.getState().Pose, // Supplier of current robot pose
                 this::resetPose, // Consumer for seeding pose against auto
@@ -339,7 +461,9 @@ public class Swerve extends SwerveDrivetrain implements SpectrumSubsystem, NTSen
                                 AutoRequest.withSpeeds(
                                         speeds)), // Consumer of ChassisSpeeds to drive the robot
                 new PPHolonomicDriveController(
-                        new PIDConstants(5, 0, 0), new PIDConstants(5, 0, 0), Robot.kDefaultPeriod),
+                        new PIDConstants(2.5, 0, 0),
+                        new PIDConstants(8, 0, 0.2),
+                        Robot.kDefaultPeriod),
                 robotConfig,
                 () ->
                         DriverStation.getAlliance().orElse(Alliance.Blue)

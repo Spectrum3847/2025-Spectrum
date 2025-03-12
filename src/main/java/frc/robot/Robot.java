@@ -1,93 +1,116 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DataLogManager;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.amptrap.AmpTrap;
-import frc.robot.amptrap.AmpTrap.AmpTrapConfig;
 import frc.robot.auton.Auton;
-import frc.robot.climber.Climber;
-import frc.robot.climber.Climber.ClimberConfig;
-import frc.robot.configs.FM2024;
-import frc.robot.configs.PM2024;
+import frc.robot.climb.Climb;
+import frc.robot.climb.Climb.ClimbConfig;
+import frc.robot.configs.FM2025;
+import frc.robot.configs.PHOTON2025;
+import frc.robot.configs.PM2025;
+import frc.robot.elbow.Elbow;
+import frc.robot.elbow.Elbow.ElbowConfig;
 import frc.robot.elevator.Elevator;
 import frc.robot.elevator.Elevator.ElevatorConfig;
-import frc.robot.feeder.Feeder;
-import frc.robot.feeder.Feeder.FeederConfig;
 import frc.robot.intake.Intake;
 import frc.robot.intake.Intake.IntakeConfig;
-import frc.robot.launcher.Launcher;
-import frc.robot.launcher.Launcher.LauncherConfig;
 import frc.robot.leds.LedFull;
 import frc.robot.leds.LedFull.LedFullConfig;
 import frc.robot.operator.Operator;
 import frc.robot.operator.Operator.OperatorConfig;
 import frc.robot.pilot.Pilot;
 import frc.robot.pilot.Pilot.PilotConfig;
-import frc.robot.pivot.Pivot;
-import frc.robot.pivot.Pivot.PivotConfig;
+import frc.robot.shoulder.Shoulder;
+import frc.robot.shoulder.Shoulder.ShoulderConfig;
 import frc.robot.swerve.Swerve;
 import frc.robot.swerve.SwerveConfig;
+import frc.robot.twist.Twist;
+import frc.robot.twist.Twist.TwistConfig;
+import frc.robot.vision.Vision;
 import frc.robot.vision.VisionSystem;
 import frc.spectrumLib.Rio;
 import frc.spectrumLib.SpectrumRobot;
+import frc.spectrumLib.Telemetry;
+import frc.spectrumLib.Telemetry.PrintPriority;
 import frc.spectrumLib.util.CrashTracker;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.Getter;
+import org.json.simple.parser.ParseException;
 
 public class Robot extends SpectrumRobot {
-    @Getter private static RobotTelemetry telemetry;
     @Getter private static RobotSim robotSim;
     @Getter private static Config config;
+    static Telemetry telemetry = new Telemetry();
+    private final Field2d m_field = new Field2d();
+
+    // TODO: Create robot faults
+    public enum RobotFault {
+        OVERCURRENT,
+    }
 
     public static class Config {
-
         public SwerveConfig swerve = new SwerveConfig();
-        public IntakeConfig intake = new IntakeConfig();
-        public FeederConfig feeder = new FeederConfig();
-        public ElevatorConfig elevator = new ElevatorConfig();
-        public AmpTrapConfig ampTrap = new AmpTrapConfig();
-        public PivotConfig pivot = new PivotConfig();
-        public LauncherConfig launcher = new LauncherConfig();
-        public ClimberConfig climber = new ClimberConfig();
-        public LedFullConfig leds = new LedFullConfig();
+
         public PilotConfig pilot = new PilotConfig();
         public OperatorConfig operator = new OperatorConfig();
+        public ElevatorConfig elevator = new ElevatorConfig();
+        public ShoulderConfig shoulder = new ShoulderConfig();
+
+        public IntakeConfig intake = new IntakeConfig();
+        public LedFullConfig leds = new LedFullConfig();
+        public ClimbConfig climb = new ClimbConfig();
+        public ElbowConfig elbow = new ElbowConfig();
+        public TwistConfig twist = new TwistConfig();
     }
 
     @Getter private static Swerve swerve;
-    @Getter private static AmpTrap ampTrap;
-    @Getter private static Climber climber;
     @Getter private static Elevator elevator;
-    @Getter private static Feeder feeder;
     @Getter private static Intake intake;
-    @Getter private static Launcher launcher;
     @Getter private static LedFull leds;
     @Getter private static Operator operator;
     @Getter private static Pilot pilot;
-    @Getter private static Pivot pivot;
     @Getter private static VisionSystem visionSystem;
+    @Getter private static Vision vision;
     @Getter private static Auton auton;
+    @Getter private static Climb climb;
+    @Getter private static Elbow elbow;
+    @Getter private static Shoulder shoulder;
+    @Getter private static Twist twist;
 
     public Robot() {
         super();
-        DataLogManager.start();
+        Telemetry.start(true, true, PrintPriority.NORMAL);
 
         try {
-            RobotTelemetry.print("--- Robot Init Starting ---");
+            Telemetry.print("--- Robot Init Starting ---");
             robotSim = new RobotSim();
 
             /** Set up the config */
             switch (Rio.id) {
-                case FM_2024:
-                    config = new FM2024();
+                case PHOTON_2025:
+                    config = new PHOTON2025();
                     break;
-                case PM_2024:
-                    config = new PM2024();
+                case PM_2025:
+                    config = new PM2025();
+                    break;
+                case FM_2025:
+                    config = new FM2025();
                     break;
                 default: // SIM and UNKNOWN
-                    config = new FM2024();
+                    config = new FM2025();
                     break;
             }
 
@@ -105,27 +128,24 @@ public class Robot extends SpectrumRobot {
             Timer.delay(canInitDelay);
             elevator = new Elevator(config.elevator);
             Timer.delay(canInitDelay);
-            pivot = new Pivot(config.pivot);
+            climb = new Climb(config.climb);
             Timer.delay(canInitDelay);
-            ampTrap = new AmpTrap(config.ampTrap);
+            shoulder = new Shoulder(config.shoulder);
             Timer.delay(canInitDelay);
-            climber = new Climber(config.climber);
-            Timer.delay(canInitDelay);
-            feeder = new Feeder(config.feeder);
+            elbow = new Elbow(config.elbow);
             Timer.delay(canInitDelay);
             intake = new Intake(config.intake);
             Timer.delay(canInitDelay);
-            launcher = new Launcher(config.launcher);
-            auton = new Auton();
+            vision = new Vision();
             visionSystem = new VisionSystem(swerve::getRobotPose);
-
-            /** Initialize Telemetry */
-            telemetry = new RobotTelemetry();
+            Timer.delay(canInitDelay);
+            twist = new Twist(config.twist);
+            auton = new Auton();
 
             // Setup Default Commands for all subsystems
             setupDefaultCommands();
 
-            RobotTelemetry.print("--- Robot Init Complete ---");
+            Telemetry.print("--- Robot Init Complete ---");
 
         } catch (Throwable t) {
             // intercept error and log it
@@ -150,6 +170,7 @@ public class Robot extends SpectrumRobot {
         // Bind Triggers for all subsystems
         setupStates();
         RobotStates.setupStates();
+        RobotStates.clearStates().schedule();
     }
 
     public void clearCommandsAndButtons() {
@@ -159,10 +180,18 @@ public class Robot extends SpectrumRobot {
         // Bind Triggers for all subsystems
         setupStates();
         RobotStates.setupStates();
+        RobotStates.clearStates().schedule();
+    }
+
+    public void setupAutoVisualizer() {
+        SmartDashboard.putData("Auto Visualizer", m_field);
     }
 
     @Override // Deprecated
-    public void robotInit() {}
+    public void robotInit() {
+        setupAutoVisualizer();
+        WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
+    }
 
     /* ROBOT PERIODIC  */
     /**
@@ -192,19 +221,47 @@ public class Robot extends SpectrumRobot {
 
     @Override
     public void disabledInit() {
-        RobotTelemetry.print("### Disabled Init Starting ### ");
+        Telemetry.print("### Disabled Init Starting ### ");
         resetCommandsAndButtons();
 
-        RobotTelemetry.print("### Disabled Init Complete ### ");
+        Telemetry.print("### Disabled Init Complete ### ");
     }
 
     @Override
-    public void disabledPeriodic() {}
+    public void disabledPeriodic() {
+        String autoName = "";
+        String newAutoName;
+        List<PathPlannerPath> pathPlannerPaths = new ArrayList<>();
+        newAutoName = (auton.getAutonomousCommand()).getName();
+        if (!autoName.equals(newAutoName)) {
+            autoName = newAutoName;
+            if (AutoBuilder.getAllAutoNames().contains(autoName)) {
+                try {
+                    pathPlannerPaths = PathPlannerAuto.getPathGroupFromAutoFile(autoName);
+                } catch (IOException | ParseException e) {
+                    Telemetry.print("Could not load path planner paths");
+                }
+                List<Pose2d> poses = new ArrayList<>();
+                for (PathPlannerPath path : pathPlannerPaths) {
+                    poses.addAll(
+                            path.getAllPathPoints().stream()
+                                    .map(
+                                            point ->
+                                                    new Pose2d(
+                                                            point.position.getX(),
+                                                            point.position.getY(),
+                                                            new Rotation2d()))
+                                    .collect(Collectors.toList()));
+                }
+                m_field.getObject("path").setPoses(poses);
+            }
+        }
+    }
 
     @Override
     public void disabledExit() {
         RobotStates.coastMode.setFalse(); // Ensure motors are in brake mode
-        RobotTelemetry.print("### Disabled Exit### ");
+        Telemetry.print("### Disabled Exit### ");
     }
 
     /* AUTONOMOUS MODE (AUTO) */
@@ -217,12 +274,12 @@ public class Robot extends SpectrumRobot {
     @Override
     public void autonomousInit() {
         try {
-            RobotTelemetry.print("@@@ Auton Init Starting @@@ ");
+            Telemetry.print("@@@ Auton Init Starting @@@ ");
             clearCommandsAndButtons();
 
             auton.init();
 
-            RobotTelemetry.print("@@@ Auton Init Complete @@@ ");
+            Telemetry.print("@@@ Auton Init Complete @@@ ");
         } catch (Throwable t) {
             // intercept error and log it
             CrashTracker.logThrowableCrash(t);
@@ -236,16 +293,16 @@ public class Robot extends SpectrumRobot {
     @Override
     public void autonomousExit() {
         auton.exit();
-        RobotTelemetry.print("@@@ Auton Exit @@@ ");
+        Telemetry.print("@@@ Auton Exit @@@ ");
     }
 
     @Override
     public void teleopInit() {
         try {
-            RobotTelemetry.print("!!! Teleop Init Starting !!! ");
+            Telemetry.print("!!! Teleop Init Starting !!! ");
             resetCommandsAndButtons();
 
-            RobotTelemetry.print("!!! Teleop Init Complete !!! ");
+            Telemetry.print("!!! Teleop Init Complete !!! ");
         } catch (Throwable t) {
             // intercept error and log it
             CrashTracker.logThrowableCrash(t);
@@ -258,7 +315,7 @@ public class Robot extends SpectrumRobot {
 
     @Override
     public void teleopExit() {
-        RobotTelemetry.print("!!! Teleop Exit !!! ");
+        Telemetry.print("!!! Teleop Exit !!! ");
     }
 
     /* TEST MODE */
@@ -274,10 +331,10 @@ public class Robot extends SpectrumRobot {
     public void testInit() {
         try {
 
-            RobotTelemetry.print("~~~ Test Init Starting ~~~ ");
+            Telemetry.print("~~~ Test Init Starting ~~~ ");
             resetCommandsAndButtons();
 
-            RobotTelemetry.print("~~~ Test Init Complete ~~~ ");
+            Telemetry.print("~~~ Test Init Complete ~~~ ");
         } catch (Throwable t) {
             // intercept error and log it
             CrashTracker.logThrowableCrash(t);
@@ -290,7 +347,7 @@ public class Robot extends SpectrumRobot {
 
     @Override
     public void testExit() {
-        RobotTelemetry.print("~~~ Test Exit ~~~ ");
+        Telemetry.print("~~~ Test Exit ~~~ ");
     }
 
     /* SIMULATION MODE */
@@ -302,9 +359,9 @@ public class Robot extends SpectrumRobot {
     /** This method is called once when a simulation starts */
     @Override
     public void simulationInit() {
-        RobotTelemetry.print("$$$ Simulation Init Starting $$$ ");
+        Telemetry.print("$$$ Simulation Init Starting $$$ ");
 
-        RobotTelemetry.print("$$$ Simulation Init Complete $$$ ");
+        Telemetry.print("$$$ Simulation Init Complete $$$ ");
     }
 
     /** This method is called periodically during simulation. */

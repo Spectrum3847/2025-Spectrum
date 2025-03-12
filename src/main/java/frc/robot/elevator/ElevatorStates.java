@@ -3,85 +3,111 @@ package frc.robot.elevator;
 import static frc.robot.RobotStates.*;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
-import frc.robot.RobotTelemetry;
-import frc.robot.climber.ClimberStates;
 import frc.robot.elevator.Elevator.ElevatorConfig;
-import frc.robot.operator.Operator;
-import frc.robot.pilot.Pilot;
-import frc.spectrumLib.TuneValue;
+import frc.spectrumLib.Telemetry;
 import java.util.function.DoubleSupplier;
 
 public class ElevatorStates {
     private static Elevator elevator = Robot.getElevator();
     private static ElevatorConfig config = Robot.getConfig().elevator;
-    private static Pilot pilot = Robot.getPilot();
-    private static Operator operator = Robot.getOperator();
 
     /* Check Elevator States */
-    // Is Amp Height
-    public static final Trigger isAtAmp =
-            elevator.atPercentage(config::getAmp, config::getTolerance);
     public static final Trigger isUp =
-            elevator.atPercentage(config::getElevatorUpHeight, config::getTolerance);
+            elevator.atPercentage(config::getElevatorIsUpHeight, config::getTriggerTolerance);
+    public static final Trigger isHigh =
+            elevator.atPercentage(config::getElevatorIsHighHeight, config::getTriggerTolerance);
     public static final Trigger isHome =
-            elevator.atPercentage(config::getHome, config::getTolerance);
+            elevator.atRotations(config::getHome, config::getTriggerTolerance);
+    public static final Trigger isL2Coral =
+            elevator.atRotations(config::getL2Coral, config::getTriggerTolerance);
+    public static final Trigger isL3Coral =
+            elevator.atRotations(config::getL3Coral, config::getTriggerTolerance);
+    public static final Trigger isL4Coral =
+            elevator.atRotations(config::getL4Coral, config::getTriggerTolerance);
 
     public static void setupDefaultCommand() {
-        elevator.setDefaultCommand(
-                holdPosition().ignoringDisable(true).withName("Elevator.default"));
+        elevator.setDefaultCommand(holdPosition().withName("Elevator.default"));
+        // Removed run when disabled, so that the elevator doesn't jump up on enable
     }
 
     public static void setStates() {
-        // Test statements to show how these triggers work
-        isAtAmp.onTrue(Commands.print("At Amp Height"));
-        isUp.onTrue(Commands.print("Elevator Up"));
+        coastMode.onTrue(log(coastMode()));
+        coastMode.onFalse(log(ensureBrakeMode()));
+        homeAll.whileTrue(home());
 
-        ampPrep.whileTrue(RobotTelemetry.logCommand(amp()));
-        score.onFalse(home()); // Return home when we stop the scoring action
+        stationIntaking.whileTrue(
+                move(
+                        config::getStationIntake,
+                        config::getStationExtendedIntake,
+                        "Elevator.stationIntake"));
+        stationIntaking.onFalse(home());
 
-        // Elevator Extends when the climber is at mid climb
-        climbRoutine.and(ClimberStates.atMidClimbPos).onTrue(fullExtend());
+        Robot.getPilot()
+                .photonRemoveL2Algae
+                .whileTrue(move(config::getL2Algae, "Elevator.L2Algae"));
+        Robot.getPilot()
+                .photonRemoveL3Algae
+                .whileTrue(move(config::getL3Algae, "Elevator.L3Algae"));
+        Robot.getPilot()
+                .photonRemoveL2Algae
+                .or(Robot.getPilot().photonRemoveL3Algae)
+                .onFalse(home());
 
-        operator.overrideElevator.whileTrue(runElevator(operator::getElevatorOverride));
-        operator.zeroElevator.whileTrue(zero());
+        (stagedCoral.or(stagedAlgae))
+                .and(actionState.not())
+                .whileTrue(move(config::getHome, "Elevator.Stage"));
 
-        // Test Mode Buttons
-        pilot.tuneElevator_tB.whileTrue(tuneElevator());
+        L1Coral.and(actionPrepState)
+                .whileTrue(move(config::getL1Coral, config::getExl1Coral, "Elevator.L1Coral"));
+        L2Coral.and(actionPrepState)
+                .whileTrue(move(config::getL2Coral, config::getExl2Coral, "Elevator.L2Coral"));
+        L2Coral.and(actionState)
+                .whileTrue(move(config::getL2Score, config::getExl2Score, "Elevator.L2CoralScore"));
+        L3Coral.and(actionPrepState)
+                .whileTrue(move(config::getL3Coral, config::getExl3Coral, "Elevator.L3Coral"));
+        L3Coral.and(actionState)
+                .whileTrue(move(config::getL3Score, config::getExl3Score, "Elevator.L3CoralScore"));
+        L4Coral.and(actionPrepState)
+                .whileTrue(move(config::getL4Coral, config::getExl4Coral, "Elevator.L4Coral"));
+        L4Coral.and(actionState)
+                .whileTrue(move(config::getL4Score, config::getExl4Score, "Elevator.L4CoralScore"));
 
-        coastMode.onTrue(coastMode());
-        coastMode.onFalse(ensureBrakeMode());
+        processorAlgae
+                .and(actionPrepState)
+                .whileTrue(move(config::getProcessorAlgae, "Elevator.processorAlgae"));
+        L2Algae.and(actionPrepState).whileTrue(move(config::getL2Algae, "Elevator.L2Algae"));
+        L2Algae.and(actionState).whileTrue(move(config::getHome, "Elevator.L2AlgaeHome"));
+        L3Algae.and(actionPrepState).whileTrue(move(config::getL3Algae, "Elevator.L3Algae"));
+        L3Algae.and(actionState).whileTrue(move(config::getHome, "Elevator.L3AlgaeHome"));
+        netAlgae.and(actionPrepState).whileTrue(move(config::getNetAlgae, "Elevator.NetAlgae"));
+
+        Robot.getPilot()
+                .reZero_start
+                .onTrue(elevator.resetToInitialPos()); // TODO: check if this works
+        // Robot.getOperator().climbPrep_start.whileTrue(move(config::getClimbPrep,
+        // "Elbow.climbPrep"));
     }
 
-    private static Command runElevator(DoubleSupplier speed) {
+    public static DoubleSupplier getPosition() {
+        return () -> elevator.getPositionRotations();
+    }
 
-        return elevator.runPercentage(speed).withName("Elevator.runElevator");
+    public static Command move(DoubleSupplier rotations, String name) {
+        return elevator.move(rotations, rotations).withName(name);
+    }
+
+    public static Command move(DoubleSupplier rotations, DoubleSupplier exRotaitons, String name) {
+        return elevator.move(rotations, exRotaitons).withName(name);
     }
 
     private static Command holdPosition() {
         return elevator.holdPosition().withName("Elevator.holdPosition");
     }
 
-    private static Command fullExtend() {
-        return elevator.moveToRotations(config::getFullExtend).withName("Elevator.fullExtend");
-    }
-
-    private static Command amp() {
-        return elevator.moveToRotations(config::getAmp)
-                .alongWith(elevator.checkMaxCurrent(() -> 100))
-                .withName("Elevator.amp");
-    }
-
     private static Command home() {
-        return elevator.moveToRotations(config::getHome)
-                .alongWith(elevator.checkMaxCurrent(() -> 100))
-                .withName("Elevator.home");
-    }
-
-    private static Command zero() {
-        return elevator.zeroElevatorRoutine().withName("Zero Elevator");
+        return move(config::getHome, "Elevator.home");
     }
 
     private static Command coastMode() {
@@ -92,9 +118,8 @@ public class ElevatorStates {
         return elevator.ensureBrakeMode().withName("Elevator.BrakeMode");
     }
 
-    // Example of a TuneValue that is used to tune a single value in the code
-    private static Command tuneElevator() {
-        return elevator.moveToRotations(new TuneValue("Tune Elevator", 0).getSupplier())
-                .withName("Elevator.Tune");
+    // Log Command
+    protected static Command log(Command cmd) {
+        return Telemetry.log(cmd);
     }
 }

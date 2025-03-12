@@ -3,6 +3,8 @@ package frc.robot.pilot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Robot;
+import frc.robot.vision.VisionStates;
+import frc.spectrumLib.Telemetry;
 
 /** This class should have any command calls that directly call the Pilot */
 public class PilotStates {
@@ -10,15 +12,18 @@ public class PilotStates {
 
     /** Set default command to turn off the rumble */
     public static void setupDefaultCommand() {
-        pilot.setDefaultCommand(rumble(0, 1).withName("Pilot.noRumble"));
+        pilot.setDefaultCommand(log(rumble(0, 1).withName("Pilot.noRumble")));
     }
 
     /** Set the states for the pilot controller */
     public static void setStates() {
+
+        pilot.actionReady_RB.whileTrue(slowMode());
+        pilot.visionPoseReset_LB_Select.onTrue(VisionStates.resetVisionPose());
         // Rumble whenever we reorient
         pilot.upReorient
                 .or(pilot.downReorient, pilot.leftReorient, pilot.rightReorient)
-                .onTrue(rumble(1, 0.5));
+                .onTrue(log(rumble(1, 0.5).withName("Pilot.reorientRumble")));
     }
 
     /** Command that can be used to rumble the pilot controller */
@@ -28,10 +33,13 @@ public class PilotStates {
 
     /**
      * Command that can be used to turn on the slow mode. Slow mode modifies the fwd, left, and CCW
-     * methods, we don't want these to require the pilot subsystem
+     * methods, we don't want these to require the pilot subsystem arm
      */
     public static Command slowMode() {
-        return Commands.startEnd(() -> pilot.setSlowMode(true), () -> pilot.setSlowMode(false));
+        return Commands.startEnd(
+                        () -> pilot.getSlowMode().setState(true),
+                        () -> pilot.getSlowMode().setState(false))
+                .withName("Pilot.setSlowMode");
     }
 
     /**
@@ -39,6 +47,14 @@ public class PilotStates {
      * want these to require the pilot subsystem
      */
     public static Command turboMode() {
-        return Commands.startEnd(() -> pilot.setTurboMode(true), () -> pilot.setTurboMode(false));
+        return Commands.startEnd(
+                        () -> pilot.getTurboMode().setState(true),
+                        () -> pilot.getTurboMode().setState(false))
+                .withName("Pilot.setTurboMode");
+    }
+
+    // Log Command
+    protected static Command log(Command cmd) {
+        return Telemetry.log(cmd);
     }
 }

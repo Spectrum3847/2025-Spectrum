@@ -3,10 +3,12 @@ package frc.spectrumLib.mechanism;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -23,6 +25,7 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.spectrumLib.CachedDouble;
 import frc.spectrumLib.SpectrumRobot;
@@ -50,9 +53,12 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
     Alert disconnectedAlert =
             new Alert(getName() + " motor " + config.getId() + " disconnected", AlertType.kWarning);
     Alert unlicensedAlert = new Alert(getName() + " motor " + config.getId() + " unlicensed", AlertType.kWarning);
+    private double target = 0;
 
     private final CachedDouble cachedRotations;
     private final CachedDouble cachedPercentage;
+    private final CachedDouble cachedVoltage;
+    private final CachedDouble cachedDegrees;
     private final CachedDouble cachedVelocity;
     private final CachedDouble cachedCurrent;
 
@@ -73,8 +79,10 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
         }
 
         cachedCurrent = new CachedDouble(this::updateCurrent);
+        cachedVoltage = new CachedDouble(this::updateVoltage);
         cachedRotations = new CachedDouble(this::updatePositionRotations);
         cachedPercentage = new CachedDouble(this::updatePositionPercentage);
+        cachedDegrees = new CachedDouble(this::updatePositionDegrees);
         cachedVelocity = new CachedDouble(this::updateVelocityRPM);
 
         SpectrumRobot.add(this);
@@ -113,6 +121,36 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
         builder.setSmartDashboardType(getName());
     }
 
+    protected String getCurrentCommandName() {
+        Command currentCommand = this.getCurrentCommand();
+        if (currentCommand != null) {
+            return currentCommand.getName();
+        }
+
+        return "none";
+    }
+
+    public Trigger runningDefaultCommand() {
+        return new Trigger(this::isRunningDefaultCommand);
+    }
+
+    private boolean isRunningDefaultCommand() {
+        return this.getCurrentCommand() == this.getDefaultCommand();
+    }
+
+    // Return the closed loop target we have sent to the motor.
+    public double getTarget() {
+        return target;
+    }
+
+    public Trigger atTargetPosition(DoubleSupplier tolerance) {
+        return new Trigger(() -> isAtTargetPosition(tolerance));
+    }
+
+    private boolean isAtTargetPosition(DoubleSupplier tolerance) {
+        return Math.abs(cachedRotations.getAsDouble() - target) < tolerance.getAsDouble();
+    }
+
     public Trigger atRotations(DoubleSupplier target, DoubleSupplier tolerance) {
         return new Trigger(
                 () ->
@@ -147,6 +185,23 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
                 () -> getPositionPercentage() > (target.getAsDouble() - tolerance.getAsDouble()));
     }
 
+    public Trigger atDegrees(DoubleSupplier target, DoubleSupplier tolerance) {
+        return new Trigger(
+                () ->
+                        Math.abs(getPositionDegrees() - target.getAsDouble())
+                                < tolerance.getAsDouble());
+    }
+
+    public Trigger belowDegrees(DoubleSupplier target, DoubleSupplier tolerance) {
+        return new Trigger(
+                () -> getPositionDegrees() < (target.getAsDouble() + tolerance.getAsDouble()));
+    }
+
+    public Trigger aboveDegrees(DoubleSupplier target, DoubleSupplier tolerance) {
+        return new Trigger(
+                () -> getPositionDegrees() > (target.getAsDouble() - tolerance.getAsDouble()));
+    }
+
     public Trigger atVelocityRPM(DoubleSupplier target, DoubleSupplier tolerance) {
         return new Trigger(
                 () -> Math.abs(getVelocityRPM() - target.getAsDouble()) < tolerance.getAsDouble());
@@ -164,15 +219,19 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
 
     public Trigger atCurrent(DoubleSupplier target, DoubleSupplier tolerance) {
         return new Trigger(
-                () -> Math.abs(getCurrent() - target.getAsDouble()) < tolerance.getAsDouble());
+                () ->
+                        Math.abs(getStatorCurrent() - target.getAsDouble())
+                                < tolerance.getAsDouble());
     }
 
     public Trigger belowCurrent(DoubleSupplier target, DoubleSupplier tolerance) {
-        return new Trigger(() -> getCurrent() < (target.getAsDouble() + tolerance.getAsDouble()));
+        return new Trigger(
+                () -> getStatorCurrent() < (target.getAsDouble() + tolerance.getAsDouble()));
     }
 
     public Trigger aboveCurrent(DoubleSupplier target, DoubleSupplier tolerance) {
-        return new Trigger(() -> getCurrent() > (target.getAsDouble() - tolerance.getAsDouble()));
+        return new Trigger(
+                () -> getStatorCurrent() > (target.getAsDouble() - tolerance.getAsDouble()));
     }
 
     /**
@@ -187,8 +246,19 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
         return 0;
     }
 
-    public double getCurrent() {
+    public double getStatorCurrent() {
         return cachedCurrent.getAsDouble();
+    }
+
+    public double updateVoltage() {
+        if (config.attached) {
+            return motor.getMotorVoltage().getValueAsDouble();
+        }
+        return 0;
+    }
+
+    public double getVoltage() {
+        return cachedVoltage.getAsDouble();
     }
 
     /**
@@ -208,6 +278,25 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
      */
     public double rotationsToPercent(DoubleSupplier rotations) {
         return (rotations.getAsDouble() / config.maxRotations) * 100;
+    }
+
+    /**
+     * Degrees to Rotations
+     *
+     * @return rotations
+     */
+    public double degreesToRotations(DoubleSupplier degrees) {
+        return (degrees.getAsDouble() / 360);
+    }
+
+    /**
+     * Rotations to Degrees
+     *
+     * @param rotations
+     * @return degrees
+     */
+    public double rotationsToDegrees(DoubleSupplier rotations) {
+        return 360 * rotations.getAsDouble();
     }
 
     public double getPositionRotations() {
@@ -232,6 +321,14 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
 
     private double updatePositionPercentage() {
         return rotationsToPercent(this::getPositionRotations);
+    }
+
+    public double getPositionDegrees() {
+        return cachedDegrees.getAsDouble();
+    }
+
+    private double updatePositionDegrees() {
+        return rotationsToDegrees(this::getPositionRotations);
     }
 
     /**
@@ -281,13 +378,21 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
         return run(() -> setPercentOutput(percent)).withName(getName() + ".runPercentage");
     }
 
+    public Command runVoltage(DoubleSupplier voltage) {
+        return run(() -> setVoltageOutput(voltage)).withName(getName() + ".runVoltage");
+    }
+
+    public Command runTorqueCurrentFoc(DoubleSupplier current) {
+        return run(() -> setTorqueCurrentFoc(current)).withName(getName() + ".runTorqueCurrentFoc");
+    }
+
     /**
      * Run to the specified position.
      *
      * @param rotations position in revolutions
      */
     public Command moveToRotations(DoubleSupplier rotations) {
-        return run(() -> setMMPosition(rotations)).withName(getName() + ".runPoseRevolutions");
+        return run(() -> setMMPositionFoc(rotations)).withName(getName() + ".runPoseRevolutions");
     }
 
     /**
@@ -296,8 +401,18 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
      * @param percent position in percentage of max revolutions
      */
     public Command moveToPercentage(DoubleSupplier percent) {
-        return run(() -> setMMPosition(() -> percentToRotations(percent)))
+        return run(() -> setMMPositionFoc(() -> percentToRotations(percent)))
                 .withName(getName() + ".runPosePercentage");
+    }
+
+    /**
+     * Move to the specified position.
+     *
+     * @param degrees position in degrees
+     */
+    public Command moveToDegrees(DoubleSupplier degrees) {
+        return run(() -> setMMPositionFoc(() -> degreesToRotations(degrees)))
+                .withName(getName() + ".runPoseDegrees");
     }
 
     /**
@@ -334,6 +449,15 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
                                                 == NeutralModeValue.Coast)
                 .ignoringDisable(true)
                 .withName(getName() + ".ensureBrakeMode");
+    }
+
+    protected Command runCurrentLimits(DoubleSupplier supplyLimit, DoubleSupplier statorLimit) {
+        return new InstantCommand(() -> setCurrentLimits(supplyLimit, statorLimit));
+    }
+
+    protected void setCurrentLimits(DoubleSupplier supplyLimit, DoubleSupplier statorLimit) {
+        toggleSupplyCurrentLimit(supplyLimit, true);
+        toggleTorqueCurrentLimit(statorLimit, true);
     }
 
     protected void stop() {
@@ -386,14 +510,13 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
      * @param velocityRPS rotations per second
      */
     protected void setMMVelocityFOC(DoubleSupplier velocityRPS) {
-        if (!isAttached()) {
-            return;
+        if (isAttached()) {
+            target = velocityRPS.getAsDouble();
+            MotionMagicVelocityTorqueCurrentFOC mm =
+                    config.mmVelocityFOC.withVelocity(target);
+
+            checkMotorOK(() -> motor.setControl(mm));
         }
-
-        MotionMagicVelocityTorqueCurrentFOC mm =
-                config.mmVelocityFOC.withVelocity(velocityRPS.getAsDouble());
-
-        checkMotorOK(() -> motor.setControl(mm));
     }
 
     /**
@@ -402,14 +525,11 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
      * @param velocityRPS rotations per second
      */
     protected void setVelocityTorqueCurrentFOC(DoubleSupplier velocityRPS) {
-        if (!isAttached()) {
-            return;
+        if (isAttached()) {
+            target = velocityRPS.getAsDouble();
+            VelocityTorqueCurrentFOC output = config.velocityTorqueCurrentFOC.withVelocity(target);
+            checkMotorOK(() -> motor.setControl(output));
         }
-
-        VelocityTorqueCurrentFOC output =
-                config.velocityTorqueCurrentFOC.withVelocity(velocityRPS.getAsDouble());
-
-        checkMotorOK(() -> motor.setControl(output));
     }
 
     /**
@@ -418,15 +538,11 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
      * @param velocity rotations per second
      */
     protected void setVelocityTCFOCrpm(DoubleSupplier velocityRPS) {
-        if (!isAttached()) {
-            return;
+        if (isAttached()) {
+            target = Conversions.RPMtoRPS(velocityRPS.getAsDouble());
+            VelocityTorqueCurrentFOC output = config.velocityTorqueCurrentFOC.withVelocity(target);
+            checkMotorOK(() -> motor.setControl(output));
         }
-
-        VelocityTorqueCurrentFOC output =
-                config.velocityTorqueCurrentFOC.withVelocity(
-                        Conversions.RPMtoRPS(velocityRPS.getAsDouble()));
-
-        checkMotorOK(() -> motor.setControl(output));
     }
 
     /**
@@ -435,13 +551,11 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
      * @param velocityRPS rotations per second
      */
     protected void setVelocity(DoubleSupplier velocityRPS) {
-        if (!isAttached()) {
-            return;
+        if (isAttached()) {
+            target = velocityRPS.getAsDouble();
+            VelocityVoltage output = config.velocityControl.withVelocity(target);
+            checkMotorOK(() -> motor.setControl(output));
         }
-
-        VelocityVoltage output = config.velocityControl.withVelocity(velocityRPS.getAsDouble());
-
-        checkMotorOK(() -> motor.setControl(output));
     }
 
     /**
@@ -450,13 +564,37 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
      * @param rotations rotations
      */
     protected void setMMPositionFoc(DoubleSupplier rotations) {
-        if (!isAttached()) {
-            return;
+        if (isAttached()) {
+            target = rotations.getAsDouble();
+            MotionMagicTorqueCurrentFOC mm = config.mmPositionFOC.withPosition(target);
+            checkMotorOK(() -> motor.setControl(mm));
         }
+    }
 
-        MotionMagicTorqueCurrentFOC mm = config.mmPositionFOC.withPosition(rotations.getAsDouble());
-
-        checkMotorOK(() -> motor.setControl(mm));
+    /**
+     * Closed-loop Position Motion Magic with torque control (requires Pro) Dynamic allows you to
+     * set velocity, acceleration, and jerk during the command
+     *
+     * @param rotations
+     * @param velocity
+     * @param acceleration
+     * @param jerk
+     */
+    protected void setDynMMPositionFoc(
+            DoubleSupplier rotations,
+            DoubleSupplier velocity,
+            DoubleSupplier acceleration,
+            DoubleSupplier jerk) {
+        if (isAttached()) {
+            target = rotations.getAsDouble();
+            DynamicMotionMagicTorqueCurrentFOC mm =
+                    config.dynamicMMPositionFOC
+                            .withPosition(target)
+                            .withVelocity(velocity.getAsDouble())
+                            .withAcceleration(acceleration.getAsDouble())
+                            .withJerk(jerk.getAsDouble());
+            checkMotorOK(() -> motor.setControl(mm));
+        }
     }
 
     /**
@@ -475,14 +613,12 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
      * @param slot gains slot
      */
     public void setMMPosition(DoubleSupplier rotations, int slot) {
-        if (!isAttached()) {
-            return;
+        if (isAttached()) {
+            target = rotations.getAsDouble();
+            MotionMagicVoltage mm =
+                    config.mmPositionVoltageSlot.withSlot(slot).withPosition(target);
+            checkMotorOK(() -> motor.setControl(mm));
         }
-
-        MotionMagicVoltage mm =
-                config.mmPositionVoltageSlot.withSlot(slot).withPosition(rotations.getAsDouble());
-
-        checkMotorOK(() -> motor.setControl(mm));
     }
 
     /**
@@ -491,15 +627,26 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
      * @param percent fractional units between -1 and +1
      */
     public void setPercentOutput(DoubleSupplier percent) {
-        if (!isAttached()) {
-            return;
+        if (isAttached()) {
+            VoltageOut output =
+                    config.voltageControl.withOutput(
+                            config.voltageCompSaturation * percent.getAsDouble());
+            checkMotorOK(() -> motor.setControl(output));
         }
+    }
 
-        VoltageOut output =
-                config.voltageControl.withOutput(
-                        config.voltageCompSaturation * percent.getAsDouble());
+    public void setVoltageOutput(DoubleSupplier voltage) {
+        if (isAttached()) {
+            VoltageOut output = config.voltageControl.withOutput(voltage.getAsDouble());
+            checkMotorOK(() -> motor.setControl(output));
+        }
+    }
 
-        checkMotorOK(() -> motor.setControl(output));
+    public void setTorqueCurrentFoc(DoubleSupplier current) {
+        if (isAttached()) {
+            TorqueCurrentFOC output = config.torqueCurrentFOC.withOutput(current.getAsDouble());
+            checkMotorOK(() -> motor.setControl(output));
+        }
     }
 
     public void setBrakeMode(boolean isInBrake) {
@@ -521,11 +668,24 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
         if (isAttached()) {
             if (enabled) {
                 config.configForwardTorqueCurrentLimit(enabledLimit.getAsDouble());
-                config.configReverseTorqueCurrentLimit(enabledLimit.getAsDouble());
+                config.configReverseTorqueCurrentLimit(-1 * enabledLimit.getAsDouble());
+                config.configStatorCurrentLimit(enabledLimit.getAsDouble(), true);
                 config.applyTalonConfig(motor);
             } else {
-                config.configForwardTorqueCurrentLimit(400);
-                config.configReverseTorqueCurrentLimit(400);
+                config.configForwardTorqueCurrentLimit(300);
+                config.configReverseTorqueCurrentLimit(-300);
+                config.applyTalonConfig(motor);
+            }
+        }
+    }
+
+    public void toggleSupplyCurrentLimit(DoubleSupplier enabledLimit, boolean enabled) {
+        if (isAttached()) {
+            if (enabled) {
+                config.configSupplyCurrentLimit(enabledLimit.getAsDouble(), true);
+                config.applyTalonConfig(motor);
+            } else {
+                config.configSupplyCurrentLimit(enabledLimit.getAsDouble(), false);
                 config.applyTalonConfig(motor);
             }
         }
@@ -545,7 +705,7 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
 
             @Override
             public void execute() {
-                totalCurrent += getCurrent();
+                totalCurrent += getStatorCurrent();
                 count++;
             }
 
@@ -578,7 +738,7 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
 
             @Override
             public void execute() {
-                double current = getCurrent();
+                double current = getStatorCurrent();
                 if (current > maxCurrent) {
                     maxCurrent = current;
                 }
@@ -611,7 +771,7 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
 
             @Override
             public void execute() {
-                double current = getCurrent();
+                double current = getStatorCurrent();
                 if (current > maxCurrent) {
                     maxCurrent = current;
                 }
@@ -649,7 +809,7 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
         @Getter private String name;
         @Getter @Setter private boolean attached = true;
         @Getter private CanDeviceId id;
-        @Getter protected TalonFXConfiguration talonConfig;
+        @Getter @Setter protected TalonFXConfiguration talonConfig;
         @Getter private int numMotors = 1;
         @Getter private double voltageCompSaturation = 12.0; // 12V by default
         @Getter private double minRotations = 0;
@@ -665,6 +825,10 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
         private MotionMagicTorqueCurrentFOC mmPositionFOC = new MotionMagicTorqueCurrentFOC(0);
 
         @Getter
+        private DynamicMotionMagicTorqueCurrentFOC dynamicMMPositionFOC =
+                new DynamicMotionMagicTorqueCurrentFOC(0, 0, 0, 0);
+
+        @Getter
         private MotionMagicVelocityVoltage mmVelocityVoltage = new MotionMagicVelocityVoltage(0);
 
         @Getter private MotionMagicVoltage mmPositionVoltage = new MotionMagicVoltage(0);
@@ -677,6 +841,8 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
 
         @Getter
         private VelocityTorqueCurrentFOC velocityTorqueCurrentFOC = new VelocityTorqueCurrentFOC(0);
+
+        @Getter private TorqueCurrentFOC torqueCurrentFOC = new TorqueCurrentFOC(0);
 
         @Getter
         private DutyCycleOut percentOutput =
@@ -719,20 +885,32 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
         }
 
         public void configSupplyCurrentLimit(double supplyLimit, boolean enabled) {
+            if (supplyLimit < 0) {
+                supplyLimit = -supplyLimit;
+            }
             talonConfig.CurrentLimits.SupplyCurrentLimit = supplyLimit;
             talonConfig.CurrentLimits.SupplyCurrentLimitEnable = enabled;
         }
 
         public void configStatorCurrentLimit(double statorLimit, boolean enabled) {
+            if (statorLimit < 0) {
+                statorLimit = -statorLimit;
+            }
             talonConfig.CurrentLimits.StatorCurrentLimit = statorLimit;
             talonConfig.CurrentLimits.StatorCurrentLimitEnable = enabled;
         }
 
         public void configForwardTorqueCurrentLimit(double currentLimit) {
+            if (currentLimit < 0) {
+                currentLimit = -currentLimit;
+            }
             talonConfig.TorqueCurrent.PeakForwardTorqueCurrent = currentLimit;
         }
 
         public void configReverseTorqueCurrentLimit(double currentLimit) {
+            if (currentLimit > 0) {
+                currentLimit = -currentLimit;
+            }
             talonConfig.TorqueCurrent.PeakReverseTorqueCurrent = currentLimit;
         }
 
@@ -753,6 +931,10 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
         public void configReverseSoftLimit(double threshold, boolean enabled) {
             talonConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = threshold;
             talonConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = enabled;
+        }
+
+        public void configContinuousWrap(boolean enabled) {
+            talonConfig.ClosedLoopGeneral.ContinuousWrap = enabled;
         }
 
         // Configure optional motion magic velocity parameters

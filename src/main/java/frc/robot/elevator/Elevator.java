@@ -3,64 +3,107 @@ package frc.robot.elevator;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NTSendableBuilder;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.RobotSim;
-import frc.robot.RobotTelemetry;
+import frc.robot.RobotStates;
 import frc.spectrumLib.Rio;
+import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.mechanism.Mechanism;
 import frc.spectrumLib.sim.LinearConfig;
 import frc.spectrumLib.sim.LinearSim;
+import java.util.function.DoubleSupplier;
 import lombok.*;
 
 public class Elevator extends Mechanism {
 
     public static class ElevatorConfig extends Config {
+        @Getter @Setter private boolean isPhoton = false;
+
         /* Elevator constants in rotations */
-        @Getter private double maxRotations = 29.8;
-        @Getter private double minRotations = 0;
+        @Getter @Setter private double maxRotations = 21.1;
+
+        @Getter @Setter private double minRotations = 0.3;
 
         /* Elevator positions in rotations */
-        @Getter @Setter private double fullExtend = maxRotations;
-        @Getter private double home = minRotations;
-        @Getter private double amp = 15;
+        // TODO: Find elevator positions
+        @Getter @Setter private double fullExtend = maxRotations * .999;
+        @Getter @Setter private double home = 0;
 
-        @Getter private double tolerance = 0.95;
-        @Getter private double elevatorUpHeight = 5;
+        @Getter @Setter private double clawGroundAlgaeIntake = 0;
+        @Getter @Setter private double clawGroundCoralIntake = 0;
+
+        @Getter @Setter private double stationIntake = 0;
+        @Getter @Setter private double stationExtendedIntake = 0;
+
+        @Getter @Setter private double processorAlgae = 0.3;
+        @Getter @Setter private double l2Algae = 1;
+        @Getter @Setter private double l3Algae = 12;
+        @Getter @Setter private double netAlgae = fullExtend;
+
+        @Getter @Setter private double l1Coral = 0;
+        @Getter @Setter private double l2Coral = 8.6; // 0.68;
+        @Getter @Setter private double l2Score = 6.2; // l2Coral;
+        @Getter @Setter private double l3Coral = 20; // 12.8; // 10.7;
+        @Getter @Setter private double l3Score = 17.6; // l3Coral - 1;
+        @Getter @Setter private double l4Coral = fullExtend;
+        @Getter @Setter private double l4Score = l4Coral - 3;
+
+        @Getter @Setter private double exl1Coral = 0.3;
+        @Getter @Setter private double exl2Coral = 8.6; // 1
+        @Getter @Setter private double exl2Score = 6.2; // 0.3;
+        @Getter @Setter private double exl3Coral = 20; // 12.8;
+        @Getter @Setter private double exl3Score = 17.6; // 11.8;
+        @Getter @Setter private double exl4Coral = fullExtend;
+        @Getter @Setter private double exl4Score = exl4Coral - 3;
+
+        @Getter private double triggerTolerance = 0.95;
+        @Getter private double elevatorIsUpHeight = 5;
+        @Getter private double elevatorIsHighHeight = 10;
+        @Getter private double initPosition = 0;
+        @Getter private double holdMaxSpeedRPM = 1000;
 
         /* Elevator config settings */
         @Getter private final double zeroSpeed = -0.2;
-        @Getter private final double positionKp = 0.86; // 20 FOC // 10 Regular
-        @Getter private final double positionKv = 0.13; // .12 FOC // .15 regular
-        @Getter private double currentLimit = 20;
-        @Getter private final double torqueCurrentLimit = 100;
+        @Getter private final double positionKp = 100;
+        @Getter private final double positionKd = 6;
+        @Getter private final double positionKa = 0.2;
+        @Getter private final double positionKv = 0;
+        @Getter private final double positionKs = 5;
+        @Getter private final double positionKg = 25.3;
+        @Getter private final double mmCruiseVelocity = 40;
+        @Getter private final double mmAcceleration = 280;
+        @Getter private final double mmJerk = 2000;
+
+        @Getter private double currentLimit = 40;
+        @Getter private double torqueCurrentLimit = 160;
 
         /* Sim properties */
-        @Getter private double kElevatorGearing = 5;
-        @Getter private double kCarriageMass = 1;
+        @Getter private double kElevatorGearing = 1.7;
+        @Getter private double kCarriageMass = 13.6078;
         @Getter private double kElevatorDrumRadiusMeters = Units.inchesToMeters(0.955 / 2);
-        @Getter private double initialX = 0.5;
-        @Getter private double initialY = 0.0;
-        @Getter private double angle = 180.0 - 72.0;
-        @Getter private double staticLength = 20;
-        @Getter private double movingLength = 20;
+        @Getter private double initialX = 0.8;
+        @Getter private double initialY = 0.35;
+        @Getter private double angle = 90;
+        @Getter private double staticLength = 50;
+        @Getter private double movingLength = 50;
 
         public ElevatorConfig() {
-            super("Elevator", 52, Rio.CANIVORE);
+            super("ElevatorFront", 40, Rio.CANIVORE);
             configMinMaxRotations(minRotations, maxRotations);
-            configPIDGains(0, positionKp, 0, 0);
-            configFeedForwardGains(0, positionKv, 0, 0);
-            configMotionMagic(700, 900, 0); // 40, 120 FOC // 120, 195 Regular
+            configPIDGains(0, positionKp, 0, positionKd);
+            configFeedForwardGains(positionKs, positionKv, positionKa, positionKg);
+            configMotionMagic(mmCruiseVelocity, mmAcceleration, mmJerk);
             configSupplyCurrentLimit(currentLimit, true);
             configStatorCurrentLimit(torqueCurrentLimit, true);
             configForwardTorqueCurrentLimit(torqueCurrentLimit);
-            configReverseTorqueCurrentLimit(torqueCurrentLimit);
+            configReverseTorqueCurrentLimit(-1 * torqueCurrentLimit);
             configForwardSoftLimit(maxRotations, true);
             configReverseSoftLimit(minRotations, true);
             configNeutralBrakeMode(true);
             configCounterClockwise_Positive();
+            setFollowerConfigs(new FollowerConfig("ElevatorRear", 41, Rio.CANIVORE, true));
         }
 
         /** Use these method to set the config for the mechanism on each robot */
@@ -77,9 +120,11 @@ public class Elevator extends Mechanism {
         super(config);
         this.config = config;
 
+        setInitialPosition();
+
         simulationInit();
         telemetryInit();
-        RobotTelemetry.print(getName() + " Subsystem Initialized");
+        Telemetry.print(getName() + " Subsystem Initialized");
     }
 
     @Override
@@ -100,12 +145,23 @@ public class Elevator extends Mechanism {
     @Override
     public void initSendable(NTSendableBuilder builder) {
         if (isAttached()) {
-            builder.addDoubleProperty("Position Percentage", this::getPositionPercentage, null);
+            builder.addStringProperty("CurrentCommand", this::getCurrentCommandName, null);
             builder.addDoubleProperty("Rotations", this::getPositionRotations, null);
-            builder.addDoubleProperty("Velocity", this::getVelocityRPM, null);
-            builder.addDoubleProperty("StatorCurrent", this::getCurrent, null);
-            builder.addDoubleProperty("#FullExtend", config::getFullExtend, config::setFullExtend);
+            // builder.addDoubleProperty("Velocity", this::getVelocityRPM, null);
+            builder.addDoubleProperty("StatorCurrent", this::getStatorCurrent, null);
+            builder.addDoubleProperty("MotorVoltage", this::getVoltage, null);
         }
+    }
+
+    private void setInitialPosition() {
+        if (isAttached()) {
+            motor.setPosition(config.getInitPosition());
+            followerMotors[0].setPosition(config.getInitPosition());
+        }
+    }
+
+    public Command resetToInitialPos() {
+        return run(() -> setInitialPosition());
     }
 
     // --------------------------------------------------------------------------------
@@ -124,24 +180,27 @@ public class Elevator extends Mechanism {
             }
 
             @Override
+            public boolean runsWhenDisabled() {
+                return true;
+            }
+
+            @Override
             public void initialize() {
-                stop();
                 holdPosition = getPositionRotations();
+                stop();
             }
 
             @Override
             public void execute() {
                 double currentPosition = getPositionRotations();
-                if (Math.abs(holdPosition - currentPosition) <= 5) {
-                    setMMPosition(() -> holdPosition);
-                } else {
+                if (Math.abs(currentPosition)
+                        < 0.3) { // Added so it doesn't try to hold when all the way down
                     stop();
-                    DriverStation.reportError(
-                            "ElevatorHoldPosition tried to go too far away from current position. Current Position: "
-                                    + currentPosition
-                                    + " || Hold Position: "
-                                    + holdPosition,
-                            false);
+                } else if (Math.abs(getVelocityRPM()) > config.holdMaxSpeedRPM) {
+                    stop(); // Don't hold if moving too fast
+                    holdPosition = currentPosition; // Update to a new hold position
+                } else {
+                    setMMPositionFoc(() -> holdPosition);
                 }
             }
 
@@ -150,6 +209,17 @@ public class Elevator extends Mechanism {
                 stop();
             }
         };
+    }
+
+    public Command move(DoubleSupplier rotations, DoubleSupplier exRotations) {
+        return run(
+                () -> {
+                    if (RobotStates.extended.getAsBoolean()) {
+                        setMMPositionFoc(exRotations);
+                    } else {
+                        setMMPositionFoc(rotations);
+                    }
+                });
     }
 
     public Command zeroElevatorRoutine() {
@@ -191,10 +261,11 @@ public class Elevator extends Mechanism {
                                     config.kElevatorDrumRadiusMeters)
                             .setAngle(config.angle)
                             .setMovingLength(config.getMovingLength())
-                            .setStaticLength(config.getStaticLength()),
+                            .setStaticLength(config.getStaticLength())
+                            .setMaxHeight(30.5 + 7),
                     mech,
                     elevatorMotorSim,
-                    config.getName());
+                    "1" + config.getName()); // added 1 to the name to create it first
         }
     }
 }

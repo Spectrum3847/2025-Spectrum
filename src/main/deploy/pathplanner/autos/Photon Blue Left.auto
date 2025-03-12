@@ -1,0 +1,49 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "1 - Photon Blue Left"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "2 - Photon Blue Left"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3 - Photon Blue Left"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Photon",
+  "choreoAuto": false
+}
