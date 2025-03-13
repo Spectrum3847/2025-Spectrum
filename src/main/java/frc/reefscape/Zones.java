@@ -27,7 +27,8 @@ public class Zones {
 
 
     //TODO: add the reef face zones of the 12 tags
-    public static final double[][] 
+    public static final double[][] blueReefZones = {{},{},{},{},{},{}};
+    public static final double[][] redReefZones = {{},{},{},{},{},{}};
 
     public static final Trigger bargeZone =
             swerve.inXzoneAlliance(
@@ -81,7 +82,7 @@ public class Zones {
      * with a triangle formed by the reef face points and the center of the reef
      * @param robotPose
      */
-    public double getReefBlueZone(double[] robotPose) {
+    public double getBlueReefZoneID(double[] robotPose) {
         double[] reefBlueCenter = {Field.Reef.center.getX(), Field.Reef.center.getY()};
         
         /**
@@ -120,7 +121,7 @@ public class Zones {
      * with a triangle formed by the reef face points and the center of the reef
      * @param robotPose
      */
-    public double getReefRedZone() {
+    public double getRedRe() {
         double[] reefRedCenter = {Field.Reef.center.getX() + 370.1, Field.Reef.center.getY()};
 
         /**
