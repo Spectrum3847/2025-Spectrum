@@ -152,7 +152,7 @@ public class RobotStates {
                     .and(algaeAfterAction)
                     .onTrue(
                             l3.setTrueAfterTime(RobotStates::getScoreTime),
-                            algae.setTrue(),
+                            algae.setTrueAfterTime(() -> (RobotStates.getScoreTime()/2)),
                             coral.setFalse(),
                             l1.setFalseAfterTime(RobotStates::getScoreTime),
                             l2.setFalseAfterTime(RobotStates::getScoreTime),
@@ -162,7 +162,7 @@ public class RobotStates {
                     .and(algaeAfterAction)
                     .onTrue(
                             l2.setTrueAfterTime(RobotStates::getScoreTime),
-                            algae.setTrue(),
+                            algae.setTrueAfterTime(() -> (RobotStates.getScoreTime()/2)),
                             coral.setFalse(),
                             l1.setFalseAfterTime(RobotStates::getScoreTime),
                             l3.setFalseAfterTime(RobotStates::getScoreTime),
