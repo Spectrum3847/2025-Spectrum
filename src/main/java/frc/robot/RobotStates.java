@@ -150,7 +150,9 @@ public class RobotStates {
                 .or(autonActionOn)
                 .onTrue(actionPrepState.setTrue(), actionState.setFalse());
 
-        actionPrepState.or(autonActionOn).onTrue(actionState.setFalse());
+        actionPrepState
+                .or(autonActionOn)
+                .onTrue(actionState.setFalse(), algaeAfterAction.setFalse());
         actionPrepState.onChangeToFalse(actionState.setTrueForTime(RobotStates::getScoreTime));
 
         autonActionOff.onChangeToFalse(actionState.setTrueForTime(RobotStates::getScoreTime));
@@ -158,7 +160,11 @@ public class RobotStates {
         operator.algaeStage.or(operator.coralStage).onTrue(actionState.setFalse());
 
         pilot.algaeRemovalAfterScore.onTrue(algaeAfterAction.setTrue());
-        actionState.onFalse(algaeAfterAction.setFalse());
+        actionState
+                .and(algaeAfterAction)
+                .onTrue(
+                        l2.setTrueAfterTime(RobotStates::getScoreTime),
+                        algae.setTrueAfterTime(RobotStates::getScoreTime));
 
         // *********************************
         // Intaking States
@@ -251,7 +257,8 @@ public class RobotStates {
                         rightScore.setFalse(),
                         coral.setFalse(),
                         algae.setFalse(),
-                        extendedState.setFalse())
+                        extendedState.setFalse(),
+                        algaeAfterAction.setFalse())
                 .withName("Clear Staged");
     }
 

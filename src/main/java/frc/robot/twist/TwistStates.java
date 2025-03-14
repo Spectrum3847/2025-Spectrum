@@ -44,13 +44,9 @@ public class TwistStates {
         netAlgae.whileTrue(twist.moveToDegrees(config::getNet).withName("Twist.Net"));
 
         branch.and(rightScore)
-                .whileTrue(
-                        twist.moveToDegrees(config::getRightCoral)
-                                .withName("Twist.rightCoral"));
+                .whileTrue(twist.moveToDegrees(config::getRightCoral).withName("Twist.rightCoral"));
         branch.and(rightScore.not())
-                .whileTrue(
-                        twist.moveToDegrees(config::getLeftCoral)
-                                .withName("Twist.leftCoral"));
+                .whileTrue(twist.moveToDegrees(config::getLeftCoral).withName("Twist.leftCoral"));
     }
 
     public static Command coastMode() {
