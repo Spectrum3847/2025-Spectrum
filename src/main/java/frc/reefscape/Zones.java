@@ -40,7 +40,7 @@ public class Zones {
 
     // (tagid, x1, y1, x2, y2) Going right to left for each reef face
     public static final double[][] redReefZones = {
-        {6, Units.inchesToMeters(546.87), Units.inchesToMeters(142.55641), Units.inchesToMeters(514.3), Units.inchesToMeters(116.02)}
+        {6, Units.inchesToMeters(546.87), Units.inchesToMeters(142.55641), Units.inchesToMeters(514.3), Units.inchesToMeters(116.02)},
         {7, Units.inchesToMeters(546.87), Units.inchesToMeters(142.55641), Units.inchesToMeters(546.87), Units.inchesToMeters(174.44359)},
         {8, Units.inchesToMeters(546.87), Units.inchesToMeters(174.44359), Units.inchesToMeters(514.3), Units.inchesToMeters(201.001)},
 
