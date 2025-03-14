@@ -160,7 +160,7 @@ public class Pilot extends Gamepad {
         return -1 * ccwPositive; // invert the value
     }
 
-    public double getTestTriggersAxis() { // TODO: Remove after Testing
-        return getRightTriggerAxis() - getLeftTriggerAxis();
+    public double getPilotStickAngle() {
+        return getLeftStickDirection().getRadians();
     }
 }

@@ -34,7 +34,7 @@ public class Shoulder extends Mechanism {
 
         /* Shoulder positions in degrees || 0 is vertical down || positions should be towards front of robot */
 
-        @Getter @Setter private double climbPrep = -56.7;;
+        @Getter @Setter private double climbPrep = -56.7;
         @Getter @Setter private double home = 0;
 
         @Getter @Setter private double stationIntake = 9.2;
@@ -335,7 +335,7 @@ public class Shoulder extends Mechanism {
                                     config.simRatio,
                                     config.length,
                                     -270,
-                                    360 - 90,
+                                    360.0 - 90.0,
                                     -90)
                             .setMount(Robot.getElevator().getSim(), true),
                     mech,

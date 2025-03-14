@@ -39,26 +39,9 @@ public class Operator extends Gamepad {
 
     public final Trigger homeElevator_A = A.and(nothingStaged, teleop);
 
-    // TODO: Removed until we are ready to implement
-    // public final Trigger algaeHandoff_X = X.and(nothingStaged, teleop);
-    // public final Trigger coralHandoff_Y = Y.and(nothingStaged, teleop);
-
     // DISABLED TRIGGERS
     public final Trigger coastOn_dB = disabled.and(B);
     public final Trigger coastOff_dA = disabled.and(A);
-
-    // TEST TRIGGERS
-    // public final Trigger testOperatorCoralStage = leftBumper.and(testMode);
-    // public final Trigger testOperatorAlgaeStage = rightBumper.and(testMode);
-    // public final Trigger test_tA = A.and(testOperatorCoralStage);
-    // public final Trigger test_tB = B.and(testOperatorCoralStage);
-    // public final Trigger test_tX = X.and(testOperatorCoralStage);
-    // public final Trigger test_tY = Y.and(testOperatorCoralStage);
-    // public final Trigger test_A = A.and(testOperatorAlgaeStage);
-    // public final Trigger test_B = B.and(testOperatorAlgaeStage);
-    // public final Trigger test_X = X.and(testOperatorAlgaeStage);
-    // public final Trigger test_Y = Y.and(testMode);
-    //  TODO: move reef scoring/intaking to operator
 
     public static class OperatorConfig extends Config {
 

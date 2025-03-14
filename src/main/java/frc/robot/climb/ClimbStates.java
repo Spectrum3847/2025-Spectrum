@@ -23,9 +23,6 @@ public class ClimbStates {
         coastMode.onTrue(log(coastMode()));
         coastMode.onFalse(log(ensureBrakeMode()));
 
-        // groundAlgae.whileTrue(log(algaeFloorIntake()));
-        // groundCoral.whileTrue(log(coralFloorIntake()));
-
         Robot.getOperator().latchOpen_startUp.onTrue(openLatch());
         Robot.getOperator().latchCloser_startDown.onTrue(closeLatch());
         Robot.getOperator()
@@ -49,7 +46,6 @@ public class ClimbStates {
                                 .withName("Climb.prepClimber"));
 
         homeAll.and(climb.getLatched().not(), climbPrep.not()).whileTrue(log(home()));
-        // Robot.getPilot().reZero_start.whileTrue(climb.resetToInitialPos());
     }
 
     public static Command runClimb(DoubleSupplier speed) {
@@ -58,16 +54,6 @@ public class ClimbStates {
 
     public static Command home() {
         return climb.moveToDegrees(config::getHome).withName("Climb.home");
-    }
-
-    // TODO: delete?
-    public static Command climbPrep() {
-        return climb.moveToDegrees(config::getPrepClimber).withName("Climb.prepClimber");
-    }
-
-    // TODO: delete?
-    public static Command climbFinish() {
-        return climb.moveToDegrees(config::getFinishClimb).withName("Climb.finishClimb");
     }
 
     public static DoubleSupplier getPosition() {

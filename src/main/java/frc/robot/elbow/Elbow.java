@@ -173,7 +173,6 @@ public class Elbow extends Mechanism {
         if (isAttached()) {
             builder.addStringProperty("CurrentCommand", this::getCurrentCommandName, null);
             builder.addDoubleProperty("Position Degrees", () -> (getPositionWithNegative()), null);
-            // builder.addDoubleProperty("Velocity", this::getVelocityRPM, null);
             builder.addDoubleProperty("MotorVoltage", this::getVoltage, null);
             builder.addDoubleProperty("StatorCurrent", this::getStatorCurrent, null);
         }
@@ -354,8 +353,8 @@ public class Elbow extends Mechanism {
                                     config.elbowY,
                                     config.simRatio,
                                     config.length,
-                                    90 - 360,
-                                    360 - 90,
+                                    90.0 - 360.0,
+                                    360.0 - 90.0,
                                     180 - config.getStartingAngle())
                             .setColor(new Color8Bit(Color.kAqua))
                             .setMount(Robot.getShoulder().getSim(), true),

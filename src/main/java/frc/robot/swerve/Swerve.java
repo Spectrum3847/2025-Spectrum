@@ -53,6 +53,8 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
     private RotationController rotationController;
     private TagCenterAlignController tagCenterAlignController;
     private TagDistanceAlignController tagDistanceAlignController;
+    private TranslationXController xController;
+    private TranslationYController yController;
 
     @Getter
     protected SwerveModuleState[] setpoints =
@@ -91,6 +93,8 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
         rotationController = new RotationController(config);
         tagCenterAlignController = new TagCenterAlignController(config);
         tagDistanceAlignController = new TagDistanceAlignController(config);
+        xController = new TranslationXController(config);
+        yController = new TranslationYController(config);
 
         if (Utils.isSimulation()) {
             startSimThread();
@@ -327,12 +331,6 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
         return Math.toRadians(closestAngle);
     }
 
-    // Helper method to calculate the shortest angle difference
-    private double getAngleDifference(double angle1, double angle2) {
-        double diff = Math.abs(angle1 - angle2) % 360;
-        return diff > 180 ? 360 - diff : diff;
-    }
-
     protected Command cardinalReorient() {
         return runOnce(
                 () -> {
@@ -349,25 +347,16 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
         } else {
             flippedHeading = heading + 180;
         }
-        double frontDifference = getMinDegreesDifference(heading, angleDegrees);
-        double flippedDifference = getMinDegreesDifference(flippedHeading, angleDegrees);
+        double frontDifference = getAngleDifference(heading, angleDegrees);
+        double flippedDifference = getAngleDifference(flippedHeading, angleDegrees);
 
-        if (frontDifference < flippedDifference) {
-            return true;
-        }
-
-        return false;
+        return frontDifference < flippedDifference;
     }
 
-    protected double getMinDegreesDifference(
-            double currentAngleDegrees, double targetAngleDegrees) {
-        double difference = Math.abs(currentAngleDegrees - targetAngleDegrees);
-
-        if ((360 - difference < difference) && (360 - difference >= 0)) {
-            difference = 360 - difference;
-        }
-
-        return difference;
+    // Helper method to calculate the shortest angle difference
+    private double getAngleDifference(double angle1, double angle2) {
+        double diff = Math.abs(angle1 - angle2) % 360;
+        return diff > 180 ? 360 - diff : diff;
     }
 
     // --------------------------------------------------------------------------------
@@ -430,6 +419,28 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
         } else {
             return 0;
         }
+    }
+
+    // --------------------------------------------------------------------------------
+    // Translation X Controller
+    // --------------------------------------------------------------------------------
+    void resetXController() {
+        xController.reset(getRobotPose().getX());
+    }
+
+    double calculateXController(DoubleSupplier targetMeters) {
+        return xController.calculate(targetMeters.getAsDouble(), getRobotPose().getX());
+    }
+
+    // --------------------------------------------------------------------------------
+    // Translation Y Controller
+    // --------------------------------------------------------------------------------
+    void resetYController() {
+        yController.reset(getRobotPose().getY());
+    }
+
+    double calculateYController(DoubleSupplier targetMeters) {
+        return yController.calculate(targetMeters.getAsDouble(), getRobotPose().getY());
     }
 
     // --------------------------------------------------------------------------------

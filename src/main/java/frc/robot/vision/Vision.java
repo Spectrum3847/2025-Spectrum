@@ -14,7 +14,7 @@ import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.reefscape.Field;
 import frc.robot.Robot;
 import frc.spectrumLib.Telemetry;
@@ -28,60 +28,48 @@ import java.util.Arrays;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Vision extends SubsystemBase implements NTSendable {
+public class Vision implements NTSendable, Subsystem {
 
-    public static final class VisionConfig {
+    public static class VisionConfig {
+        @Getter final String name = "Vision";
         /* Limelight Configuration */
-        @Getter static final String FRONT_LL = "limelight-front";
+        @Getter final String frontLL = "limelight-front";
 
         @Getter
-        static final LimelightConfig FRONT_CONFIG =
-                new LimelightConfig(FRONT_LL)
+        final LimelightConfig frontConfig =
+                new LimelightConfig(frontLL)
                         .withTranslation(0.215, 0, 0.188)
                         .withRotation(0, Math.toRadians(28), 0);
 
-        @Getter static final String BACK_LL = "limelight-back";
+        @Getter final String backLL = "limelight-back";
 
         @Getter
-        static final LimelightConfig BACK_CONFIG =
-                new LimelightConfig(BACK_LL)
+        final LimelightConfig backConfig =
+                new LimelightConfig(backLL)
                         .withTranslation(-0.215, 0.0, 0.188)
                         .withRotation(0, Math.toRadians(28), Math.toRadians(180));
 
         /* Pipeline configs */
-        @Getter static final int frontTagPipeline = 0;
-        @Getter static final int backTagPipeline = 0;
+        @Getter final int frontTagPipeline = 0;
+        @Getter final int backTagPipeline = 0;
 
         /* Pose Estimation Constants */
 
-        @Getter static double visionStdDevX = 0.5;
-        @Getter static double visionStdDevY = 0.5;
-        @Getter static double visionStdDevTheta = 0.5;
+        @Getter double visionStdDevX = 0.5;
+        @Getter double visionStdDevY = 0.5;
+        @Getter double visionStdDevTheta = 0.5;
 
         @Getter
-        static final Matrix<N3, N1> visionStdMatrix =
+        final Matrix<N3, N1> visionStdMatrix =
                 VecBuilder.fill(visionStdDevX, visionStdDevY, visionStdDevTheta);
     }
 
     /** Limelights */
-    @Getter
-    public final Limelight frontLL =
-            new Limelight(
-                    VisionConfig.FRONT_LL,
-                    VisionConfig.frontTagPipeline,
-                    VisionConfig.FRONT_CONFIG);
+    @Getter public final Limelight frontLL;
 
-    public final VisionLogger frontLLLogger = new VisionLogger("front", frontLL);
+    public final Limelight backLL;
 
-    public final Limelight backLL =
-            new Limelight(
-                    VisionConfig.BACK_LL, VisionConfig.backTagPipeline, VisionConfig.BACK_CONFIG);
-
-    public final VisionLogger backLLLogger = new VisionLogger("back", backLL);
-
-    public final Limelight[] allLimelights = {frontLL, backLL};
-
-    public final VisionLogger[] allLimelightLoggers = {frontLLLogger, backLLLogger};
+    public final Limelight[] allLimelights;
 
     private final DecimalFormat df = new DecimalFormat();
 
@@ -92,8 +80,16 @@ public class Vision extends SubsystemBase implements NTSendable {
     int[] blueTags = {17, 18, 19, 20, 21, 22};
     int[] redTags = {6, 7, 8, 9, 10, 11};
 
-    public Vision() {
-        setName("vision");
+    private VisionConfig config;
+
+    public Vision(VisionConfig config) {
+        this.config = config;
+
+        frontLL = new Limelight(config.frontLL, config.frontTagPipeline, config.frontConfig);
+
+        backLL = new Limelight(config.backLL, config.backTagPipeline, config.backConfig);
+
+        allLimelights = new Limelight[] {frontLL, backLL};
 
         // logging
         df.setMaximumFractionDigits(2);
@@ -101,11 +97,67 @@ public class Vision extends SubsystemBase implements NTSendable {
         /* Configure Limelight Settings Here */
         for (Limelight limelight : allLimelights) {
             limelight.setLEDMode(false);
-            limelight.setIMUmode(3);
+            limelight.setIMUmode(1);
         }
 
+        this.register();
+        telemetryInit();
+    }
+
+    @Override
+    public String getName() {
+        return config.getName();
+    }
+
+    // Setup the telemetry values, has to be called at the end of the implemented mechanism
+    // constructor
+    public void telemetryInit() {
         SendableRegistry.add(this, getName());
         SmartDashboard.putData(this);
+
+        Robot.getField2d().getObject(frontLL.getCameraName());
+        Robot.getField2d().getObject(backLL.getCameraName());
+    }
+
+    @Override
+    public void periodic() {
+        setLimeLightOrientation();
+        disabledLimelightUpdates();
+        enabledLimelightUpdates();
+
+        Robot.getField2d().getObject(frontLL.getCameraName()).setPose(getFrontMegaTag2Pose());
+        Robot.getField2d().getObject(backLL.getCameraName()).setPose(getBackMegaTag2Pose());
+    }
+
+    public Pose2d getFrontMegaTag2Pose() {
+        Pose2d pose = frontLL.getMegaTag2_Pose2d();
+        if (pose != null) {
+            return pose;
+        }
+        return new Pose2d();
+    }
+
+    public Pose2d getBackMegaTag2Pose() {
+        Pose2d pose = backLL.getMegaTag2_Pose2d();
+        if (pose != null) {
+            return pose;
+        }
+        return new Pose2d();
+    }
+
+    /*-------------------
+    initSendable
+    Use # to denote items that are settable
+    ------------*/
+
+    @Override
+    public void initSendable(NTSendableBuilder builder) {
+        builder.addDoubleProperty("FrontTX", frontLL::getTagTx, null);
+        builder.addDoubleProperty("FrontTY", frontLL::getTagTA, null);
+        builder.addDoubleProperty("FrontTagID", frontLL::getClosestTagID, null);
+        builder.addDoubleProperty("BackTX", backLL::getTagTx, null);
+        builder.addDoubleProperty("BackTY", backLL::getTagTA, null);
+        builder.addDoubleProperty("BackTagID", backLL::getClosestTagID, null);
     }
 
     private void setLimeLightOrientation() {
@@ -164,26 +216,6 @@ public class Vision extends SubsystemBase implements NTSendable {
                 Telemetry.print("FRONT MT1: Vision pose not present but tried to access it");
             }
         }
-    }
-
-    @Override
-    public void periodic() {
-        setLimeLightOrientation();
-        disabledLimelightUpdates();
-        enabledLimelightUpdates();
-    }
-
-    /*-------------------
-    initSendable
-    Use # to denote items that are settable
-    ------------*/
-
-    @Override
-    public void initSendable(NTSendableBuilder builder) {
-        builder.setSmartDashboardType("VisionTargetValues");
-        builder.addDoubleProperty("FrontTX", frontLL::getTagTx, null);
-        builder.addDoubleProperty("FrontTY", frontLL::getTagTA, null);
-        builder.addDoubleProperty("FrontRotation", frontLL::getTagRotationDegrees, null);
     }
 
     @SuppressWarnings("all")

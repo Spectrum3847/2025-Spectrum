@@ -177,7 +177,11 @@ public class Limelight {
         if (!isAttached()) {
             return new Pose3d();
         }
-        return LimelightHelpers.getBotPose3d_wpiBlue(config.name);
+        Pose3d pose3d = LimelightHelpers.getBotPose3d_wpiBlue(config.name);
+        if (pose3d == null) {
+            return new Pose3d();
+        }
+        return pose3d;
     }
 
     /** @return the corresponding LL Pose3d (MEGATAG2) for the alliance in DriverStation.java */
@@ -185,22 +189,37 @@ public class Limelight {
         if (!isAttached()) {
             return new Pose2d();
         }
-        return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(config.name)
-                .pose; // 2024: all alliances use blue as 0,0
+        PoseEstimate poseEstimate =
+                LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(config.name);
+        if (poseEstimate == null) {
+            return new Pose2d();
+        }
+        return poseEstimate.pose;
     }
 
     public PoseEstimate getMegaTag1_PoseEstimate() {
         if (!isAttached()) {
             return new PoseEstimate();
         }
-        return LimelightHelpers.getBotPoseEstimate_wpiBlue(config.name);
+
+        PoseEstimate poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(config.name);
+        if (poseEstimate == null) {
+            return new PoseEstimate();
+        }
+        return poseEstimate;
     }
 
     public PoseEstimate getMegaTag2_PoseEstimate() {
         if (!isAttached()) {
             return new PoseEstimate();
         }
-        return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(config.name);
+
+        PoseEstimate poseEstimate =
+                LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(config.name);
+        if (poseEstimate == null) {
+            return new PoseEstimate();
+        }
+        return poseEstimate;
     }
 
     public boolean hasAccuratePose() {

@@ -83,11 +83,7 @@ public class ElevatorStates {
         L3Algae.and(actionState).whileTrue(move(config::getHome, "Elevator.L3AlgaeHome"));
         netAlgae.and(actionPrepState).whileTrue(move(config::getNetAlgae, "Elevator.NetAlgae"));
 
-        Robot.getPilot()
-                .reZero_start
-                .onTrue(elevator.resetToInitialPos()); // TODO: check if this works
-        // Robot.getOperator().climbPrep_start.whileTrue(move(config::getClimbPrep,
-        // "Elbow.climbPrep"));
+        Robot.getPilot().reZero_start.onTrue(elevator.resetToInitialPos());
     }
 
     public static DoubleSupplier getPosition() {

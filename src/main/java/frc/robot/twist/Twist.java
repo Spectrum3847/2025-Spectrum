@@ -72,7 +72,7 @@ public class Twist extends Mechanism {
         // Need to add auto launching positions when auton is added
 
         /* Cancoder config settings */
-        @Getter private final double CANcoderGearRatio = 1; // TODO: find CANcoder gear ratio
+        @Getter private final double CANcoderGearRatio = 1;
         @Getter private double CANcoderOffset = 0;
         @Getter private boolean isCANcoderAttached = false;
 
@@ -453,6 +453,7 @@ public class Twist extends Mechanism {
             return startingAngle * ((Math.abs(posePercent) - 50) / 50);
         }
 
+        @SuppressWarnings("unused ")
         private double calculateBaseLength(
                 double startingLength, double startingAngle, double angle, double posePercent) {
             double startingVerticalLeg =
