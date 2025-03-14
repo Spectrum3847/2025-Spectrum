@@ -118,23 +118,23 @@ public class Zones {
 
             if (reefTheta == 60) {
                 double point1[] = {reefBlueCenter[0], reefBlueCenter[1] + distanceFactor};
-                double point2[] = {reefBlueCenter[0] + distanceFactor * Math.cos(theta), reefBlueCenter[1] + Math.sin(theta)};
+                double point2[] = {reefBlueCenter[0] + distanceFactor * Math.sin(theta), reefBlueCenter[1] + Math.cos(theta)};
                 if (isPointInZone(point1, point2, reefBlueCenter, robotPose)) {
                     return i + 17; //returns the tag
                 }
             }
 
             if (reefTheta == 0) {
-                double point1[] = {reefBlueCenter[0] + distanceFactor * Math.cos(theta), reefBlueCenter[1] + Math.sin(theta)};
-                double point2[] = {reefBlueCenter[0] + distanceFactor * Math.cos(theta), reefBlueCenter[1] - distanceFactor * Math.sin(theta)};
+                double point1[] = {reefBlueCenter[0] + distanceFactor * Math.sin(theta), reefBlueCenter[1] + Math.cos(theta)};
+                double point2[] = {reefBlueCenter[0] + distanceFactor * Math.sin(theta), reefBlueCenter[1] - distanceFactor * Math.cos(theta)};
                 if (isPointInZone(point1, point2, reefBlueCenter, robotPose)) {
                     return i + 17; //returns the tag
                 }
             }
 
             if (reefTheta == 300) {
-                double point1[] = {reefBlueCenter[0] + distanceFactor * Math.cos(theta), reefBlueCenter[1] - distanceFactor * Math.sin(theta)};
-                double point2[] = {reefBlueCenter[0], reefBlueCenter[1]- distanceFactor};
+                double point1[] = {reefBlueCenter[0] + distanceFactor * Math.sin(theta), reefBlueCenter[1] - distanceFactor * Math.cos(theta)};
+                double point2[] = {reefBlueCenter[0], reefBlueCenter[1] - distanceFactor};
                 if (isPointInZone(point1, point2, reefBlueCenter, robotPose)) {
                     return i + 17; //returns the tag
                 }
@@ -145,6 +145,7 @@ public class Zones {
       return -1;
     }
 
+    
     /**
      * Red Zones of the reef
      *  
@@ -189,23 +190,23 @@ public class Zones {
 
             if (reefTheta == 60) {
                 double point1[] = {reefRedCenter[0], reefRedCenter[1] + distanceFactor};
-                double point2[] = {reefRedCenter[0] + distanceFactor * Math.cos(theta), reefRedCenter[1] + Math.sin(theta)};
+                double point2[] = {reefRedCenter[0] + distanceFactor * Math.sin(theta), reefRedCenter[1] + Math.cos(theta)};
                 if (isPointInZone(point1, point2, reefRedCenter, robotPose)) {
                     return i + 6; //returns the tag
                 }
             }
 
             if (reefTheta == 0) {
-                double point1[] = {reefRedCenter[0] + distanceFactor * Math.cos(theta), reefRedCenter[1] + Math.sin(theta)};
-                double point2[] = {reefRedCenter[0] + distanceFactor * Math.cos(theta), reefRedCenter[1] - distanceFactor * Math.sin(theta)};
+                double point1[] = {reefRedCenter[0] + distanceFactor * Math.sin(theta), reefRedCenter[1] + Math.cos(theta)};
+                double point2[] = {reefRedCenter[0] + distanceFactor * Math.sin(theta), reefRedCenter[1] - distanceFactor * Math.cos(theta)};
                 if (isPointInZone(point1, point2, reefRedCenter, robotPose)) {
                     return i + 6; //returns the tag
                 }
             }
 
             if (reefTheta == 300) {
-                double point1[] = {reefRedCenter[0] + distanceFactor * Math.cos(theta), reefRedCenter[1] - distanceFactor * Math.sin(theta)};
-                double point2[] = {reefRedCenter[0], reefRedCenter[1]- distanceFactor};
+                double point1[] = {reefRedCenter[0] + distanceFactor * Math.sin(theta), reefRedCenter[1] - distanceFactor * Math.cos(theta)};
+                double point2[] = {reefRedCenter[0], reefRedCenter[1] - distanceFactor};
                 if (isPointInZone(point1, point2, reefRedCenter, robotPose)) {
                     return i + 6; //returns the tag
                 }
