@@ -10,7 +10,6 @@ import frc.robot.swerve.Swerve;
 public class Zones {
 
     private static final Swerve swerve = Robot.getSwerve();
-    private static final double[] robot2d = {Robot.getSwerve().getRobotPose().getX(), Robot.getSwerve().getRobotPose().getY()};
 
     // zones
     public static final Trigger topLeftZone =
@@ -28,7 +27,8 @@ public class Zones {
 
 
     //TODO: add the reef face zones of the red tags 
-    
+    //TODO: check all the x values for blueReefZones
+    //(tagid, x1, y1, x2, y2)
     public static final double[][] blueReefZones = {
         {17, Units.inchesToMeters(176.746), Units.inchesToMeters(73.501), Units.inchesToMeters(103.13384067832271), Units.inchesToMeters(116.001)},
         {18, Units.inchesToMeters(103.13384067832271), Units.inchesToMeters(116.001), Units.inchesToMeters(103.13384067832271), Units.inchesToMeters(201.001)},
@@ -38,7 +38,16 @@ public class Zones {
         {22, Units.inchesToMeters(250.3581593216773), Units.inchesToMeters(116.001), Units.inchesToMeters(176.746), Units.inchesToMeters(73.501)}
     };
 
-    public static final double[][] redReefZones = {{6},{7},{8},{9},{10},{11}};
+    // (tagid, x1, y1, x2, y2) Going right to left for each reef face
+    public static final double[][] redReefZones = {
+        {6, Units.inchesToMeters(546.87), Units.inchesToMeters(142.55641), Units.inchesToMeters(514.3), Units.inchesToMeters(116.02)}
+        {7, Units.inchesToMeters(546.87), Units.inchesToMeters(142.55641), Units.inchesToMeters(546.87), Units.inchesToMeters(174.44359)},
+        {8, Units.inchesToMeters(546.87), Units.inchesToMeters(174.44359), Units.inchesToMeters(514.3), Units.inchesToMeters(201.001)},
+
+        {9, Units.inchesToMeters(481.39), Units.inchesToMeters(174.44359), Units.inchesToMeters(514.3), Units.inchesToMeters(201.001)},
+        {10, Units.inchesToMeters(481.39), Units.inchesToMeters(142.55641), Units.inchesToMeters(481.39), Units.inchesToMeters(174.44359)},
+        {11, Units.inchesToMeters(481.39), Units.inchesToMeters(142.55641) ,Units.inchesToMeters(514.3), Units.inchesToMeters(116.02)}
+    };
 
     public static final Trigger bargeZone =
             swerve.inXzoneAlliance(
