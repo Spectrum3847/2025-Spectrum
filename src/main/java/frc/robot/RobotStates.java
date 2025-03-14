@@ -160,11 +160,6 @@ public class RobotStates {
         operator.algaeStage.or(operator.coralStage).onTrue(actionState.setFalse());
 
         pilot.algaeRemovalAfterScore.onTrue(algaeAfterAction.setTrue());
-        actionState
-                .and(algaeAfterAction)
-                .onTrue(
-                        l2.setTrueAfterTime(RobotStates::getScoreTime),
-                        algae.setTrueAfterTime(RobotStates::getScoreTime));
 
         // *********************************
         // Intaking States
@@ -186,13 +181,17 @@ public class RobotStates {
         pilot.l3AlgaeRemoval.onFalse(l3.setFalse(), actionPrepState.setFalse());
 
         if (Robot.getVision().isL3Algae()) {
-            pilot.algaeRemovalAfterScore.whileTrue(
-                    algae.setTrue(), coral.setFalse(), l3.setTrue(), actionPrepState.setTrue());
-            pilot.algaeRemovalAfterScore.onFalse(l3.setFalse(), actionPrepState.setFalse());
+            actionState
+                .and(algaeAfterAction)
+                .onTrue(
+                        l3.setTrueAfterTime(RobotStates::getScoreTime),
+                        algae.setTrueAfterTime(RobotStates::getScoreTime));
         } else {
-            pilot.algaeRemovalAfterScore.whileTrue(
-                    algae.setTrue(), coral.setFalse(), l2.setTrue(), actionPrepState.setTrue());
-            pilot.algaeRemovalAfterScore.onFalse(l2.setFalse(), actionPrepState.setFalse());
+            actionState
+                .and(algaeAfterAction)
+                .onTrue(
+                        l2.setTrueAfterTime(RobotStates::getScoreTime),
+                        algae.setTrueAfterTime(RobotStates::getScoreTime));
         }
 
         // **********************************
