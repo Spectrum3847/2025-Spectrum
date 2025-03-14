@@ -32,9 +32,9 @@ public class Zones {
     public static final double[][] blueReefZones = {
         {17, Units.inchesToMeters(176.746), Units.inchesToMeters(73.501), Units.inchesToMeters(103.13384067832271), Units.inchesToMeters(116.001)},
         {18, Units.inchesToMeters(103.13384067832271), Units.inchesToMeters(116.001), Units.inchesToMeters(103.13384067832271), Units.inchesToMeters(201.001)},
-        {19, Units.inchesToMeters(103.13384067832271), Units.inchesToMeters(201.001), Units.inchesToMeters(103.13384067832271), Units.inchesToMeters(201.001)},
-        {20, Units.inchesToMeters(176.746), Units.inchesToMeters(243.501), Units.inchesToMeters(176.746), Units.inchesToMeters(243.501)},
-        {21, Units.inchesToMeters(250.3581593216773), Units.inchesToMeters(201.001), Units.inchesToMeters(250.3581593216773), Units.inchesToMeters(201.001)},
+        {19, Units.inchesToMeters(103.13384067832271), Units.inchesToMeters(201.001), Units.inchesToMeters(176.746), Units.inchesToMeters(243.501)},
+        {20, Units.inchesToMeters(176.746), Units.inchesToMeters(243.501), Units.inchesToMeters(250.3581593216773), Units.inchesToMeters(201.001)},
+        {21, Units.inchesToMeters(250.3581593216773), Units.inchesToMeters(201.001), Units.inchesToMeters(250.3581593216773), Units.inchesToMeters(116.001)},
         {22, Units.inchesToMeters(250.3581593216773), Units.inchesToMeters(116.001), Units.inchesToMeters(176.746), Units.inchesToMeters(73.501)}
     };
 
