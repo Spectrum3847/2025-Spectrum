@@ -27,8 +27,17 @@ public class Zones {
                     .and(swerve.inYzoneAlliance(0, Field.Reef.center.getY()));
 
 
-    //TODO: add the reef face zones of the 12 tags
-    public static final double[][] blueReefZones = {{17},{18},{19},{20},{21},{22}};
+    //TODO: add the reef face zones of the red tags 
+    
+    public static final double[][] blueReefZones = {
+        {17, Units.inchesToMeters(176.746), Units.inchesToMeters(73.501), Units.inchesToMeters(103.13384067832271), Units.inchesToMeters(116.001)},
+        {18, Units.inchesToMeters(103.13384067832271), Units.inchesToMeters(116.001), Units.inchesToMeters(103.13384067832271), Units.inchesToMeters(201.001)},
+        {19, Units.inchesToMeters(103.13384067832271), Units.inchesToMeters(201.001), Units.inchesToMeters(103.13384067832271), Units.inchesToMeters(201.001)},
+        {20, Units.inchesToMeters(176.746), Units.inchesToMeters(243.501), Units.inchesToMeters(176.746), Units.inchesToMeters(243.501)},
+        {21, Units.inchesToMeters(250.3581593216773), Units.inchesToMeters(201.001), Units.inchesToMeters(250.3581593216773), Units.inchesToMeters(201.001)},
+        {22, Units.inchesToMeters(250.3581593216773), Units.inchesToMeters(116.001), Units.inchesToMeters(176.746), Units.inchesToMeters(73.501)}
+    };
+
     public static final double[][] redReefZones = {{6},{7},{8},{9},{10},{11}};
 
     public static final Trigger bargeZone =
@@ -86,15 +95,15 @@ public class Zones {
     public double getBlueReefZoneID(double[] robotPose) {
         double[] reefBlueCenter = {Field.Reef.center.getX(), Field.Reef.center.getY()};
         double distanceFactor = 85;
-        double[] blueReefTagAngles = {240,180,120,60,0,300}; // Reef face ID's 17-22
+        double[] blueReefTagAngles = {240,180,120,60,0,300};// Reef face ID's 17-22
 
         for (int i = 0; i < 6 ; i++) {
-            double theta = Math.toRadians(60);
+            double theta = Math.toRadians(30);
             double reefTheta = blueReefTagAngles[i]; //given theta of reef face
 
             if (reefTheta == 240) {
-                double point1[] = {reefBlueCenter[0] - distanceFactor * Math.cos(theta), reefBlueCenter[1] - distanceFactor * Math.sin(theta)};
-                double point2[] = {reefBlueCenter[0], reefBlueCenter[1] - distanceFactor};
+                double point1[] = {reefBlueCenter[0], reefBlueCenter[1] - distanceFactor};
+                double point2[] = {reefBlueCenter[0] - distanceFactor * Math.cos(theta), reefBlueCenter[1] - distanceFactor * Math.sin(theta)};
                 if (isPointInZone(point1, point2, reefBlueCenter, robotPose)) {
                     return i + 17; //returns the tag
                 }
@@ -118,29 +127,28 @@ public class Zones {
 
             if (reefTheta == 60) {
                 double point1[] = {reefBlueCenter[0], reefBlueCenter[1] + distanceFactor};
-                double point2[] = {reefBlueCenter[0] + distanceFactor * Math.sin(theta), reefBlueCenter[1] + Math.cos(theta)};
+                double point2[] = {reefBlueCenter[0] + distanceFactor * Math.cos(theta), reefBlueCenter[1] + distanceFactor * Math.sin(theta)};
                 if (isPointInZone(point1, point2, reefBlueCenter, robotPose)) {
                     return i + 17; //returns the tag
                 }
             }
 
             if (reefTheta == 0) {
-                double point1[] = {reefBlueCenter[0] + distanceFactor * Math.sin(theta), reefBlueCenter[1] + Math.cos(theta)};
-                double point2[] = {reefBlueCenter[0] + distanceFactor * Math.sin(theta), reefBlueCenter[1] - distanceFactor * Math.cos(theta)};
+                double point1[] = {reefBlueCenter[0] + distanceFactor * Math.cos(theta), reefBlueCenter[1] + distanceFactor * Math.sin(theta)};
+                double point2[] = {reefBlueCenter[0] + distanceFactor * Math.cos(theta), reefBlueCenter[1] - distanceFactor * Math.sin(theta)};
                 if (isPointInZone(point1, point2, reefBlueCenter, robotPose)) {
                     return i + 17; //returns the tag
                 }
             }
 
             if (reefTheta == 300) {
-                double point1[] = {reefBlueCenter[0] + distanceFactor * Math.sin(theta), reefBlueCenter[1] - distanceFactor * Math.cos(theta)};
+                double point1[] = {reefBlueCenter[0] + distanceFactor * Math.cos(theta), reefBlueCenter[1] - distanceFactor * Math.sin(theta)};
                 double point2[] = {reefBlueCenter[0], reefBlueCenter[1] - distanceFactor};
                 if (isPointInZone(point1, point2, reefBlueCenter, robotPose)) {
                     return i + 17; //returns the tag
                 }
             }
         }
-
       // Not in any reef zone
       return -1;
     }
@@ -161,7 +169,7 @@ public class Zones {
         double[] redReefTagAngles = {300,0,60,120,180,240}; // Reef face ID's 6-11
 
         for (int i = 0; i < 6 ; i++) {
-            double theta = Math.toRadians(60);
+            double theta = Math.toRadians(30);
             double reefTheta = redReefTagAngles[i]; //given theta of reef face
 
             if (reefTheta == 240) {
@@ -190,22 +198,22 @@ public class Zones {
 
             if (reefTheta == 60) {
                 double point1[] = {reefRedCenter[0], reefRedCenter[1] + distanceFactor};
-                double point2[] = {reefRedCenter[0] + distanceFactor * Math.sin(theta), reefRedCenter[1] + Math.cos(theta)};
+                double point2[] = {reefRedCenter[0] + distanceFactor * Math.cos(theta), reefRedCenter[1] + distanceFactor * Math.sin(theta)};
                 if (isPointInZone(point1, point2, reefRedCenter, robotPose)) {
                     return i + 6; //returns the tag
                 }
             }
 
             if (reefTheta == 0) {
-                double point1[] = {reefRedCenter[0] + distanceFactor * Math.sin(theta), reefRedCenter[1] + Math.cos(theta)};
-                double point2[] = {reefRedCenter[0] + distanceFactor * Math.sin(theta), reefRedCenter[1] - distanceFactor * Math.cos(theta)};
+                double point1[] = {reefRedCenter[0] + distanceFactor * Math.cos(theta), reefRedCenter[1] + distanceFactor * Math.sin(theta)};
+                double point2[] = {reefRedCenter[0] + distanceFactor * Math.cos(theta), reefRedCenter[1] - distanceFactor * Math.sin(theta)};
                 if (isPointInZone(point1, point2, reefRedCenter, robotPose)) {
                     return i + 6; //returns the tag
                 }
             }
 
             if (reefTheta == 300) {
-                double point1[] = {reefRedCenter[0] + distanceFactor * Math.sin(theta), reefRedCenter[1] - distanceFactor * Math.cos(theta)};
+                double point1[] = {reefRedCenter[0] + distanceFactor * Math.cos(theta), reefRedCenter[1] - distanceFactor * Math.sin(theta)};
                 double point2[] = {reefRedCenter[0], reefRedCenter[1] - distanceFactor};
                 if (isPointInZone(point1, point2, reefRedCenter, robotPose)) {
                     return i + 6; //returns the tag
@@ -215,9 +223,5 @@ public class Zones {
         // Not in any reef zone
         return -1;
    }
-
-
-
-
 
 }
