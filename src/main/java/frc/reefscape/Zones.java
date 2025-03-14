@@ -40,13 +40,13 @@ public class Zones {
 
     // (tagid, x1, y1, x2, y2) Going right to left for each reef face
     public static final double[][] redReefZones = {
-        {6, Units.inchesToMeters(546.87), Units.inchesToMeters(142.55641), Units.inchesToMeters(514.3), Units.inchesToMeters(116.02)},
-        {7, Units.inchesToMeters(546.87), Units.inchesToMeters(142.55641), Units.inchesToMeters(546.87), Units.inchesToMeters(174.44359)},
-        {8, Units.inchesToMeters(546.87), Units.inchesToMeters(174.44359), Units.inchesToMeters(514.3), Units.inchesToMeters(201.001)},
+        {6, Units.inchesToMeters(546.846), Units.inchesToMeters(73.501), Units.inchesToMeters(620.4581593216773), Units.inchesToMeters(116.001)},
+        {7, Units.inchesToMeters(620.4581593216773), Units.inchesToMeters(116.001), Units.inchesToMeters(620.45815932167737), Units.inchesToMeters(201.001)},
+        {8, Units.inchesToMeters(620.45815932167737), Units.inchesToMeters(201.001), Units.inchesToMeters(546.846), Units.inchesToMeters(243.501)},
 
-        {9, Units.inchesToMeters(481.39), Units.inchesToMeters(174.44359), Units.inchesToMeters(514.3), Units.inchesToMeters(201.001)},
-        {10, Units.inchesToMeters(481.39), Units.inchesToMeters(142.55641), Units.inchesToMeters(481.39), Units.inchesToMeters(174.44359)},
-        {11, Units.inchesToMeters(481.39), Units.inchesToMeters(142.55641) ,Units.inchesToMeters(514.3), Units.inchesToMeters(116.02)}
+        {9, Units.inchesToMeters(546.846), Units.inchesToMeters(243.501), Units.inchesToMeters(473.23384067832274), Units.inchesToMeters(201.001)},
+        {10, Units.inchesToMeters(473.23384067832274), Units.inchesToMeters(201.001), Units.inchesToMeters(473.23384067832274), Units.inchesToMeters(116.001)},
+        {11, Units.inchesToMeters(473.23384067832274), Units.inchesToMeters(116.001) ,Units.inchesToMeters(546.846), Units.inchesToMeters(73.501)}
     };
 
     public static final Trigger bargeZone =
