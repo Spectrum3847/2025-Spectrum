@@ -242,18 +242,6 @@ public class Twist extends Mechanism {
         return super.moveToDegrees(degrees).withName(getName() + ".runPoseDegrees");
     }
 
-    public Command moveToDegrees(DoubleSupplier degrees, boolean shortestPath) {
-        if (shortestPath) {
-            return moveToDegrees(degrees);
-        } else {
-            if (degrees.getAsDouble() < 0) {
-                return moveToDegrees(() -> degrees.getAsDouble() + 360);
-            } else {
-                return moveToDegrees(() -> degrees.getAsDouble() - 360);
-            }
-        }
-    }
-
     private void setDegrees(DoubleSupplier degrees) {
         setMMPositionFoc(() -> degreesToRotations(degrees));
     }

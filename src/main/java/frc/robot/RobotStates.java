@@ -157,6 +157,9 @@ public class RobotStates {
 
         operator.algaeStage.or(operator.coralStage).onTrue(actionState.setFalse());
 
+        pilot.algaeRemovalAfterScore.onTrue(algaeAfterAction.setTrue());
+        actionState.onFalse(algaeAfterAction.setFalse());
+
         // *********************************
         // Intaking States
         stationIntaking.whileTrue(coral.toggleToTrue(), algae.setFalse());
@@ -177,11 +180,11 @@ public class RobotStates {
         pilot.l3AlgaeRemoval.onFalse(l3.setFalse(), actionPrepState.setFalse());
 
         if (Robot.getVision().isL3Algae()) {
-            pilot.algaeRemovalAfterScore.onTrue(
+            pilot.algaeRemovalAfterScore.whileTrue(
                     algae.setTrue(), coral.setFalse(), l3.setTrue(), actionPrepState.setTrue());
             pilot.algaeRemovalAfterScore.onFalse(l3.setFalse(), actionPrepState.setFalse());
         } else {
-            pilot.algaeRemovalAfterScore.onTrue(
+            pilot.algaeRemovalAfterScore.whileTrue(
                     algae.setTrue(), coral.setFalse(), l2.setTrue(), actionPrepState.setTrue());
             pilot.algaeRemovalAfterScore.onFalse(l2.setFalse(), actionPrepState.setFalse());
         }
