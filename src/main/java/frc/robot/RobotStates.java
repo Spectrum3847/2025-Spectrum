@@ -150,11 +150,23 @@ public class RobotStates {
         if (Robot.getVision().isL3Algae()) {
             actionState
                     .and(algaeAfterAction)
-                    .onTrue(l3.setTrue(), algae.setTrue());
+                    .onTrue(
+                            l3.setTrueAfterTime(RobotStates::getScoreTime),
+                            algae.setTrue(),
+                            coral.setFalse(),
+                            l1.setFalseAfterTime(RobotStates::getScoreTime),
+                            l2.setFalseAfterTime(RobotStates::getScoreTime),
+                            l4.setFalseAfterTime(RobotStates::getScoreTime));
         } else {
             actionState
                     .and(algaeAfterAction)
-                    .onTrue(l2.setTrue(), algae.setTrue());
+                    .onTrue(
+                            l2.setTrueAfterTime(RobotStates::getScoreTime),
+                            algae.setTrue(),
+                            coral.setFalse(),
+                            l1.setFalseAfterTime(RobotStates::getScoreTime),
+                            l3.setFalseAfterTime(RobotStates::getScoreTime),
+                            l4.setFalseAfterTime(RobotStates::getScoreTime));
         }
 
         // **********************************
