@@ -87,8 +87,6 @@ public class RobotStates {
 
     public static final Trigger hasGamePiece = new Trigger(Robot.getIntake()::hasIntakeGamePiece);
 
-    public static final SpectrumState backwardMode = new SpectrumState("backward");
-
     // Setup any binding to set states
     public static void setupStates() {
         Util.disabled.whileTrue(clearStates().repeatedly());
@@ -184,13 +182,17 @@ public class RobotStates {
         operator.leftScore.and(operator.staged).onTrue(rightScore.setFalse());
         operator.rightScore.and(operator.staged).onTrue(rightScore.setTrue());
 
+        // *********************************
         // Auton States
-
         autonSourceIntakeOn.onTrue(autonStationIntake.setTrue());
         autonSourceIntakeOff.onTrue(autonStationIntake.setFalse());
 
         autonLeftL4.onTrue(rightScore.setFalse());
         autonRightL4.onTrue(rightScore.setTrue());
+
+        // *********************************
+        // Reversal States
+        operator.toggleReverse.onTrue(reverse.toggle());
     }
 
     private RobotStates() {

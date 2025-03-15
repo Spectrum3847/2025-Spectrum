@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Robot;
 import frc.robot.twist.Twist.TwistConfig;
 import frc.spectrumLib.Telemetry;
+import java.util.function.DoubleSupplier;
 
 public class TwistStates {
     private static Twist twist = Robot.getTwist();
@@ -24,27 +25,24 @@ public class TwistStates {
 
         // Robot.getPilot().reZero_start.onTrue(twist.resetToInitialPos());
 
-        stationIntaking.whileTrue(
-                twist.moveToDegrees((config::getStationIntake)).withName("Twist.stationIntake"));
+        stationIntaking.whileTrue(move(config::getStationIntake, "Twist.stationIntake"));
 
-        algae.or(groundAlgae, stagedAlgae)
-                .whileTrue(twist.moveToDegrees(config::getAlgaeIntake).withName("Twist.Algae"));
+        algae.or(groundAlgae, stagedAlgae).whileTrue(move(config::getAlgaeIntake, "Twist.Algae"));
 
         Robot.getPilot()
                 .groundAlgae_RT
-                .whileTrue(
-                        twist.moveToDegrees(config::getAlgaeIntake).withName("Twist.AlgaeIntake"));
+                .whileTrue(move(config::getAlgaeIntake, "Twist.AlgaeIntake"));
 
-        L1Coral.or(groundCoral)
-                .whileTrue(
-                        twist.moveToDegrees(config::getL1Coral).withName("Twist.l1CoralOrGround"));
+        L1Coral.or(groundCoral).whileTrue(move(config::getL1Coral, "Twist.l1CoralOrGround"));
 
-        netAlgae.whileTrue(twist.moveToDegrees(config::getNet).withName("Twist.Net"));
+        netAlgae.whileTrue(move(config::getNet, "Twist.Net"));
 
-        branch.and(rightScore)
-                .whileTrue(twist.moveToDegrees(config::getRightCoral).withName("Twist.rightCoral"));
-        branch.and(rightScore.not())
-                .whileTrue(twist.moveToDegrees(config::getLeftCoral).withName("Twist.leftCoral"));
+        branch.and(rightScore).whileTrue(move(config::getRightCoral, "Twist.rightCoral"));
+        branch.and(rightScore.not()).whileTrue(move(config::getLeftCoral, "Twist.leftCoral"));
+    }
+
+    public static Command move(DoubleSupplier degrees, String name) {
+        return twist.move(degrees).withName(name);
     }
 
     public static Command coastMode() {
@@ -62,11 +60,5 @@ public class TwistStates {
     // Log Command
     protected static Command log(Command cmd) {
         return Telemetry.log(cmd);
-    }
-
-    // Negate position command
-    protected static Command reverse(Command cmd) {
-        return cmd.deadlineFor(
-                Commands.startEnd(() -> config.setReversed(true), () -> config.setReversed(false)));
     }
 }

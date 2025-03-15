@@ -39,6 +39,8 @@ public class Operator extends Gamepad {
 
     public final Trigger homeElevator_A = A.and(nothingStaged, teleop);
 
+    public final Trigger toggleReverse = upDpad.and(climbPrep_start.not(), teleop);
+
     // DISABLED TRIGGERS
     public final Trigger coastOn_dB = disabled.and(B);
     public final Trigger coastOff_dA = disabled.and(A);

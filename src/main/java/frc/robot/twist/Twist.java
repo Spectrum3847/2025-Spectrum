@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 import frc.robot.RobotSim;
+import frc.robot.RobotStates;
 import frc.spectrumLib.Rio;
 import frc.spectrumLib.SpectrumCANcoder;
 import frc.spectrumLib.Telemetry;
@@ -43,9 +44,9 @@ public class Twist extends Mechanism {
 
         @Getter private final double home = 0;
         @Getter private final double coralLollipop = 90;
-        @Getter private final double stationIntake = 179.9;
+        @Getter private final double stationIntake = 0; // 179.9;
         @Getter private final double algaeIntake = stationIntake;
-        @Getter private final double groundCoralIntake = 0;
+        @Getter private final double groundCoralIntake = 179.9;
         @Getter private final double leftCoral = 90;
         @Getter private final double rightCoral = -90;
         @Getter private final double l1Coral = 0;
@@ -243,6 +244,21 @@ public class Twist extends Mechanism {
 
     private void setDegrees(DoubleSupplier degrees) {
         setMMPositionFoc(() -> degreesToRotations(degrees));
+    }
+
+    public Command move(DoubleSupplier degrees) {
+        return run(
+                () -> {
+                    if (RobotStates.reverse.getAsBoolean()) {
+                        if (degrees.getAsDouble() + 180 > 180) {
+                            setDegrees(() -> degrees.getAsDouble() - 179.9);
+                        } else {
+                            setDegrees(() -> degrees.getAsDouble() + 179.9);
+                        }
+                    } else {
+                        setDegrees(degrees);
+                    }
+                });
     }
 
     public Command twistHome() {
