@@ -55,7 +55,7 @@ public class IntakeStates {
                                         config::getCoralIntakeTorqueCurrent,
                                         config::getCoralIntakeSupplyCurrent)
                                 .withName("Intake.StationIntaking"));
-        
+
         groundCoral.whileTrue(
                 intake.intakeCoral(
                                 config::getCoralGroundTorqueCurrent,
