@@ -36,7 +36,7 @@ public class Auton {
     public static final EventTrigger autonScore = new EventTrigger("score");
     public static final EventTrigger autonLeftL4 = new EventTrigger("leftL4");
     public static final EventTrigger autonRightL4 = new EventTrigger("rightL4");
-    public static final EventTrigger autonL1 = new EventTrigger("L1");
+    public static final EventTrigger autonL1 = new EventTrigger("L1"); //trough
     public static final EventTrigger autonNet = new EventTrigger("net");
     public static final EventTrigger autonProcessor = new EventTrigger("processor");
     public static final EventTrigger autonClearStates = new EventTrigger("clearStates");

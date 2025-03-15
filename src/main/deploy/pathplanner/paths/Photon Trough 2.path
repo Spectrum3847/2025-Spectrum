@@ -3,32 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.28,
-        "y": 5.1
+        "x": 5.053,
+        "y": 5.307
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.2541573033707865,
-        "y": 6.084803370786516
+        "x": 4.502528089887639,
+        "y": 7.50870786516854
       },
       "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 3.795926966292135,
-        "y": 6.613132022471909
-      },
-      "prevControl": {
-        "x": 4.518960674157304,
-        "y": 6.404536516853932
-      },
-      "nextControl": {
-        "x": 3.3885848754850176,
-        "y": 6.730650373922322
-      },
-      "isLocked": false,
-      "linkedName": null
+      "linkedName": "Trough 1-2"
     },
     {
       "anchor": {
@@ -36,12 +20,12 @@
         "y": 7.06
       },
       "prevControl": {
-        "x": 2.234831631483027,
-        "y": 6.917136008925118
+        "x": 1.465734405019621,
+        "y": 6.933672384290567
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Trough 2-3"
     }
   ],
   "rotationTargets": [],
@@ -50,14 +34,14 @@
   "eventMarkers": [
     {
       "name": "sourceIntake",
-      "waypointRelativePos": 1.2411902897415883,
-      "endWaypointRelativePos": 2.0,
+      "waypointRelativePos": 0.6957713390759535,
+      "endWaypointRelativePos": 1.0,
       "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 2.5,
+    "maxAcceleration": 2.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -65,7 +49,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -53.5
+    "rotation": -53.0
   },
   "reversed": false,
   "folder": "Photon",
@@ -73,5 +57,5 @@
     "velocity": 0,
     "rotation": -119.99999999999999
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }
