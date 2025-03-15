@@ -638,7 +638,7 @@ public class Vision implements NTSendable, Subsystem {
         }
 
         else {
-            cageDiffs[0] = Math.abs(Field.flipYifRed(robotPose.getY()) - Field.flipYifRed(Units.inchesToMeters(286.779)) );
+            cageDiffs[0] = Math.abs(Field.flipYifRed(robotPose.getY()) - Field.flipYifRed(Units.inchesToMeters(286.779)));
             cageDiffs[1] = Math.abs(Field.flipYifRed(robotPose.getY()) - Field.flipYifRed(Units.inchesToMeters(242.855)));
             cageDiffs[2] = Math.abs(Field.flipYifRed(robotPose.getY()) - Field.flipYifRed(Units.inchesToMeters(199.947)));
 
