@@ -600,7 +600,7 @@ public class Vision implements NTSendable, Subsystem {
             return 0;
         }
     }
-  
+
     public double getTagTX() {
         if (frontLL.targetInView()) {
             return frontLL.getTagTx();
@@ -609,9 +609,10 @@ public class Vision implements NTSendable, Subsystem {
         } else {
             return 0;
         }
-    
-     public String getCageToClimb() {
-        Pose2d robotPose = frontLL.getMegaPose2d();
+    }
+
+    public String getCageToClimb() {
+        Pose2d robotPose = frontLL.getMegaTag2_Pose2d();
         double[] cageDiffs = new double[3];
 
         if (Field.isBlue()) {
@@ -621,110 +622,49 @@ public class Vision implements NTSendable, Subsystem {
 
             if (indexOfSmallest(cageDiffs) == 0) {
                 return "B1";
-            }
-
-            else if (indexOfSmallest(cageDiffs) == 1) {
+            } else if (indexOfSmallest(cageDiffs) == 1) {
                 return "B2";
-            }
-
-            else if (indexOfSmallest(cageDiffs) == 2) {
+            } else if (indexOfSmallest(cageDiffs) == 2) {
                 return "B3";
-            }
-
-            else {
+            } else {
                 return "Nothing";
             }
-        }
-
-        else {
-            cageDiffs[0] = Math.abs(Field.flipYifRed(robotPose.getY()) - Field.flipYifRed(Units.inchesToMeters(286.779)) );
-            cageDiffs[1] = Math.abs(Field.flipYifRed(robotPose.getY()) - Field.flipYifRed(Units.inchesToMeters(242.855)));
-            cageDiffs[2] = Math.abs(Field.flipYifRed(robotPose.getY()) - Field.flipYifRed(Units.inchesToMeters(199.947)));
+        } else {
+            cageDiffs[0] =
+                    Math.abs(
+                            Field.flipYifRed(robotPose.getY())
+                                    - Field.flipYifRed(Units.inchesToMeters(286.779)));
+            cageDiffs[1] =
+                    Math.abs(
+                            Field.flipYifRed(robotPose.getY())
+                                    - Field.flipYifRed(Units.inchesToMeters(242.855)));
+            cageDiffs[2] =
+                    Math.abs(
+                            Field.flipYifRed(robotPose.getY())
+                                    - Field.flipYifRed(Units.inchesToMeters(199.947)));
 
             if (indexOfSmallest(cageDiffs) == 0) {
                 return "R1";
-            }
-
-            else if (indexOfSmallest(cageDiffs) == 1) {
+            } else if (indexOfSmallest(cageDiffs) == 1) {
                 return "R2";
-            }
-
-            else if (indexOfSmallest(cageDiffs) == 2) {
+            } else if (indexOfSmallest(cageDiffs) == 2) {
                 return "R3";
-            }
-
-            else {
+            } else {
                 return "Nothing";
             }
         }
-     }
+    }
 
     public static double indexOfSmallest(double[] array) {
         int indexOfSmallest = 0;
         double smallestIndex = array[indexOfSmallest];
-        for(int i = 0; i < array.length; i++) {
-            if(array[i] <= smallestIndex) {
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] <= smallestIndex) {
                 smallestIndex = array[i];
                 indexOfSmallest = i;
             }
         }
         return indexOfSmallest;
-     }
-
-    /**
-     * Gets a field-relative position for the score to the reef the robot should align, adjusted for
-     * the robot's movement.
-     *
-     * @return A {@link Translation2d} representing a field relative position in meters.
-     */
-    public Translation2d getAdjustedReefPos() {
-
-        int reefID = closestReefFace(); // must call closestReefFace before this method gets passed
-        Pose2d[] reefFaces = Field.Reef.getCenterFaces();
-        double NORM_FUDGE = 0.075;
-        // double tunableNoteVelocity = 1;
-        // double tunableNormFudge = 0;
-        // double tunableStrafeFudge = 1;
-        // TODO: fudges may be subject to removal
-        double tunableReefYFudge = 0.0;
-        double tunableReefXFudge = 0.0;
-
-        Translation2d robotPos = Robot.getSwerve().getRobotPose().getTranslation();
-        Translation2d targetPose =
-                Field.flipXifRed(reefFaces[reefID].getTranslation()); // given reef face
-        double xDifference = Math.abs(robotPos.getX() - targetPose.getX());
-        double spinYFudge =
-                (xDifference < 5.8)
-                        ? 0.05
-                        : 0.8; // change spin fudge for score distances vs. feed distances
-
-        ChassisSpeeds robotVel =
-                Robot.getSwerve().getCurrentRobotChassisSpeeds(); // get current robot velocity
-
-        double distance = robotPos.getDistance(reefFaces[fieldReefID].getTranslation());
-        double normFactor =
-                Math.hypot(robotVel.vxMetersPerSecond, robotVel.vyMetersPerSecond) < NORM_FUDGE
-                        ? 0.0
-                        : Math.abs(
-                                MathUtil.angleModulus(
-                                                robotPos.minus(targetPose).getAngle().getRadians()
-                                                        - Math.atan2(
-                                                                robotVel.vyMetersPerSecond,
-                                                                robotVel.vxMetersPerSecond))
-                                        / Math.PI);
-
-        double x =
-                reefFaces[fieldReefID].getX()
-                        + (Field.isBlue() ? tunableReefXFudge : -tunableReefXFudge);
-        // - (robotVel.vxMetersPerSecond * (distance / tunableNoteVelocity));
-        //      * (1.0 - (tunableNormFudge * normFactor)));
-        double y =
-                reefFaces[fieldReefID].getY()
-                        + (Field.isBlue() ? -spinYFudge : spinYFudge)
-                        + tunableReefYFudge;
-        // - (robotVel.vyMetersPerSecond * (distance / tunableNoteVelocity));
-        //       * tunableStrafeFudge);
-        return new Translation2d(x, y);
     }
 
     // ------------------------------------------------------------------------------
