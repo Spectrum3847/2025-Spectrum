@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 import frc.robot.RobotSim;
+import frc.robot.RobotStates;
 import frc.spectrumLib.Rio;
 import frc.spectrumLib.SpectrumCANcoder;
 import frc.spectrumLib.Telemetry;
@@ -39,13 +40,16 @@ public class Twist extends Mechanism {
         // Positions set as percentage of Twist
         @Getter private final int initializedPosition = 20;
 
+        @Getter private final double stageDelay = 0.1;
+
         /* twist positions in percentage of max rotation || 0 is horizontal */
 
         @Getter private final double home = 0;
         @Getter private final double coralLollipop = 90;
-        @Getter private final double stationIntake = 179.9;
-        @Getter private final double algaeIntake = stationIntake;
-        @Getter private final double groundCoralIntake = 0;
+        @Getter private final double stationIntake = 0; // 179.9;
+        @Getter private final double algaeIntake = 179.9;
+        @Getter private final double groundAlgaeIntake = 0;
+        @Getter private final double groundCoralIntake = 179.9;
         @Getter private final double leftCoral = 90;
         @Getter private final double rightCoral = -90;
         @Getter private final double l1Coral = 0;
@@ -100,7 +104,7 @@ public class Twist extends Mechanism {
             configStatorCurrentLimit(torqueCurrentLimit, true);
             configForwardTorqueCurrentLimit(torqueCurrentLimit);
             configReverseTorqueCurrentLimit(torqueCurrentLimit);
-            configMinMaxRotations(-.25, 0.5);
+            configMinMaxRotations(-.25, 0.75);
             configReverseSoftLimit(getMinRotations(), true);
             configForwardSoftLimit(getMaxRotations(), true);
             configNeutralBrakeMode(true);
@@ -245,6 +249,61 @@ public class Twist extends Mechanism {
         setMMPositionFoc(() -> degreesToRotations(degrees));
     }
 
+    public Command move(DoubleSupplier targetDegrees, boolean clockwise) {
+        return run(
+                () -> {
+                    double currentDegrees = getPositionDegrees();
+                    // Normalize targetDegrees to be within 0 to 360
+                    double target = (targetDegrees.getAsDouble() % 360);
+                    // Normalize currentDegrees to be within 0 to 360
+                    double currentMod = (currentDegrees % 360);
+
+                    double output;
+
+                    if (clockwise) {
+                        // Calculate the closest clockwise position
+                        if (currentMod > target) {
+                            output = currentDegrees - (currentMod - target);
+                        } else {
+                            output = currentDegrees - (360 + currentMod - target);
+                        }
+                    } else {
+                        // Calculate the closest counterclockwise position
+                        if (currentMod < target) {
+                            output = currentDegrees + (target - currentMod);
+                        } else {
+                            output = currentDegrees + (360 + target - currentMod);
+                        }
+                    }
+
+                    final double out = output;
+                    setDegrees(() -> out);
+                });
+    }
+
+    public Command move(DoubleSupplier degrees) {
+        return run(
+                () -> {
+                    if (RobotStates.reverse.getAsBoolean()) {
+                        if (degrees.getAsDouble() + 180 >= 180
+                                && degrees.getAsDouble() - 179.9 >= 0) {
+                            setDegrees(() -> degrees.getAsDouble() - 179.9);
+                        } else {
+                            setDegrees(() -> degrees.getAsDouble() + 179.9);
+                        }
+                    } else {
+                        setDegrees(degrees);
+                    }
+                });
+    }
+
+    public DoubleSupplier getIfReversedDegrees(DoubleSupplier degrees) {
+        return () ->
+                (RobotStates.reverse.getAsBoolean())
+                        ? degrees.getAsDouble() + 180
+                        : degrees.getAsDouble();
+    }
+
     public Command twistHome() {
         return run(
                 () -> {
@@ -298,8 +357,8 @@ public class Twist extends Mechanism {
                             1.2,
                             config.getCoralLength(), // placeholder, should really be length of
                             // forearm
-                            Math.toRadians(-180),
-                            Math.toRadians(180),
+                            Math.toRadians(-360),
+                            Math.toRadians(360),
                             false, // Simulate gravity (change back to true)
                             0);
             this.twistMotorSim = twistMotorSim;
@@ -380,7 +439,7 @@ public class Twist extends Mechanism {
                             mount.getAngle()));
 
             /* changes which side is closest to the viewer; the left prong is always closest to the viewer */
-            if (getPositionPercentage() > 0) {
+            if (getPositionPercentage() > 0 && getPositionDegrees() % 360 <= 180) {
                 leftBase.setColor(config.getCoralColor());
                 leftProng.setColor(config.getCoralColor());
                 rightBase.setColor(config.getAlgaeColor());
@@ -447,6 +506,15 @@ public class Twist extends Mechanism {
                                         config.getCoralBaseAngle(), getPositionPercentage()),
                                 getPositionPercentage()));
             }
+        }
+
+        private double getPositionPercentage() {
+            double position = getPositionDegrees() % 360;
+            if (position > 180) {
+                position -= 180;
+                position = 180 - position;
+            }
+            return (position / 180) * 100;
         }
 
         private double calculateBaseAngle(double startingAngle, double posePercent) {

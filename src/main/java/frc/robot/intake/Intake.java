@@ -27,7 +27,7 @@ public class Intake extends Mechanism {
         // Algae Voltages and Current
         @Getter @Setter private double algaeIntakeVoltage = -9.0;
         @Getter @Setter private double algaeIntakeSupplyCurrent = 30.0;
-        @Getter @Setter private double algaeIntakeTorqueCurrent = 100.0;
+        @Getter @Setter private double algaeIntakeTorqueCurrent = 80.0;
 
         @Getter @Setter private double algaeScoreVoltage = 12.0;
         @Getter @Setter private double algaeScoreSupplyCurrent = 30.0;
@@ -143,7 +143,7 @@ public class Intake extends Mechanism {
     }
 
     public boolean hasIntakeGamePiece() {
-        double motorOutput = getVelocityRPM(); // might be better to check with motor voltage
+        double motorOutput = getVelocityRPM();
         double motorCurrent = getStatorCurrent();
         return (Math.abs(motorOutput) < config.hasGamePieceVelocity
                 && Math.abs(motorCurrent) > config.hasGamePieceCurrent);

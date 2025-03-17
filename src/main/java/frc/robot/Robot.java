@@ -37,6 +37,7 @@ import frc.robot.swerve.SwerveConfig;
 import frc.robot.twist.Twist;
 import frc.robot.twist.Twist.TwistConfig;
 import frc.robot.vision.Vision;
+import frc.robot.vision.Vision.VisionConfig;
 import frc.robot.vision.VisionSystem;
 import frc.spectrumLib.Rio;
 import frc.spectrumLib.SpectrumRobot;
@@ -54,7 +55,7 @@ public class Robot extends SpectrumRobot {
     @Getter private static RobotSim robotSim;
     @Getter private static Config config;
     static Telemetry telemetry = new Telemetry();
-    private final Field2d m_field = new Field2d();
+    @Getter private static final Field2d field2d = new Field2d();
 
     public enum RobotFault {
         OVERCURRENT,
@@ -73,6 +74,7 @@ public class Robot extends SpectrumRobot {
         public ClimbConfig climb = new ClimbConfig();
         public ElbowConfig elbow = new ElbowConfig();
         public TwistConfig twist = new TwistConfig();
+        public VisionConfig vision = new VisionConfig();
     }
 
     @Getter private static Swerve swerve;
@@ -135,7 +137,7 @@ public class Robot extends SpectrumRobot {
             Timer.delay(canInitDelay);
             intake = new Intake(config.intake);
             Timer.delay(canInitDelay);
-            vision = new Vision();
+            vision = new Vision(config.vision);
             visionSystem = new VisionSystem(swerve::getRobotPose);
             Timer.delay(canInitDelay);
             twist = new Twist(config.twist);
@@ -183,7 +185,7 @@ public class Robot extends SpectrumRobot {
     }
 
     public void setupAutoVisualizer() {
-        SmartDashboard.putData("Auto Visualizer", m_field);
+        SmartDashboard.putData("Field2d", field2d);
     }
 
     @Override // Deprecated
@@ -211,6 +213,7 @@ public class Robot extends SpectrumRobot {
             CommandScheduler.getInstance().run();
 
             SmartDashboard.putNumber("MatchTime", DriverStation.getMatchTime());
+            field2d.setRobotPose(swerve.getRobotPose());
         } catch (Throwable t) {
             // intercept error and log it
             CrashTracker.logThrowableCrash(t);
@@ -252,7 +255,7 @@ public class Robot extends SpectrumRobot {
                                                             new Rotation2d()))
                                     .collect(Collectors.toList()));
                 }
-                m_field.getObject("path").setPoses(poses);
+                field2d.getObject("path").setPoses(poses);
             }
         }
     }

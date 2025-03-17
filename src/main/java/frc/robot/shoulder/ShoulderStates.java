@@ -14,8 +14,7 @@ import java.util.function.DoubleSupplier;
 public class ShoulderStates {
     private static Shoulder shoulder = Robot.getShoulder();
     private static ShoulderConfig config = Robot.getConfig().shoulder;
-    public static final Trigger isHome =
-            shoulder.atDegrees(() -> (config.getHome() + config.getOffset()), config::getTolerance);
+    public static final Trigger isHome = shoulder.atDegrees(config::getHome, config::getTolerance);
 
     public static void setupDefaultCommand() {
         shoulder.setDefaultCommand(
@@ -31,10 +30,8 @@ public class ShoulderStates {
         stationIntaking.whileTrue(
                 move(
                         config::getStationIntake,
-                        config::getStationExtendedIntake,
+                        // config::getStationExtendedIntake,
                         "Shoulder.stationIntake"));
-        // stationExtendedIntaking.whileTrue(
-        //         move(config::getStationExtendedIntake, "Shoulder.stationExtendedIntake"));
         stationIntaking.or(groundCoral, groundAlgae).onFalse(home());
 
         groundCoral.whileTrue(move(config::getGroundCoralIntake, "Shoulder.groundCoral"));

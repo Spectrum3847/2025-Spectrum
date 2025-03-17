@@ -10,7 +10,7 @@ public class LedLeft extends SpectrumLEDs {
 
     public static class LedConfig extends Config {
         public LedConfig(AddressableLED l, AddressableLEDBuffer lb) {
-            super("LEDS Right", l, lb, lb.getLength() / 2, lb.getLength() - 1);
+            super("LEDS Left", l, lb, lb.getLength() / 2, lb.getLength() - 1);
             setLedSpacing(Meters.of(1 / 120.0));
         }
     }
