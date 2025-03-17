@@ -39,6 +39,7 @@ import frc.robot.twist.Twist.TwistConfig;
 import frc.robot.vision.Vision;
 import frc.robot.vision.Vision.VisionConfig;
 import frc.robot.vision.VisionSystem;
+import  frc.reefscape.Zones;
 import frc.spectrumLib.Rio;
 import frc.spectrumLib.SpectrumRobot;
 import frc.spectrumLib.Telemetry;
@@ -85,6 +86,7 @@ public class Robot extends SpectrumRobot {
     @Getter private static Pilot pilot;
     @Getter private static VisionSystem visionSystem;
     @Getter private static Vision vision;
+    @Getter private static Zones zones;
     @Getter private static Auton auton;
     @Getter private static Climb climb;
     @Getter private static Elbow elbow;

@@ -578,24 +578,12 @@ public class Vision implements NTSendable, Subsystem {
         return Robot.getSwerve().getRobotPose().getRotation().getRadians();
     }
 
-    public double getReefZoneTagAngle() {
-        Zones zone = new Zones();
-        Pose2d robotPose = Robot.getSwerve().getRobotPose();
-        double[] pose = {robotPose.getX(), robotPose.getY()};
-        double[][] blueIDs =  {{17, 60}, {18, 0}, {19, -60}, {20, -120}, {21, 180}, {22, 120}};
-        double[][] redIDs = {{6, 120}, {7, 180}, {8, -120}, {9, -60}, {10, 0}, {11, 60}};
-        for (int i = 0; i < 6; i++) {
-            if (zone.getBlueReefZoneID(pose) == blueIDs[i][0]) {
-                return blueIDs[i][1];
-            }     
-            if (zone.getRedReefZoneID(pose) == redIDs[i][0]) {
-                return redIDs[i][1];
-            }
-        }
+    
 
-        return 0;     
-    }
-
+    /**
+     * Checks if the robot is in the correct position to score on the reef
+     * @return
+     */
     public boolean tagsInView() {
 
         DriverStation.Alliance alliance =
@@ -646,6 +634,12 @@ public class Vision implements NTSendable, Subsystem {
         }
     }
 
+    /**
+     * Gets the closest cage for the robot to climb to
+     * based on the limelight's vision
+     * returns a string of the specific cage to climb to
+     * @return
+     */
     public String getCageToClimb() {
         Pose2d robotPose = frontLL.getMegaTag2_Pose2d();
         double[] cageDiffs = new double[3];

@@ -1,5 +1,6 @@
 package frc.reefscape;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,9 +27,7 @@ public class Zones {
                     .and(swerve.inYzoneAlliance(0, Field.Reef.center.getY()));
 
 
-    //TODO: add the reef face zones of the red tags 
-    //TODO: check all the x values for blueReefZones
-    //(tagid, x1, y1, x2, y2)
+    //(tagid, x1, y1, x2, y2) for each blue zone
     public static final double[][] blueReefZones = {
         {17, Units.inchesToMeters(176.746), Units.inchesToMeters(73.501), Units.inchesToMeters(103.13384067832271), Units.inchesToMeters(116.001)},
         {18, Units.inchesToMeters(103.13384067832271), Units.inchesToMeters(116.001), Units.inchesToMeters(103.13384067832271), Units.inchesToMeters(201.001)},
@@ -38,7 +37,7 @@ public class Zones {
         {22, Units.inchesToMeters(250.3581593216773), Units.inchesToMeters(116.001), Units.inchesToMeters(176.746), Units.inchesToMeters(73.501)}
     };
 
-    // (tagid, x1, y1, x2, y2) Going right to left for each reef face
+    // (tagid, x1, y1, x2, y2) for each red zone
     public static final double[][] redReefZones = {
         {6, Units.inchesToMeters(546.846), Units.inchesToMeters(73.501), Units.inchesToMeters(620.4581593216773), Units.inchesToMeters(116.001)},
         {7, Units.inchesToMeters(620.4581593216773), Units.inchesToMeters(116.001), Units.inchesToMeters(620.45815932167737), Units.inchesToMeters(201.001)},
@@ -48,6 +47,33 @@ public class Zones {
         {10, Units.inchesToMeters(473.23384067832274), Units.inchesToMeters(201.001), Units.inchesToMeters(473.23384067832274), Units.inchesToMeters(116.001)},
         {11, Units.inchesToMeters(473.23384067832274), Units.inchesToMeters(116.001) ,Units.inchesToMeters(546.846), Units.inchesToMeters(73.501)}
     };
+
+
+    // (tagid, angle) Going right to left for each reef face
+    double[][] blueReefAngles =  {{17, 60}, {18, 0}, {19, -60}, {20, -120}, {21, 180}, {22, 120}};
+    double[][] redReefAngles = {{6, 120}, {7, 180}, {8, -120}, {9, -60}, {10, 0}, {11, 60}};
+
+
+    // (tagid, x, y) for each blue reef tag
+    double[][] blueReefTags = {
+        {17, Units.inchesToMeters(160.39), Units.inchesToMeters(130.17)},
+        {18, Units.inchesToMeters(144.003), Units.inchesToMeters(158.5)},
+        {19, Units.inchesToMeters(160.39), Units.inchesToMeters(160.39)},
+        {20, Units.inchesToMeters(193.1), Units.inchesToMeters(186.83)},
+        {21, Units.inchesToMeters(209.49), Units.inchesToMeters(158.5)},
+        {22, Units.inchesToMeters(193.1), Units.inchesToMeters(130.17)}
+    };
+
+    // (tagid, x, y) for each red reef tag
+    double[][] redReefTagAngles = {
+        {6, Units.inchesToMeters(530.49), Units.inchesToMeters(130.17)},
+        {7, Units.inchesToMeters(546.49), Units.inchesToMeters(158.5)},
+        {8, Units.inchesToMeters(530.49), Units.inchesToMeters(186.83)},
+        {9, Units.inchesToMeters(497.77), Units.inchesToMeters(186.83)},
+        {10, Units.inchesToMeters(481.39), Units.inchesToMeters(158.5)},
+        {11, Units.inchesToMeters(497.77), Units.inchesToMeters(130.17)}
+    };
+
 
     public static final Trigger bargeZone =
             swerve.inXzoneAlliance(
@@ -232,5 +258,98 @@ public class Zones {
         // Not in any reef zone
         return -1;
    }
+
+   /**
+    * Reef Tag Angle within a given reef zone
+    * @return
+    */
+   public double getReefTagAngle() {
+        Zones zone = new Zones();
+        Pose2d robotPose = Robot.getSwerve().getRobotPose();
+        double[] pose = {robotPose.getX(), robotPose.getY()};
+        for (int i = 0; i < 6; i++) {
+            if (Field.isBlue() && (zone.getBlueReefZoneID(pose) == blueReefAngles[i][0])) {
+                return blueReefAngles[i][1];
+            }     
+            if (!Field.isBlue() && (zone.getRedReefZoneID(pose) == redReefAngles[i][0])) {
+                return redReefAngles[i][1];
+            }
+        }
+        return 0;     
+    }
+
+    /**
+     * Distance to the tag from the robot pose
+     * Uses getBlueReefZoneID and getRedReefZoneID to get the tagID depending on the alliance
+     * Then uses the tagID from the given reef zone to get the distance to the tag
+     * 
+     * @return distance to the tag from the robotPose
+     */
+    public double getDistanceToTag() {
+        Pose2d robotPose = Robot.getSwerve().getRobotPose();
+        double[] pose = {robotPose.getX(), robotPose.getY()};
+        double distance = 0;
+        double tagID = 0;
+        if (Field.isBlue()) {
+            tagID = getBlueReefZoneID(pose);
+            distance = getDistanceToBlueTag(pose, tagID);
+        } else {
+            tagID = getRedReefZoneID(pose);
+            distance = getDistancetoRedTag(pose, tagID);
+        }
+
+        return distance;
+    
+    }
+
+    /**
+     * Distance to the blue tag of a given tagID
+     * from given robot pose
+     * @param robotPose
+     * @param tagID
+     * @return
+     */
+    public double getDistanceToBlueTag(double[] robotPose, double tagID) {
+        double[] pose = robotPose;
+        double blueDistance = 0;
+
+        for(int i = 0; i < 6; i++) {
+            if (tagID == blueReefTags[i][0]) {
+                blueDistance = distanceBetweenTwoPoints(pose[0], blueReefTags[i][1], pose[1], blueReefTags[i][2]);
+            }
+        }
+        return blueDistance;
+    }
+
+    /**
+     * Distance to the red tag for a given tagID 
+     * from given robot pose 
+     * @param robotPose
+     * @param tagID
+     * @return
+     */
+    public double getDistancetoRedTag(double[] robotPose, double tagID) {
+        double[] pose = robotPose;
+        double redDistance = 0;
+        for(int i = 0; i < 6; i++) {
+            if (tagID == redReefTagAngles[i][0]) {
+                redDistance = distanceBetweenTwoPoints(pose[0], redReefTagAngles[i][1], pose[1], redReefTagAngles[i][2]);
+            }
+        }
+
+        return redDistance;
+    }
+
+    /**
+     * Distance between two points
+     * @param x1 robotPose x
+     * @param x2 target x
+     * @param y1 robotPose y
+     * @param y2 target y
+     * @return
+     */
+    public double distanceBetweenTwoPoints(double x1, double x2, double y1, double y2) {
+        return Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
+    }
 
 }

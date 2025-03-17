@@ -104,7 +104,7 @@ public class SwerveStates {
         else {
             return fpvAimDrive(SwerveStates::getTagDistanceVelocity, 
                             SwerveStates::getTagTxVelocity,
-                            Robot.getVision()::getReefZoneTagAngle)
+                            Robot.getZones()::getReefTagAngle)
                 .withName("Swerve.reefAimDrive");
         }        
     }
@@ -122,9 +122,13 @@ public class SwerveStates {
         if (Robot.getVision().frontLL.targetInView()) {
             return distanceAlignController.calculate(
                     config.getHomeLlAimTAgoal(), Robot.getVision().frontLL.getTagTA());
+                    
+        } else if (Robot.getZones().getReefTagAngle() != 0) {
+            return distanceAlignController.calculate(
+                    config.getHomeLlAimTAgoal(), Robot.getZones().getDistanceToTag());
         }
         return 0;
-    }
+    }    
 
     protected static Command snapSteerDrive() {
         return drive(
