@@ -27,6 +27,7 @@ import frc.spectrumLib.vision.Limelight.LimelightConfig;
 import frc.spectrumLib.vision.LimelightHelpers.RawFiducial;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import frc.reefscape.Zones;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -577,6 +578,24 @@ public class Vision implements NTSendable, Subsystem {
         return Robot.getSwerve().getRobotPose().getRotation().getRadians();
     }
 
+    public double getReefZoneTagAngle() {
+        Zones zone = new Zones();
+        Pose2d robotPose = Robot.getSwerve().getRobotPose();
+        double[] pose = {robotPose.getX(), robotPose.getY()};
+        double[][] blueIDs =  {{17, 60}, {18, 0}, {19, -60}, {20, -120}, {21, 180}, {22, 120}};
+        double[][] redIDs = {{6, 120}, {7, 180}, {8, -120}, {9, -60}, {10, 0}, {11, 60}};
+        for (int i = 0; i < 6; i++) {
+            if (zone.getBlueReefZoneID(pose) == blueIDs[i][0]) {
+                return blueIDs[i][1];
+            }     
+            if (zone.getRedReefZoneID(pose) == redIDs[i][0]) {
+                return redIDs[i][1];
+            }
+        }
+
+        return 0;     
+    }
+
     public boolean tagsInView() {
 
         DriverStation.Alliance alliance =
@@ -670,7 +689,7 @@ public class Vision implements NTSendable, Subsystem {
             }
         }
     }
-
+    
     public static double indexOfSmallest(double[] array) {
         int indexOfSmallest = 0;
         double smallestIndex = array[indexOfSmallest];

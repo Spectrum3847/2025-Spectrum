@@ -10,10 +10,12 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.reefscape.Zones;
 import frc.robot.Robot;
 import frc.robot.pilot.Pilot;
 import frc.spectrumLib.SpectrumState;
 import frc.spectrumLib.Telemetry;
+import frc.reefscape.Zones;
 import java.util.function.DoubleSupplier;
 
 public class SwerveStates {
@@ -92,11 +94,19 @@ public class SwerveStates {
     }
 
     public static Command reefAimDrive() {
-        return fpvAimDrive(
+        if (Robot.getVision().tagsInView()) {
+            return fpvAimDrive(
                         SwerveStates::getTagDistanceVelocity,
                         SwerveStates::getTagTxVelocity,
                         Robot.getVision()::getReefTagAngle)
                 .withName("Swerve.reefAimDrive");
+        }
+        else {
+            return fpvAimDrive(SwerveStates::getTagDistanceVelocity, 
+                            SwerveStates::getTagTxVelocity,
+                            Robot.getVision()::getReefZoneTagAngle)
+                .withName("Swerve.reefAimDrive");
+        }        
     }
 
     private static double getTagTxVelocity() {
@@ -108,9 +118,10 @@ public class SwerveStates {
     }
 
     private static double getTagDistanceVelocity() {
+        TagDistanceAlignController distanceAlignController = new TagDistanceAlignController(swerve.getConfig());
         if (Robot.getVision().frontLL.targetInView()) {
-            return swerve.calculateTagDistanceAlignController(
-                    () -> config.getHomeLlAimTAgoal(), () -> Robot.getVision().frontLL.getTagTA());
+            return distanceAlignController.calculate(
+                    config.getHomeLlAimTAgoal(), Robot.getVision().frontLL.getTagTA());
         }
         return 0;
     }
@@ -137,14 +148,6 @@ public class SwerveStates {
                         pilot::getDriveLeftPositive,
                         pilot::getDriveCCWPositive)
                 .withName("Swerve.PilotFPVDrive");
-    }
-
-    protected static Command visionReefDrive() {
-        return aimDrive(
-                        pilot::getDriveFwdPositive,
-                        pilot::getDriveLeftPositive,
-                        () -> Robot.getVision().getAdjustedThetaToReefFace())
-                .withName("Swerve.VisionDrive");
     }
 
     protected static Command pilotAimDrive(DoubleSupplier targetDegrees) {

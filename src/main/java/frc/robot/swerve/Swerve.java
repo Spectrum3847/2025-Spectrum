@@ -414,7 +414,7 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
                 tagDistanceAlignController.calculate(
                         targetArea.getAsDouble(), Robot.getVision().getTagTA());
 
-        if (Robot.getVision().tagsInView()) {
+        if (Robot.getVision().getBestLimelight().multipleTagsInView()) {
             return front ? output : -output;
         } else {
             return 0;
