@@ -10,7 +10,7 @@ public class PhotonElevatorConfig extends ElevatorConfig {
     @Getter private double maxRotations = 21;
     @Getter private double minRotations = 0.3;
 
-    @Getter private final double stationIntake = 9.67;
+    @Getter private final double stationIntake = 10.67;
     @Getter private final double stationExtendedIntake = 8.5;
 
     @Getter private final double L1Coral = 0;
