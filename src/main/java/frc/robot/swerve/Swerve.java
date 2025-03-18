@@ -21,6 +21,7 @@ import edu.wpi.first.networktables.NTSendable;
 import edu.wpi.first.networktables.NTSendableBuilder;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.util.sendable.SendableRegistry;
@@ -46,10 +47,14 @@ import lombok.Getter;
  */
 public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
         implements SpectrumSubsystem, NTSendable {
-    private SwerveConfig config;
+    @Getter private SwerveConfig config;
     private Notifier simNotifier = null;
     private double lastSimTime;
     private RotationController rotationController;
+    private TagCenterAlignController tagCenterAlignController;
+    private TagDistanceAlignController tagDistanceAlignController;
+    private TranslationXController xController;
+    private TranslationYController yController;
 
     @Getter
     protected SwerveModuleState[] setpoints =
@@ -61,10 +66,12 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
     private final SwerveRequest.ApplyRobotSpeeds AutoRequest = new SwerveRequest.ApplyRobotSpeeds();
 
     // Logging publisher
-    StructArrayPublisher<SwerveModuleState> publisher =
+    StructArrayPublisher<SwerveModuleState> moduleStatePublisher =
             NetworkTableInstance.getDefault()
                     .getStructArrayTopic("SwerveStates", SwerveModuleState.struct)
                     .publish();
+    StructPublisher<Pose2d> posePublisher =
+            NetworkTableInstance.getDefault().getStructTopic("SwervePose", Pose2d.struct).publish();
 
     /**
      * Constructs a new Swerve drive subsystem.
@@ -84,6 +91,10 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
         configurePathPlanner();
 
         rotationController = new RotationController(config);
+        tagCenterAlignController = new TagCenterAlignController(config);
+        tagDistanceAlignController = new TagDistanceAlignController(config);
+        xController = new TranslationXController(config);
+        yController = new TranslationYController(config);
 
         if (Utils.isSimulation()) {
             startSimThread();
@@ -98,7 +109,7 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
     }
 
     protected void log(SwerveDriveState state) {
-        publisher.set(state.ModuleStates);
+        moduleStatePublisher.set(state.ModuleStates);
     }
 
     /**
@@ -107,6 +118,7 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
      */
     @Override
     public void periodic() {
+        posePublisher.set(getRobotPose());
         setPilotPerspective();
     }
 
@@ -223,7 +235,7 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
         return run(() -> this.setControl(requestSupplier.get())).ignoringDisable(true);
     }
 
-    private ChassisSpeeds getCurrentRobotChassisSpeeds() {
+    public ChassisSpeeds getCurrentRobotChassisSpeeds() {
         return getKinematics().toChassisSpeeds(getState().ModuleStates);
     }
 
@@ -293,12 +305,58 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
         return Rotation2d.fromDegrees(closest45Degrees).getRadians();
     }
 
+    protected double getClosestFieldAngle() {
+        // Step 1: Read the angle in radians
+        double angleRadians = getRotation().getRadians();
+
+        // Step 2: Convert the angle from radians to degrees
+        double angleDegrees = Math.toDegrees(angleRadians);
+
+        // Step 3: Define a table of angles in degrees
+        double[] angleTable = {0, 180, 126, -126, 54, -54, 60, -60, 120, -120, 90, -90};
+
+        // Step 4: Find the nearest angle from the table
+        double closestAngle = angleTable[0];
+        double minDifference = getAngleDifference(angleDegrees, closestAngle);
+
+        for (double angle : angleTable) {
+            double difference = getAngleDifference(angleDegrees, angle);
+            if (difference < minDifference) {
+                minDifference = difference;
+                closestAngle = angle;
+            }
+        }
+
+        // Step 5: Return the nearest angle in Radians
+        return Math.toRadians(closestAngle);
+    }
+
     protected Command cardinalReorient() {
         return runOnce(
                 () -> {
                     double angleDegrees = getClosestCardinal();
                     reorient(angleDegrees);
                 });
+    }
+
+    public boolean frontClosestToAngle(double angleDegrees) {
+        double heading = getRotation().getDegrees();
+        double flippedHeading;
+        if (heading > 0) {
+            flippedHeading = heading - 180;
+        } else {
+            flippedHeading = heading + 180;
+        }
+        double frontDifference = getAngleDifference(heading, angleDegrees);
+        double flippedDifference = getAngleDifference(flippedHeading, angleDegrees);
+
+        return frontDifference < flippedDifference;
+    }
+
+    // Helper method to calculate the shortest angle difference
+    private double getAngleDifference(double angle1, double angle2) {
+        double diff = Math.abs(angle1 - angle2) % 360;
+        return diff > 180 ? 360 - diff : diff;
     }
 
     // --------------------------------------------------------------------------------
@@ -325,6 +383,67 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
     }
 
     // --------------------------------------------------------------------------------
+    // Tag Center Align Controller
+    // --------------------------------------------------------------------------------
+    void resetTagCenterAlignController(double currentMeters) {
+        tagCenterAlignController.reset(currentMeters);
+    }
+
+    double calculateTagCenterAlignController(
+            DoubleSupplier targetMeters, DoubleSupplier currentMeters) {
+        return tagCenterAlignController.calculate(
+                targetMeters.getAsDouble(), currentMeters.getAsDouble());
+    }
+
+    // --------------------------------------------------------------------------------
+    // Tag Distance Align Controller
+    // --------------------------------------------------------------------------------
+    void resetTagDistanceAlignController(double currentMeters) {
+        tagDistanceAlignController.reset(currentMeters);
+    }
+
+    double calculateTagDistanceAlignController(DoubleSupplier targetArea) {
+        boolean front = true;
+        if (Robot.getVision().frontLL.targetInView()) {
+            front = true;
+        } else if (Robot.getVision().backLL.targetInView()) {
+            front = false;
+        }
+
+        double output =
+                tagDistanceAlignController.calculate(
+                        targetArea.getAsDouble(), Robot.getVision().getTagTA());
+
+        if (Robot.getVision().tagsInView()) {
+            return front ? output : -output;
+        } else {
+            return 0;
+        }
+    }
+
+    // --------------------------------------------------------------------------------
+    // Translation X Controller
+    // --------------------------------------------------------------------------------
+    void resetXController() {
+        xController.reset(getRobotPose().getX());
+    }
+
+    double calculateXController(DoubleSupplier targetMeters) {
+        return xController.calculate(targetMeters.getAsDouble(), getRobotPose().getX());
+    }
+
+    // --------------------------------------------------------------------------------
+    // Translation Y Controller
+    // --------------------------------------------------------------------------------
+    void resetYController() {
+        yController.reset(getRobotPose().getY());
+    }
+
+    double calculateYController(DoubleSupplier targetMeters) {
+        return yController.calculate(targetMeters.getAsDouble(), getRobotPose().getY());
+    }
+
+    // --------------------------------------------------------------------------------
     // Path Planner
     // --------------------------------------------------------------------------------
     private void configurePathPlanner() {
@@ -334,10 +453,6 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
                         Units.feetToMeters(27.0),
                         Units.feetToMeters(27.0 / 2.0),
                         config.getBlueAlliancePerspectiveRotation()));
-        double driveBaseRadius = .4;
-        for (var moduleLocation : getModuleLocations()) {
-            driveBaseRadius = Math.max(driveBaseRadius, moduleLocation.getNorm());
-        }
 
         RobotConfig robotConfig = null; // Initialize with null in case of exception
         try {
@@ -357,7 +472,9 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
                                 AutoRequest.withSpeeds(
                                         speeds)), // Consumer of ChassisSpeeds to drive the robot
                 new PPHolonomicDriveController(
-                        new PIDConstants(5, 0, 0), new PIDConstants(5, 0, 0), Robot.kDefaultPeriod),
+                        new PIDConstants(2.5, 0, 0),
+                        new PIDConstants(8, 0, 0.2),
+                        Robot.kDefaultPeriod),
                 robotConfig,
                 () ->
                         DriverStation.getAlliance().orElse(Alliance.Blue)

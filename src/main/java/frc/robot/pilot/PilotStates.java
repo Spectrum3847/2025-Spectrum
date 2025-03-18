@@ -3,6 +3,8 @@ package frc.robot.pilot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Robot;
+import frc.robot.intake.IntakeStates;
+import frc.robot.vision.VisionStates;
 import frc.spectrumLib.Telemetry;
 
 /** This class should have any command calls that directly call the Pilot */
@@ -16,10 +18,15 @@ public class PilotStates {
 
     /** Set the states for the pilot controller */
     public static void setStates() {
+
+        pilot.actionReady_RB.whileTrue(slowMode());
+        pilot.visionPoseReset_LB_Select.onTrue(VisionStates.resetVisionPose());
         // Rumble whenever we reorient
         pilot.upReorient
                 .or(pilot.downReorient, pilot.leftReorient, pilot.rightReorient)
                 .onTrue(log(rumble(1, 0.5).withName("Pilot.reorientRumble")));
+        IntakeStates.hasCoral.onTrue(log(rumble(1, 0.5).withName("Pilot.hasCoralRumble")));
+        IntakeStates.hasAlgae.onTrue(log(rumble(1, 0.5).withName("Pilot.hasAlgaeRumble")));
     }
 
     /** Command that can be used to rumble the pilot controller */
@@ -32,7 +39,9 @@ public class PilotStates {
      * methods, we don't want these to require the pilot subsystem arm
      */
     public static Command slowMode() {
-        return Commands.startEnd(() -> pilot.setSlowMode(true), () -> pilot.setSlowMode(false))
+        return Commands.startEnd(
+                        () -> pilot.getSlowMode().setState(true),
+                        () -> pilot.getSlowMode().setState(false))
                 .withName("Pilot.setSlowMode");
     }
 
@@ -41,7 +50,9 @@ public class PilotStates {
      * want these to require the pilot subsystem
      */
     public static Command turboMode() {
-        return Commands.startEnd(() -> pilot.setTurboMode(true), () -> pilot.setTurboMode(false))
+        return Commands.startEnd(
+                        () -> pilot.getTurboMode().setState(true),
+                        () -> pilot.getTurboMode().setState(false))
                 .withName("Pilot.setTurboMode");
     }
 

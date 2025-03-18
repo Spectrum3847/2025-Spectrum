@@ -7,6 +7,11 @@
       "window": {
         "visible": true
       }
+    },
+    "Other Devices": {
+      "window": {
+        "visible": false
+      }
     }
   },
   "NTProvider": {
@@ -15,9 +20,13 @@
       "/SmartDashboard/Alerts": "Alerts",
       "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/Auto Visualizer": "Field2d",
+      "/SmartDashboard/Field2d": "Field2d",
       "/SmartDashboard/LeftView": "Mechanism2d",
       "/SmartDashboard/Scheduler": "Scheduler",
-      "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d"
+      "/SmartDashboard/States": "Alerts",
+      "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d",
+      "/SmartDashboard/frontView": "Mechanism2d",
+      "/SmartDashboard/vision": "Subsystem"
     },
     "windows": {
       "/SmartDashboard/Alerts": {
@@ -64,6 +73,11 @@
           "visible": true
         }
       },
+      "/SmartDashboard/States": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/VisionSystemSim-main/Sim Field": {
         "Robot": {
           "arrowColor": [
@@ -78,8 +92,8 @@
             0.7215189933776855,
             255.0
           ],
-          "length": 0.8500000238418579,
-          "width": 0.8500000238418579
+          "length": 0.9100000262260437,
+          "width": 0.9100000262260437
         },
         "apriltag": {
           "image": "./images/tag-blue.png"
@@ -101,11 +115,19 @@
         "window": {
           "visible": true
         }
+      },
+      "/SmartDashboard/frontView": {
+        "window": {
+          "visible": true
+        }
       }
     }
   },
   "NetworkTables": {
     "transitory": {
+      "CameraPublisher": {
+        "open": true
+      },
       "Robot": {
         "open": true
       },
@@ -113,7 +135,13 @@
         "Elbow": {
           "open": true
         },
+        "ElevatorFront": {
+          "open": true
+        },
         "Shoulder": {
+          "open": true
+        },
+        "Twist": {
           "open": true
         },
         "open": true

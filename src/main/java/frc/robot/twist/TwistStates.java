@@ -13,72 +13,56 @@ public class TwistStates {
     private static TwistConfig config = Robot.getConfig().twist;
 
     public static void setupDefaultCommand() {
-        twist.setDefaultCommand(
-                log(twist.runHoldTwist().ignoringDisable(true).withName("Twist.default")));
+        twist.setDefaultCommand(log(twist.runHoldTwist().withName("Twist.default")));
+        // twist.runStop());
     }
 
     public static void setStates() {
         coastMode.onTrue(log(coastMode()));
         coastMode.onFalse(log(ensureBrakeMode()));
+
+        homeAll.onTrue(twist.twistHome());
+
+        // Robot.getPilot().reZero_start.onTrue(twist.resetToInitialPos());
+
+        stationIntaking.whileTrue(move(config::getStationIntake, "Twist.stationIntake"));
+
+        stagedAlgae.whileTrue(move(config::getAlgaeIntake, "Twist.Algae"));
+
+        Robot.getPilot()
+                .groundAlgae_RT
+                .whileTrue(move(config::getGroundAlgaeIntake, "Twist.AlgaeIntake"));
+
+        groundCoral.whileTrue(move(config::getGroundCoralIntake, "Twist.GroundCoralIntake"));
+
+        L1Coral.whileTrue(move(config::getL1Coral, "Twist.l1Coral"));
+
+        netAlgae.whileTrue(move(config::getNet, "Twist.Net"));
+
+        branch.and(rightScore, actionPrepState)
+                .whileTrue(move(config::getRightCoral, config::getStageDelay, "Twist.rightCoral"));
+        branch.and(rightScore.not(), actionPrepState)
+                .whileTrue(move(config::getLeftCoral, config::getStageDelay, "Twist.leftCoral"));
     }
 
-    public static Command runTwist(DoubleSupplier speed) {
-        return twist.runPercentage(speed).withName("Twist.runTwist");
+    public static Command move(DoubleSupplier degrees, String name) {
+        return twist.move(degrees).withName(name);
     }
 
-    public static Command home() {
-        return twist.moveToPercentage(config::getHome).withName("Twist.home");
-    }
-
-    public static Command moveToPercentage(DoubleSupplier percent) {
-        return twist.moveToPercentage(percent).withName("Twist.moveToPercentage");
-    }
-
-    /* Scoring positions */
-
-    public static Command L2Algae() {
-        return twist.moveToPercentage(config::getL2Algae).withName("Twist.L2Algae");
-    }
-
-    public static Command L3Algae() {
-        return twist.moveToPercentage(config::getL3Algae).withName("Twist.L3Algae");
-    }
-
-    public static Command L2Coral() {
-        return twist.moveToPercentage(config::getL2Coral).withName("Twist.L2Coral");
-    }
-
-    public static Command L3Coral() {
-        return twist.moveToPercentage(config::getL3Coral).withName("Twist.L3Coral");
-    }
-
-    public static Command L1Coral() {
-        return twist.moveToPercentage(config::getL1).withName("Twist.L1Coral");
-    }
-
-    public static Command L4Coral() {
-        return twist.moveToPercentage(config::getL4).withName("Twist.L4Coral");
-    }
-
-    public static Command intake() {
-        return twist.moveToPercentage(config::getIntake).withName("Twist.intake");
+    public static Command move(DoubleSupplier degrees, DoubleSupplier delay, String name) {
+        return new WaitCommand(delay.getAsDouble()).andThen(move(degrees, name).withName(name));
     }
 
     public static Command coastMode() {
         return twist.coastMode().withName("Twist.CoastMode");
     }
 
-    public static Command stopMotor() {
-        return twist.runStop().withName("Twist.stop");
-    }
-
     public static Command ensureBrakeMode() {
         return twist.ensureBrakeMode().withName("Twist.BrakeMode");
     }
 
-    // Tune value command
-    public static Command tuneTwist() {
-        return twist.moveToPercentage(config::getTuneTwist).withName("Twist.tune");
+    public static Command stopMotor() {
+        return twist.runStop().withName("Twist.stop");
     }
 
     // Log Command

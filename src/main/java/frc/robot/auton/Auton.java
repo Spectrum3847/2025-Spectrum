@@ -1,6 +1,7 @@
 package frc.robot.auton;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.events.EventTrigger;
 import com.pathplanner.lib.path.PathConstraints;
@@ -16,6 +17,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import frc.robot.RobotStates;
+import frc.robot.swerve.SwerveStates;
 import frc.spectrumLib.Telemetry;
 import java.io.IOException;
 import org.json.simple.parser.ParseException;
@@ -24,14 +27,23 @@ public class Auton {
 
     // Setup EventTriggers
     // Should all be public static final
-    public static final EventTrigger autonGorundIntake = new EventTrigger("groundIntake");
-    public static final EventTrigger autonSourceIntake = new EventTrigger("sourceIntake");
+    public static final EventTrigger autonGroundIntake = new EventTrigger("groundIntake");
+    public static final EventTrigger autonSourceIntakeOn = new EventTrigger("sourceIntakeOn");
+    public static final EventTrigger autonSourceIntakeOff = new EventTrigger("sourceIntakeOff");
     public static final EventTrigger autonLowAlgae = new EventTrigger("lowAlgae");
     public static final EventTrigger autonHighAlgae = new EventTrigger("highAlgae");
+    public static final EventTrigger autonPreScore = new EventTrigger("prescore");
     public static final EventTrigger autonScore = new EventTrigger("score");
-    public static final EventTrigger autonL4 = new EventTrigger("L4");
+    public static final EventTrigger autonLeftL4 = new EventTrigger("leftL4");
+    public static final EventTrigger autonRightL4 = new EventTrigger("rightL4");
+    public static final EventTrigger autonL1 = new EventTrigger("L1");
     public static final EventTrigger autonNet = new EventTrigger("net");
     public static final EventTrigger autonProcessor = new EventTrigger("processor");
+    public static final EventTrigger autonClearStates = new EventTrigger("clearStates");
+    public static final EventTrigger autonCoral = new EventTrigger("coral");
+    public static final EventTrigger autonHome = new EventTrigger("home");
+    public static final EventTrigger autonActionOn = new EventTrigger("actionOn");
+    public static final EventTrigger autonActionOff = new EventTrigger("actionOff");
 
     private final SendableChooser<Command> pathChooser = new SendableChooser<>();
     private boolean autoMessagePrinted = true;
@@ -44,26 +56,29 @@ public class Auton {
     public void setupSelectors() {
 
         pathChooser.setDefaultOption("Do Nothing", Commands.print("Do Nothing Auto ran"));
-        // autonChooser.addOption("1 Meter", new PathPlannerAuto("1 Meter Auto"));
-        // autonChooser.addOption("3 Meter", new PathPlannerAuto("3 Meter Auto"));
 
-        pathChooser.addOption("1 Meter", SpectrumAuton("1 Meter", false));
-        pathChooser.addOption("3 Meter", SpectrumAuton("3 Meter", false));
-        pathChooser.addOption("5 Meter", SpectrumAuton("5 Meter", false));
+        // pathChooser.addOption("1 Meter", SpectrumAuton("1 Meter", false));
+        // pathChooser.addOption("3 Meter", SpectrumAuton("3 Meter", false));
+        // pathChooser.addOption("5 Meter", SpectrumAuton("5 Meter", false));
 
-        pathChooser.addOption(
-                "Left - Preplace 5High", SpectrumAuton("Clean Side - Preplace 5High", false));
-        pathChooser.addOption(
-                "Right - Preplace 5High", SpectrumAuton("Clean Side - Preplace 5High", true));
-        pathChooser.addOption(
-                "Left - Source 5High", SpectrumAuton("Clean Side - Source 5High", false));
-        pathChooser.addOption(
-                "Right - Source 5High", SpectrumAuton("Clean Side - Source 5High", true));
+        pathChooser.addOption("Left | Belton L4", beltonAuton(false));
+        pathChooser.addOption("Right | Belton L4", beltonAuton(true));
+
+        pathChooser.addOption("Left | Belton L1", beltonAutonL1(false));
+        pathChooser.addOption("Right | Belton L1", beltonAutonL1(true));
+
+        // pathChooser.addOption("Left | 2.5-L4 Belton Auto", beltonAuton2(false));
+        // pathChooser.addOption("Right | 2.5-L4 Belton Auto", beltonAuton2(true));
 
         SmartDashboard.putData("Auto Chooser", pathChooser);
     }
 
+    public static void setupNamedCommands() {
+        NamedCommands.registerCommand("autonAlign", SwerveStates.autonSwerveAlign(2));
+    }
+
     public Auton() {
+        setupNamedCommands();
         setupSelectors(); // runs the command to start the chooser for auto on shuffleboard
         Telemetry.print("Auton Subsystem Initialized: ");
     }
@@ -81,6 +96,75 @@ public class Auton {
 
     public void exit() {
         printAutoDuration();
+    }
+
+    public Command beltonAuton(boolean mirrored) {
+        return SpectrumAuton("L4-SideStart", mirrored)
+                .withTimeout(2)
+                .andThen(aimL4score(), SpectrumAuton("TroughRush", mirrored), aimL4score());
+    }
+
+    public Command beltonAutonL1(boolean mirrored) {
+        return SpectrumAuton("L4-SideStart", mirrored)
+                .withTimeout(2)
+                .andThen(aimL4score(), SpectrumAuton("TroughRush", mirrored), aimL1score());
+    }
+
+    public Command beltonAuton2(boolean mirrored) {
+        return SpectrumAuton("L4-SideStart", mirrored)
+                .withTimeout(2)
+                .andThen(
+                        aimL4score(),
+                        SpectrumAuton("TroughRush", mirrored),
+                        aimL4score(),
+                        SpectrumAuton("TroughRush2", mirrored),
+                        aimL4score());
+    }
+
+    public Command aimL4score() {
+        return SwerveStates.reefAimDrive().withTimeout(1.2).alongWith(l4score());
+    }
+
+    public Command aimL1score() {
+        return SwerveStates.reefAimDrive().withTimeout(1.2).alongWith(l1score());
+    }
+
+    public Command l4score() {
+        return Commands.waitSeconds(0.05)
+                .andThen(
+                        RobotStates.coral
+                                .setTrue()
+                                .alongWith(
+                                        RobotStates.l4.setTrue(),
+                                        RobotStates.shrinkState.setTrue(),
+                                        RobotStates.homeAll.setFalse())
+                                .andThen(
+                                        Commands.waitSeconds(0.05),
+                                        RobotStates.actionPrepState.setTrue(),
+                                        Commands.waitSeconds(1.1),
+                                        RobotStates.actionPrepState.setFalse(),
+                                        Commands.waitSeconds(0.5),
+                                        RobotStates.clearStates(),
+                                        RobotStates.homeAll.setTrue()));
+    }
+
+    public Command l1score() {
+        return Commands.waitSeconds(0.05)
+                .andThen(
+                        RobotStates.coral
+                                .setTrue()
+                                .alongWith(
+                                        RobotStates.l1.setTrue(),
+                                        RobotStates.shrinkState.setTrue(),
+                                        RobotStates.homeAll.setFalse())
+                                .andThen(
+                                        Commands.waitSeconds(0.05),
+                                        RobotStates.actionPrepState.setTrue(),
+                                        Commands.waitSeconds(1.1),
+                                        RobotStates.actionPrepState.setFalse(),
+                                        Commands.waitSeconds(0.5),
+                                        RobotStates.clearStates(),
+                                        RobotStates.homeAll.setTrue()));
     }
 
     /**
@@ -180,5 +264,9 @@ public class Auton {
                         );
 
         return pathfindingCommand;
+    }
+    // Log Command
+    protected static Command log(Command cmd) {
+        return Telemetry.log(cmd);
     }
 }

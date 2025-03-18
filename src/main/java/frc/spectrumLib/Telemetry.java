@@ -2,6 +2,7 @@ package frc.spectrumLib;
 
 import dev.doglog.DogLog;
 import dev.doglog.DogLogOptions;
+import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.Timer;
@@ -18,7 +19,6 @@ public class Telemetry extends DogLog implements Subsystem {
 
     private static final Map<String, String[]> previousAlerts = new HashMap<>();
 
-    // TODO: Create default Fault Types
     public enum Fault {
         CAMERA_OFFLINE,
         AUTO_SHOT_TIMEOUT_TRIGGERED,
@@ -53,8 +53,8 @@ public class Telemetry extends DogLog implements Subsystem {
                         .withNtPublish(ntPublish)
                         .withCaptureDs(true)
                         .withCaptureNt(captureNt)
-                        .withCaptureConsole(true)
-                        .withLogExtras(true));
+                        .withCaptureConsole(false)
+                        .withLogExtras(false));
         Telemetry.setPdh(new PowerDistribution());
         /* Display the currently running commands on SmartDashboard*/
         SmartDashboard.putData(CommandScheduler.getInstance());
@@ -69,8 +69,25 @@ public class Telemetry extends DogLog implements Subsystem {
                         Commands.startEnd(
                                 () -> log("Commands", "Init: " + cmd.getName()),
                                 () -> log("Commands", "End: " + cmd.getName())))
-                .ignoringDisable(true)
+                .ignoringDisable(cmd.runsWhenDisabled())
                 .withName(cmd.getName());
+    }
+
+    // Boolean logger
+    public static void log(String key, Boolean value) {
+        var now = HALUtil.getFPGATime();
+        logger.queueLog(now, key, value);
+    }
+
+    // double logger
+    public static void log(String key, double value) {
+        var now = HALUtil.getFPGATime();
+        logger.queueLog(now, key, value);
+    }
+
+    public static void log(String key, double[] value) {
+        var now = HALUtil.getFPGATime();
+        logger.queueLog(now, key, value);
     }
 
     /** Print a statement if they are enabled */

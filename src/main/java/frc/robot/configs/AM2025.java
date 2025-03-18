@@ -13,13 +13,11 @@ public class AM2025 extends Config {
         // Attached Mechanisms
         pilot.setAttached(true);
         operator.setAttached(true);
-        algaeIntake.setAttached(true);
-        coralIntake.setAttached(true);
-        algaePivot.setAttached(true);
+        intake.setAttached(true);
+        climb.setAttached(true);
         shoulder.setAttached(true);
         elbow.setAttached(true);
         twist.setAttached(true);
-        climber.setAttached(false);
         elevator.setAttached(true);
     }
 }

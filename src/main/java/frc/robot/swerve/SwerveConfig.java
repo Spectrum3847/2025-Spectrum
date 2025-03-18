@@ -14,6 +14,7 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.ClosedLoopOutputType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerFeedbackType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstantsFactory;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.*;
 import lombok.Getter;
@@ -21,15 +22,34 @@ import lombok.Setter;
 
 public class SwerveConfig {
 
+    // Make this number smaller to move further from reef, make it bigger to move closer
+    @Getter private final double homeLlAimTAgoal = 7.9;
+    @Getter private final double eventLlAimTAgoal = 8.1;
+
     @Getter private final double simLoopPeriod = 0.005; // 5 ms
     @Getter @Setter private double robotWidth = Units.inchesToMeters(29.5);
     @Getter @Setter private double robotLength = Units.inchesToMeters(29.5);
 
     @Getter @Setter private double maxAngularRate = 1.5 * Math.PI; // rad/s
-    @Getter @Setter private double deadband = 0.1;
+    @Getter @Setter private double deadband = 0.02;
+
+    @Getter @Setter
+    private double driveGearRatio = (50.0 / 14.0) * (17.0 / 27.0) * (45.0 / 15.0); // 6.74603174603;
+
+    @Getter @Setter private double steerGearRatio = 21.428571428571427; // 12.8;
+
+    @Getter @Setter
+    // Estimated at first, then fudge-factored to make odom match record
+    private Distance wheelRadius = Inches.of(3.815 / 2);
+
+    // Theoretical free speed (m/s) at 12v applied output;
+    // This needs to be tuned to your individual robot
+    @Getter @Setter
+    private LinearVelocity speedAt12Volts =
+            MetersPerSecond.of((95 / driveGearRatio) * 2 * Math.PI * wheelRadius.in(Meters));
 
     // -----------------------------------------------------------------------
-    // Rotation Controller Constants
+    // PID Controller Constants
     // -----------------------------------------------------------------------
     @Getter private double maxAngularVelocity = 2 * Math.PI; // rad/s
     @Getter private double maxAngularAcceleration = Math.pow(maxAngularVelocity, 2); // rad/s^2
@@ -41,6 +61,27 @@ public class SwerveConfig {
     @Getter private double kPHoldController = 12.0;
     @Getter private double kIHoldController = 0.0;
     @Getter private double kDHoldController = 0.0;
+
+    @Getter private double kPTranslationController = 4;
+    @Getter private double kITranslationController = 0.0;
+    @Getter private double kDTranslationController = 0.0;
+    @Getter private double translationTolerance = 0.001;
+
+    @Getter
+    private Constraints translationConstraints =
+            new Constraints(
+                    speedAt12Volts.baseUnitMagnitude() / 2,
+                    speedAt12Volts.baseUnitMagnitude() / 20);
+
+    @Getter private double kPTagCenterController = 3.3;
+    @Getter private double kITagCenterController = 0.0;
+    @Getter private double kDTagController = 0.0;
+    @Getter private double tagCenterTolerance = 0.00001; // meters
+
+    @Getter private double kPTagDistanceController = 0.15;
+    @Getter private double kITagDistanceController = 0.0;
+    @Getter private double kDTagDistanceController = 0.0;
+    @Getter private double tagDistanceTolerance = 0.2; // meters
 
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     @Getter private final Rotation2d blueAlliancePerspectiveRotation = Rotation2d.fromDegrees(0);
@@ -87,26 +128,13 @@ public class SwerveConfig {
                                     .withStatorCurrentLimit(Amps.of(60))
                                     .withStatorCurrentLimitEnable(true));
 
-    @Getter private CANcoderConfiguration cancoderInitialConfigs = new CANcoderConfiguration();
+    @Getter private CANcoderConfiguration canCoderInitialConfigs = new CANcoderConfiguration();
     // Configs for the Pigeon 2; leave this null to skip applying Pigeon 2 configs
     @Getter private Pigeon2Configuration pigeonConfigs = new Pigeon2Configuration();
-
-    // Theoretical free speed (m/s) at 12v applied output;
-    // This needs to be tuned to your individual robot
-    @Getter @Setter private LinearVelocity speedAt12Volts = MetersPerSecond.of(4.70);
 
     // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
     // This may need to be tuned to your individual robot
     @Getter private double coupleRatio = 3.125 * 14.0 / 13.0; // copied from 254-2024
-
-    @Getter @Setter
-    private double driveGearRatio = (50.0 / 16.0) * (16.0 / 28.0) * (45.0 / 15.0); // 7.363636364;
-
-    @Getter @Setter private double steerGearRatio = 21.428571428571427; // 12.8;
-
-    @Getter @Setter
-    // Estimated at first, then fudge-factored to make odom match record
-    private Distance wheelRadius = Inches.of(3.815 / 2);
 
     @Getter @Setter private boolean steerMotorReversed = true;
     @Getter @Setter private boolean invertLeftSide = false;
@@ -124,7 +152,10 @@ public class SwerveConfig {
 
     @Getter private SwerveDrivetrainConstants drivetrainConstants;
 
-    @Getter private SwerveModuleConstantsFactory constantCreator;
+    @Getter
+    private SwerveModuleConstantsFactory<
+                    TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
+            constantCreator;
 
     private final double wheelBaseInches = 21.5;
     private final double trackWidthInches = 18.5;
@@ -165,16 +196,37 @@ public class SwerveConfig {
     @Getter private Distance backRightXPos = Inches.of(-wheelBaseInches / 2);
     @Getter private Distance backRightYPos = Inches.of(-trackWidthInches / 2);
 
-    @Getter private SwerveModuleConstants frontLeft;
-    @Getter private SwerveModuleConstants frontRight;
-    @Getter private SwerveModuleConstants backLeft;
-    @Getter private SwerveModuleConstants backRight;
+    @Getter
+    private SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
+            frontLeft;
 
-    // Used in commands
+    @Getter
+    private SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
+            frontRight;
+
+    @Getter
+    private SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
+            backLeft;
+
+    @Getter
+    private SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
+            backRight;
+
     @Getter @Setter private double targetHeading = 0;
 
-    public SwerveModuleConstants[] getModules() {
-        return new SwerveModuleConstants[] {frontLeft, frontRight, backLeft, backRight};
+    private SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
+                    []
+            modules;
+
+    @SuppressWarnings("unchecked")
+    public SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
+            [] getModules() {
+        if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
+            modules = new SwerveModuleConstants[] {frontLeft, frontRight, backLeft, backRight};
+        } else {
+            throw new IllegalStateException("One or more SwerveModuleConstants are null");
+        }
+        return modules;
     }
 
     public SwerveConfig() {
@@ -189,7 +241,8 @@ public class SwerveConfig {
                         .withPigeon2Configs(pigeonConfigs);
 
         constantCreator =
-                new SwerveModuleConstantsFactory()
+                new SwerveModuleConstantsFactory<
+                                TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>()
                         .withDriveMotorGearRatio(driveGearRatio)
                         .withSteerMotorGearRatio(steerGearRatio)
                         .withWheelRadius(wheelRadius)
