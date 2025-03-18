@@ -202,6 +202,12 @@ public class LedStates {
         ledCommand("left.SecretLThree", right, right.bounce(Color.kPurple, 2), priority, trigger);
     }
 
+    static void secretLTwoLED(Trigger trigger, int priority) {
+        ledCommand("right.SecretLTwo", right, right.chase(new Color("#d1acfb"), 10, 10), priority, trigger);
+        ledCommand("right.SecretLTwo", right, right.chase(new Color("#d1acfb"), 10, 10), priority, trigger);
+    
+    }
+
     // Log Command
     protected static Command log(Command cmd) {
         return Telemetry.log(cmd);
