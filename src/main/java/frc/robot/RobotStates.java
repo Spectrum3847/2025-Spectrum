@@ -100,9 +100,12 @@ public class RobotStates {
         pilot.home_select.or(operator.home_select).onFalse(clearStates());
         autonClearStates.whileTrue(clearStates());
 
-        actionState
-                .or(operator.staged)
-                .onChangeToFalse(coral.setFalse().alongWith(algae.setFalse()));
+        actionState.or(operator.staged).onChangeToFalse(coral.setFalse());
+        algaeAfterAction
+                .not()
+                .and(actionState.or(operator.staged))
+                .onChangeToFalse(algae.setFalse());
+        algae.and(actionState).onTrue(algaeAfterAction.setFalse());
         isAtHome.onTrue(homeAll.setFalse());
 
         pilot.coastOn_dB.or(operator.coastOn_dB).onTrue(coastMode.setTrue().ignoringDisable(true));
@@ -151,22 +154,24 @@ public class RobotStates {
             actionState
                     .and(algaeAfterAction)
                     .onTrue(
-                            l3.setTrueAfterTime(RobotStates::getScoreTime),
-                            algae.setTrueAfterTime(() -> (RobotStates.getScoreTime()/2)),
-                            coral.setFalse(),
+                            l3.setTrueAfterTime(() -> (RobotStates.getScoreTime() + 1)),
+                            algae.setTrueAfterTime(() -> (RobotStates.getScoreTime() + 1)),
+                            coral.setFalseAfterTime(() -> (RobotStates.getScoreTime() / 2)),
                             l1.setFalseAfterTime(RobotStates::getScoreTime),
                             l2.setFalseAfterTime(RobotStates::getScoreTime),
-                            l4.setFalseAfterTime(RobotStates::getScoreTime));
+                            l4.setFalseAfterTime(RobotStates::getScoreTime),
+                            homeAll.setTrueAfterTime(() -> RobotStates.getScoreTime() / 2));
         } else {
             actionState
                     .and(algaeAfterAction)
                     .onTrue(
-                            l2.setTrueAfterTime(RobotStates::getScoreTime),
-                            algae.setTrueAfterTime(() -> (RobotStates.getScoreTime()/2)),
-                            coral.setFalse(),
+                            l2.setTrueAfterTime(() -> (RobotStates.getScoreTime() + 1)),
+                            algae.setTrueAfterTime(() -> (RobotStates.getScoreTime() + 1)),
+                            coral.setFalseAfterTime(() -> (RobotStates.getScoreTime() / 2)),
                             l1.setFalseAfterTime(RobotStates::getScoreTime),
                             l3.setFalseAfterTime(RobotStates::getScoreTime),
-                            l4.setFalseAfterTime(RobotStates::getScoreTime));
+                            l4.setFalseAfterTime(RobotStates::getScoreTime),
+                            homeAll.setTrueAfterTime(() -> RobotStates.getScoreTime() / 2));
         }
 
         // **********************************
