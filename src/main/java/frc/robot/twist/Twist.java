@@ -308,7 +308,7 @@ public class Twist extends Mechanism {
         return run(
                 () -> {
                     if (algae.getAsBoolean()) {
-                        setDegrees(config::getRightCoral);
+                        setDegrees(config::getAlgaeIntake);
                     } else if (coral.getAsBoolean()) {
                         setDegrees(config::getLeftCoral);
                     } else {
