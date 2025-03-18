@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.RobotStates;
 import frc.robot.climb.ClimbStates;
+import frc.robot.elevator.ElevatorStates;
 import frc.robot.intake.IntakeStates;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.leds.SpectrumLEDs;
@@ -30,6 +31,9 @@ public class LedStates {
 
         // General Led Commands
         homeFinishLED(RobotStates.isAtHome.and(Util.teleop, RobotStates.staged.not()), 8);
+        elevatorHomeLED(ElevatorStates.isHome, 17);
+        elevatorNotHomeLED(ElevatorStates.isHigh, 18);
+        secretLThreeLED(ElevatorStates.isL3Coral, 19);
 
         // Coral and Algae Led Commands
         coralModeLED(RobotStates.coral.and(Util.teleop), 6);
@@ -186,6 +190,16 @@ public class LedStates {
     static void elevatorHomeLED(Trigger trigger, int priority) {
         ledCommand("right.ElevatorHome", right, right.blink(Color.kPurple, 2), priority, trigger);
         ledCommand("left.ElevatorHome", left, left.blink(Color.kPurple, 2), priority, trigger);
+    }
+
+    static void elevatorNotHomeLED(Trigger trigger, int priority) {
+        ledCommand("right.ElevatorNotHome", right, right.blink(Color.kRed, 1), priority, trigger);
+        ledCommand("left.ElevatorNotHome", left, left.blink(Color.kRed, 1), priority, trigger);
+    }
+
+    static void secretLThreeLED(Trigger trigger, int priority) {
+        ledCommand("right.SecretLThree", right, right.bounce(Color.kPurple, 1), priority, trigger);
+        ledCommand("left.SecretLThree", right, right.bounce(Color.kPurple, 2), priority, trigger);
     }
 
     // Log Command
