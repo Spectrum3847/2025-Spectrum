@@ -40,7 +40,7 @@ public class ElevatorStates {
         stationIntaking.whileTrue(
                 move(
                         config::getStationIntake,
-                        config::getStationExtendedIntake,
+                        // config::getStationExtendedIntake,
                         "Elevator.stationIntake"));
         stationIntaking.onFalse(home());
 

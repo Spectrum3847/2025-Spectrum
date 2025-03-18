@@ -25,7 +25,8 @@ public class PilotStates {
         pilot.upReorient
                 .or(pilot.downReorient, pilot.leftReorient, pilot.rightReorient)
                 .onTrue(log(rumble(1, 0.5).withName("Pilot.reorientRumble")));
-        IntakeStates.hasCoral.onTrue(log(rumble(1, 0.5).withName("Pilot.coralRumble")));
+        IntakeStates.hasCoral.onTrue(log(rumble(1, 0.5).withName("Pilot.hasCoralRumble")));
+        IntakeStates.hasAlgae.onTrue(log(rumble(1, 0.5).withName("Pilot.hasAlgaeRumble")));
     }
 
     /** Command that can be used to rumble the pilot controller */

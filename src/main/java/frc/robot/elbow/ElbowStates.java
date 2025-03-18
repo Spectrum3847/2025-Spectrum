@@ -14,8 +14,7 @@ public class ElbowStates {
     private static Elbow elbow = Robot.getElbow();
     private static ElbowConfig config = Robot.getConfig().elbow;
 
-    public static final Trigger isHome =
-            elbow.atDegrees(() -> (config.getHome() + config.getOffset()), config::getTolerance);
+    public static final Trigger isHome = elbow.atDegrees(config::getHome, config::getTolerance);
     public static final Trigger pastElevator =
             elbow.aboveDegrees(() -> (config.getClearElevator() + 360), config::getTolerance)
                     .or(elbow.belowDegrees(() -> -config.getClearElevator(), config::getTolerance));
@@ -41,10 +40,10 @@ public class ElbowStates {
                 .whileTrue(
                         move(
                                 config::getStationIntake,
-                                config::getStationExtendedIntake,
+                                // config::getStationExtendedIntake,
                                 "Elbow.StationIntake"));
         Robot.getPilot()
-                .groundCoral_LB_RT
+                .groundCoral_LB_LT
                 .and(actionState.not())
                 .whileTrue(move(config::getGroundCoralIntake, "Elbow.GroundCoral"));
 

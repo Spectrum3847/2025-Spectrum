@@ -37,10 +37,10 @@ public class Shoulder extends Mechanism {
         @Getter @Setter private double climbPrep = -56.7;
         @Getter @Setter private double home = 0;
 
-        @Getter @Setter private double stationIntake = 9.2;
-        @Getter @Setter private double stationExtendedIntake = 23.6;
+        @Getter @Setter private double stationIntake = -9.2;
+        @Getter @Setter private double stationExtendedIntake = -23.6;
         @Getter @Setter private double groundAlgaeIntake = 0;
-        @Getter @Setter private double groundCoralIntake = -4;
+        @Getter @Setter private double groundCoralIntake = 4;
 
         @Getter @Setter private double processorAlgae = 55;
         @Getter @Setter private double l2Algae = 160; // -32;
@@ -201,7 +201,7 @@ public class Shoulder extends Mechanism {
     public Trigger belowDegrees(DoubleSupplier degrees, DoubleSupplier tolerance) {
         return new Trigger(
                 () ->
-                        (getPositionDegrees() + config.getOffset())
+                        (getPositionDegrees() - config.getOffset())
                                 < (degrees.getAsDouble() - tolerance.getAsDouble()));
     }
 
@@ -209,7 +209,7 @@ public class Shoulder extends Mechanism {
     public Trigger aboveDegrees(DoubleSupplier degrees, DoubleSupplier tolerance) {
         return new Trigger(
                 () ->
-                        (getPositionDegrees() + config.getOffset())
+                        (getPositionDegrees() - config.getOffset())
                                 > (degrees.getAsDouble() + tolerance.getAsDouble()));
     }
 
@@ -217,7 +217,7 @@ public class Shoulder extends Mechanism {
     public Trigger atDegrees(DoubleSupplier degrees, DoubleSupplier tolerance) {
         return new Trigger(
                 () ->
-                        Math.abs(getPositionDegrees() + config.getOffset() - degrees.getAsDouble())
+                        Math.abs(getPositionDegrees() - config.getOffset() - degrees.getAsDouble())
                                 < tolerance.getAsDouble());
     }
 
@@ -291,17 +291,35 @@ public class Shoulder extends Mechanism {
         return super.moveToDegrees(offsetPosition(degrees)).withName(getName() + ".runPoseDegrees");
     }
 
-    public Command move(DoubleSupplier degrees, DoubleSupplier exDegrees) {
-        return run(
-                () -> {
-                    // TODO: add a check for reversed and negate values when we do double sided
-                    // scoring.
-                    if (RobotStates.extended.getAsBoolean()) {
-                        setMMPositionFoc(() -> degreesToRotations(offsetPosition(exDegrees)));
+    public Command move(DoubleSupplier shrinkDegrees, DoubleSupplier exDegrees) {
+        return run(() -> {
+                    if (!RobotStates.shrink.getAsBoolean()) {
+                        setMMPositionFoc(getIfReversedOffsetInRotations(exDegrees));
                     } else {
-                        setMMPositionFoc(() -> degreesToRotations(offsetPosition(degrees)));
+                        setMMPositionFoc(getIfReversedOffsetInRotations(shrinkDegrees));
                     }
-                });
+                })
+                .withName("Shoulder.move");
+    }
+
+    public Command move(DoubleSupplier degrees) {
+        return run(() -> setMMPositionFoc(getIfReversedOffsetInRotations(degrees)))
+                .withName("Shoulder.move");
+    }
+
+    public DoubleSupplier getIfReversedOffsetInRotations(DoubleSupplier degrees) {
+        return getOffsetRotations(getIfReversedDegrees(degrees));
+    }
+
+    public DoubleSupplier getIfReversedDegrees(DoubleSupplier degrees) {
+        return () ->
+                (RobotStates.reverse.getAsBoolean()
+                        ? -1 * degrees.getAsDouble()
+                        : degrees.getAsDouble());
+    }
+
+    public DoubleSupplier getOffsetRotations(DoubleSupplier degrees) {
+        return () -> degreesToRotations(offsetPosition(degrees));
     }
 
     public DoubleSupplier offsetPosition(DoubleSupplier position) {

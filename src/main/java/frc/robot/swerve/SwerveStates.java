@@ -51,7 +51,7 @@ public class SwerveStates {
         pilot.rightReorient.onTrue(log(reorientRight()));
 
         // // vision aim
-        pilot.visionAim_A.whileTrue(log(reefAimDrive()));
+        pilot.reefAim_A.whileTrue(log(reefAimDrive()));
     }
 
     /** Pilot Commands ************************************************************************ */

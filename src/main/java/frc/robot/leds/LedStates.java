@@ -1,17 +1,21 @@
 package frc.robot.leds;
 
+import static edu.wpi.first.units.Units.*;
+
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.RobotStates;
 import frc.robot.climb.ClimbStates;
-import frc.robot.elevator.ElevatorStates;
+import frc.robot.intake.IntakeStates;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.leds.SpectrumLEDs;
 import frc.spectrumLib.util.Util;
+import java.util.function.BooleanSupplier;
 
 public class LedStates {
     private static LedFull leds = Robot.getLeds();
@@ -24,12 +28,17 @@ public class LedStates {
         autoPattern(Util.autoMode.and(Util.dsAttached));
         testModePattern(Util.testMode.and(Util.dsAttached));
 
+        // General Led Commands
+        homeFinishLED(RobotStates.isAtHome.and(Util.teleop, RobotStates.staged.not()), 8);
+
         // Coral and Algae Led Commands
-        coralModeLED(RobotStates.coral, 6);
-        algaeModeLED(RobotStates.algae, 6);
+        coralModeLED(RobotStates.coral.and(Util.teleop), 6);
+        algaeModeLED(RobotStates.algae.and(Util.teleop), 6);
+        hasCoralLED(IntakeStates.hasCoral.and(Util.teleop), 7);
+        hasAlgaeLED(IntakeStates.hasAlgae.and(Util.teleop), 7);
 
         // Elevator Led Commands
-        elevatorUpLED(ElevatorStates.isUp.and(Util.teleop), 6);
+        // elevatorUpLED(ElevatorStates.isUp.and(Util.teleop), 6);
 
         // Climb Led Commands
         climbReadyLED(ClimbStates.isLatched.and(RobotStates.climbPrep, Util.teleop), 6);
@@ -40,7 +49,10 @@ public class LedStates {
             String name, SpectrumLEDs sLeds, LEDPattern pattern, Trigger trigger) {
         int priority = -1;
         return trigger.and(sLeds.checkPriority(priority), sLeds.defaultTrigger)
-                .onTrue(sLeds.setPattern(pattern, priority).withName(name));
+                // .onTrue(sLeds.setPattern(pattern, priority).withName(name));
+                .onTrue(
+                        setPatternWithReverseCheck(
+                                name, sLeds, pattern, priority, () -> sLeds == left));
     }
 
     static void disabledPattern(Trigger trigger) {
@@ -75,9 +87,61 @@ public class LedStates {
                 .whileTrue(log(sLed.setPattern(pattern, priority).withName(name)));
     }
 
+    private static Trigger withReverseLedCommand(
+            String name, SpectrumLEDs sLed, LEDPattern pattern, int priority, Trigger trigger) {
+        return trigger.and(sLed.checkPriority(priority))
+                .whileTrue(
+                        log(
+                                setPatternWithReverseCheck(
+                                        name, sLed, pattern, priority, () -> sLed == left)));
+    }
+
+    private static Command setPatternWithReverseCheck(
+            String name,
+            SpectrumLEDs sLed,
+            LEDPattern pattern,
+            int priority,
+            BooleanSupplier front) {
+        return Commands.either(
+                        sLed.setPattern(pattern, priority)
+                                .until(
+                                        () ->
+                                                RobotStates.reverse.getAsBoolean()
+                                                                != front.getAsBoolean()
+                                                        && !RobotStates.photon.getAsBoolean()),
+                        sLed.setPattern(pattern.atBrightness(Percent.of(25)), priority)
+                                .until(
+                                        () ->
+                                                RobotStates.reverse.getAsBoolean()
+                                                        == front.getAsBoolean()),
+                        () ->
+                                (RobotStates.reverse.getAsBoolean() == front.getAsBoolean())
+                                        || RobotStates.photon.getAsBoolean())
+                .repeatedly();
+    }
+
+    static void homeFinishLED(Trigger trigger, int priority) {
+        withReverseLedCommand(
+                "right.HomeFinish",
+                right,
+                right.bounce(right.purple, 3)
+                        .blend(right.solid(right.purple).atBrightness(Percent.of(75))),
+                priority,
+                trigger);
+        withReverseLedCommand(
+                "left.HomeFinish",
+                left,
+                right.bounce(right.purple, 3)
+                        .blend(right.solid(right.purple).atBrightness(Percent.of(75))),
+                priority,
+                trigger);
+    }
+
     static void elevatorUpLED(Trigger trigger, int priority) {
-        ledCommand("right.ElevatorUp", right, right.blink(Color.kBlue, 0.25), priority, trigger);
-        ledCommand("left.ElevatorUp", left, left.blink(Color.kBlue, 0.25), priority, trigger);
+        withReverseLedCommand(
+                "right.ElevatorUp", right, right.blink(Color.kBlue, 0.25), priority, trigger);
+        withReverseLedCommand(
+                "left.ElevatorUp", left, left.blink(Color.kBlue, 0.25), priority, trigger);
     }
 
     static void climbReadyLED(Trigger trigger, int priority) {
@@ -86,13 +150,34 @@ public class LedStates {
     }
 
     static void coralModeLED(Trigger trigger, int priority) {
-        ledCommand("right.CoralMode", right, right.solid(Color.kWhite), priority, trigger);
-        ledCommand("left.CoralMode", left, left.solid(Color.kWhite), priority, trigger);
+        withReverseLedCommand(
+                "right.CoralMode", right, right.solid(Color.kCoral), priority, trigger);
+        withReverseLedCommand("left.CoralMode", left, left.solid(Color.kCoral), priority, trigger);
     }
 
     static void algaeModeLED(Trigger trigger, int priority) {
-        ledCommand("right.AlgaeMode", right, right.solid(Color.kGreen), priority, trigger);
-        ledCommand("left.AlgaeMode", left, left.solid(Color.kGreen), priority, trigger);
+        withReverseLedCommand(
+                "right.AlgaeMode", right, right.solid(Color.kMediumSeaGreen), priority, trigger);
+        withReverseLedCommand(
+                "left.AlgaeMode", left, left.solid(Color.kMediumSeaGreen), priority, trigger);
+    }
+
+    static void hasCoralLED(Trigger trigger, int priority) {
+        withReverseLedCommand(
+                "right.HasCoral", right, right.breathe(Color.kCoral, 1), priority, trigger);
+        withReverseLedCommand(
+                "left.HasCoral", left, left.breathe(Color.kCoral, 1), priority, trigger);
+    }
+
+    static void hasAlgaeLED(Trigger trigger, int priority) {
+        withReverseLedCommand(
+                "right.HasAlgae",
+                right,
+                right.breathe(Color.kMediumSeaGreen, 1),
+                priority,
+                trigger);
+        withReverseLedCommand(
+                "left.HasAlgae", left, left.breathe(Color.kMediumSeaGreen, 1), priority, trigger);
     }
 
     // Log Command
