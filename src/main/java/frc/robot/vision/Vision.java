@@ -611,56 +611,60 @@ public class Vision implements NTSendable, Subsystem {
         }
     }
 
-    public String getCageToClimb() {
-        Pose2d robotPose = frontLL.getMegaTag2_Pose2d();
+    public double getCageYToClimb() {
+        Pose2d robotPose = Robot.getSwerve().getRobotPose();
         double[] cageDiffs = new double[3];
 
         if (Field.isBlue()) {
-            cageDiffs[0] = Math.abs(robotPose.getY() - Units.inchesToMeters(286.779));
-            cageDiffs[1] = Math.abs(robotPose.getY() - Units.inchesToMeters(242.855));
-            cageDiffs[2] = Math.abs(robotPose.getY() - Units.inchesToMeters(199.947));
+            cageDiffs[0] = Math.abs(robotPose.getY() - Field.Barge.farCage.getY());
+            cageDiffs[1] = Math.abs(robotPose.getY() - Field.Barge.middleCage.getY());
+            cageDiffs[2] = Math.abs(robotPose.getY() - Field.Barge.closeCage.getY());
 
-            if (indexOfSmallest(cageDiffs) == 0) {
-                return "B1";
+            int closestCage = indexOfSmallest(cageDiffs);
+
+            if (closestCage == 0) {
+                return Field.Barge.farCage.getY();
             }
 
-            else if (indexOfSmallest(cageDiffs) == 1) {
-                return "B2";
+            else if (closestCage == 1) {
+                return Field.Barge.middleCage.getY();
             }
 
-            else if (indexOfSmallest(cageDiffs) == 2) {
-                return "B3";
+            else if (closestCage == 2) {
+                return Field.Barge.closeCage.getY();
             }
 
             else {
-                return "Nothing";
+                return 0;
             }
         }
 
         else {
-            cageDiffs[0] = Math.abs(Field.flipYifRed(robotPose.getY()) - Field.flipYifRed(Units.inchesToMeters(286.779)));
-            cageDiffs[1] = Math.abs(Field.flipYifRed(robotPose.getY()) - Field.flipYifRed(Units.inchesToMeters(242.855)));
-            cageDiffs[2] = Math.abs(Field.flipYifRed(robotPose.getY()) - Field.flipYifRed(Units.inchesToMeters(199.947)));
+            cageDiffs[0] = Math.abs(Field.flipYifRed(robotPose.getY()) - Field.flipYifRed(Field.Barge.farCage.getY()));
+            cageDiffs[1] = Math.abs(Field.flipYifRed(robotPose.getY()) - Field.flipYifRed(Field.Barge.middleCage.getY()));
+            cageDiffs[2] = Math.abs(Field.flipYifRed(robotPose.getY()) - Field.flipYifRed(Field.Barge.closeCage.getY()));
 
-            if (indexOfSmallest(cageDiffs) == 0) {
-                return "R1";
+            int closestCage = indexOfSmallest(cageDiffs);
+
+            if (closestCage == 0) {
+                return Field.Barge.farCage.getY(); 
             }
 
-            else if (indexOfSmallest(cageDiffs) == 1) {
-                return "R2";
+            else if (closestCage == 1) {
+                return Field.Barge.middleCage.getY();
             }
 
-            else if (indexOfSmallest(cageDiffs) == 2) {
-                return "R3";
+            else if (closestCage == 2) {
+                return Field.Barge.middleCage.getY();
             }
 
             else {
-                return "Nothing";
+                return 0;
             }
         }
      }
 
-    public static double indexOfSmallest(double[] array) {
+    public static int indexOfSmallest(double[] array) {
         int indexOfSmallest = 0;
         double smallestIndex = array[indexOfSmallest];
         for(int i = 0; i < array.length; i++) {

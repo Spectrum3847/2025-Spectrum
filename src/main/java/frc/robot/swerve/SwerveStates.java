@@ -96,33 +96,7 @@ public class SwerveStates {
     }
 
     public static Command cageAimDrive() {
-        if (Robot.getVision().getCageToClimb().equals("B1")) {
-            return alignToYDrive(() -> Units.inchesToMeters(286.779));
-        }
-
-        else if (Robot.getVision().getCageToClimb().equals("B2")) {
-            return alignToYDrive(() -> Units.inchesToMeters(242.855));
-        }
-
-        else if (Robot.getVision().getCageToClimb().equals("B3")) {
-            return alignToYDrive(() -> Units.inchesToMeters(199.947));
-        }
-
-        else if (Robot.getVision().getCageToClimb().equals("R1")) {
-            return alignToYDrive(() -> Field.flipYifRed(Units.inchesToMeters(286.779)));
-        }
-
-        else if (Robot.getVision().getCageToClimb().equals("R2")) {
-            return alignToYDrive(() -> Field.flipYifRed(Units.inchesToMeters(242.855)));
-        }
-
-        else if (Robot.getVision().getCageToClimb().equals("R3")) {
-            return alignToYDrive(() -> Field.flipYifRed(Units.inchesToMeters(199.947)));
-        }
-
-        else {
-            return fpvAimDrive(null, null, null);
-        }
+        return alignToYDrive(() -> Robot.getVision().getCageYToClimb());
     }
 
     public static Command alignToXDrive(DoubleSupplier xGoalMeters) {
