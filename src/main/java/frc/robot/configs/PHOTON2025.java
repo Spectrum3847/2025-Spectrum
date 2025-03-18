@@ -12,7 +12,7 @@ public class PHOTON2025 extends Config {
         // to flip direction of swerve add 0.5 to negative values and subtract 0.5 from positive
         // values
         // swerve.configEncoderOffsets(0.204590, -0.414062, -0.163330, 0.026855);
-        swerve.configEncoderOffsets(-0.29541, 0.085938, 0.33667, 0.387451);
+        swerve.configEncoderOffsets(-0.265625, 0.078613, 0.374023, -0.478516);
 
         elevator = new PhotonElevatorConfig();
         shoulder = new PhotonShoulderConfig();
