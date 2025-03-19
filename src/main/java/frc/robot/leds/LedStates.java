@@ -34,6 +34,7 @@ public class LedStates {
         elevatorHomeLED(ElevatorStates.isHome, 17);
         elevatorNotHomeLED(ElevatorStates.isHigh, 18);
         secretLThreeLED(ElevatorStates.isL3Coral, 19);
+        secretLTwoLED(ElevatorStates.isL2Coral, 20);
 
         // Coral and Algae Led Commands
         coralModeLED(RobotStates.coral.and(Util.teleop), 6);
@@ -193,13 +194,13 @@ public class LedStates {
     }
 
     static void elevatorNotHomeLED(Trigger trigger, int priority) {
-        ledCommand("right.ElevatorNotHome", right, right.blink(Color.kRed, 1), priority, trigger);
-        ledCommand("left.ElevatorNotHome", left, left.blink(Color.kRed, 1), priority, trigger);
+        ledCommand("right.ElevatorNotHome", right, right.blink(Color.kPurple, 1), priority, trigger);
+        ledCommand("left.ElevatorNotHome", left, left.blink(Color.kPurple, 1), priority, trigger);
     }
 
     static void secretLThreeLED(Trigger trigger, int priority) {
-        ledCommand("right.SecretLThree", right, right.bounce(Color.kPurple, 1), priority, trigger);
-        ledCommand("left.SecretLThree", right, right.bounce(Color.kPurple, 2), priority, trigger);
+        ledCommand("right.SecretLThree", right, right.bounce(Color.kMagenta, 1), priority, trigger);
+        ledCommand("left.SecretLThree", right, right.bounce(Color.kMagenta, 2), priority, trigger);
     }
 
     static void secretLTwoLED(Trigger trigger, int priority) {
