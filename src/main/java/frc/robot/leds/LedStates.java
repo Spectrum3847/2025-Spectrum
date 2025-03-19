@@ -31,10 +31,9 @@ public class LedStates {
 
         // General Led Commands
         homeFinishLED(RobotStates.isAtHome.and(Util.teleop, RobotStates.staged.not()), 8);
-        elevatorHomeLED(ElevatorStates.isHome, 17);
-        elevatorNotHomeLED(ElevatorStates.isHigh, 18);
-        secretLThreeLED(ElevatorStates.isL3Coral, 19);
+        secretLThreeLED(ElevatorStates.isL3Coral, 20);
         secretLTwoLED(ElevatorStates.isL2Coral, 20);
+        secretLFourLED(ElevatorStates.isL4Coral, 20);
 
         // Coral and Algae Led Commands
         coralModeLED(RobotStates.coral.and(Util.teleop), 6);
@@ -43,6 +42,8 @@ public class LedStates {
         hasAlgaeLED(IntakeStates.hasAlgae.and(Util.teleop), 7);
 
         // Elevator Led Commands
+        elevatorHomeLED(ElevatorStates.isHome, 17);
+        elevatorNotHomeLED(ElevatorStates.isHigh, 18);
         // elevatorUpLED(ElevatorStates.isUp.and(Util.teleop), 6);
 
         // Climb Led Commands
@@ -207,6 +208,11 @@ public class LedStates {
         ledCommand("right.SecretLTwo", right, right.chase(new Color("#d1acfb"), 10, 10), priority, trigger);
         ledCommand("right.SecretLTwo", right, right.chase(new Color("#d1acfb"), 10, 10), priority, trigger);
     
+    }
+
+    static void secretLFourLED(Trigger trigger, int priority) {
+        ledCommand("right.SecretLFour", right, right.rainbow(100, 100), priority, trigger);
+        ledCommand("left.SecretLFour", left, left.rainbow(100, 100), priority, trigger);
     }
 
     // Log Command
