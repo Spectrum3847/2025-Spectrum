@@ -120,7 +120,7 @@ public class SwerveStates {
     private static double getTagTxVelocity() {
         if (Robot.getVision().tagsInView()) {
             return swerve.calculateTagCenterAlignController(
-                    () -> 0, () -> Robot.getVision().getTagTX());
+                    config::getReefTXalignValue, () -> Robot.getVision().getTagTX());
         }
         return 0;
     }

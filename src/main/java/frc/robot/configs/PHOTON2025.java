@@ -13,6 +13,9 @@ public class PHOTON2025 extends Config {
         // values
         // swerve.configEncoderOffsets(0.204590, -0.414062, -0.163330, 0.026855);
         swerve.configEncoderOffsets(-0.29541, 0.085938, 0.33667, 0.387451);
+        swerve.setReefTXalignValue(8);
+        swerve.setEventLlAimTAgoal(30);
+        swerve.setHomeLlAimTAgoal(30);
 
         elevator = new PhotonElevatorConfig();
         shoulder = new PhotonShoulderConfig();
