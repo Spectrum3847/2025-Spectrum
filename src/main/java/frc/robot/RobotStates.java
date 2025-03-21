@@ -100,7 +100,7 @@ public class RobotStates {
     public static final Trigger L1Coral = (l1.and(coral)).or(autonL1);
     public static final Trigger L2Coral = l2.and(coral);
     public static final Trigger L3Coral = l3.and(coral);
-    public static final Trigger L4Coral = (l4.and(coral)).or(autonLeftL4, autonRightL4);
+    public static final Trigger L4Coral = (l4.and(coral));
     public static final Trigger branch = L2Coral.or(L3Coral, L4Coral);
     public static final Trigger stagedCoral = L1Coral.or(L2Coral, L3Coral, L4Coral);
 
@@ -149,7 +149,7 @@ public class RobotStates {
                 .or(autonActionOn)
                 .onTrue(actionPrepState.setTrue(), actionState.setFalse());
 
-        actionPrepState.or(autonActionOn).onTrue(actionState.setFalse());
+        actionPrepState.onTrue(actionState.setFalse());
         actionPrepState.onChangeToFalse(actionState.setTrueForTime(RobotStates::getScoreTime));
 
         autonActionOff.onChangeToFalse(actionState.setTrueForTime(RobotStates::getScoreTime));
@@ -207,10 +207,9 @@ public class RobotStates {
         operator.L3
                 .and(operator.staged)
                 .onTrue(l3.setTrue(), l1.setFalse(), l2.setFalse(), l4.setFalse());
-        operator.L4
-                .and(operator.staged)
+        (operator.L4.and(operator.staged))
+                .or(autonRightL4, autonLeftL4)
                 .onTrue(l4.setTrue(), l1.setFalse(), l2.setFalse(), l3.setFalse());
-
         // Set left or right score
         operator.leftScore.and(operator.staged).onTrue(rightScore.setFalse());
         operator.rightScore.and(operator.staged).onTrue(rightScore.setTrue());

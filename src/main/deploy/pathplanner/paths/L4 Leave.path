@@ -33,26 +33,26 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
+      "name": "leftL4",
+      "waypointRelativePos": 0.0,
+      "endWaypointRelativePos": 1.0,
+      "command": null
+    },
+    {
       "name": "coral",
       "waypointRelativePos": 0,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
-      "name": "rightL4",
-      "waypointRelativePos": 0.04737666405638224,
-      "endWaypointRelativePos": 1.0,
-      "command": null
-    },
-    {
-      "name": "prescore",
-      "waypointRelativePos": 0.2,
+      "name": "actionOn",
+      "waypointRelativePos": 0.8508222396241147,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
-      "name": "score",
-      "waypointRelativePos": 0.8523884103367276,
+      "name": "actionOff",
+      "waypointRelativePos": 1.0,
       "endWaypointRelativePos": null,
       "command": null
     }

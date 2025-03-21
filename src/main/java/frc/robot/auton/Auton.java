@@ -1,7 +1,6 @@
 package frc.robot.auton;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.events.EventTrigger;
 import com.pathplanner.lib.path.PathConstraints;
@@ -69,7 +68,7 @@ public class Auton {
     }
 
     public Auton() {
-        setupSelectors(); // runs the command to start the chooser for auto on shuffleboard
+        // setupSelectors(); // runs the command to start the chooser for auto on shuffleboard
         Telemetry.print("Auton Subsystem Initialized: ");
     }
 
@@ -182,7 +181,10 @@ public class Auton {
      *     indicating that the autonomous command is null.
      */
     public Command getAutonomousCommand() {
-        Command auton = pathChooser.getSelected(); // sees what auto is chosen on shuffleboard
+        // Command auton = pathChooser.getSelected(); // sees what auto is chosen on shuffleboard
+        Command auton = SpectrumAuton("L4 Leave", false);
+        // Command auton = SpectrumAuton("Drive Forward", false);
+
         if (auton != null) {
             return auton; // checks to make sure there is an auto and if there is it runs an auto
         } else {
