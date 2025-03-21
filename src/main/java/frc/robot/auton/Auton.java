@@ -61,24 +61,14 @@ public class Auton {
         // pathChooser.addOption("3 Meter", SpectrumAuton("3 Meter", false));
         // pathChooser.addOption("5 Meter", SpectrumAuton("5 Meter", false));
 
-        pathChooser.addOption("Left | Belton L4", beltonAuton(false));
-        pathChooser.addOption("Right | Belton L4", beltonAuton(true));
+        pathChooser.addOption("Drive Forward", SpectrumAuton("Drive Forward", false));
 
-        pathChooser.addOption("Left | Belton L1", beltonAutonL1(false));
-        pathChooser.addOption("Right | Belton L1", beltonAutonL1(true));
-
-        // pathChooser.addOption("Left | 2.5-L4 Belton Auto", beltonAuton2(false));
-        // pathChooser.addOption("Right | 2.5-L4 Belton Auto", beltonAuton2(true));
+        pathChooser.addOption("Center L4 Leave", SpectrumAuton("L4 Leave", false));
 
         SmartDashboard.putData("Auto Chooser", pathChooser);
     }
 
-    public static void setupNamedCommands() {
-        NamedCommands.registerCommand("autonAlign", SwerveStates.autonSwerveAlign(2));
-    }
-
     public Auton() {
-        setupNamedCommands();
         setupSelectors(); // runs the command to start the chooser for auto on shuffleboard
         Telemetry.print("Auton Subsystem Initialized: ");
     }
