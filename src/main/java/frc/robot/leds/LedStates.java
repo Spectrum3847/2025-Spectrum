@@ -201,12 +201,12 @@ public class LedStates {
 
     static void secretLThreeLED(Trigger trigger, int priority) {
         ledCommand("right.SecretLThree", right, right.bounce(Color.kMagenta, 1), priority, trigger);
-        ledCommand("left.SecretLThree", right, right.bounce(Color.kMagenta, 2), priority, trigger);
+        ledCommand("left.SecretLThree", left, left.bounce(Color.kMagenta, 2), priority, trigger);
     }
 
     static void secretLTwoLED(Trigger trigger, int priority) {
         ledCommand("right.SecretLTwo", right, right.chase(new Color("#d1acfb"), 10, 10), priority, trigger);
-        ledCommand("right.SecretLTwo", right, right.chase(new Color("#d1acfb"), 10, 10), priority, trigger);
+        ledCommand("right.SecretLTwo", left, left.chase(new Color("#d1acfb"), 10, 10), priority, trigger);
     
     }
 
