@@ -5,6 +5,7 @@ import static frc.robot.auton.Auton.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.reefscape.Field;
 import frc.robot.elbow.ElbowStates;
@@ -143,7 +144,7 @@ public class RobotStates {
         // *********************************
         // ActionPrep and ActionState
         pilot.actionReady_RB.onFalse(actionPrepState.setFalse());
-        autonActionOff.onTrue(actionPrepState.setFalse());
+        autonActionOff.onTrue(new WaitCommand(4).andThen(actionPrepState.setFalse()));
 
         (pilot.actionReady_RB.and(coral.or(algae)))
                 .or(autonActionOn)

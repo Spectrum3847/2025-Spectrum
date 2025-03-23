@@ -46,13 +46,7 @@
     },
     {
       "name": "actionOn",
-      "waypointRelativePos": 0.8508222396241147,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "actionOff",
-      "waypointRelativePos": 1.0,
+      "waypointRelativePos": 0.6957713390759551,
       "endWaypointRelativePos": null,
       "command": null
     }

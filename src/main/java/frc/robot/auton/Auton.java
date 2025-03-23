@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotStates;
 import frc.robot.swerve.SwerveStates;
 import frc.spectrumLib.Telemetry;
@@ -60,7 +61,7 @@ public class Auton {
         // pathChooser.addOption("3 Meter", SpectrumAuton("3 Meter", false));
         // pathChooser.addOption("5 Meter", SpectrumAuton("5 Meter", false));
 
-        pathChooser.addOption("Drive Forward", SpectrumAuton("Drive Forward", false));
+        pathChooser.addOption("Drive Forward", leaveL4(false));
 
         pathChooser.addOption("Center L4 Leave", SpectrumAuton("L4 Leave", false));
 
@@ -85,6 +86,14 @@ public class Auton {
 
     public void exit() {
         printAutoDuration();
+    }
+
+    public Command leaveL4(boolean mirrored) {
+        return SpectrumAuton("L4 Leave", mirrored)
+                .andThen(
+                        new WaitCommand(5),
+                        RobotStates.actionPrepState.setFalse(),
+                        RobotStates.actionState.setTrue());
     }
 
     public Command beltonAuton(boolean mirrored) {
@@ -182,7 +191,7 @@ public class Auton {
      */
     public Command getAutonomousCommand() {
         // Command auton = pathChooser.getSelected(); // sees what auto is chosen on shuffleboard
-        Command auton = SpectrumAuton("L4 Leave", false);
+        Command auton = leaveL4(false);
         // Command auton = SpectrumAuton("Drive Forward", false);
 
         if (auton != null) {
