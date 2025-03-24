@@ -360,6 +360,43 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
     }
 
     // --------------------------------------------------------------------------------
+    // tagID Areas 
+    // --------------------------------------------------------------------------------
+
+    //Home tag areas are only blue tags since that's the only tags we have on the field
+    public double[][] getHomeTagAreas() {
+        double[][] homeTagIDAreas = { 
+            {17, config.getHomeTag17TAGoal()},
+            {18, config.getHomeTag18TAGoal()},
+            {19, config.getHomeTag19TAGoal()},
+            {20, config.getHomeTag20TAGoal()},
+            {21, config.getHomeTag21TAGoal()},
+            {22, config.getHomeTag22TAGoal()}
+        };
+
+        return homeTagIDAreas;
+    }
+
+    public double[][] getEventTagAreas() {
+        double[][] eventTagIDAreas = {
+            {17, config.getEventTag17TAGoal()},
+            {18, config.getEventTag18TAGoal()},
+            {19, config.getEventTag19TAGoal()},
+            {20, config.getEventTag20TAGoal()},
+            {21, config.getEventTag21TAGoal()},
+            {22, config.getEventTag22TAGoal()},
+            {6, config.getEventTag6TAGoal()},
+            {7, config.getEventTag7TAGoal()},
+            {8, config.getEventTag8TAGoal()},
+            {9, config.getEventTag9TAGoal()},
+            {10, config.getEventTag10TAGoal()},
+            {11, config.getEventTag11TAGoal()}
+        };
+        
+        return eventTagIDAreas;
+    }
+
+    // --------------------------------------------------------------------------------
     // Rotation Controller
     // --------------------------------------------------------------------------------
     double getRotationControl(double goalRadians) {

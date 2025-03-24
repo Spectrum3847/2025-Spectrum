@@ -129,20 +129,10 @@ public class SwerveStates {
         if (tagID < 0) {
             return 0;
         }
-        double[][] tagIDAreas = {
-            {17, config.getEventTag17TAGoal()},
-            {18, config.getEventTag18TAGoal()},
-            {19, config.getEventTag19TAGoal()},
-            {20, config.getEventTag20TAGoal()},
-            {21, config.getEventTag21TAGoal()},
-            {22, config.getEventTag22TAGoal()},
-            {6, config.getEventTag6TAGoal()},
-            {7, config.getEventTag7TAGoal()},
-            {8, config.getEventTag8TAGoal()},
-            {9, config.getEventTag9TAGoal()},
-            {10, config.getEventTag10TAGoal()},
-            {11, config.getEventTag11TAGoal()}
-        };
+
+        //change depending on event or at home
+        double[][] tagIDAreas = swerve.getHomeTagAreas();
+
         if (tagID >= 17) {
             tagID -= 17;
         }
@@ -158,7 +148,7 @@ public class SwerveStates {
             return swerve.calculateTagDistanceAlignController(() -> tagIDAreas[finalTagID][1]);
         } catch (Exception e) {
             Telemetry.print("Error in getTagDistanceVelocity: " + finalTagID);
-            return config.getEventLlAimTAgoal();
+            return config.getHomeLlAimTAgoal();
         }
         // return swerve.calculateTagDistanceAlignController(() -> tagIDAreas[finalTagID][1]);
     }
