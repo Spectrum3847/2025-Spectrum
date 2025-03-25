@@ -26,8 +26,8 @@ public class Climb extends Mechanism {
 
     public static class ClimbConfig extends Config {
 
-        @Getter private final double maxRotations = 0.34; // 0.36;
-        @Getter private final double minRotations = -0.085;
+        @Getter private final double maxRotations = 0.335; // 0.36;
+        @Getter private final double minRotations = -0.06;
         /* Climb positions in degrees || 0 is horizontal */
         @Getter private final double home = 90;
         @Getter private final double intake = 0;
@@ -70,7 +70,7 @@ public class Climb extends Mechanism {
             configPIDGains(0, positionKp, 0, positionKd);
             configFeedForwardGains(positionKs, positionKv, positionKa, positionKg);
             configMotionMagic(mmCruiseVelocity, mmAcceleration, mmJerk);
-            configGearRatio(74.6666666667); // 9t = 99.5555555555); 12t - 74.6666666667;
+            configGearRatio(99.5555555555); // 9t = 99.5555555555); 12t - 74.6666666667;
             configSupplyCurrentLimit(currentLimit, true);
             configStatorCurrentLimit(torqueCurrentLimit, true);
             configForwardTorqueCurrentLimit(torqueCurrentLimit);

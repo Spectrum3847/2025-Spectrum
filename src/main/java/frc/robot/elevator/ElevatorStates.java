@@ -36,6 +36,9 @@ public class ElevatorStates {
         coastMode.onTrue(log(coastMode()));
         coastMode.onFalse(log(ensureBrakeMode()));
         homeAll.whileTrue(home());
+        Robot.getOperator()
+                .antiSecretClimb_LTRSup
+                .whileTrue(move(config::getFullExtend, "Elevator.fullExtend"));
 
         stationIntaking.whileTrue(
                 move(

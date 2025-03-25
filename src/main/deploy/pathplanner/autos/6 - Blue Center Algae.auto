@@ -7,19 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1 Meter"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "shoulderL4"
+            "pathName": "6 - Blue Center Algae"
           }
         }
       ]
     }
   },
-  "resetOdom": true,
-  "folder": "Config Autos",
+  "resetOdom": false,
+  "folder": "Algae Rush",
   "choreoAuto": false
 }

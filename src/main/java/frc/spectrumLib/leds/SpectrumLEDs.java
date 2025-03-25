@@ -419,6 +419,21 @@ public class SpectrumLEDs implements SpectrumSubsystem {
         };
     }
 
+    public LEDPattern edges(Color c, double length) {
+        return new LEDPattern() {
+            public void applyTo(LEDReader reader, LEDWriter writer) {
+                int bufLen = reader.getLength();
+                for (int i = 0; i < bufLen; i++) {
+                    if (i < length || i > bufLen - length - 1) {
+                        writer.setLED(i, c);
+                    } else {
+                        writer.setLED(i, Color.kBlack);
+                    }
+                }
+            }
+        };
+    }
+
     // LEDPattern Methods
     // reversed()
     // offsetBy(int offset)

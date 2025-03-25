@@ -52,6 +52,8 @@ public class ElbowStates {
                 .and(actionState.not())
                 .whileTrue(move(config::getGroundAlgaeIntake, "Elbow.GroundAlgae"));
 
+        Robot.getOperator().antiSecretClimb_LTRSup.whileTrue(home()); // Stick the Elbow Vertical
+
         // stages elbow
         stagedCoral.whileTrue(move(config::getStage, "Elbow.Stage"));
 

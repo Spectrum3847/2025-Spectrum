@@ -27,6 +27,8 @@ public class ShoulderStates {
         coastMode.onTrue(log(coastMode()).ignoringDisable(true));
         coastMode.onFalse(log(ensureBrakeMode()));
 
+        Robot.getOperator().antiSecretClimb_LTRSup.whileTrue(shoulder.move(config::getNetAlgae));
+
         stationIntaking.whileTrue(
                 move(
                         config::getStationIntake,
@@ -91,6 +93,8 @@ public class ShoulderStates {
                                 config::getExl4Score,
                                 config::getScoreDelay,
                                 "Shoulder.L4Coral.score"));
+
+        shoulderL4.onTrue(move(config::getExl4Coral, "Shoulder.L4Coral.prescore"));
 
         processorAlgae
                 .and(actionPrepState.or(actionState))

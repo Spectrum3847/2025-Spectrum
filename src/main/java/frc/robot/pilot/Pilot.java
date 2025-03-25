@@ -48,7 +48,9 @@ public class Pilot extends Gamepad {
     public final Trigger driving = enabled.and(leftStickX.or(leftStickY));
     public final Trigger steer = enabled.and(rightStickX.or(rightStickY));
 
-    public final Trigger fpv_LS = leftStickClick.and(enabled); // Remapped to Right back button
+    public final Trigger fpv_LS = leftStickClick.and(enabled); // Remapped to Left back button
+    public final Trigger toggleReverse =
+            rightStickClick.and(enabled); // Remapped to Right back button
 
     // DISABLED TRIGGERS
     public final Trigger coastOn_dB = disabled.and(B);

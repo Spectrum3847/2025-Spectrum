@@ -54,6 +54,7 @@ public class Twist extends Mechanism {
         @Getter private final double rightCoral = -90;
         @Getter private final double l1Coral = 0;
         @Getter private final double net = algaeIntake;
+        @Getter private final double climbPrep = 179.9;
 
         @Getter private final double initPosition = 0;
 

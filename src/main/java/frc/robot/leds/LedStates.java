@@ -10,8 +10,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.RobotStates;
-import frc.robot.climb.ClimbStates;
-import frc.robot.intake.IntakeStates;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.leds.SpectrumLEDs;
 import frc.spectrumLib.util.Util;
@@ -29,19 +27,22 @@ public class LedStates {
         testModePattern(Util.testMode.and(Util.dsAttached));
 
         // General Led Commands
-        homeFinishLED(RobotStates.isAtHome.and(Util.teleop, RobotStates.staged.not()), 8);
+        // homeFinishLED(RobotStates.isAtHome.and(Util.teleop, RobotStates.staged.not()), 8);
 
-        // Coral and Algae Led Commands
-        coralModeLED(RobotStates.coral.and(Util.teleop), 6);
-        algaeModeLED(RobotStates.algae.and(Util.teleop), 6);
-        hasCoralLED(IntakeStates.hasCoral.and(Util.teleop), 7);
-        hasAlgaeLED(IntakeStates.hasAlgae.and(Util.teleop), 7);
+        // // Coral and Algae Led Commands
+        // coralModeLED(RobotStates.coral.and(Util.teleop), 6);
+        // algaeModeLED(RobotStates.algae.and(Util.teleop), 6);
+        // coralStagedLED(RobotStates.stagedCoral.and(Util.teleop), 7);
+        // algaeStagedLED(RobotStates.stagedAlgae.and(Util.teleop), 7);
+        // hasCoralLED(IntakeStates.hasCoral.and(Util.teleop), 7);
+        // // hasAlgaeLED(IntakeStates.hasAlgae.and(Util.teleop), 7);
+        rightCoralLED(RobotStates.rightScore.and(Util.teleop), 8);
 
         // Elevator Led Commands
         // elevatorUpLED(ElevatorStates.isUp.and(Util.teleop), 6);
 
         // Climb Led Commands
-        climbReadyLED(ClimbStates.isLatched.and(RobotStates.climbPrep, Util.teleop), 6);
+        // climbReadyLED(ClimbStates.isLatched.and(RobotStates.climbPrep, Util.teleop), 6);
     }
 
     /** Default LED commands for each mode */
@@ -50,9 +51,7 @@ public class LedStates {
         int priority = -1;
         return trigger.and(sLeds.checkPriority(priority), sLeds.defaultTrigger)
                 // .onTrue(sLeds.setPattern(pattern, priority).withName(name));
-                .onTrue(
-                        setPatternWithReverseCheck(
-                                name, sLeds, pattern, priority, () -> sLeds == left));
+                .onTrue(sLeds.setPattern(pattern, priority));
     }
 
     static void disabledPattern(Trigger trigger) {
@@ -109,7 +108,8 @@ public class LedStates {
                                                 RobotStates.reverse.getAsBoolean()
                                                                 != front.getAsBoolean()
                                                         && !RobotStates.photon.getAsBoolean()),
-                        sLed.setPattern(pattern.atBrightness(Percent.of(25)), priority)
+                        // sLed.setPattern(pattern.atBrightness(Percent.of(25)), priority)
+                        sLed.setPattern(sLed.edges(Color.kOrange, 3).overlayOn(pattern), priority)
                                 .until(
                                         () ->
                                                 RobotStates.reverse.getAsBoolean()
@@ -156,10 +156,49 @@ public class LedStates {
     }
 
     static void algaeModeLED(Trigger trigger, int priority) {
+        // withReverseLedCommand(
+        //         "right.AlgaeMode", right, right.solid(Color.kMediumSeaGreen), priority, trigger);
+        // withReverseLedCommand(
+        //         "left.AlgaeMode", left, left.solid(Color.kMediumSeaGreen), priority, trigger);
+    }
+
+    static void coralStagedLED(Trigger trigger, int priority) {
         withReverseLedCommand(
-                "right.AlgaeMode", right, right.solid(Color.kMediumSeaGreen), priority, trigger);
+                "right.CoralStaged", right, right.breathe(Color.kCoral, 1), priority, trigger);
         withReverseLedCommand(
-                "left.AlgaeMode", left, left.solid(Color.kMediumSeaGreen), priority, trigger);
+                "left.CoralStaged", left, left.breathe(Color.kCoral, 1), priority, trigger);
+    }
+
+    static void algaeStagedLED(Trigger trigger, int priority) {
+        withReverseLedCommand(
+                "right.AlgaeStaged",
+                right,
+                right.breathe(Color.kMediumSeaGreen, 1),
+                priority,
+                trigger);
+        withReverseLedCommand(
+                "left.AlgaeStaged",
+                left,
+                left.breathe(Color.kMediumSeaGreen, 1),
+                priority,
+                trigger);
+    }
+
+    static void rightCoralLED(Trigger trigger, int priority) {
+        // withReverseLedCommand(
+        //         "right.RightCoral",
+        //         right,
+        //         right.edges(Color.kGreen, 5).overlayOn(right.breathe(Color.kCoral, 1)),
+        //         priority,
+        //         trigger);
+        // withReverseLedCommand(
+        //         "left.RightCoral",
+        //         left,
+        //         left.edges(Color.kGreen, 5).overlayOn(left.breathe(Color.kCoral, 1)),
+        //         priority,
+        //         trigger);
+        ledCommand("right.RightCoral", right, right.solid(Color.kGreen), priority, trigger);
+        ledCommand("left.LeftCoral", left, left.solid(Color.kGreen), priority, trigger);
     }
 
     static void hasCoralLED(Trigger trigger, int priority) {

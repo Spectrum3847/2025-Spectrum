@@ -2,6 +2,7 @@ package frc.robot.operator;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
+import frc.robot.RobotStates;
 import frc.spectrumLib.Telemetry;
 
 /** This class should have any command calls that directly call the Operator */
@@ -18,7 +19,9 @@ public class OperatorStates {
     }
 
     /** Set the states for the operator controller */
-    public static void setStates() {}
+    public static void setStates() {
+        RobotStates.staged.onTrue(log(rumble(1, 0.5).withName("Pilot.stagedRumble")));
+    }
 
     /** Command that can be used to rumble the operator controller */
     public static Command rumble(double intensity, double durationSeconds) {

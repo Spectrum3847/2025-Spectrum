@@ -32,13 +32,13 @@ public class Elbow extends Mechanism {
         @Getter private final double handAlgae = 0;
         @Getter private final double home = 180;
         @Getter private final double clearElevator = -125;
-        @Getter private final double climbPrep = 67;
+        @Getter private final double climbPrep = 180; // 67;
 
         @Getter private final double scoreDelay = 0.2;
 
         @Getter private final double stationIntake = -158.7;
         @Getter private final double stationExtendedIntake = -154.4;
-        @Getter private final double groundAlgaeIntake = 78;
+        @Getter private final double groundAlgaeIntake = 76;
         @Getter private final double groundCoralIntake = 75;
 
         @Getter private final double stage = 180; // -160;
