@@ -96,7 +96,7 @@ public class SwerveStates {
     }
 
     public static Command cageAimDrive() {
-        return alignToYDrive(() -> Robot.getVision().getCageYToClimb());
+        return alignToYDrive(() -> Field.Barge.getCageYToClimb());
     }
 
     public static Command alignToXDrive(DoubleSupplier xGoalMeters) {

@@ -10,6 +10,8 @@ import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Robot;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +47,71 @@ public class Field {
         // Measured from floor to bottom of cage
         public static final double deepHeight = Units.inchesToMeters(3.125);
         public static final double shallowHeight = Units.inchesToMeters(30.125);
+
+        public static double getCageYToClimb() {
+            Pose2d robotPose = Robot.getSwerve().getRobotPose();
+            double[] cageDiffs = new double[3];
+
+            if (Field.isBlue()) {
+                cageDiffs[0] = Math.abs(robotPose.getY() - Field.Barge.farCage.getY());
+                cageDiffs[1] = Math.abs(robotPose.getY() - Field.Barge.middleCage.getY());
+                cageDiffs[2] = Math.abs(robotPose.getY() - Field.Barge.closeCage.getY());
+
+                int closestCage = indexOfSmallest(cageDiffs);
+
+                if (closestCage == 0) {
+                    return Field.Barge.farCage.getY();
+                }
+
+                else if (closestCage == 1) {
+                    return Field.Barge.middleCage.getY();
+                }
+
+                else if (closestCage == 2) {
+                    return Field.Barge.closeCage.getY();
+                }
+
+                else {
+                    return 0;
+                }
+            }
+
+            else {
+                cageDiffs[0] = Math.abs(Field.flipYifRed(robotPose.getY()) - Field.flipYifRed(Field.Barge.farCage.getY()));
+                cageDiffs[1] = Math.abs(Field.flipYifRed(robotPose.getY()) - Field.flipYifRed(Field.Barge.middleCage.getY()));
+                cageDiffs[2] = Math.abs(Field.flipYifRed(robotPose.getY()) - Field.flipYifRed(Field.Barge.closeCage.getY()));
+
+                int closestCage = indexOfSmallest(cageDiffs);
+
+                if (closestCage == 0) {
+                    return Field.Barge.farCage.getY(); 
+                }
+
+                else if (closestCage == 1) {
+                    return Field.Barge.middleCage.getY();
+                }
+
+                else if (closestCage == 2) {
+                    return Field.Barge.middleCage.getY();
+                }
+
+                else {
+                    return 0;
+                }
+            }
+        }
+
+        public static int indexOfSmallest(double[] array) {
+            int indexOfSmallest = 0;
+            double smallestIndex = array[indexOfSmallest];
+            for(int i = 0; i < array.length; i++) {
+                if(array[i] <= smallestIndex) {
+                    smallestIndex = array[i];
+                    indexOfSmallest = i;
+                }
+            }
+            return indexOfSmallest;
+        }
     }
 
     public static class CoralStation {
