@@ -166,20 +166,22 @@ public class RobotStates {
         pilot.l3AlgaeRemoval.onFalse(l3.setFalse(), actionPrepState.setFalse());
 
         actionState
-                .and(algaeAfterAction, L3Algae)
+                .and(algaeAfterAction, isL3Algae)
                 .onTrue(
                         l3.setTrueAfterTime(() -> (RobotStates.getScoreTime() + 0.1)),
                         algae.setTrueAfterTime(() -> (RobotStates.getScoreTime() + 0.1)),
+                        actionPrepState.setTrueAfterTime(() -> (RobotStates.getScoreTime() + 0.1)),
                         coral.setFalseAfterTime(() -> (RobotStates.getScoreTime() / 2)),
                         l1.setFalseAfterTime(RobotStates::getScoreTime),
                         l2.setFalseAfterTime(RobotStates::getScoreTime),
                         l4.setFalseAfterTime(RobotStates::getScoreTime),
                         homeAll.setTrueAfterTime(() -> RobotStates.getScoreTime() / 2));
         actionState
-                .and(algaeAfterAction, L3Algae.not())
+                .and(algaeAfterAction, isL3Algae.not())
                 .onTrue(
                         l2.setTrueAfterTime(() -> (RobotStates.getScoreTime() + 0.1)),
                         algae.setTrueAfterTime(() -> (RobotStates.getScoreTime() + 0.1)),
+                        actionPrepState.setTrueAfterTime(() -> (RobotStates.getScoreTime() + 0.1)),
                         coral.setFalseAfterTime(() -> (RobotStates.getScoreTime() / 2)),
                         l1.setFalseAfterTime(RobotStates::getScoreTime),
                         l3.setFalseAfterTime(RobotStates::getScoreTime),
