@@ -18,6 +18,7 @@ import frc.robot.pilot.Pilot;
 import frc.spectrumLib.SpectrumState;
 import frc.spectrumLib.Telemetry;
 import java.util.function.DoubleSupplier;
+import frc.reefscape.Field;
 
 public class SwerveStates {
     static Swerve swerve = Robot.getSwerve();
@@ -63,7 +64,7 @@ public class SwerveStates {
         //                 backReefOffset::getY,
         //                 () -> Math.toRadians(180))); // alignToYDrive(() -> Field.fieldWidth /
         // 2));
-        pilot.netAim_X.whileTrue(log)
+        pilot.netAim_X.whileTrue(log())
     }
 
     /** Pilot Commands ************************************************************************ */
@@ -101,7 +102,9 @@ public class SwerveStates {
     }
 
     public static Command netAimDrive() {
-        return alignToXDrive();
+        // return aimDrive(SwerveStates::getTagDistanceVelocity,
+        //         pilot::getDriveLeftPositive,
+        //         );
     }
 
     public static Command alignToXDrive(DoubleSupplier xGoalMeters) {
