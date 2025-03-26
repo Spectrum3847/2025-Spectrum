@@ -1,23 +1,28 @@
 {
   "Docking": {
     "Data": [
-      "DockNode  ID=0x00000001 Pos=7,990 Size=905,316 Selected=0x48913727"
+      "DockNode  ID=0x00000001 Pos=7,990 Size=905,316 Selected=0x2D9B9756"
     ]
   },
   "MainWindow": {
     "GLOBAL": {
       "font": "Proggy Dotted",
       "fps": "120",
-      "height": "1415",
+      "height": "1405",
       "maximized": "1",
       "style": "0",
       "userScale": "2",
-      "width": "2256",
+      "width": "1126",
       "xpos": "0",
       "ypos": "29"
     }
   },
   "Table": {
+    "0x965B9C9E,2": {
+      "Column 0  Width": "160",
+      "Column 1  Weight": "1.0000",
+      "RefScale": "16"
+    },
     "0xE56EC1C2,4": {
       "Column 0  Weight": "1.0000",
       "Column 1  Weight": "1.0000",
@@ -43,12 +48,12 @@
     },
     "###/SmartDashboard/Field2d": {
       "Collapsed": "0",
-      "Pos": "8,639",
+      "Pos": "11,639",
       "Size": "650,348"
     },
     "###/SmartDashboard/LeftView": {
       "Collapsed": "0",
-      "Pos": "1675,640",
+      "Pos": "1107,648",
       "Size": "544,547"
     },
     "###/SmartDashboard/Scheduler": {
@@ -73,7 +78,7 @@
     },
     "###/SmartDashboard/frontView": {
       "Collapsed": "0",
-      "Pos": "1299,640",
+      "Pos": "1107,648",
       "Size": "373,555"
     },
     "###Addressable LEDs": {

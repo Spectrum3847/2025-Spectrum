@@ -10,25 +10,18 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.io.IOException;
 import org.photonvision.PhotonCamera;
+import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 
 public class VisionSystem extends SubsystemBase {
     @SuppressWarnings("unused")
     private final PhotonCamera camera = new PhotonCamera("cameraName");
-    // private final PhotonCamera frontCam = new PhotonCamera(VisionConfig.FRONT_LL);
-    // private final PhotonCamera backCam = new PhotonCamera(VisionConfig.RIGHT_LL);
+
+    private final PhotonCamera frontCam = new PhotonCamera("limelight-front");
+    private final PhotonCamera backCam = new PhotonCamera("limelight-back");
     private final VisionSystemSim visionSim = new VisionSystemSim("main");
     private final Pose2dSupplier getSimPose;
-
-    Transform3d robotToFrontCamera =
-            new Transform3d(
-                    new Translation3d(0, 0, 0.5), // Centered on the robot, 0.5m up
-                    new Rotation3d(0, Math.toRadians(-15), 0)); // Pitched 15 deg up
-    Transform3d robotToBackCamera =
-            new Transform3d(
-                    new Translation3d(0, 0, 0.5), // Centered on the robot, 0.5m up
-                    new Rotation3d(0, Math.toRadians(-15), 0)); // Pitched 15 deg up
 
     @FunctionalInterface
     public interface Pose2dSupplier {
@@ -46,15 +39,20 @@ public class VisionSystem extends SubsystemBase {
         props.setLatencyStdDevMs(5.0);
 
         // Setup simulated camera
-        // PhotonCameraSim cameraSimFront = new PhotonCameraSim(frontCam, props);
-        // PhotonCameraSim cameraSimBack = new PhotonCameraSim(backCam, props);
-        // Draw field wireframe in simulated camera view
-        // cameraSimFront.enableDrawWireframe(true);
-        // cameraSimBack.enableDrawWireframe(false);
+        PhotonCameraSim cameraSimFront = new PhotonCameraSim(frontCam, props);
+        Translation3d robotToFrontCameraTrl = new Translation3d(0.215, 0, 0.188);
+        Rotation3d robotToFrontCameraRot = new Rotation3d(0, Math.toRadians(0), 0);
+        Transform3d robotToFrontCamera =
+                new Transform3d(robotToFrontCameraTrl, robotToFrontCameraRot);
+
+        PhotonCameraSim cameraSimBack = new PhotonCameraSim(backCam, props);
+        Translation3d robotToBackCameraTrl = new Translation3d(-0.215, 0.0, 0.188);
+        Rotation3d robotToBackCameraRot = new Rotation3d(0, Math.toRadians(0), Math.toRadians(180));
+        Transform3d robotToBackCamera = new Transform3d(robotToBackCameraTrl, robotToBackCameraRot);
 
         // // Add simulated camera to vision sim
-        // visionSim.addCamera(cameraSimFront, robotToFrontCamera);
-        // visionSim.addCamera(cameraSimBack, robotToBackCamera);
+        visionSim.addCamera(cameraSimFront, robotToFrontCamera);
+        visionSim.addCamera(cameraSimBack, robotToBackCamera);
 
         // Add AprilTags to vision sim
         try {
@@ -65,6 +63,14 @@ public class VisionSystem extends SubsystemBase {
         } catch (IOException e) {
             System.err.println(e);
         }
+
+        visionSim.getDebugField();
+        cameraSimFront.enableRawStream(true);
+        cameraSimFront.enableProcessedStream(true);
+
+        // Draw field wireframe in simulated camera view
+        cameraSimFront.enableDrawWireframe(true);
+        cameraSimBack.enableDrawWireframe(false);
     }
 
     @Override

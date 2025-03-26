@@ -44,6 +44,8 @@ public class RobotStates {
     public static final SpectrumState homeAll = new SpectrumState("homeAll");
     public static final SpectrumState autonStationIntake = new SpectrumState("autonStationIntake");
 
+    public static final SpectrumState testL3 = new SpectrumState("testL3");
+
     /**
      * Define Robot States here and how they can be triggered States should be triggers that command
      * multiple mechanism or can be used in teleop or auton Use onTrue/whileTrue to run a command
@@ -99,6 +101,7 @@ public class RobotStates {
             ElevatorStates.isHome.and(ElbowStates.isHome, ShoulderStates.isHome);
 
     public static final Trigger isL3Algae = new Trigger(() -> Robot.getVision().isL3Algae());
+    public static final Trigger seesTag = new Trigger(() -> Robot.getVision().seesTag());
 
     // reset triggers
     public static final Trigger homeElevator = operator.homeElevator_A;
@@ -164,6 +167,9 @@ public class RobotStates {
         pilot.l3AlgaeRemoval.onTrue(
                 algae.setTrue(), coral.setFalse(), l3.setTrue(), actionPrepState.setTrue());
         pilot.l3AlgaeRemoval.onFalse(l3.setFalse(), actionPrepState.setFalse());
+
+        seesTag.onTrue(testL3.setTrue());
+        seesTag.onFalse(testL3.setFalse());
 
         actionState
                 .and(algaeAfterAction, isL3Algae)

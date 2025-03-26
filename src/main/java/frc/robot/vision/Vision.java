@@ -752,28 +752,17 @@ public class Vision implements NTSendable, Subsystem {
     // }
 
     public boolean isL3Algae() {
-        int frontTag = (int) frontLL.getClosestTagID();
-        int backTag = (int) backLL.getClosestTagID();
+        int tag = (int) getClosestTagID();
         boolean isL3 = false;
 
         if (Field.isBlue()) {
-            if (frontTag == 22
-                    || frontTag == 20
-                    || frontTag == 18
-                    || backTag == 22
-                    || backTag == 20
-                    || backTag == 18) {
+            if (tag == 22 || tag == 20 || tag == 18) {
                 isL3 = true;
             } else {
                 isL3 = false;
             }
         } else {
-            if (frontTag == 11
-                    || frontTag == 9
-                    || frontTag == 7
-                    || backTag == 11
-                    || backTag == 9
-                    || backTag == 7) {
+            if (tag == 11 || tag == 9 || tag == 7) {
                 isL3 = true;
             } else {
                 isL3 = false;
@@ -781,6 +770,10 @@ public class Vision implements NTSendable, Subsystem {
         }
 
         return isL3;
+    }
+
+    public boolean seesTag() {
+        return frontLL.targetInView() || backLL.targetInView();
     }
 
     // ------------------------------------------------------------------------------
