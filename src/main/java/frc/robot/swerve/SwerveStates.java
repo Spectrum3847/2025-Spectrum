@@ -102,9 +102,9 @@ public class SwerveStates {
     }
 
     public static Command netAimDrive() {
-        // return aimDrive(SwerveStates::getTagDistanceVelocity,
-        //         pilot::getDriveLeftPositive,
-        //         );
+        return aimDrive(SwerveStates::getTagDistanceVelocity,
+                pilot::getDriveLeftPositive,
+                () -> 0.0);
     }
 
     public static Command alignToXDrive(DoubleSupplier xGoalMeters) {
