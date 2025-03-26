@@ -63,6 +63,7 @@ public class SwerveStates {
         //                 backReefOffset::getY,
         //                 () -> Math.toRadians(180))); // alignToYDrive(() -> Field.fieldWidth /
         // 2));
+        pilot.netAim_X.whileTrue(log)
     }
 
     /** Pilot Commands ************************************************************************ */
@@ -97,6 +98,10 @@ public class SwerveStates {
                         SwerveStates::getTagTxVelocity,
                         Robot.getVision()::getReefTagAngle)
                 .withName("Swerve.reefAimDrive");
+    }
+
+    public static Command netAimDrive() {
+        return alignToXDrive();
     }
 
     public static Command alignToXDrive(DoubleSupplier xGoalMeters) {
