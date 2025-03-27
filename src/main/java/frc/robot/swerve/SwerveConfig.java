@@ -26,6 +26,7 @@ public class SwerveConfig {
     @Getter private final double homeLlAimTAgoal = 7.9;
     @Getter private final double eventLlAimTAgoal = 7.9;
 
+    //Event Blue Tag Area Goals
     @Getter private final double eventTag17TAGoal = 7.8;
     @Getter private final double eventTag18TAGoal = 7.8;
     @Getter private final double eventTag19TAGoal = 7.8;
@@ -33,12 +34,21 @@ public class SwerveConfig {
     @Getter private final double eventTag21TAGoal = 7.8;
     @Getter private final double eventTag22TAGoal = 7.8;
 
+    //Event Red Tag Area Goals
     @Getter private final double eventTag6TAGoal = 7.8;
     @Getter private final double eventTag7TAGoal = 7.8;
     @Getter private final double eventTag8TAGoal = 7.8;
     @Getter private final double eventTag9TAGoal = 7.6;
     @Getter private final double eventTag10TAGoal = 7.7;
     @Getter private final double eventTag11TAGoal = 7.8;
+
+    //Home Tag Area Goals
+    @Getter private final double homeTag17TAGoal = 7.9;
+    @Getter private final double homeTag18TAGoal = 7.9;
+    @Getter private final double homeTag19TAGoal = 7.9; 
+    @Getter private final double homeTag20TAGoal = 7.9;   
+    @Getter private final double homeTag21TAGoal = 7.9;
+    @Getter private final double homeTag22TAGoal = 7.9;
 
     @Getter private final double simLoopPeriod = 0.005; // 5 ms
     @Getter @Setter private double robotWidth = Units.inchesToMeters(29.5);
