@@ -58,7 +58,10 @@
         },
         "right": 3466,
         "top": 291,
-        "width": 17.54825210571289
+        "width": 17.54825210571289,
+        "window": {
+          "visible": true
+        }
       },
       "/SmartDashboard/Field2d": {
         "bottom": 1638,
