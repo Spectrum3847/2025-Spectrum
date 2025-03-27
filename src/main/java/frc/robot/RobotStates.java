@@ -23,7 +23,7 @@ public class RobotStates {
     private static final Pilot pilot = Robot.getPilot();
     private static final Operator operator = Robot.getOperator();
 
-    @Getter private static double scoreTime = 2.0;
+    @Getter private static double scoreTime = 1.5;
 
     // Robot States
     // These are states that aren't directly tied to hardware or buttons, etc.
@@ -181,7 +181,7 @@ public class RobotStates {
                         l1.setFalseAfterTime(RobotStates::getScoreTime),
                         l2.setFalseAfterTime(RobotStates::getScoreTime),
                         l4.setFalseAfterTime(RobotStates::getScoreTime),
-                        homeAll.setTrueAfterTime(() -> RobotStates.getScoreTime() / 2));
+                        homeAll.setTrueAfterTime(() -> RobotStates.getScoreTime() / 2 + 0.2));
         actionState
                 .and(algaeAfterAction, isL3Algae.not())
                 .onTrue(
@@ -192,7 +192,7 @@ public class RobotStates {
                         l1.setFalseAfterTime(RobotStates::getScoreTime),
                         l3.setFalseAfterTime(RobotStates::getScoreTime),
                         l4.setFalseAfterTime(RobotStates::getScoreTime),
-                        homeAll.setTrueAfterTime(() -> RobotStates.getScoreTime() / 2));
+                        homeAll.setTrueAfterTime(() -> RobotStates.getScoreTime() / 2 + 0.2));
 
         // **********************************
         // Staging and Scoring
