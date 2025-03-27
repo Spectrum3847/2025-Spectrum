@@ -104,9 +104,17 @@ public class SwerveStates {
     }
 
     public static Command netAimDrive() {
-        return aimDrive(getAlignToX(() -> Field.Barge.farCage.getX()),
-                pilot::getDriveLeftPositive,
-                () -> 0.0);
+        if (Field.isBlue()) {
+                return aimDrive(getAlignToX(() -> Field.Barge.bargeXBlue.getX()),
+                        pilot::getDriveLeftPositive,
+                        pilot::getDriveCCWPositive);
+        }
+        else {
+                return aimDrive(getAlignToX(() -> Field.Barge.bargeXRed.getX()),
+                        pilot::getDriveLeftPositive,
+                        pilot::getDriveCCWPositive);
+        }
+        
     }
 
     public static Command alignToXDrive(DoubleSupplier xGoalMeters) {
