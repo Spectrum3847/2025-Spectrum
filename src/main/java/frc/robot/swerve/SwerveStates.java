@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.reefscape.Field;
 import frc.robot.Robot;
+import frc.robot.RobotStates;
 import frc.robot.pilot.Pilot;
 import frc.spectrumLib.SpectrumState;
 import frc.spectrumLib.Telemetry;
@@ -56,6 +57,7 @@ public class SwerveStates {
 
         // // vision aim
         pilot.reefAim_A.whileTrue(log(reefAimDrive()));
+        pilot.reefAim_A.and(RobotStates.netAlgae).whileTrue(log(netAimDrive()));
 
         Pose2d backReefOffset = Field.Reef.getOffsetPosition(21, Units.inchesToMeters(24));
         // pilot.cageAim_B.whileTrue(
@@ -64,7 +66,7 @@ public class SwerveStates {
         //                 backReefOffset::getY,
         //                 () -> Math.toRadians(180))); // alignToYDrive(() -> Field.fieldWidth /
         // 2));
-        pilot.netAim_X.whileTrue(log())
+        
     }
 
     /** Pilot Commands ************************************************************************ */
@@ -102,7 +104,7 @@ public class SwerveStates {
     }
 
     public static Command netAimDrive() {
-        return aimDrive(SwerveStates::getTagDistanceVelocity,
+        return aimDrive(getAlignToX(() -> Field.Barge.farCage.getX()),
                 pilot::getDriveLeftPositive,
                 () -> 0.0);
     }
