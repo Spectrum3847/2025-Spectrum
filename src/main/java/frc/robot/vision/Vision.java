@@ -24,6 +24,7 @@ import frc.spectrumLib.util.Util;
 import frc.spectrumLib.vision.Camera;
 import frc.spectrumLib.vision.Limelight.LimelightConfig;
 import frc.spectrumLib.vision.LimelightHelpers.RawFiducial;
+import frc.spectrumLib.vision.PhotonSimCamera.PhotonSimCameraConfig;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import lombok.Getter;
@@ -42,6 +43,12 @@ public class Vision implements NTSendable, Subsystem {
                         .withTranslation(0.215, 0, 0.188)
                         .withRotation(0, Math.toRadians(28), 0);
 
+        @Getter
+        final PhotonSimCameraConfig frontSimConfig =
+                new PhotonSimCameraConfig(frontLL)
+                        .withTranslation(0.215, 0, 0.188)
+                        .withRotation(0, Math.toRadians(0), 0);
+
         @Getter final String backLL = "limelight-back";
 
         @Getter
@@ -49,6 +56,12 @@ public class Vision implements NTSendable, Subsystem {
                 new LimelightConfig(backLL)
                         .withTranslation(-0.215, 0.0, 0.188)
                         .withRotation(0, Math.toRadians(28), Math.toRadians(180));
+
+        @Getter
+        final PhotonSimCameraConfig backSimConfig =
+                new PhotonSimCameraConfig(backLL)
+                        .withTranslation(-0.215, 0.0, 0.188)
+                        .withRotation(0, Math.toRadians(0), Math.toRadians(180));
 
         /* Pipeline configs */
         @Getter final int frontTagPipeline = 0;
@@ -86,9 +99,17 @@ public class Vision implements NTSendable, Subsystem {
     public Vision(VisionConfig config) {
         this.config = config;
 
-        frontLL = new Camera(config.frontLL, config.frontTagPipeline, config.frontConfig);
+        if (Robot.isSimulation()) {
+            frontLL = new Camera(config.frontLL, config.frontTagPipeline, config.frontSimConfig);
+        } else {
+            frontLL = new Camera(config.frontLL, config.frontTagPipeline, config.frontConfig);
+        }
 
-        backLL = new Camera(config.backLL, config.backTagPipeline, config.backConfig);
+        if (Robot.isSimulation()) {
+            backLL = new Camera(config.backLL, config.backTagPipeline, config.backSimConfig);
+        } else {
+            backLL = new Camera(config.backLL, config.backTagPipeline, config.backConfig);
+        }
 
         allLimelights = new Camera[] {frontLL, backLL};
 

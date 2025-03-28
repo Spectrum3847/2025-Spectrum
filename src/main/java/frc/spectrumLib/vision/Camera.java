@@ -2,20 +2,20 @@ package frc.spectrumLib.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.wpilibj.RobotBase;
+import frc.robot.Robot;
 import frc.spectrumLib.vision.Limelight.LimelightConfig;
 import frc.spectrumLib.vision.LimelightHelpers.PoseEstimate;
 import frc.spectrumLib.vision.LimelightHelpers.RawFiducial;
-import frc.spectrumLib.vision.PhotonCamera.PhotonCameraConfig;
+import frc.spectrumLib.vision.PhotonSimCamera.PhotonSimCameraConfig;
 
 public class Camera {
     private Limelight limelight;
-    private PhotonCamera photonCamera;
-    private boolean usePhotonVision = RobotBase.isSimulation();
+    private PhotonSimCamera photonSimCamera;
+    private boolean usePhotonVision = Robot.isSimulation();
 
     public Camera(String name) {
         if (usePhotonVision) {
-            photonCamera = new PhotonCamera(name);
+            photonSimCamera = new PhotonSimCamera(name);
         } else {
             limelight = new Limelight(name);
         }
@@ -23,7 +23,7 @@ public class Camera {
 
     public Camera(String name, boolean attached) {
         if (usePhotonVision) {
-            photonCamera = new PhotonCamera(name, attached);
+            photonSimCamera = new PhotonSimCamera(name, attached);
         } else {
             limelight = new Limelight(name, attached);
         }
@@ -31,7 +31,7 @@ public class Camera {
 
     public Camera(String name, int pipeline) {
         if (usePhotonVision) {
-            photonCamera = new PhotonCamera(name, pipeline);
+            photonSimCamera = new PhotonSimCamera(name, pipeline);
         } else {
             limelight = new Limelight(name, pipeline);
         }
@@ -41,97 +41,107 @@ public class Camera {
         limelight = new Limelight(name, pipeline, config);
     }
 
-    public Camera(String name, int pipeline, PhotonCameraConfig config) {
-        photonCamera = new PhotonCamera(name, pipeline, config);
+    public Camera(String name, int pipeline, PhotonSimCameraConfig config) {
+        photonSimCamera = new PhotonSimCamera(name, pipeline, config);
     }
 
     public String getName() {
-        return usePhotonVision ? photonCamera.getName() : limelight.getName();
+        return usePhotonVision ? photonSimCamera.getName() : limelight.getName();
     }
 
     public boolean isAttached() {
-        return usePhotonVision ? photonCamera.isAttached() : limelight.isAttached();
+        return usePhotonVision ? photonSimCamera.isAttached() : limelight.isAttached();
     }
 
     public double getHorizontalOffset() {
         return usePhotonVision
-                ? photonCamera.getHorizontalOffset()
+                ? photonSimCamera.getHorizontalOffset()
                 : limelight.getHorizontalOffset();
     }
 
     public double getVerticalOffset() {
-        return usePhotonVision ? photonCamera.getVerticalOffset() : limelight.getVerticalOffset();
+        return usePhotonVision
+                ? photonSimCamera.getVerticalOffset()
+                : limelight.getVerticalOffset();
     }
 
     public boolean targetInView() {
-        return usePhotonVision ? photonCamera.targetInView() : limelight.targetInView();
+        return usePhotonVision ? photonSimCamera.targetInView() : limelight.targetInView();
     }
 
     public boolean multipleTagsInView() {
-        return usePhotonVision ? photonCamera.multipleTagsInView() : limelight.multipleTagsInView();
+        return usePhotonVision
+                ? photonSimCamera.multipleTagsInView()
+                : limelight.multipleTagsInView();
     }
 
     public double getTagCountInView() {
-        return usePhotonVision ? photonCamera.getTagCountInView() : limelight.getTagCountInView();
+        return usePhotonVision
+                ? photonSimCamera.getTagCountInView()
+                : limelight.getTagCountInView();
     }
 
     public double getClosestTagID() {
-        return usePhotonVision ? photonCamera.getClosestTagID() : limelight.getClosestTagID();
+        return usePhotonVision ? photonSimCamera.getClosestTagID() : limelight.getClosestTagID();
     }
 
     public double getTargetSize() {
-        return usePhotonVision ? photonCamera.getTargetSize() : limelight.getTargetSize();
+        return usePhotonVision ? photonSimCamera.getTargetSize() : limelight.getTargetSize();
     }
 
     public Pose3d getMegaTag1_Pose3d() {
-        return usePhotonVision ? photonCamera.getMegaTag1_Pose3d() : limelight.getMegaTag1_Pose3d();
+        return usePhotonVision
+                ? photonSimCamera.getMegaTag1_Pose3d()
+                : limelight.getMegaTag1_Pose3d();
     }
 
     public Pose2d getMegaTag2_Pose2d() {
-        return usePhotonVision ? photonCamera.getMegaTag2_Pose2d() : limelight.getMegaTag2_Pose2d();
+        return usePhotonVision
+                ? photonSimCamera.getMegaTag2_Pose2d()
+                : limelight.getMegaTag2_Pose2d();
     }
 
     public PoseEstimate getMegaTag1_PoseEstimate() {
         return usePhotonVision
-                ? photonCamera.getMegaTag1_PoseEstimate()
+                ? photonSimCamera.getMegaTag1_PoseEstimate()
                 : limelight.getMegaTag1_PoseEstimate();
     }
 
     public PoseEstimate getMegaTag2_PoseEstimate() {
         return usePhotonVision
-                ? photonCamera.getMegaTag2_PoseEstimate()
+                ? photonSimCamera.getMegaTag2_PoseEstimate()
                 : limelight.getMegaTag2_PoseEstimate();
     }
 
     public boolean hasAccuratePose() {
-        return usePhotonVision ? photonCamera.hasAccuratePose() : limelight.hasAccuratePose();
+        return usePhotonVision ? photonSimCamera.hasAccuratePose() : limelight.hasAccuratePose();
     }
 
     public double getDistanceToTagFromCamera() {
         return usePhotonVision
-                ? photonCamera.getDistanceToTagFromCamera()
+                ? photonSimCamera.getDistanceToTagFromCamera()
                 : limelight.getDistanceToTagFromCamera();
     }
 
     public RawFiducial[] getRawFiducial() {
-        return usePhotonVision ? photonCamera.getRawFiducial() : limelight.getRawFiducial();
+        return usePhotonVision ? photonSimCamera.getRawFiducial() : limelight.getRawFiducial();
     }
 
     public double getMegaTag1PoseTimestamp() {
         return usePhotonVision
-                ? photonCamera.getMegaTag1PoseTimestamp()
+                ? photonSimCamera.getMegaTag1PoseTimestamp()
                 : limelight.getMegaTag1PoseTimestamp();
     }
 
     public double getMegaTag2PoseTimestamp() {
         return usePhotonVision
-                ? photonCamera.getMegaTag2PoseTimestamp()
+                ? photonSimCamera.getMegaTag2PoseTimestamp()
                 : limelight.getMegaTag2PoseTimestamp();
     }
 
     public double getDistanceToTarget(double targetHeight) {
         return usePhotonVision
-                ? photonCamera.getDistanceToTarget(targetHeight)
+                ? photonSimCamera.getDistanceToTarget(targetHeight)
                 : limelight.getDistanceToTarget(targetHeight);
     }
 
@@ -172,16 +182,16 @@ public class Camera {
     }
 
     public double getTagTx() {
-        return usePhotonVision ? photonCamera.getTagTx() : limelight.getTagTx();
+        return usePhotonVision ? photonSimCamera.getTagTx() : limelight.getTagTx();
     }
 
     public double getTagTA() {
-        return usePhotonVision ? photonCamera.getTagTA() : limelight.getTagTA();
+        return usePhotonVision ? photonSimCamera.getTagTA() : limelight.getTagTA();
     }
 
     public double getTagRotationDegrees() {
         return usePhotonVision
-                ? photonCamera.getTagRotationDegrees()
+                ? photonSimCamera.getTagRotationDegrees()
                 : limelight.getTagRotationDegrees();
     }
 

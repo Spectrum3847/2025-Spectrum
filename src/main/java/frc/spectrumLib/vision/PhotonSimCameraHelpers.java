@@ -29,17 +29,17 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * PhotonCameraHelpers provides static methods and classes for interfacing with PhotonCamera vision
- * cameras in FRC. This library supports all PhotonCamera features including AprilTag tracking,
- * Neural Networks, and standard color/retroreflective tracking.
+ * PhotonSimCameraHelpers provides static methods and classes for interfacing with PhotonSimCamera
+ * vision cameras in FRC. This library supports all PhotonSimCamera features including AprilTag
+ * tracking, Neural Networks, and standard color/retroreflective tracking.
  */
-public class PhotonCameraHelpers {
+public class PhotonSimCameraHelpers {
 
     private static final Map<String, DoubleArrayEntry> doubleArrayEntries =
             new ConcurrentHashMap<>();
 
     /** Represents a Color/Retroreflective Target Result extracted from JSON Output */
-    public static class PhotonCameraTarget_Retro {
+    public static class PhotonSimCameraTarget_Retro {
 
         @JsonProperty("t6c_ts")
         private double[] cameraPose_TargetSpace;
@@ -120,7 +120,7 @@ public class PhotonCameraHelpers {
         @JsonProperty("ts")
         public double ts;
 
-        public PhotonCameraTarget_Retro() {
+        public PhotonSimCameraTarget_Retro() {
             cameraPose_TargetSpace = new double[6];
             robotPose_FieldSpace = new double[6];
             robotPose_TargetSpace = new double[6];
@@ -130,7 +130,7 @@ public class PhotonCameraHelpers {
     }
 
     /** Represents an AprilTag/Fiducial Target Result extracted from JSON Output */
-    public static class PhotonCameraTarget_Fiducial {
+    public static class PhotonSimCameraTarget_Fiducial {
 
         @JsonProperty("fID")
         public double fiducialID;
@@ -217,7 +217,7 @@ public class PhotonCameraHelpers {
         @JsonProperty("ts")
         public double ts;
 
-        public PhotonCameraTarget_Fiducial() {
+        public PhotonSimCameraTarget_Fiducial() {
             cameraPose_TargetSpace = new double[6];
             robotPose_FieldSpace = new double[6];
             robotPose_TargetSpace = new double[6];
@@ -227,7 +227,7 @@ public class PhotonCameraHelpers {
     }
 
     /** Represents a Barcode Target Result extracted from JSON Output */
-    public static class PhotonCameraTarget_Barcode {
+    public static class PhotonSimCameraTarget_Barcode {
 
         /** Barcode family type (e.g. "QR", "DataMatrix", etc.) */
         @JsonProperty("fam")
@@ -261,7 +261,7 @@ public class PhotonCameraHelpers {
         @JsonProperty("pts")
         public double[][] corners;
 
-        public PhotonCameraTarget_Barcode() {}
+        public PhotonSimCameraTarget_Barcode() {}
 
         public String getFamily() {
             return family;
@@ -269,7 +269,7 @@ public class PhotonCameraHelpers {
     }
 
     /** Represents a Neural Classifier Pipeline Result extracted from JSON Output */
-    public static class PhotonCameraTarget_Classifier {
+    public static class PhotonSimCameraTarget_Classifier {
 
         @JsonProperty("class")
         public String className;
@@ -295,11 +295,11 @@ public class PhotonCameraHelpers {
         @JsonProperty("typ")
         public double ty_pixels;
 
-        public PhotonCameraTarget_Classifier() {}
+        public PhotonSimCameraTarget_Classifier() {}
     }
 
     /** Represents a Neural Detector Pipeline Result extracted from JSON Output */
-    public static class PhotonCameraTarget_Detector {
+    public static class PhotonSimCameraTarget_Detector {
 
         @JsonProperty("class")
         public String className;
@@ -331,11 +331,11 @@ public class PhotonCameraHelpers {
         @JsonProperty("ty_nocross")
         public double ty_nocrosshair;
 
-        public PhotonCameraTarget_Detector() {}
+        public PhotonSimCameraTarget_Detector() {}
     }
 
-    /** PhotonCamera Results object, parsed from a PhotonCamera's JSON results output. */
-    public static class PhotonCameraResults {
+    /** PhotonSimCamera Results object, parsed from a PhotonSimCamera's JSON results output. */
+    public static class PhotonSimCameraResults {
 
         public String error;
 
@@ -409,35 +409,35 @@ public class PhotonCameraHelpers {
         }
 
         @JsonProperty("Retro")
-        public PhotonCameraTarget_Retro[] targets_Retro;
+        public PhotonSimCameraTarget_Retro[] targets_Retro;
 
         @JsonProperty("Fiducial")
-        public PhotonCameraTarget_Fiducial[] targets_Fiducials;
+        public PhotonSimCameraTarget_Fiducial[] targets_Fiducials;
 
         @JsonProperty("Classifier")
-        public PhotonCameraTarget_Classifier[] targets_Classifier;
+        public PhotonSimCameraTarget_Classifier[] targets_Classifier;
 
         @JsonProperty("Detector")
-        public PhotonCameraTarget_Detector[] targets_Detector;
+        public PhotonSimCameraTarget_Detector[] targets_Detector;
 
         @JsonProperty("Barcode")
-        public PhotonCameraTarget_Barcode[] targets_Barcode;
+        public PhotonSimCameraTarget_Barcode[] targets_Barcode;
 
-        public PhotonCameraResults() {
+        public PhotonSimCameraResults() {
             botpose = new double[6];
             botpose_wpired = new double[6];
             botpose_wpiblue = new double[6];
             camerapose_robotspace = new double[6];
-            targets_Retro = new PhotonCameraTarget_Retro[0];
-            targets_Fiducials = new PhotonCameraTarget_Fiducial[0];
-            targets_Classifier = new PhotonCameraTarget_Classifier[0];
-            targets_Detector = new PhotonCameraTarget_Detector[0];
-            targets_Barcode = new PhotonCameraTarget_Barcode[0];
+            targets_Retro = new PhotonSimCameraTarget_Retro[0];
+            targets_Fiducials = new PhotonSimCameraTarget_Fiducial[0];
+            targets_Classifier = new PhotonSimCameraTarget_Classifier[0];
+            targets_Detector = new PhotonSimCameraTarget_Detector[0];
+            targets_Barcode = new PhotonSimCameraTarget_Barcode[0];
         }
     }
 
     /**
-     * Represents a PhotonCamera Raw Neural Detector result from PhotonCamera's NetworkTables
+     * Represents a PhotonSimCamera Raw Neural Detector result from PhotonSimCamera's NetworkTables
      * output.
      */
     public static class RawDetection {
@@ -482,7 +482,7 @@ public class PhotonCameraHelpers {
         }
     }
 
-    /** Encapsulates the state of an internal PhotonCamera IMU. */
+    /** Encapsulates the state of an internal PhotonSimCamera IMU. */
     public static class IMUData {
         public double robotYaw = 0.0;
         public double Roll = 0.0;
@@ -520,7 +520,7 @@ public class PhotonCameraHelpers {
 
     static final String sanitizeName(String name) {
         if (name == "" || name == null) {
-            return "photonCamera";
+            return "photonSimCamera";
         }
         return name;
     }
@@ -608,9 +608,10 @@ public class PhotonCameraHelpers {
     }
 
     private static PoseEstimate getBotPoseEstimate(
-            String photonCameraName, String entryName, boolean isMegaTag2) {
+            String photonSimCameraName, String entryName, boolean isMegaTag2) {
         DoubleArrayEntry poseEntry =
-                PhotonCameraHelpers.getPhotonCameraDoubleArrayEntry(photonCameraName, entryName);
+                PhotonSimCameraHelpers.getPhotonSimCameraDoubleArrayEntry(
+                        photonSimCameraName, entryName);
 
         TimestampedDoubleArray tsValue = poseEntry.getAtomic();
         double[] poseArray = tsValue.value;
@@ -667,12 +668,13 @@ public class PhotonCameraHelpers {
     /**
      * Gets the latest raw fiducial/AprilTag detection results from NetworkTables.
      *
-     * @param photonCameraName Name/identifier of the PhotonCamera
+     * @param photonSimCameraName Name/identifier of the PhotonSimCamera
      * @return Array of RawFiducial objects containing detection details
      */
-    public static RawFiducial[] getRawFiducials(String photonCameraName) {
+    public static RawFiducial[] getRawFiducials(String photonSimCameraName) {
         var entry =
-                PhotonCameraHelpers.getPhotonCameraNTTableEntry(photonCameraName, "rawfiducials");
+                PhotonSimCameraHelpers.getPhotonSimCameraNTTableEntry(
+                        photonSimCameraName, "rawfiducials");
         var rawFiducialArray = entry.getDoubleArray(new double[0]);
         int valsPerEntry = 7;
         if (rawFiducialArray.length % valsPerEntry != 0) {
@@ -702,12 +704,13 @@ public class PhotonCameraHelpers {
     /**
      * Gets the latest raw neural detector results from NetworkTables
      *
-     * @param photonCameraName Name/identifier of the PhotonCamera
+     * @param photonSimCameraName Name/identifier of the PhotonSimCamera
      * @return Array of RawDetection objects containing detection details
      */
-    public static RawDetection[] getRawDetections(String photonCameraName) {
+    public static RawDetection[] getRawDetections(String photonSimCameraName) {
         var entry =
-                PhotonCameraHelpers.getPhotonCameraNTTableEntry(photonCameraName, "rawdetections");
+                PhotonSimCameraHelpers.getPhotonSimCameraNTTableEntry(
+                        photonSimCameraName, "rawdetections");
         var rawDetectionArray = entry.getDoubleArray(new double[0]);
         int valsPerEntry = 12;
         if (rawDetectionArray.length % valsPerEntry != 0) {
@@ -788,7 +791,7 @@ public class PhotonCameraHelpers {
         return pose != null && pose.rawFiducials != null && pose.rawFiducials.length != 0;
     }
 
-    public static NetworkTable getPhotonCameraNTTable(String tableName) {
+    public static NetworkTable getPhotonSimCameraNTTable(String tableName) {
         return NetworkTableInstance.getDefault().getTable(sanitizeName(tableName));
     }
 
@@ -796,48 +799,48 @@ public class PhotonCameraHelpers {
         NetworkTableInstance.getDefault().flush();
     }
 
-    public static NetworkTableEntry getPhotonCameraNTTableEntry(
+    public static NetworkTableEntry getPhotonSimCameraNTTableEntry(
             String tableName, String entryName) {
-        return getPhotonCameraNTTable(tableName).getEntry(entryName);
+        return getPhotonSimCameraNTTable(tableName).getEntry(entryName);
     }
 
-    public static DoubleArrayEntry getPhotonCameraDoubleArrayEntry(
+    public static DoubleArrayEntry getPhotonSimCameraDoubleArrayEntry(
             String tableName, String entryName) {
         String key = tableName + "/" + entryName;
         return doubleArrayEntries.computeIfAbsent(
                 key,
                 k -> {
-                    NetworkTable table = getPhotonCameraNTTable(tableName);
+                    NetworkTable table = getPhotonSimCameraNTTable(tableName);
                     return table.getDoubleArrayTopic(entryName).getEntry(new double[0]);
                 });
     }
 
-    public static double getPhotonCameraNTDouble(String tableName, String entryName) {
-        return getPhotonCameraNTTableEntry(tableName, entryName).getDouble(0.0);
+    public static double getPhotonSimCameraNTDouble(String tableName, String entryName) {
+        return getPhotonSimCameraNTTableEntry(tableName, entryName).getDouble(0.0);
     }
 
-    public static void setPhotonCameraNTDouble(String tableName, String entryName, double val) {
-        getPhotonCameraNTTableEntry(tableName, entryName).setDouble(val);
+    public static void setPhotonSimCameraNTDouble(String tableName, String entryName, double val) {
+        getPhotonSimCameraNTTableEntry(tableName, entryName).setDouble(val);
     }
 
-    public static void setPhotonCameraNTDoubleArray(
+    public static void setPhotonSimCameraNTDoubleArray(
             String tableName, String entryName, double[] val) {
-        getPhotonCameraNTTableEntry(tableName, entryName).setDoubleArray(val);
+        getPhotonSimCameraNTTableEntry(tableName, entryName).setDoubleArray(val);
     }
 
-    public static double[] getPhotonCameraNTDoubleArray(String tableName, String entryName) {
-        return getPhotonCameraNTTableEntry(tableName, entryName).getDoubleArray(new double[0]);
+    public static double[] getPhotonSimCameraNTDoubleArray(String tableName, String entryName) {
+        return getPhotonSimCameraNTTableEntry(tableName, entryName).getDoubleArray(new double[0]);
     }
 
-    public static String getPhotonCameraNTString(String tableName, String entryName) {
-        return getPhotonCameraNTTableEntry(tableName, entryName).getString("");
+    public static String getPhotonSimCameraNTString(String tableName, String entryName) {
+        return getPhotonSimCameraNTTableEntry(tableName, entryName).getString("");
     }
 
-    public static String[] getPhotonCameraNTStringArray(String tableName, String entryName) {
-        return getPhotonCameraNTTableEntry(tableName, entryName).getStringArray(new String[0]);
+    public static String[] getPhotonSimCameraNTStringArray(String tableName, String entryName) {
+        return getPhotonSimCameraNTTableEntry(tableName, entryName).getStringArray(new String[0]);
     }
 
-    public static URL getPhotonCameraURLString(String tableName, String request) {
+    public static URL getPhotonSimCameraURLString(String tableName, String request) {
         String urlString = "http://" + sanitizeName(tableName) + ".local:5807/" + request;
         URL url;
         try {
@@ -852,33 +855,33 @@ public class PhotonCameraHelpers {
     /////
 
     /**
-     * Does the PhotonCamera have a valid target?
+     * Does the PhotonSimCamera have a valid target?
      *
-     * @param photonCameraName Name of the PhotonCamera camera ("" for default)
+     * @param photonSimCameraName Name of the PhotonSimCamera camera ("" for default)
      * @return True if a valid target is present, false otherwise
      */
-    public static boolean getTV(String photonCameraName) {
-        return 1.0 == getPhotonCameraNTDouble(photonCameraName, "tv");
+    public static boolean getTV(String photonSimCameraName) {
+        return 1.0 == getPhotonSimCameraNTDouble(photonSimCameraName, "tv");
     }
 
     /**
      * Gets the horizontal offset from the crosshair to the target in degrees.
      *
-     * @param photonCameraName Name of the PhotonCamera camera ("" for default)
+     * @param photonSimCameraName Name of the PhotonSimCamera camera ("" for default)
      * @return Horizontal offset angle in degrees
      */
-    public static double getTX(String photonCameraName) {
-        return getPhotonCameraNTDouble(photonCameraName, "tx");
+    public static double getTX(String photonSimCameraName) {
+        return getPhotonSimCameraNTDouble(photonSimCameraName, "tx");
     }
 
     /**
      * Gets the vertical offset from the crosshair to the target in degrees.
      *
-     * @param photonCameraName Name of the PhotonCamera camera ("" for default)
+     * @param photonSimCameraName Name of the PhotonSimCamera camera ("" for default)
      * @return Vertical offset angle in degrees
      */
-    public static double getTY(String photonCameraName) {
-        return getPhotonCameraNTDouble(photonCameraName, "ty");
+    public static double getTY(String photonSimCameraName) {
+        return getPhotonSimCameraNTDouble(photonSimCameraName, "ty");
     }
 
     /**
@@ -886,11 +889,11 @@ public class PhotonCameraHelpers {
      * the most accurate 2d metric if you are using a calibrated camera and you don't need
      * adjustable crosshair functionality.
      *
-     * @param photonCameraName Name of the PhotonCamera camera ("" for default)
+     * @param photonSimCameraName Name of the PhotonSimCamera camera ("" for default)
      * @return Horizontal offset angle in degrees
      */
-    public static double getTXNC(String photonCameraName) {
-        return getPhotonCameraNTDouble(photonCameraName, "txnc");
+    public static double getTXNC(String photonSimCameraName) {
+        return getPhotonSimCameraNTDouble(photonSimCameraName, "txnc");
     }
 
     /**
@@ -898,44 +901,44 @@ public class PhotonCameraHelpers {
      * most accurate 2d metric if you are using a calibrated camera and you don't need adjustable
      * crosshair functionality.
      *
-     * @param photonCameraName Name of the PhotonCamera camera ("" for default)
+     * @param photonSimCameraName Name of the PhotonSimCamera camera ("" for default)
      * @return Vertical offset angle in degrees
      */
-    public static double getTYNC(String photonCameraName) {
-        return getPhotonCameraNTDouble(photonCameraName, "tync");
+    public static double getTYNC(String photonSimCameraName) {
+        return getPhotonSimCameraNTDouble(photonSimCameraName, "tync");
     }
 
     /**
      * Gets the target area as a percentage of the image (0-100%).
      *
-     * @param photonCameraName Name of the PhotonCamera camera ("" for default)
+     * @param photonSimCameraName Name of the PhotonSimCamera camera ("" for default)
      * @return Target area percentage (0-100)
      */
-    public static double getTA(String photonCameraName) {
-        return getPhotonCameraNTDouble(photonCameraName, "ta");
+    public static double getTA(String photonSimCameraName) {
+        return getPhotonSimCameraNTDouble(photonSimCameraName, "ta");
     }
 
     /**
      * T2D is an array that contains several targeting metrics
      *
-     * @param photonCameraName Name of the PhotonCamera camera
+     * @param photonSimCameraName Name of the PhotonSimCamera camera
      * @return Array containing [targetValid, targetCount, targetLatency, captureLatency, tx, ty,
      *     txnc, tync, ta, tid, targetClassIndexDetector, targetClassIndexClassifier,
      *     targetLongSidePixels, targetShortSidePixels, targetHorizontalExtentPixels,
      *     targetVerticalExtentPixels, targetSkewDegrees]
      */
-    public static double[] getT2DArray(String photonCameraName) {
-        return getPhotonCameraNTDoubleArray(photonCameraName, "t2d");
+    public static double[] getT2DArray(String photonSimCameraName) {
+        return getPhotonSimCameraNTDoubleArray(photonSimCameraName, "t2d");
     }
 
     /**
      * Gets the number of targets currently detected.
      *
-     * @param photonCameraName Name of the PhotonCamera camera
+     * @param photonSimCameraName Name of the PhotonSimCamera camera
      * @return Number of detected targets
      */
-    public static int getTargetCount(String photonCameraName) {
-        double[] t2d = getT2DArray(photonCameraName);
+    public static int getTargetCount(String photonSimCameraName) {
+        double[] t2d = getT2DArray(photonSimCameraName);
         if (t2d.length == 17) {
             return (int) t2d[1];
         }
@@ -945,11 +948,11 @@ public class PhotonCameraHelpers {
     /**
      * Gets the classifier class index from the currently running neural classifier pipeline
      *
-     * @param photonCameraName Name of the PhotonCamera camera
+     * @param photonSimCameraName Name of the PhotonSimCamera camera
      * @return Class index from classifier pipeline
      */
-    public static int getClassifierClassIndex(String photonCameraName) {
-        double[] t2d = getT2DArray(photonCameraName);
+    public static int getClassifierClassIndex(String photonSimCameraName) {
+        double[] t2d = getT2DArray(photonSimCameraName);
         if (t2d.length == 17) {
             return (int) t2d[10];
         }
@@ -960,11 +963,11 @@ public class PhotonCameraHelpers {
      * Gets the detector class index from the primary result of the currently running neural
      * detector pipeline.
      *
-     * @param photonCameraName Name of the PhotonCamera camera
+     * @param photonSimCameraName Name of the PhotonSimCamera camera
      * @return Class index from detector pipeline
      */
-    public static int getDetectorClassIndex(String photonCameraName) {
-        double[] t2d = getT2DArray(photonCameraName);
+    public static int getDetectorClassIndex(String photonSimCameraName) {
+        double[] t2d = getT2DArray(photonSimCameraName);
         if (t2d.length == 17) {
             return (int) t2d[11];
         }
@@ -974,255 +977,257 @@ public class PhotonCameraHelpers {
     /**
      * Gets the current neural classifier result class name.
      *
-     * @param photonCameraName Name of the PhotonCamera camera
+     * @param photonSimCameraName Name of the PhotonSimCamera camera
      * @return Class name string from classifier pipeline
      */
-    public static String getClassifierClass(String photonCameraName) {
-        return getPhotonCameraNTString(photonCameraName, "tcclass");
+    public static String getClassifierClass(String photonSimCameraName) {
+        return getPhotonSimCameraNTString(photonSimCameraName, "tcclass");
     }
 
     /**
      * Gets the primary neural detector result class name.
      *
-     * @param photonCameraName Name of the PhotonCamera camera
+     * @param photonSimCameraName Name of the PhotonSimCamera camera
      * @return Class name string from detector pipeline
      */
-    public static String getDetectorClass(String photonCameraName) {
-        return getPhotonCameraNTString(photonCameraName, "tdclass");
+    public static String getDetectorClass(String photonSimCameraName) {
+        return getPhotonSimCameraNTString(photonSimCameraName, "tdclass");
     }
 
     /**
      * Gets the pipeline's processing latency contribution.
      *
-     * @param photonCameraName Name of the PhotonCamera camera
+     * @param photonSimCameraName Name of the PhotonSimCamera camera
      * @return Pipeline latency in milliseconds
      */
-    public static double getLatency_Pipeline(String photonCameraName) {
-        return getPhotonCameraNTDouble(photonCameraName, "tl");
+    public static double getLatency_Pipeline(String photonSimCameraName) {
+        return getPhotonSimCameraNTDouble(photonSimCameraName, "tl");
     }
 
     /**
      * Gets the capture latency.
      *
-     * @param photonCameraName Name of the PhotonCamera camera
+     * @param photonSimCameraName Name of the PhotonSimCamera camera
      * @return Capture latency in milliseconds
      */
-    public static double getLatency_Capture(String photonCameraName) {
-        return getPhotonCameraNTDouble(photonCameraName, "cl");
+    public static double getLatency_Capture(String photonSimCameraName) {
+        return getPhotonSimCameraNTDouble(photonSimCameraName, "cl");
     }
 
     /**
      * Gets the active pipeline index.
      *
-     * @param photonCameraName Name of the PhotonCamera camera
+     * @param photonSimCameraName Name of the PhotonSimCamera camera
      * @return Current pipeline index (0-9)
      */
-    public static double getCurrentPipelineIndex(String photonCameraName) {
-        return getPhotonCameraNTDouble(photonCameraName, "getpipe");
+    public static double getCurrentPipelineIndex(String photonSimCameraName) {
+        return getPhotonSimCameraNTDouble(photonSimCameraName, "getpipe");
     }
 
     /**
      * Gets the current pipeline type.
      *
-     * @param photonCameraName Name of the PhotonCamera camera
+     * @param photonSimCameraName Name of the PhotonSimCamera camera
      * @return Pipeline type string (e.g. "retro", "apriltag", etc.)
      */
-    public static String getCurrentPipelineType(String photonCameraName) {
-        return getPhotonCameraNTString(photonCameraName, "getpipetype");
+    public static String getCurrentPipelineType(String photonSimCameraName) {
+        return getPhotonSimCameraNTString(photonSimCameraName, "getpipetype");
     }
 
     /**
      * Gets the full JSON results dump.
      *
-     * @param photonCameraName Name of the PhotonCamera camera
+     * @param photonSimCameraName Name of the PhotonSimCamera camera
      * @return JSON string containing all current results
      */
-    public static String getJSONDump(String photonCameraName) {
-        return getPhotonCameraNTString(photonCameraName, "json");
+    public static String getJSONDump(String photonSimCameraName) {
+        return getPhotonSimCameraNTString(photonSimCameraName, "json");
     }
 
     /**
      * Switch to getBotPose
      *
-     * @param photonCameraName
+     * @param photonSimCameraName
      * @return
      */
     @Deprecated
-    public static double[] getBotpose(String photonCameraName) {
-        return getPhotonCameraNTDoubleArray(photonCameraName, "botpose");
+    public static double[] getBotpose(String photonSimCameraName) {
+        return getPhotonSimCameraNTDoubleArray(photonSimCameraName, "botpose");
     }
 
     /**
      * Switch to getBotPose_wpiRed
      *
-     * @param photonCameraName
+     * @param photonSimCameraName
      * @return
      */
     @Deprecated
-    public static double[] getBotpose_wpiRed(String photonCameraName) {
-        return getPhotonCameraNTDoubleArray(photonCameraName, "botpose_wpired");
+    public static double[] getBotpose_wpiRed(String photonSimCameraName) {
+        return getPhotonSimCameraNTDoubleArray(photonSimCameraName, "botpose_wpired");
     }
 
     /**
      * Switch to getBotPose_wpiBlue
      *
-     * @param photonCameraName
+     * @param photonSimCameraName
      * @return
      */
     @Deprecated
-    public static double[] getBotpose_wpiBlue(String photonCameraName) {
-        return getPhotonCameraNTDoubleArray(photonCameraName, "botpose_wpiblue");
+    public static double[] getBotpose_wpiBlue(String photonSimCameraName) {
+        return getPhotonSimCameraNTDoubleArray(photonSimCameraName, "botpose_wpiblue");
     }
 
-    public static double[] getBotPose(String photonCameraName) {
-        return getPhotonCameraNTDoubleArray(photonCameraName, "botpose");
+    public static double[] getBotPose(String photonSimCameraName) {
+        return getPhotonSimCameraNTDoubleArray(photonSimCameraName, "botpose");
     }
 
-    public static double[] getBotPose_wpiRed(String photonCameraName) {
-        return getPhotonCameraNTDoubleArray(photonCameraName, "botpose_wpired");
+    public static double[] getBotPose_wpiRed(String photonSimCameraName) {
+        return getPhotonSimCameraNTDoubleArray(photonSimCameraName, "botpose_wpired");
     }
 
-    public static double[] getBotPose_wpiBlue(String photonCameraName) {
-        return getPhotonCameraNTDoubleArray(photonCameraName, "botpose_wpiblue");
+    public static double[] getBotPose_wpiBlue(String photonSimCameraName) {
+        return getPhotonSimCameraNTDoubleArray(photonSimCameraName, "botpose_wpiblue");
     }
 
-    public static double[] getBotPose_TargetSpace(String photonCameraName) {
-        return getPhotonCameraNTDoubleArray(photonCameraName, "botpose_targetspace");
+    public static double[] getBotPose_TargetSpace(String photonSimCameraName) {
+        return getPhotonSimCameraNTDoubleArray(photonSimCameraName, "botpose_targetspace");
     }
 
-    public static double[] getCameraPose_TargetSpace(String photonCameraName) {
-        return getPhotonCameraNTDoubleArray(photonCameraName, "camerapose_targetspace");
+    public static double[] getCameraPose_TargetSpace(String photonSimCameraName) {
+        return getPhotonSimCameraNTDoubleArray(photonSimCameraName, "camerapose_targetspace");
     }
 
-    public static double[] getTargetPose_CameraSpace(String photonCameraName) {
-        return getPhotonCameraNTDoubleArray(photonCameraName, "targetpose_cameraspace");
+    public static double[] getTargetPose_CameraSpace(String photonSimCameraName) {
+        return getPhotonSimCameraNTDoubleArray(photonSimCameraName, "targetpose_cameraspace");
     }
 
-    public static double[] getTargetPose_RobotSpace(String photonCameraName) {
-        return getPhotonCameraNTDoubleArray(photonCameraName, "targetpose_robotspace");
+    public static double[] getTargetPose_RobotSpace(String photonSimCameraName) {
+        return getPhotonSimCameraNTDoubleArray(photonSimCameraName, "targetpose_robotspace");
     }
 
-    public static double[] getTargetColor(String photonCameraName) {
-        return getPhotonCameraNTDoubleArray(photonCameraName, "tc");
+    public static double[] getTargetColor(String photonSimCameraName) {
+        return getPhotonSimCameraNTDoubleArray(photonSimCameraName, "tc");
     }
 
-    public static double getFiducialID(String photonCameraName) {
-        return getPhotonCameraNTDouble(photonCameraName, "tid");
+    public static double getFiducialID(String photonSimCameraName) {
+        return getPhotonSimCameraNTDouble(photonSimCameraName, "tid");
     }
 
-    public static String getNeuralClassID(String photonCameraName) {
-        return getPhotonCameraNTString(photonCameraName, "tclass");
+    public static String getNeuralClassID(String photonSimCameraName) {
+        return getPhotonSimCameraNTString(photonSimCameraName, "tclass");
     }
 
-    public static String[] getRawBarcodeData(String photonCameraName) {
-        return getPhotonCameraNTStringArray(photonCameraName, "rawbarcodes");
+    public static String[] getRawBarcodeData(String photonSimCameraName) {
+        return getPhotonSimCameraNTStringArray(photonSimCameraName, "rawbarcodes");
     }
 
     /////
     /////
 
-    public static Pose3d getBotPose3d(String photonCameraName) {
-        double[] poseArray = getPhotonCameraNTDoubleArray(photonCameraName, "botpose");
+    public static Pose3d getBotPose3d(String photonSimCameraName) {
+        double[] poseArray = getPhotonSimCameraNTDoubleArray(photonSimCameraName, "botpose");
         return toPose3D(poseArray);
     }
 
     /**
      * (Not Recommended) Gets the robot's 3D pose in the WPILib Red Alliance Coordinate System.
      *
-     * @param photonCameraName Name/identifier of the PhotonCamera
+     * @param photonSimCameraName Name/identifier of the PhotonSimCamera
      * @return Pose3d object representing the robot's position and orientation in Red Alliance field
      *     space
      */
-    public static Pose3d getBotPose3d_wpiRed(String photonCameraName) {
-        double[] poseArray = getPhotonCameraNTDoubleArray(photonCameraName, "botpose_wpired");
+    public static Pose3d getBotPose3d_wpiRed(String photonSimCameraName) {
+        double[] poseArray = getPhotonSimCameraNTDoubleArray(photonSimCameraName, "botpose_wpired");
         return toPose3D(poseArray);
     }
 
     /**
      * (Recommended) Gets the robot's 3D pose in the WPILib Blue Alliance Coordinate System.
      *
-     * @param photonCameraName Name/identifier of the PhotonCamera
+     * @param photonSimCameraName Name/identifier of the PhotonSimCamera
      * @return Pose3d object representing the robot's position and orientation in Blue Alliance
      *     field space
      */
-    public static Pose3d getBotPose3d_wpiBlue(String photonCameraName) {
-        double[] poseArray = getPhotonCameraNTDoubleArray(photonCameraName, "botpose_wpiblue");
+    public static Pose3d getBotPose3d_wpiBlue(String photonSimCameraName) {
+        double[] poseArray =
+                getPhotonSimCameraNTDoubleArray(photonSimCameraName, "botpose_wpiblue");
         return toPose3D(poseArray);
     }
 
     /**
      * Gets the robot's 3D pose with respect to the currently tracked target's coordinate system.
      *
-     * @param photonCameraName Name/identifier of the PhotonCamera
+     * @param photonSimCameraName Name/identifier of the PhotonSimCamera
      * @return Pose3d object representing the robot's position and orientation relative to the
      *     target
      */
-    public static Pose3d getBotPose3d_TargetSpace(String photonCameraName) {
-        double[] poseArray = getPhotonCameraNTDoubleArray(photonCameraName, "botpose_targetspace");
+    public static Pose3d getBotPose3d_TargetSpace(String photonSimCameraName) {
+        double[] poseArray =
+                getPhotonSimCameraNTDoubleArray(photonSimCameraName, "botpose_targetspace");
         return toPose3D(poseArray);
     }
 
     /**
      * Gets the camera's 3D pose with respect to the currently tracked target's coordinate system.
      *
-     * @param photonCameraName Name/identifier of the PhotonCamera
+     * @param photonSimCameraName Name/identifier of the PhotonSimCamera
      * @return Pose3d object representing the camera's position and orientation relative to the
      *     target
      */
-    public static Pose3d getCameraPose3d_TargetSpace(String photonCameraName) {
+    public static Pose3d getCameraPose3d_TargetSpace(String photonSimCameraName) {
         double[] poseArray =
-                getPhotonCameraNTDoubleArray(photonCameraName, "camerapose_targetspace");
+                getPhotonSimCameraNTDoubleArray(photonSimCameraName, "camerapose_targetspace");
         return toPose3D(poseArray);
     }
 
     /**
      * Gets the target's 3D pose with respect to the camera's coordinate system.
      *
-     * @param photonCameraName Name/identifier of the PhotonCamera
+     * @param photonSimCameraName Name/identifier of the PhotonSimCamera
      * @return Pose3d object representing the target's position and orientation relative to the
      *     camera
      */
-    public static Pose3d getTargetPose3d_CameraSpace(String photonCameraName) {
+    public static Pose3d getTargetPose3d_CameraSpace(String photonSimCameraName) {
         double[] poseArray =
-                getPhotonCameraNTDoubleArray(photonCameraName, "targetpose_cameraspace");
+                getPhotonSimCameraNTDoubleArray(photonSimCameraName, "targetpose_cameraspace");
         return toPose3D(poseArray);
     }
 
     /**
      * Gets the target's 3D pose with respect to the robot's coordinate system.
      *
-     * @param photonCameraName Name/identifier of the PhotonCamera
+     * @param photonSimCameraName Name/identifier of the PhotonSimCamera
      * @return Pose3d object representing the target's position and orientation relative to the
      *     robot
      */
-    public static Pose3d getTargetPose3d_RobotSpace(String photonCameraName) {
+    public static Pose3d getTargetPose3d_RobotSpace(String photonSimCameraName) {
         double[] poseArray =
-                getPhotonCameraNTDoubleArray(photonCameraName, "targetpose_robotspace");
+                getPhotonSimCameraNTDoubleArray(photonSimCameraName, "targetpose_robotspace");
         return toPose3D(poseArray);
     }
 
     /**
      * Gets the camera's 3D pose with respect to the robot's coordinate system.
      *
-     * @param photonCameraName Name/identifier of the PhotonCamera
+     * @param photonSimCameraName Name/identifier of the PhotonSimCamera
      * @return Pose3d object representing the camera's position and orientation relative to the
      *     robot
      */
-    public static Pose3d getCameraPose3d_RobotSpace(String photonCameraName) {
+    public static Pose3d getCameraPose3d_RobotSpace(String photonSimCameraName) {
         double[] poseArray =
-                getPhotonCameraNTDoubleArray(photonCameraName, "camerapose_robotspace");
+                getPhotonSimCameraNTDoubleArray(photonSimCameraName, "camerapose_robotspace");
         return toPose3D(poseArray);
     }
 
     /**
      * Gets the Pose2d for easy use with Odometry vision pose estimator (addVisionMeasurement)
      *
-     * @param photonCameraName
+     * @param photonSimCameraName
      * @return
      */
-    public static Pose2d getBotPose2d_wpiBlue(String photonCameraName) {
+    public static Pose2d getBotPose2d_wpiBlue(String photonSimCameraName) {
 
-        double[] result = getBotPose_wpiBlue(photonCameraName);
+        double[] result = getBotPose_wpiBlue(photonSimCameraName);
         return toPose2D(result);
     }
 
@@ -1230,11 +1235,11 @@ public class PhotonCameraHelpers {
      * Gets the MegaTag1 Pose2d and timestamp for use with WPILib pose estimator
      * (addVisionMeasurement) in the WPILib Blue alliance coordinate system.
      *
-     * @param photonCameraName
+     * @param photonSimCameraName
      * @return
      */
-    public static PoseEstimate getBotPoseEstimate_wpiBlue(String photonCameraName) {
-        return getBotPoseEstimate(photonCameraName, "botpose_wpiblue", false);
+    public static PoseEstimate getBotPoseEstimate_wpiBlue(String photonSimCameraName) {
+        return getBotPoseEstimate(photonSimCameraName, "botpose_wpiblue", false);
     }
 
     /**
@@ -1242,22 +1247,22 @@ public class PhotonCameraHelpers {
      * (addVisionMeasurement) in the WPILib Blue alliance coordinate system. Make sure you are
      * calling setRobotOrientation() before calling this method.
      *
-     * @param photonCameraName
+     * @param photonSimCameraName
      * @return
      */
-    public static PoseEstimate getBotPoseEstimate_wpiBlue_MegaTag2(String photonCameraName) {
-        return getBotPoseEstimate(photonCameraName, "botpose_orb_wpiblue", true);
+    public static PoseEstimate getBotPoseEstimate_wpiBlue_MegaTag2(String photonSimCameraName) {
+        return getBotPoseEstimate(photonSimCameraName, "botpose_orb_wpiblue", true);
     }
 
     /**
      * Gets the Pose2d for easy use with Odometry vision pose estimator (addVisionMeasurement)
      *
-     * @param photonCameraName
+     * @param photonSimCameraName
      * @return
      */
-    public static Pose2d getBotPose2d_wpiRed(String photonCameraName) {
+    public static Pose2d getBotPose2d_wpiRed(String photonSimCameraName) {
 
-        double[] result = getBotPose_wpiRed(photonCameraName);
+        double[] result = getBotPose_wpiRed(photonSimCameraName);
         return toPose2D(result);
     }
 
@@ -1265,33 +1270,33 @@ public class PhotonCameraHelpers {
      * Gets the Pose2d and timestamp for use with WPILib pose estimator (addVisionMeasurement) when
      * you are on the RED alliance
      *
-     * @param photonCameraName
+     * @param photonSimCameraName
      * @return
      */
-    public static PoseEstimate getBotPoseEstimate_wpiRed(String photonCameraName) {
-        return getBotPoseEstimate(photonCameraName, "botpose_wpired", false);
+    public static PoseEstimate getBotPoseEstimate_wpiRed(String photonSimCameraName) {
+        return getBotPoseEstimate(photonSimCameraName, "botpose_wpired", false);
     }
 
     /**
      * Gets the Pose2d and timestamp for use with WPILib pose estimator (addVisionMeasurement) when
      * you are on the RED alliance
      *
-     * @param photonCameraName
+     * @param photonSimCameraName
      * @return
      */
-    public static PoseEstimate getBotPoseEstimate_wpiRed_MegaTag2(String photonCameraName) {
-        return getBotPoseEstimate(photonCameraName, "botpose_orb_wpired", true);
+    public static PoseEstimate getBotPoseEstimate_wpiRed_MegaTag2(String photonSimCameraName) {
+        return getBotPoseEstimate(photonSimCameraName, "botpose_orb_wpired", true);
     }
 
     /**
      * Gets the Pose2d for easy use with Odometry vision pose estimator (addVisionMeasurement)
      *
-     * @param photonCameraName
+     * @param photonSimCameraName
      * @return
      */
-    public static Pose2d getBotPose2d(String photonCameraName) {
+    public static Pose2d getBotPose2d(String photonSimCameraName) {
 
-        double[] result = getBotPose(photonCameraName);
+        double[] result = getBotPose(photonSimCameraName);
         return toPose2D(result);
     }
 
@@ -1300,11 +1305,11 @@ public class PhotonCameraHelpers {
      * Pitch, Yaw, gyroX, gyroY, gyroZ, accelX, accelY, accelZ]. Returns all zeros if data is
      * invalid or unavailable.
      *
-     * @param photonCameraName Name/identifier of the PhotonCamera
+     * @param photonSimCameraName Name/identifier of the PhotonSimCamera
      * @return IMUData object containing all current IMU data
      */
-    public static IMUData getIMUData(String photonCameraName) {
-        double[] imuData = getPhotonCameraNTDoubleArray(photonCameraName, "imu");
+    public static IMUData getIMUData(String photonSimCameraName) {
+        double[] imuData = getPhotonSimCameraNTDoubleArray(photonSimCameraName, "imu");
         if (imuData == null || imuData.length < 10) {
             return new IMUData(); // Returns object with all zeros
         }
@@ -1314,73 +1319,73 @@ public class PhotonCameraHelpers {
     /////
     /////
 
-    public static void setPipelineIndex(String photonCameraName, int pipelineIndex) {
-        setPhotonCameraNTDouble(photonCameraName, "pipeline", pipelineIndex);
+    public static void setPipelineIndex(String photonSimCameraName, int pipelineIndex) {
+        setPhotonSimCameraNTDouble(photonSimCameraName, "pipeline", pipelineIndex);
     }
 
-    public static void setPriorityTagID(String photonCameraName, int ID) {
-        setPhotonCameraNTDouble(photonCameraName, "priorityid", ID);
+    public static void setPriorityTagID(String photonSimCameraName, int ID) {
+        setPhotonSimCameraNTDouble(photonSimCameraName, "priorityid", ID);
     }
 
     /**
      * Sets LED mode to be controlled by the current pipeline.
      *
-     * @param photonCameraName Name of the PhotonCamera camera
+     * @param photonSimCameraName Name of the PhotonSimCamera camera
      */
-    public static void setLEDMode_PipelineControl(String photonCameraName) {
-        setPhotonCameraNTDouble(photonCameraName, "ledMode", 0);
+    public static void setLEDMode_PipelineControl(String photonSimCameraName) {
+        setPhotonSimCameraNTDouble(photonSimCameraName, "ledMode", 0);
     }
 
-    public static void setLEDMode_ForceOff(String photonCameraName) {
-        setPhotonCameraNTDouble(photonCameraName, "ledMode", 1);
+    public static void setLEDMode_ForceOff(String photonSimCameraName) {
+        setPhotonSimCameraNTDouble(photonSimCameraName, "ledMode", 1);
     }
 
-    public static void setLEDMode_ForceBlink(String photonCameraName) {
-        setPhotonCameraNTDouble(photonCameraName, "ledMode", 2);
+    public static void setLEDMode_ForceBlink(String photonSimCameraName) {
+        setPhotonSimCameraNTDouble(photonSimCameraName, "ledMode", 2);
     }
 
-    public static void setLEDMode_ForceOn(String photonCameraName) {
-        setPhotonCameraNTDouble(photonCameraName, "ledMode", 3);
+    public static void setLEDMode_ForceOn(String photonSimCameraName) {
+        setPhotonSimCameraNTDouble(photonSimCameraName, "ledMode", 3);
     }
 
     /**
      * Enables standard side-by-side stream mode.
      *
-     * @param photonCameraName Name of the PhotonCamera camera
+     * @param photonSimCameraName Name of the PhotonSimCamera camera
      */
-    public static void setStreamMode_Standard(String photonCameraName) {
-        setPhotonCameraNTDouble(photonCameraName, "stream", 0);
+    public static void setStreamMode_Standard(String photonSimCameraName) {
+        setPhotonSimCameraNTDouble(photonSimCameraName, "stream", 0);
     }
 
     /**
      * Enables Picture-in-Picture mode with secondary stream in the corner.
      *
-     * @param photonCameraName Name of the PhotonCamera camera
+     * @param photonSimCameraName Name of the PhotonSimCamera camera
      */
-    public static void setStreamMode_PiPMain(String photonCameraName) {
-        setPhotonCameraNTDouble(photonCameraName, "stream", 1);
+    public static void setStreamMode_PiPMain(String photonSimCameraName) {
+        setPhotonSimCameraNTDouble(photonSimCameraName, "stream", 1);
     }
 
     /**
      * Enables Picture-in-Picture mode with primary stream in the corner.
      *
-     * @param photonCameraName Name of the PhotonCamera camera
+     * @param photonSimCameraName Name of the PhotonSimCamera camera
      */
-    public static void setStreamMode_PiPSecondary(String photonCameraName) {
-        setPhotonCameraNTDouble(photonCameraName, "stream", 2);
+    public static void setStreamMode_PiPSecondary(String photonSimCameraName) {
+        setPhotonSimCameraNTDouble(photonSimCameraName, "stream", 2);
     }
 
     /**
      * Sets the crop window for the camera. The crop window in the UI must be completely open.
      *
-     * @param photonCameraName Name of the PhotonCamera camera
+     * @param photonSimCameraName Name of the PhotonSimCamera camera
      * @param cropXMin Minimum X value (-1 to 1)
      * @param cropXMax Maximum X value (-1 to 1)
      * @param cropYMin Minimum Y value (-1 to 1)
      * @param cropYMax Maximum Y value (-1 to 1)
      */
     public static void setCropWindow(
-            String photonCameraName,
+            String photonSimCameraName,
             double cropXMin,
             double cropXMax,
             double cropYMin,
@@ -1390,23 +1395,23 @@ public class PhotonCameraHelpers {
         entries[1] = cropXMax;
         entries[2] = cropYMin;
         entries[3] = cropYMax;
-        setPhotonCameraNTDoubleArray(photonCameraName, "crop", entries);
+        setPhotonSimCameraNTDoubleArray(photonSimCameraName, "crop", entries);
     }
 
     /** Sets 3D offset point for easy 3D targeting. */
     public static void setFiducial3DOffset(
-            String photonCameraName, double offsetX, double offsetY, double offsetZ) {
+            String photonSimCameraName, double offsetX, double offsetY, double offsetZ) {
         double[] entries = new double[3];
         entries[0] = offsetX;
         entries[1] = offsetY;
         entries[2] = offsetZ;
-        setPhotonCameraNTDoubleArray(photonCameraName, "fiducial_offset_set", entries);
+        setPhotonSimCameraNTDoubleArray(photonSimCameraName, "fiducial_offset_set", entries);
     }
 
     /**
      * Sets robot orientation values used by MegaTag2 localization algorithm.
      *
-     * @param photonCameraName Name/identifier of the PhotonCamera
+     * @param photonSimCameraName Name/identifier of the PhotonSimCamera
      * @param yaw Robot yaw in degrees. 0 = robot facing red alliance wall in FRC
      * @param yawRate (Unnecessary) Angular velocity of robot yaw in degrees per second
      * @param pitch (Unnecessary) Robot pitch in degrees
@@ -1415,7 +1420,7 @@ public class PhotonCameraHelpers {
      * @param rollRate (Unnecessary) Angular velocity of robot roll in degrees per second
      */
     public static void SetRobotOrientation(
-            String photonCameraName,
+            String photonSimCameraName,
             double yaw,
             double yawRate,
             double pitch,
@@ -1423,11 +1428,11 @@ public class PhotonCameraHelpers {
             double roll,
             double rollRate) {
         SetRobotOrientation_INTERNAL(
-                photonCameraName, yaw, yawRate, pitch, pitchRate, roll, rollRate, true);
+                photonSimCameraName, yaw, yawRate, pitch, pitchRate, roll, rollRate, true);
     }
 
     public static void SetRobotOrientation_NoFlush(
-            String photonCameraName,
+            String photonSimCameraName,
             double yaw,
             double yawRate,
             double pitch,
@@ -1435,11 +1440,11 @@ public class PhotonCameraHelpers {
             double roll,
             double rollRate) {
         SetRobotOrientation_INTERNAL(
-                photonCameraName, yaw, yawRate, pitch, pitchRate, roll, rollRate, false);
+                photonSimCameraName, yaw, yawRate, pitch, pitchRate, roll, rollRate, false);
     }
 
     private static void SetRobotOrientation_INTERNAL(
-            String photonCameraName,
+            String photonSimCameraName,
             double yaw,
             double yawRate,
             double pitch,
@@ -1455,7 +1460,7 @@ public class PhotonCameraHelpers {
         entries[3] = pitchRate;
         entries[4] = roll;
         entries[5] = rollRate;
-        setPhotonCameraNTDoubleArray(photonCameraName, "robot_orientation_set", entries);
+        setPhotonSimCameraNTDoubleArray(photonSimCameraName, "robot_orientation_set", entries);
         if (flush) {
             Flush();
         }
@@ -1464,55 +1469,57 @@ public class PhotonCameraHelpers {
     /**
      * Configures the IMU mode for MegaTag2 Localization
      *
-     * @param photonCameraName Name/identifier of the PhotonCamera
+     * @param photonSimCameraName Name/identifier of the PhotonSimCamera
      * @param mode IMU mode.
      */
-    public static void SetIMUMode(String photonCameraName, int mode) {
-        setPhotonCameraNTDouble(photonCameraName, "imumode_set", mode);
+    public static void SetIMUMode(String photonSimCameraName, int mode) {
+        setPhotonSimCameraNTDouble(photonSimCameraName, "imumode_set", mode);
     }
 
     /**
      * Sets the 3D point-of-interest offset for the current fiducial pipeline.
-     * https://docs.photonCameravision.io/docs/docs-photonCamera/pipeline-apriltag/apriltag-3d#point-of-interest-tracking
+     * https://docs.photonSimCameravision.io/docs/docs-photonSimCamera/pipeline-apriltag/apriltag-3d#point-of-interest-tracking
      *
-     * @param photonCameraName Name/identifier of the PhotonCamera
+     * @param photonSimCameraName Name/identifier of the PhotonSimCamera
      * @param x X offset in meters
      * @param y Y offset in meters
      * @param z Z offset in meters
      */
-    public static void SetFidcuial3DOffset(String photonCameraName, double x, double y, double z) {
+    public static void SetFidcuial3DOffset(
+            String photonSimCameraName, double x, double y, double z) {
 
         double[] entries = new double[3];
         entries[0] = x;
         entries[1] = y;
         entries[2] = z;
-        setPhotonCameraNTDoubleArray(photonCameraName, "fiducial_offset_set", entries);
+        setPhotonSimCameraNTDoubleArray(photonSimCameraName, "fiducial_offset_set", entries);
     }
 
     /**
      * Overrides the valid AprilTag IDs that will be used for localization. Tags not in this list
      * will be ignored for robot pose estimation.
      *
-     * @param photonCameraName Name/identifier of the PhotonCamera
+     * @param photonSimCameraName Name/identifier of the PhotonSimCamera
      * @param validIDs Array of valid AprilTag IDs to track
      */
-    public static void SetFiducialIDFiltersOverride(String photonCameraName, int[] validIDs) {
+    public static void SetFiducialIDFiltersOverride(String photonSimCameraName, int[] validIDs) {
         double[] validIDsDouble = new double[validIDs.length];
         for (int i = 0; i < validIDs.length; i++) {
             validIDsDouble[i] = validIDs[i];
         }
-        setPhotonCameraNTDoubleArray(photonCameraName, "fiducial_id_filters_set", validIDsDouble);
+        setPhotonSimCameraNTDoubleArray(
+                photonSimCameraName, "fiducial_id_filters_set", validIDsDouble);
     }
 
     /**
      * Sets the downscaling factor for AprilTag detection. Increasing downscale can improve
      * performance at the cost of potentially reduced detection range.
      *
-     * @param photonCameraName Name/identifier of the PhotonCamera
+     * @param photonSimCameraName Name/identifier of the PhotonSimCamera
      * @param downscale Downscale factor. Valid values: 1.0 (no downscale), 1.5, 2.0, 3.0, 4.0. Set
      *     to 0 for pipeline control.
      */
-    public static void SetFiducialDownscalingOverride(String photonCameraName, float downscale) {
+    public static void SetFiducialDownscalingOverride(String photonSimCameraName, float downscale) {
         int d = 0; // pipeline
         if (downscale == 1.0) {
             d = 1;
@@ -1529,13 +1536,13 @@ public class PhotonCameraHelpers {
         if (downscale == 4) {
             d = 5;
         }
-        setPhotonCameraNTDouble(photonCameraName, "fiducial_downscale_set", d);
+        setPhotonSimCameraNTDouble(photonSimCameraName, "fiducial_downscale_set", d);
     }
 
     /**
      * Sets the camera pose relative to the robot.
      *
-     * @param photonCameraName Name of the PhotonCamera camera
+     * @param photonSimCameraName Name of the PhotonSimCamera camera
      * @param forward Forward offset in meters
      * @param side Side offset in meters
      * @param up Up offset in meters
@@ -1544,7 +1551,7 @@ public class PhotonCameraHelpers {
      * @param yaw Yaw angle in degrees
      */
     public static void setCameraPose_RobotSpace(
-            String photonCameraName,
+            String photonSimCameraName,
             double forward,
             double side,
             double up,
@@ -1558,18 +1565,19 @@ public class PhotonCameraHelpers {
         entries[3] = roll;
         entries[4] = pitch;
         entries[5] = yaw;
-        setPhotonCameraNTDoubleArray(photonCameraName, "camerapose_robotspace_set", entries);
+        setPhotonSimCameraNTDoubleArray(photonSimCameraName, "camerapose_robotspace_set", entries);
     }
 
     /////
     /////
 
-    public static void setPythonScriptData(String photonCameraName, double[] outgoingPythonData) {
-        setPhotonCameraNTDoubleArray(photonCameraName, "llrobot", outgoingPythonData);
+    public static void setPythonScriptData(
+            String photonSimCameraName, double[] outgoingPythonData) {
+        setPhotonSimCameraNTDoubleArray(photonSimCameraName, "llrobot", outgoingPythonData);
     }
 
-    public static double[] getPythonScriptData(String photonCameraName) {
-        return getPhotonCameraNTDoubleArray(photonCameraName, "llpython");
+    public static double[] getPythonScriptData(String photonSimCameraName) {
+        return getPhotonSimCameraNTDoubleArray(photonSimCameraName, "llpython");
     }
 
     /////
@@ -1584,7 +1592,7 @@ public class PhotonCameraHelpers {
     }
 
     private static boolean SYNCH_TAKESNAPSHOT(String tableName, String snapshotName) {
-        URL url = getPhotonCameraURLString(tableName, "capturesnapshot");
+        URL url = getPhotonSimCameraURLString(tableName, "capturesnapshot");
         try {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
@@ -1605,16 +1613,16 @@ public class PhotonCameraHelpers {
     }
 
     /**
-     * Gets the latest JSON results output and returns a PhotonCameraResults object.
+     * Gets the latest JSON results output and returns a PhotonSimCameraResults object.
      *
-     * @param photonCameraName Name of the PhotonCamera camera
-     * @return PhotonCameraResults object containing all current target data
+     * @param photonSimCameraName Name of the PhotonSimCamera camera
+     * @return PhotonSimCameraResults object containing all current target data
      */
-    public static PhotonCameraResults getLatestResults(String photonCameraName) {
+    public static PhotonSimCameraResults getLatestResults(String photonSimCameraName) {
 
         long start = System.nanoTime();
-        PhotonCameraHelpers.PhotonCameraResults results =
-                new PhotonCameraHelpers.PhotonCameraResults();
+        PhotonSimCameraHelpers.PhotonSimCameraResults results =
+                new PhotonSimCameraHelpers.PhotonSimCameraResults();
         if (mapper == null) {
             mapper =
                     new ObjectMapper()
@@ -1622,7 +1630,9 @@ public class PhotonCameraHelpers {
         }
 
         try {
-            results = mapper.readValue(getJSONDump(photonCameraName), PhotonCameraResults.class);
+            results =
+                    mapper.readValue(
+                            getJSONDump(photonSimCameraName), PhotonSimCameraResults.class);
         } catch (JsonProcessingException e) {
             results.error = "lljson error: " + e.getMessage();
         }

@@ -7,16 +7,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.vision.Vision.VisionConfig;
 import frc.spectrumLib.vision.LimelightHelpers.PoseEstimate;
 import frc.spectrumLib.vision.LimelightHelpers.RawFiducial;
-import frc.spectrumLib.vision.PhotonCameraHelpers.PhotonCameraResults;
+import frc.spectrumLib.vision.PhotonSimCameraHelpers.PhotonSimCameraResults;
 import java.text.DecimalFormat;
 import lombok.Getter;
 import lombok.Setter;
+import org.photonvision.PhotonCamera;
 
-public class PhotonCamera {
+public class PhotonSimCamera extends PhotonCamera {
 
-    /* PhotonCamera Configuration */
+    /* PhotonSimCamera Configuration */
 
-    public static class PhotonCameraConfig {
+    public static class PhotonSimCameraConfig {
         /** Must match to the name given in LL dashboard */
         @Getter @Setter private String name;
 
@@ -28,7 +29,7 @@ public class PhotonCamera {
 
         @Getter private double roll, pitch, yaw; // degrees
 
-        public PhotonCameraConfig(String name) {
+        public PhotonSimCameraConfig(String name) {
             this.name = name;
         }
 
@@ -38,7 +39,7 @@ public class PhotonCamera {
          * @param up (meters) up from center of robot
          * @return
          */
-        public PhotonCameraConfig withTranslation(double forward, double right, double up) {
+        public PhotonSimCameraConfig withTranslation(double forward, double right, double up) {
             this.forward = forward;
             this.right = right;
             this.up = up;
@@ -46,12 +47,12 @@ public class PhotonCamera {
         }
 
         /**
-         * @param roll (degrees) roll of photonCamera || positive is rotated right
-         * @param pitch (degrees) pitch of photonCamera || positive is camera tilted up
-         * @param yaw (yaw) yaw of photonCamera || positive is rotated left
+         * @param roll (degrees) roll of photonSimCamera || positive is rotated right
+         * @param pitch (degrees) pitch of photonSimCamera || positive is camera tilted up
+         * @param yaw (yaw) yaw of photonSimCamera || positive is rotated left
          * @return
          */
-        public PhotonCameraConfig withRotation(double roll, double pitch, double yaw) {
+        public PhotonSimCameraConfig withRotation(double roll, double pitch, double yaw) {
             this.roll = roll;
             this.pitch = pitch;
             this.yaw = yaw;
@@ -61,37 +62,43 @@ public class PhotonCamera {
 
     /* Debug */
     private final DecimalFormat df = new DecimalFormat();
-    private PhotonCameraConfig config;
+    private PhotonSimCameraConfig config;
     @Getter @Setter private boolean isIntegrating = false;
     @Getter private String cameraName = "default";
     @Getter @Setter private String logStatus = "";
     @Getter @Setter private String tagStatus = "";
 
-    public PhotonCamera(PhotonCameraConfig config) {
+    public PhotonSimCamera(PhotonSimCameraConfig config) {
+        super(config.getName());
+        this.cameraName = config.getName();
         this.config = config;
     }
 
-    public PhotonCamera(String name) {
-        cameraName = name;
-        config = new PhotonCameraConfig(name);
+    public PhotonSimCamera(String name) {
+        super(name);
+        this.cameraName = name;
+        this.config = new PhotonSimCameraConfig(name);
     }
 
-    public PhotonCamera(String name, boolean attached) {
-        cameraName = name;
-        config = new PhotonCameraConfig(name).setAttached(attached);
+    public PhotonSimCamera(String name, boolean attached) {
+        super(name);
+        this.cameraName = name;
+        this.config = new PhotonSimCameraConfig(name);
+        config.setAttached(attached);
     }
 
-    public PhotonCamera(String name, int pipeline) {
-        this(name);
-        cameraName = name;
-        setPhotonCameraPipeline(pipeline);
+    public PhotonSimCamera(String name, int pipeline) {
+        super(name);
+        this.cameraName = name;
+        this.config = new PhotonSimCameraConfig(name);
+        setPhotonSimCameraPipeline(pipeline);
     }
 
-    public PhotonCamera(String name, int pipeline, PhotonCameraConfig config) {
-        this(name);
-        cameraName = name;
+    public PhotonSimCamera(String name, int pipeline, PhotonSimCameraConfig config) {
+        super(name);
+        this.cameraName = name;
         this.config = config;
-        setPhotonCameraPipeline(pipeline);
+        setPhotonSimCameraPipeline(pipeline);
     }
 
     public String getName() {
@@ -111,7 +118,7 @@ public class PhotonCamera {
         if (!isAttached()) {
             return 0;
         }
-        return PhotonCameraHelpers.getTX(config.getName());
+        return PhotonSimCameraHelpers.getTX(config.getName());
     }
 
     /**
@@ -122,7 +129,7 @@ public class PhotonCamera {
         if (!isAttached()) {
             return 0;
         }
-        return PhotonCameraHelpers.getTY(config.getName());
+        return PhotonSimCameraHelpers.getTY(config.getName());
     }
 
     /** @return Whether the LL has any valid targets (April tags or other vision targets) */
@@ -130,7 +137,7 @@ public class PhotonCamera {
         if (!isAttached()) {
             return false;
         }
-        return PhotonCameraHelpers.getTV(config.getName());
+        return PhotonSimCameraHelpers.getTV(config.getName());
     }
 
     /** @return whether the LL sees multiple tags or not */
@@ -145,7 +152,7 @@ public class PhotonCamera {
         if (!isAttached()) {
             return 0;
         }
-        return PhotonCameraHelpers.getBotPoseEstimate_wpiBlue(config.getName()).tagCount;
+        return PhotonSimCameraHelpers.getBotPoseEstimate_wpiBlue(config.getName()).tagCount;
 
         // if (retrieveJSON() == null) return 0;
 
@@ -160,14 +167,14 @@ public class PhotonCamera {
         if (!isAttached()) {
             return 0;
         }
-        return PhotonCameraHelpers.getFiducialID(config.getName());
+        return PhotonSimCameraHelpers.getFiducialID(config.getName());
     }
 
     public double getTargetSize() {
         if (!isAttached()) {
             return 0;
         }
-        return PhotonCameraHelpers.getTA(config.getName());
+        return PhotonSimCameraHelpers.getTA(config.getName());
     }
 
     /* ::: Pose Retrieval ::: */
@@ -177,7 +184,7 @@ public class PhotonCamera {
         if (!isAttached()) {
             return new Pose3d();
         }
-        Pose3d pose3d = PhotonCameraHelpers.getBotPose3d_wpiBlue(config.name);
+        Pose3d pose3d = PhotonSimCameraHelpers.getBotPose3d_wpiBlue(config.name);
         if (pose3d == null) {
             return new Pose3d();
         }
@@ -190,7 +197,7 @@ public class PhotonCamera {
             return new Pose2d();
         }
         PoseEstimate poseEstimate =
-                PhotonCameraHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(config.name);
+                PhotonSimCameraHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(config.name);
         if (poseEstimate == null) {
             return new Pose2d();
         }
@@ -202,7 +209,7 @@ public class PhotonCamera {
             return new PoseEstimate();
         }
 
-        PoseEstimate poseEstimate = PhotonCameraHelpers.getBotPoseEstimate_wpiBlue(config.name);
+        PoseEstimate poseEstimate = PhotonSimCameraHelpers.getBotPoseEstimate_wpiBlue(config.name);
         if (poseEstimate == null) {
             return new PoseEstimate();
         }
@@ -215,7 +222,7 @@ public class PhotonCamera {
         }
 
         PoseEstimate poseEstimate =
-                PhotonCameraHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(config.name);
+                PhotonSimCameraHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(config.name);
         if (poseEstimate == null) {
             return new PoseEstimate();
         }
@@ -234,17 +241,17 @@ public class PhotonCamera {
         if (!isAttached()) {
             return 0;
         }
-        double x = PhotonCameraHelpers.getCameraPose3d_TargetSpace(config.name).getX();
-        double y = PhotonCameraHelpers.getCameraPose3d_TargetSpace(config.name).getZ();
+        double x = PhotonSimCameraHelpers.getCameraPose3d_TargetSpace(config.name).getX();
+        double y = PhotonSimCameraHelpers.getCameraPose3d_TargetSpace(config.name).getZ();
         return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
     }
 
     public RawFiducial[] getRawFiducial() {
-        return PhotonCameraHelpers.getBotPoseEstimate_wpiBlue(config.name).rawFiducials;
+        return PhotonSimCameraHelpers.getBotPoseEstimate_wpiBlue(config.name).rawFiducials;
     }
 
     /**
-     * Returns the timestamp of the MEGATAG1 pose estimation from the PhotonCamera camera.
+     * Returns the timestamp of the MEGATAG1 pose estimation from the PhotonSimCamera camera.
      *
      * @return The timestamp of the pose estimation in seconds.
      */
@@ -252,11 +259,11 @@ public class PhotonCamera {
         if (!isAttached()) {
             return 0;
         }
-        return PhotonCameraHelpers.getBotPoseEstimate_wpiBlue(config.getName()).timestampSeconds;
+        return PhotonSimCameraHelpers.getBotPoseEstimate_wpiBlue(config.getName()).timestampSeconds;
     }
 
     /**
-     * Returns the timestamp of the MEGATAG2 pose estimation from the PhotonCamera camera.
+     * Returns the timestamp of the MEGATAG2 pose estimation from the PhotonSimCamera camera.
      *
      * @return The timestamp of the pose estimation in seconds.
      */
@@ -264,12 +271,12 @@ public class PhotonCamera {
         if (!isAttached()) {
             return 0;
         }
-        return PhotonCameraHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(config.getName())
+        return PhotonSimCameraHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(config.getName())
                 .timestampSeconds;
     }
 
     /**
-     * Returns the latency of the pose estimation from the PhotonCamera camera.
+     * Returns the latency of the pose estimation from the PhotonSimCamera camera.
      *
      * @return The latency of the pose estimation in seconds.
      */
@@ -279,7 +286,7 @@ public class PhotonCamera {
             return 0;
         }
         return Units.millisecondsToSeconds(
-                PhotonCameraHelpers.getBotPose_wpiBlue(config.getName())[6]);
+                PhotonSimCameraHelpers.getBotPose_wpiBlue(config.getName())[6]);
     }
 
     /*
@@ -316,18 +323,18 @@ public class PhotonCamera {
      * Utility Wrappers
      */
 
-    /** @return The latest LL results as a PhotonCameraResults object. */
+    /** @return The latest LL results as a PhotonSimCameraResults object. */
     @SuppressWarnings("unused")
-    private PhotonCameraResults retrieveJSON() {
-        return PhotonCameraHelpers.getLatestResults(config.name);
+    private PhotonSimCameraResults retrieveJSON() {
+        return PhotonSimCameraHelpers.getLatestResults(config.name);
     }
 
     /** @param pipelineIndex use pipeline indexes in {@link VisionConfig} */
-    public void setPhotonCameraPipeline(int pipelineIndex) {
+    public void setPhotonSimCameraPipeline(int pipelineIndex) {
         if (!isAttached()) {
             return;
         }
-        PhotonCameraHelpers.setPipelineIndex(config.name, pipelineIndex);
+        PhotonSimCameraHelpers.setPipelineIndex(config.name, pipelineIndex);
     }
 
     /** */
@@ -335,21 +342,21 @@ public class PhotonCamera {
         if (!isAttached()) {
             return;
         }
-        PhotonCameraHelpers.SetRobotOrientation(config.name, degrees, 0, 0, 0, 0, 0);
+        PhotonSimCameraHelpers.SetRobotOrientation(config.name, degrees, 0, 0, 0, 0, 0);
     }
 
     public void setRobotOrientation(double degrees, double angularRate) {
         if (!isAttached()) {
             return;
         }
-        PhotonCameraHelpers.SetRobotOrientation(config.name, degrees, angularRate, 0, 0, 0, 0);
+        PhotonSimCameraHelpers.SetRobotOrientation(config.name, degrees, angularRate, 0, 0, 0, 0);
     }
 
     public void setIMUmode(int mode) {
         if (!isAttached()) {
             return;
         }
-        PhotonCameraHelpers.SetIMUMode(config.name, mode);
+        PhotonSimCameraHelpers.SetIMUMode(config.name, mode);
     }
 
     public double getTagTx() {
@@ -361,7 +368,7 @@ public class PhotonCamera {
             return -99999;
         }
 
-        double tx = PhotonCameraHelpers.getTargetPose3d_RobotSpace(cameraName).getX();
+        double tx = PhotonSimCameraHelpers.getTargetPose3d_RobotSpace(cameraName).getX();
 
         return tx;
     }
@@ -374,7 +381,7 @@ public class PhotonCamera {
             return -99999;
         }
 
-        double ta = PhotonCameraHelpers.getTA(cameraName);
+        double ta = PhotonSimCameraHelpers.getTA(cameraName);
 
         return ta;
     }
@@ -388,7 +395,7 @@ public class PhotonCamera {
         }
 
         double rotation =
-                PhotonCameraHelpers.getTargetPose3d_RobotSpace(cameraName).getRotation().getZ();
+                PhotonSimCameraHelpers.getTargetPose3d_RobotSpace(cameraName).getRotation().getZ();
 
         return rotation;
     }
@@ -403,9 +410,9 @@ public class PhotonCamera {
             return;
         }
         if (enabled) {
-            PhotonCameraHelpers.setLEDMode_ForceOn(config.getName());
+            PhotonSimCameraHelpers.setLEDMode_ForceOn(config.getName());
         } else {
-            PhotonCameraHelpers.setLEDMode_ForceOff(config.getName());
+            PhotonSimCameraHelpers.setLEDMode_ForceOff(config.getName());
         }
     }
 
@@ -418,7 +425,7 @@ public class PhotonCamera {
         if (!isAttached()) {
             return;
         }
-        PhotonCameraHelpers.setLEDMode_ForceBlink(config.getName());
+        PhotonSimCameraHelpers.setLEDMode_ForceBlink(config.getName());
     }
 
     /** Checks if the camera is connected by looking for an empty botpose array from camera. */
@@ -428,7 +435,7 @@ public class PhotonCamera {
         }
         try {
             var rawPoseArray =
-                    PhotonCameraHelpers.getPhotonCameraNTTableEntry(
+                    PhotonSimCameraHelpers.getPhotonSimCameraNTTableEntry(
                                     config.getName(), "botpose_wpiblue")
                             .getDoubleArray(new double[0]);
             if (rawPoseArray.length < 6) {
@@ -437,7 +444,7 @@ public class PhotonCamera {
             return true;
         } catch (Exception e) {
             System.err.println(
-                    "Avoided crashing statement in PhotonCamera.java: isCameraConnected()");
+                    "Avoided crashing statement in PhotonSimCamera.java: isCameraConnected()");
             return false;
         }
     }
@@ -448,17 +455,17 @@ public class PhotonCamera {
             return;
         }
         Pose3d botPose3d = getMegaTag1_Pose3d();
-        SmartDashboard.putString("PhotonCameraX", df.format(botPose3d.getTranslation().getX()));
-        SmartDashboard.putString("PhotonCameraY", df.format(botPose3d.getTranslation().getY()));
-        SmartDashboard.putString("PhotonCameraZ", df.format(botPose3d.getTranslation().getZ()));
+        SmartDashboard.putString("PhotonSimCameraX", df.format(botPose3d.getTranslation().getX()));
+        SmartDashboard.putString("PhotonSimCameraY", df.format(botPose3d.getTranslation().getY()));
+        SmartDashboard.putString("PhotonSimCameraZ", df.format(botPose3d.getTranslation().getZ()));
         SmartDashboard.putString(
-                "PhotonCameraRoll",
+                "PhotonSimCameraRoll",
                 df.format(Units.radiansToDegrees(botPose3d.getRotation().getX())));
         SmartDashboard.putString(
-                "PhotonCameraPitch",
+                "PhotonSimCameraPitch",
                 df.format(Units.radiansToDegrees(botPose3d.getRotation().getY())));
         SmartDashboard.putString(
-                "PhotonCameraYaw",
+                "PhotonSimCameraYaw",
                 df.format(Units.radiansToDegrees(botPose3d.getRotation().getZ())));
     }
 }

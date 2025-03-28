@@ -8,8 +8,8 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.spectrumLib.vision.PhotonSimCamera;
 import java.io.IOException;
-import org.photonvision.PhotonCamera;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
@@ -18,8 +18,8 @@ public class VisionSystem extends SubsystemBase {
     // @SuppressWarnings("unused")
     // private final PhotonCamera camera = new PhotonCamera("cameraName");
 
-    private final PhotonCamera frontCam = new PhotonCamera("frontCam");
-    private final PhotonCamera backCam = new PhotonCamera("backCam");
+    private final PhotonSimCamera frontCam = new PhotonSimCamera("frontCam");
+    private final PhotonSimCamera backCam = new PhotonSimCamera("backCam");
     private final VisionSystemSim visionSim = new VisionSystemSim("main");
     private final Pose2dSupplier getSimPose;
 
