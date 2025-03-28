@@ -751,6 +751,31 @@ public class Vision implements NTSendable, Subsystem {
     //     return new Translation2d(x, y);
     // }
 
+    public boolean isL3Algae() {
+        int tag = (int) getClosestTagID();
+        boolean isL3 = false;
+
+        if (Field.isBlue()) {
+            if (tag == 22 || tag == 20 || tag == 18) {
+                isL3 = true;
+            } else {
+                isL3 = false;
+            }
+        } else {
+            if (tag == 11 || tag == 9 || tag == 7) {
+                isL3 = true;
+            } else {
+                isL3 = false;
+            }
+        }
+
+        return isL3;
+    }
+
+    public boolean seesTag() {
+        return frontLL.targetInView() || backLL.targetInView();
+    }
+
     // ------------------------------------------------------------------------------
     // VisionStates Commands
     // ------------------------------------------------------------------------------

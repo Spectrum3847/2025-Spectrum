@@ -18,6 +18,11 @@
     }
   },
   "Table": {
+    "0x965B9C9E,2": {
+      "Column 0  Width": "160",
+      "Column 1  Weight": "1.0000",
+      "RefScale": "16"
+    },
     "0xE56EC1C2,4": {
       "Column 0  Weight": "1.0000",
       "Column 1  Weight": "1.0000",
@@ -43,12 +48,12 @@
     },
     "###/SmartDashboard/Field2d": {
       "Collapsed": "0",
-      "Pos": "8,639",
+      "Pos": "11,639",
       "Size": "650,348"
     },
     "###/SmartDashboard/LeftView": {
       "Collapsed": "0",
-      "Pos": "1675,640",
+      "Pos": "1684,663",
       "Size": "544,547"
     },
     "###/SmartDashboard/Scheduler": {
@@ -73,7 +78,7 @@
     },
     "###/SmartDashboard/frontView": {
       "Collapsed": "0",
-      "Pos": "1299,640",
+      "Pos": "1297,660",
       "Size": "373,555"
     },
     "###Addressable LEDs": {

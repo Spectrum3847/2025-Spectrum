@@ -23,7 +23,8 @@ public class RobotStates {
     private static final Pilot pilot = Robot.getPilot();
     private static final Operator operator = Robot.getOperator();
 
-    @Getter private static double scoreTime = 3.0;
+    @Getter private static double scoreTime = 1.0;
+    @Getter private static double scoreTimeAlgae = 0.5;
 
     // Robot States
     // These are states that aren't directly tied to hardware or buttons, etc.
@@ -39,9 +40,12 @@ public class RobotStates {
     public static final SpectrumState rightScore = new SpectrumState("rightScore");
     public static final SpectrumState reverse = new SpectrumState("reverse");
     public static final SpectrumState actionPrepState = new SpectrumState("actionPrepState");
+    public static final SpectrumState algaeAfterAction = new SpectrumState("algaeAfterAction");
     public static final SpectrumState actionState = new SpectrumState("actionState");
     public static final SpectrumState homeAll = new SpectrumState("homeAll");
     public static final SpectrumState autonStationIntake = new SpectrumState("autonStationIntake");
+
+    public static final SpectrumState testL3 = new SpectrumState("testL3");
 
     /**
      * Define Robot States here and how they can be triggered States should be triggers that command
@@ -97,6 +101,9 @@ public class RobotStates {
     public static final Trigger isAtHome =
             ElevatorStates.isHome.and(ElbowStates.isHome, ShoulderStates.isHome);
 
+    public static final Trigger isL3Algae = new Trigger(() -> Robot.getVision().isL3Algae());
+    public static final Trigger seesTag = new Trigger(() -> Robot.getVision().seesTag());
+
     // reset triggers
     public static final Trigger homeElevator = operator.homeElevator_A;
 
@@ -112,9 +119,12 @@ public class RobotStates {
         pilot.home_select.or(operator.home_select).onFalse(clearStates());
         autonClearStates.whileTrue(clearStates());
 
-        actionState
-                .or(operator.staged)
-                .onChangeToFalse(coral.setFalse().alongWith(algae.setFalse()));
+        actionState.or(operator.staged).onChangeToFalse(coral.setFalse());
+        algaeAfterAction
+                .not()
+                .and(actionState.or(operator.staged))
+                .onChangeToFalse(algae.setFalse());
+        algae.and(actionState).onTrue(algaeAfterAction.setFalse());
         isAtHome.onTrue(homeAll.setFalse());
 
         pilot.coastOn_dB.or(operator.coastOn_dB).onTrue(coastMode.setTrue().ignoringDisable(true));
@@ -138,6 +148,8 @@ public class RobotStates {
 
         operator.algaeStage.or(operator.coralStage).onTrue(actionState.setFalse());
 
+        pilot.algaeRemovalAfterScore.onTrue(algaeAfterAction.setTrue());
+
         // *********************************
         // Intaking States
         stationIntaking.whileTrue(coral.toggleToTrue(), algae.setFalse());
@@ -156,6 +168,32 @@ public class RobotStates {
         pilot.l3AlgaeRemoval.onTrue(
                 algae.setTrue(), coral.setFalse(), l3.setTrue(), actionPrepState.setTrue());
         pilot.l3AlgaeRemoval.onFalse(l3.setFalse(), actionPrepState.setFalse());
+
+        seesTag.onTrue(testL3.setTrue());
+        seesTag.onFalse(testL3.setFalse());
+
+        actionState
+                .and(algaeAfterAction, isL3Algae)
+                .onTrue(
+                        l3.setTrueAfterTime(() -> (RobotStates.getScoreTime() + 0.1)),
+                        algae.setTrueAfterTime(() -> (RobotStates.getScoreTime() + 0.1)),
+                        actionPrepState.setTrueAfterTime(() -> (RobotStates.getScoreTime() + 0.1)),
+                        coral.setFalseAfterTime(() -> (RobotStates.getScoreTimeAlgae())),
+                        l1.setFalseAfterTime(RobotStates::getScoreTime),
+                        l2.setFalseAfterTime(RobotStates::getScoreTime),
+                        l4.setFalseAfterTime(RobotStates::getScoreTime),
+                        homeAll.setTrueAfterTime(() -> RobotStates.getScoreTimeAlgae() + 0.2));
+        actionState
+                .and(algaeAfterAction, isL3Algae.not())
+                .onTrue(
+                        l2.setTrueAfterTime(() -> (RobotStates.getScoreTime() + 0.1)),
+                        algae.setTrueAfterTime(() -> (RobotStates.getScoreTime() + 0.1)),
+                        actionPrepState.setTrueAfterTime(() -> (RobotStates.getScoreTime() + 0.1)),
+                        coral.setFalseAfterTime(() -> (RobotStates.getScoreTimeAlgae())),
+                        l1.setFalseAfterTime(RobotStates::getScoreTime),
+                        l3.setFalseAfterTime(RobotStates::getScoreTime),
+                        l4.setFalseAfterTime(RobotStates::getScoreTime),
+                        homeAll.setTrueAfterTime(() -> RobotStates.getScoreTimeAlgae() + 0.2));
 
         // **********************************
         // Staging and Scoring
@@ -257,6 +295,7 @@ public class RobotStates {
                         coral.setFalse(),
                         algae.setFalse(),
                         shrinkState.setFalse(),
+                        algaeAfterAction.setFalse(),
                         autonStationIntake.setFalse())
                 .withName("Clear Staged");
     }
