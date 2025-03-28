@@ -229,6 +229,16 @@ public class PhotonSimCamera extends PhotonCamera {
         return poseEstimate;
     }
 
+    public boolean canSeeTag() {
+        if (!isAttached()) {
+            return false;
+        }
+        if (getClosestTagID() > 0 && targetInView()) {
+            return true;
+        }
+        return false;
+    }
+
     public boolean hasAccuratePose() {
         if (!isAttached()) {
             return false;

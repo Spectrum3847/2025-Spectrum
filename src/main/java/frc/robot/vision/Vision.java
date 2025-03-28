@@ -714,6 +714,26 @@ public class Vision implements NTSendable, Subsystem {
         return indexOfSmallest;
     }
 
+    public boolean isPhotonCamera() {
+        // Check if any of the limelights are using Photon Vision
+        for (Camera limelight : allLimelights) {
+            if (limelight.isPhotonSimCamera()) {
+                return true; // At least one limelight is using Photon Vision
+            }
+        }
+        return false; // No limelight is using Photon Vision
+    }
+
+    public boolean canSeeTag() {
+        for (Camera limelight : allLimelights) {
+            // Check if any of the limelights can see a tag
+            if (limelight.canSeeTag()) {
+                return true; // At least one limelight can see a tag
+            }
+        }
+        return false;
+    }
+
     /**
      * Gets a field-relative position for the score to the reef the robot should align, adjusted for
      * the robot's movement.

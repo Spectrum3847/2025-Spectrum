@@ -123,6 +123,14 @@ public class Camera {
                 : limelight.getDistanceToTagFromCamera();
     }
 
+    public boolean isPhotonSimCamera() {
+        return usePhotonVision && photonSimCamera != null;
+    }
+
+    public boolean canSeeTag() {
+        return usePhotonVision ? photonSimCamera.canSeeTag() : false;
+    }
+
     public RawFiducial[] getRawFiducial() {
         return usePhotonVision ? photonSimCamera.getRawFiducial() : limelight.getRawFiducial();
     }

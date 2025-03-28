@@ -43,6 +43,9 @@ public class RobotStates {
     public static final SpectrumState homeAll = new SpectrumState("homeAll");
     public static final SpectrumState autonStationIntake = new SpectrumState("autonStationIntake");
 
+    public static final SpectrumState testIsL3 = new SpectrumState("testIsL3");
+    public static final Trigger seesTag = new Trigger(() -> Robot.getVision().canSeeTag());
+
     /**
      * Define Robot States here and how they can be triggered States should be triggers that command
      * multiple mechanism or can be used in teleop or auton Use onTrue/whileTrue to run a command
@@ -121,6 +124,9 @@ public class RobotStates {
         pilot.coastOff_dA
                 .or(operator.coastOff_dA)
                 .onTrue(coastMode.setFalse().ignoringDisable(true));
+
+        seesTag.onTrue(testIsL3.setTrue());
+        seesTag.onFalse(testIsL3.setFalse());
 
         // *********************************
         // ActionPrep and ActionState
