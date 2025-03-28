@@ -21,7 +21,7 @@ import frc.robot.Robot;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.Telemetry.PrintPriority;
 import frc.spectrumLib.util.Util;
-import frc.spectrumLib.vision.Limelight;
+import frc.spectrumLib.vision.Camera;
 import frc.spectrumLib.vision.Limelight.LimelightConfig;
 import frc.spectrumLib.vision.LimelightHelpers.RawFiducial;
 import java.text.DecimalFormat;
@@ -66,11 +66,11 @@ public class Vision implements NTSendable, Subsystem {
     }
 
     /** Limelights */
-    @Getter public final Limelight frontLL;
+    @Getter public final Camera frontLL;
 
-    public final Limelight backLL;
+    public final Camera backLL;
 
-    public final Limelight[] allLimelights;
+    public final Camera[] allLimelights;
 
     private final DecimalFormat df = new DecimalFormat();
 
@@ -86,19 +86,19 @@ public class Vision implements NTSendable, Subsystem {
     public Vision(VisionConfig config) {
         this.config = config;
 
-        frontLL = new Limelight(config.frontLL, config.frontTagPipeline, config.frontConfig);
+        frontLL = new Camera(config.frontLL, config.frontTagPipeline, config.frontConfig);
 
-        backLL = new Limelight(config.backLL, config.backTagPipeline, config.backConfig);
+        backLL = new Camera(config.backLL, config.backTagPipeline, config.backConfig);
 
-        allLimelights = new Limelight[] {frontLL, backLL};
+        allLimelights = new Camera[] {frontLL, backLL};
 
         // logging
         df.setMaximumFractionDigits(2);
 
         /* Configure Limelight Settings Here */
-        for (Limelight limelight : allLimelights) {
-            limelight.setLEDMode(false);
-            limelight.setIMUmode(1);
+        for (Camera camera : allLimelights) {
+            camera.setLEDMode(false);
+            camera.setIMUmode(1);
         }
 
         this.register();
@@ -116,8 +116,8 @@ public class Vision implements NTSendable, Subsystem {
         SendableRegistry.add(this, getName());
         SmartDashboard.putData(this);
 
-        Robot.getField2d().getObject(frontLL.getCameraName());
-        Robot.getField2d().getObject(backLL.getCameraName());
+        Robot.getField2d().getObject(frontLL.getName());
+        Robot.getField2d().getObject(backLL.getName());
     }
 
     @Override
@@ -126,8 +126,8 @@ public class Vision implements NTSendable, Subsystem {
         disabledLimelightUpdates();
         enabledLimelightUpdates();
 
-        Robot.getField2d().getObject(frontLL.getCameraName()).setPose(getFrontMegaTag2Pose());
-        Robot.getField2d().getObject(backLL.getCameraName()).setPose(getBackMegaTag2Pose());
+        Robot.getField2d().getObject(frontLL.getName()).setPose(getFrontMegaTag2Pose());
+        Robot.getField2d().getObject(backLL.getName()).setPose(getBackMegaTag2Pose());
     }
 
     public Pose2d getFrontMegaTag2Pose() {
@@ -164,14 +164,14 @@ public class Vision implements NTSendable, Subsystem {
     private void setLimeLightOrientation() {
         double yaw = Robot.getSwerve().getRobotPose().getRotation().getDegrees();
 
-        for (Limelight limelight : allLimelights) {
-            limelight.setRobotOrientation(yaw);
+        for (Camera camera : allLimelights) {
+            camera.setRobotOrientation(yaw);
         }
     }
 
     private void disabledLimelightUpdates() {
         if (Util.disabled.getAsBoolean()) {
-            for (Limelight limelight : allLimelights) {
+            for (Camera limelight : allLimelights) {
                 limelight.setIMUmode(1);
             }
             try {
@@ -190,7 +190,7 @@ public class Vision implements NTSendable, Subsystem {
 
     private void enabledLimelightUpdates() {
         if (Util.teleop.getAsBoolean()) {
-            for (Limelight limelight : allLimelights) {
+            for (Camera limelight : allLimelights) {
                 limelight.setIMUmode(3);
             }
             try {
@@ -220,7 +220,7 @@ public class Vision implements NTSendable, Subsystem {
     }
 
     @SuppressWarnings("all")
-    private void addMegaTag1_VisionInput(Limelight ll, boolean integrateXY) {
+    private void addMegaTag1_VisionInput(Camera ll, boolean integrateXY) {
         double xyStds;
         double degStds;
 
@@ -243,7 +243,7 @@ public class Vision implements NTSendable, Subsystem {
 
             /* rejections */
             // reject mt1 pose if individual tag ambiguity is too high
-            ll.setTagStatus("");
+            // ll.setTagStatus("");
             for (RawFiducial tag : tags) {
                 // search for highest ambiguity tag for later checks
                 if (highestAmbiguity == 2 || tag.ambiguity > highestAmbiguity) {
@@ -329,13 +329,13 @@ public class Vision implements NTSendable, Subsystem {
                             Utils.fpgaToCurrentTime(ll.getMegaTag1PoseTimestamp()),
                             VecBuilder.fill(xyStds, xyStds, degStds));
         } else {
-            ll.setTagStatus("no tags");
+            // ll.setTagStatus("no tags");
             ll.sendInvalidStatus("no tag found rejection");
         }
     }
 
     @SuppressWarnings("all")
-    private void addMegaTag2_VisionInput(Limelight ll) {
+    private void addMegaTag2_VisionInput(Camera ll) {
         double xyStds;
         double degStds = 99999;
 
@@ -400,7 +400,7 @@ public class Vision implements NTSendable, Subsystem {
                             Utils.fpgaToCurrentTime(ll.getMegaTag2PoseTimestamp()),
                             VecBuilder.fill(xyStds, xyStds, degStds));
         } else {
-            ll.setTagStatus("no tags");
+            // ll.setTagStatus("no tags");
             ll.sendInvalidStatus("no tag found rejection");
         }
     }
@@ -425,10 +425,10 @@ public class Vision implements NTSendable, Subsystem {
      *
      * @return
      */
-    public Limelight getBestLimelight() {
-        Limelight bestLimelight = frontLL;
+    public Camera getBestLimelight() {
+        Camera bestLimelight = frontLL;
         double bestScore = 0;
-        for (Limelight limelight : allLimelights) {
+        for (Camera limelight : allLimelights) {
             double score = 0;
             // prefer LL with most tags, when equal tag count, prefer LL closer to tags
             score += limelight.getTagCountInView();
@@ -444,7 +444,7 @@ public class Vision implements NTSendable, Subsystem {
 
     /** reset pose to the best limelight's vision pose */
     public void resetPoseToVision() {
-        Limelight ll = getBestLimelight();
+        Camera ll = getBestLimelight();
         resetPoseToVision(
                 ll.targetInView(),
                 ll.getMegaTag1_Pose3d(),
@@ -513,7 +513,7 @@ public class Vision implements NTSendable, Subsystem {
      * @return
      */
     public boolean hasAccuratePose() {
-        for (Limelight limelight : allLimelights) {
+        for (Camera limelight : allLimelights) {
             if (limelight.hasAccuratePose()) return true;
         }
         return false;
@@ -521,7 +521,7 @@ public class Vision implements NTSendable, Subsystem {
 
     /** Change all LL pipelines to the same pipeline */
     public void setLimelightPipelines(int pipeline) {
-        for (Limelight limelight : allLimelights) {
+        for (Camera limelight : allLimelights) {
             limelight.setLimelightPipeline(pipeline);
         }
     }
@@ -760,12 +760,12 @@ public class Vision implements NTSendable, Subsystem {
         Telemetry.print("Vision.blinkLimelights", PrintPriority.HIGH);
         return startEnd(
                         () -> {
-                            for (Limelight limelight : allLimelights) {
+                            for (Camera limelight : allLimelights) {
                                 limelight.blinkLEDs();
                             }
                         },
                         () -> {
-                            for (Limelight limelight : allLimelights) {
+                            for (Camera limelight : allLimelights) {
                                 limelight.setLEDMode(false);
                             }
                         })
