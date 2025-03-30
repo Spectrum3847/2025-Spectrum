@@ -73,7 +73,7 @@ public class SwerveStates {
 
         // // vision aim
         pilot.reefAim_A.whileTrue(log(reefAimDrive()));
-        pilot.cageAim_B.whileTrue(log(cageAimDrive()));
+        pilot.cageAim_X.whileTrue(log(cageAimDrive()));
 
 
         RobotStates.autoAlign.onTrue(autonSwerveAlign());
@@ -108,7 +108,10 @@ public class SwerveStates {
     }
 
     public static Command cageAimDrive() {
-        return alignToYDrive(() -> Field.Barge.getCageYToClimb());
+        return alignToYDrive(
+                () -> Field.Barge.getCageYToClimb(),
+                () -> Field.Barge.getCageAngleToClimb())
+        .withName("Swerve.cageAimDrive");
     }
 
     public static Command alignToXDrive(DoubleSupplier xGoalMeters) {
@@ -123,6 +126,13 @@ public class SwerveStates {
                 pilot::getDriveFwdPositive,
                 () -> getAlignToY(yGoalMeters),
                 pilot::getDriveCCWPositive);
+    }
+
+    public static Command alignToYDrive(DoubleSupplier yGoalMeters, DoubleSupplier headingRadians) {
+        return drive(
+                pilot::getDriveFwdPositive,
+                () -> getAlignToY(yGoalMeters),
+                () -> getAlignHeading(headingRadians));
     }
 
     public static Command alignXYDrive(DoubleSupplier xGoalMeters, DoubleSupplier yGoalMeters) {

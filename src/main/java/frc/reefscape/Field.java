@@ -51,56 +51,47 @@ public class Field {
         public static final double shallowHeight = Units.inchesToMeters(30.125);
 
         public static double getCageYToClimb() {
-            Pose2d robotPose = Robot.getSwerve().getRobotPose();
+            Pose2d robotPose = flipXifRed(Robot.getSwerve().getRobotPose());
             double[] cageDiffs = new double[3];
+            double farCage = getFarCage(0);
+            double middleCage = getMiddleCage(0);
+            double closeCage = getCloseCage(0);
 
-            if (Field.isBlue()) {
-                cageDiffs[0] = Math.abs(robotPose.getY() - Field.Barge.farCage.getY());
-                cageDiffs[1] = Math.abs(robotPose.getY() - Field.Barge.middleCage.getY());
-                cageDiffs[2] = Math.abs(robotPose.getY() - Field.Barge.closeCage.getY());
+           
+            cageDiffs[0] = Math.abs(robotPose.getY() - farCage);
+            cageDiffs[1] = Math.abs(robotPose.getY() - middleCage);
+            cageDiffs[2] = Math.abs(robotPose.getY() - closeCage);
 
-                int closestCage = indexOfSmallest(cageDiffs);
+            int closestCage = indexOfSmallest(cageDiffs);
 
-                if (closestCage == 0) {
-                    return Field.Barge.farCage.getY();
-                }
-
-                else if (closestCage == 1) {
-                    return Field.Barge.middleCage.getY();
-                }
-
-                else if (closestCage == 2) {
-                    return Field.Barge.closeCage.getY();
-                }
-
-                else {
-                    return 0;
-                }
+            if (closestCage == 0) {
+                return farCage;
             }
-
+            else if (closestCage == 1) {
+                return middleCage;
+            }
+            else if (closestCage == 2) {
+                return closeCage;
+            }
             else {
-                cageDiffs[0] = Math.abs(Field.flipYifRed(robotPose.getY()) - Field.flipYifRed(Field.Barge.farCage.getY()));
-                cageDiffs[1] = Math.abs(Field.flipYifRed(robotPose.getY()) - Field.flipYifRed(Field.Barge.middleCage.getY()));
-                cageDiffs[2] = Math.abs(Field.flipYifRed(robotPose.getY()) - Field.flipYifRed(Field.Barge.closeCage.getY()));
-
-                int closestCage = indexOfSmallest(cageDiffs);
-
-                if (closestCage == 0) {
-                    return Field.Barge.farCage.getY(); 
-                }
-
-                else if (closestCage == 1) {
-                    return Field.Barge.middleCage.getY();
-                }
-
-                else if (closestCage == 2) {
-                    return Field.Barge.middleCage.getY();
-                }
-
-                else {
-                    return 0;
-                }
+                return Robot.getSwerve().getRobotPose().getY();
             }
+        }
+
+        public static double getCageAngleToClimb() {
+            return Units.degreesToRadians(90);
+        }
+
+        public static double getCloseCage(double offset) {
+            return flipYifRed(closeCage.getY()) + offset;
+        }
+
+        public static double getMiddleCage(double offset) {
+            return flipYifRed(middleCage.getY()) + offset;
+        }
+
+        public static double getFarCage(double offset) {
+            return flipYifRed(farCage.getY()) + offset;
         }
 
         public static int indexOfSmallest(double[] array) {
