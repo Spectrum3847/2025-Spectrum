@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.spectrumLib.vision.PhotonSimCamera;
 import java.io.IOException;
 import org.photonvision.simulation.PhotonCameraSim;
@@ -73,5 +74,9 @@ public class VisionSystem extends SubsystemBase {
     public void simulationPeriodic() {
         // Update the vision system with the simulated robot pose
         visionSim.update(getSimPose.getPose2d());
+
+        var simField = visionSim.getDebugField();
+        simField.getObject(frontCam.getName()).setPose();
+        simField.getObject(backCam.getName()).setPose(Robot.getVision().getBackMegaTag2Pose());
     }
 }
