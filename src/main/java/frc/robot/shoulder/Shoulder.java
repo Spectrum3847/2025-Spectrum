@@ -15,6 +15,7 @@ import frc.robot.RobotSim;
 import frc.robot.RobotStates;
 import frc.spectrumLib.Rio;
 import frc.spectrumLib.SpectrumCANcoder;
+import frc.spectrumLib.SpectrumCANcoderConfig;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.mechanism.Mechanism;
 import frc.spectrumLib.sim.ArmConfig;
@@ -34,15 +35,15 @@ public class Shoulder extends Mechanism {
 
         /* Shoulder positions in degrees || 0 is vertical down || positions should be towards front of robot */
 
-        @Getter @Setter private double climbPrep = -56.7;
+        @Getter @Setter private double climbPrep = 110; // -56.7;
         @Getter @Setter private double home = 0;
 
-        @Getter @Setter private double stationIntake = 9.2;
-        @Getter @Setter private double stationExtendedIntake = 23.6;
+        @Getter @Setter private double stationIntake = -9.2;
+        @Getter @Setter private double stationExtendedIntake = -23.6;
         @Getter @Setter private double groundAlgaeIntake = 0;
-        @Getter @Setter private double groundCoralIntake = -4;
+        @Getter @Setter private double groundCoralIntake = 4;
 
-        @Getter @Setter private double processorAlgae = 55;
+        @Getter @Setter private double processorAlgae = -143.877;
         @Getter @Setter private double l2Algae = 160; // -32;
         @Getter @Setter private double l3Algae = 160; // -32;
         @Getter @Setter private double netAlgae = 180;
@@ -72,22 +73,32 @@ public class Shoulder extends Mechanism {
         @Getter @Setter private double zeroSpeed = -0.1;
         @Getter @Setter private double holdMaxSpeedRPM = 18;
 
-        @Getter @Setter private double currentLimit = 20;
-        @Getter @Setter private double torqueCurrentLimit = 100;
+        @Getter @Setter private double currentLimit = 60;
+        @Getter @Setter private double torqueCurrentLimit = 80;
         @Getter @Setter private double positionKp = 1500;
-        @Getter @Setter private double positionKd = 140;
+        @Getter @Setter private double positionKd = 170;
         @Getter @Setter private double positionKv = 0;
         @Getter @Setter private double positionKs = 0.06;
         @Getter @Setter private double positionKa = 0.001;
-        @Getter @Setter private double positionKg = 12.5;
+        @Getter @Setter private double positionKg = 20.83333; // 12.5 * 1.666666
         @Getter @Setter private double mmCruiseVelocity = 10;
         @Getter @Setter private double mmAcceleration = 50;
         @Getter @Setter private double mmJerk = 0;
 
+        @Getter @Setter private double sensorToMechanismRatio = 61.71428571; // 102.857;
+        @Getter @Setter private double rotorToSensorRatio = 1;
+
         /* Cancoder config settings */
-        @Getter private final double CANcoderGearRatio = 30.0 / 36.0;
-        @Getter private double CANcoderOffset = 0;
-        @Getter private boolean isCANcoderAttached = false;
+        @Getter @Setter
+        private double CANcoderRotorToSensorRatio = 61.71428571 * 1.2; // 102.857 * 1.2;
+        // CANcoderSensorToMechanismRatio / sensorToMechanismRatio;
+
+        @Getter @Setter
+        private double CANcoderSensorToMechanismRatio =
+                0.833333333333333333333333; // 1.2; // 30.0 / 36.0;
+
+        @Getter @Setter private double CANcoderOffset = 0;
+        @Getter @Setter private boolean CANcoderAttached = false;
 
         /* Sim properties */
         @Getter private double shoulderX = 0.8;
@@ -102,7 +113,7 @@ public class Shoulder extends Mechanism {
             configPIDGains(0, positionKp, 0, positionKd);
             configFeedForwardGains(positionKs, positionKv, positionKa, positionKg);
             configMotionMagic(mmCruiseVelocity, mmAcceleration, mmJerk);
-            configGearRatio(102.857);
+            configGearRatio(sensorToMechanismRatio);
             configSupplyCurrentLimit(currentLimit, true);
             configForwardTorqueCurrentLimit(torqueCurrentLimit);
             configReverseTorqueCurrentLimit(-1 * torqueCurrentLimit);
@@ -116,7 +127,7 @@ public class Shoulder extends Mechanism {
                 configClockwise_Positive();
             }
             configGravityType(true);
-            setSimRatio(102.857);
+            setSimRatio(sensorToMechanismRatio);
         }
 
         public ShoulderConfig modifyMotorConfig(TalonFX motor) {
@@ -131,6 +142,7 @@ public class Shoulder extends Mechanism {
 
     protected ShoulderConfig config;
     protected SpectrumCANcoder canCoder;
+    protected SpectrumCANcoderConfig canCoderConfig;
     @Getter private ShoulderSim sim;
     CANcoderSimState canCoderSim;
 
@@ -138,12 +150,24 @@ public class Shoulder extends Mechanism {
         super(config);
         this.config = config;
 
-        if (isAttached()) {
-            // canCoder =
-            //         new SpectrumCANcoder(42, motor, config)
-            //                 .setGearRatio(config.getCANcoderGearRatio())
-            //                 .setOffset(config.getCANcoderOffset())
-            //                 .setAttached(false);
+        if (isAttached()) { // && RobotStates.pm.and(RobotStates.photon,
+            // RobotStates.sim).not().getAsBoolean()) {
+            if (config.isCANcoderAttached()) {
+                canCoderConfig =
+                        new SpectrumCANcoderConfig(
+                                config.getCANcoderRotorToSensorRatio(),
+                                config.getCANcoderSensorToMechanismRatio(),
+                                config.getCANcoderOffset(),
+                                config.isCANcoderAttached());
+                canCoder =
+                        new SpectrumCANcoder(
+                                42,
+                                canCoderConfig,
+                                motor,
+                                config,
+                                SpectrumCANcoder.CANCoderFeedbackType.FusedCANcoder);
+            }
+
             setInitialPosition();
         }
 
@@ -172,7 +196,7 @@ public class Shoulder extends Mechanism {
         if (isAttached()) {
             builder.addStringProperty("CurrentCommand", this::getCurrentCommandName, null);
             builder.addDoubleProperty(
-                    "Position Degrees", () -> (this.getPositionDegrees() - config.offset), null);
+                    "Position Degrees", () -> (getPositionDegrees() - config.offset), null);
             // builder.addDoubleProperty("Velocity", this::getVelocityRPM, null);
             builder.addDoubleProperty("MotorVoltage", this::getVoltage, null);
             builder.addDoubleProperty("StatorCurrent", this::getStatorCurrent, null);
@@ -180,15 +204,20 @@ public class Shoulder extends Mechanism {
     }
 
     void setInitialPosition() {
-        // if (canCoder != null) {
-        //     if (canCoder.isAttached()) {
-        //         motor.setPosition(
-        //                 canCoder.getCanCoder().getAbsolutePosition().getValueAsDouble()
-        //                         * config.getGearRatio());
-        //     }
-        // } else {
-        motor.setPosition(degreesToRotations(offsetPosition(() -> config.getInitPosition())));
-        // }
+        if (canCoder != null) {
+            if (canCoder.isAttached()
+                    && canCoder.canCoderResponseOK(
+                            canCoder.getCanCoder().getAbsolutePosition().getStatus())) {
+                motor.setPosition(
+                        canCoder.getCanCoder().getAbsolutePosition().getValueAsDouble()
+                                / config.getCANcoderSensorToMechanismRatio());
+            } else {
+                motor.setPosition(
+                        degreesToRotations(offsetPosition(() -> config.getInitPosition())));
+            }
+        } else {
+            motor.setPosition(degreesToRotations(offsetPosition(() -> config.getInitPosition())));
+        }
     }
 
     public Command resetToIntialPos() {
@@ -201,7 +230,7 @@ public class Shoulder extends Mechanism {
     public Trigger belowDegrees(DoubleSupplier degrees, DoubleSupplier tolerance) {
         return new Trigger(
                 () ->
-                        (getPositionDegrees() + config.getOffset())
+                        (getPositionDegrees() - config.getOffset())
                                 < (degrees.getAsDouble() - tolerance.getAsDouble()));
     }
 
@@ -209,7 +238,7 @@ public class Shoulder extends Mechanism {
     public Trigger aboveDegrees(DoubleSupplier degrees, DoubleSupplier tolerance) {
         return new Trigger(
                 () ->
-                        (getPositionDegrees() + config.getOffset())
+                        (getPositionDegrees() - config.getOffset())
                                 > (degrees.getAsDouble() + tolerance.getAsDouble()));
     }
 
@@ -217,7 +246,7 @@ public class Shoulder extends Mechanism {
     public Trigger atDegrees(DoubleSupplier degrees, DoubleSupplier tolerance) {
         return new Trigger(
                 () ->
-                        Math.abs(getPositionDegrees() + config.getOffset() - degrees.getAsDouble())
+                        Math.abs(getPositionDegrees() - config.getOffset() - degrees.getAsDouble())
                                 < tolerance.getAsDouble());
     }
 
@@ -291,17 +320,45 @@ public class Shoulder extends Mechanism {
         return super.moveToDegrees(offsetPosition(degrees)).withName(getName() + ".runPoseDegrees");
     }
 
-    public Command move(DoubleSupplier degrees, DoubleSupplier exDegrees) {
-        return run(
-                () -> {
-                    // TODO: add a check for reversed and negate values when we do double sided
-                    // scoring.
-                    if (RobotStates.extended.getAsBoolean()) {
-                        setMMPositionFoc(() -> degreesToRotations(offsetPosition(exDegrees)));
+    public double checkMoveOverTop(DoubleSupplier degrees) {
+        double newDeg = degrees.getAsDouble();
+        if (newDeg < -90 && (getPositionDegrees() - config.offset) > 90) {
+            newDeg += 360;
+        } else if (newDeg > 90 && (getPositionDegrees() - config.offset) < -90) {
+            newDeg -= 360;
+        }
+        return newDeg;
+    }
+
+    public Command move(DoubleSupplier shrinkDegrees, DoubleSupplier exDegrees) {
+        return run(() -> {
+                    if (!RobotStates.shrink.getAsBoolean()) {
+                        setMMPositionFoc(getIfReversedOffsetInRotations(exDegrees));
                     } else {
-                        setMMPositionFoc(() -> degreesToRotations(offsetPosition(degrees)));
+                        setMMPositionFoc(getIfReversedOffsetInRotations(shrinkDegrees));
                     }
-                });
+                })
+                .withName("Shoulder.move");
+    }
+
+    public Command move(DoubleSupplier degrees) {
+        return run(() -> setMMPositionFoc(getIfReversedOffsetInRotations(degrees)))
+                .withName("Shoulder.move");
+    }
+
+    public DoubleSupplier getIfReversedOffsetInRotations(DoubleSupplier degrees) {
+        return getOffsetRotations(getIfReversedDegrees(degrees));
+    }
+
+    public DoubleSupplier getIfReversedDegrees(DoubleSupplier degrees) {
+        return () ->
+                (RobotStates.reverse.getAsBoolean()
+                        ? -1 * degrees.getAsDouble()
+                        : degrees.getAsDouble());
+    }
+
+    public DoubleSupplier getOffsetRotations(DoubleSupplier degrees) {
+        return () -> degreesToRotations(offsetPosition(() -> checkMoveOverTop(degrees)));
     }
 
     public DoubleSupplier offsetPosition(DoubleSupplier position) {
@@ -334,7 +391,7 @@ public class Shoulder extends Mechanism {
                                     config.shoulderY,
                                     config.simRatio,
                                     config.length,
-                                    -270,
+                                    -360,
                                     360.0 - 90.0,
                                     -90)
                             .setMount(Robot.getElevator().getSim(), true),

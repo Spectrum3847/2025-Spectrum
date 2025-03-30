@@ -39,13 +39,13 @@
       "command": null
     },
     {
-      "name": "prescore",
+      "name": "",
       "waypointRelativePos": 0.2,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
-      "name": "score",
+      "name": "",
       "waypointRelativePos": 0.8743148003132271,
       "endWaypointRelativePos": null,
       "command": null

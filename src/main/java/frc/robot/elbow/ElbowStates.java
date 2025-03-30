@@ -14,8 +14,7 @@ public class ElbowStates {
     private static Elbow elbow = Robot.getElbow();
     private static ElbowConfig config = Robot.getConfig().elbow;
 
-    public static final Trigger isHome =
-            elbow.atDegrees(() -> (config.getHome() + config.getOffset()), config::getTolerance);
+    public static final Trigger isHome = elbow.atDegrees(config::getHome, config::getTolerance);
     public static final Trigger pastElevator =
             elbow.aboveDegrees(() -> (config.getClearElevator() + 360), config::getTolerance)
                     .or(elbow.belowDegrees(() -> -config.getClearElevator(), config::getTolerance));
@@ -41,10 +40,10 @@ public class ElbowStates {
                 .whileTrue(
                         move(
                                 config::getStationIntake,
-                                config::getStationExtendedIntake,
+                                // config::getStationExtendedIntake,
                                 "Elbow.StationIntake"));
         Robot.getPilot()
-                .groundCoral_LB_RT
+                .groundCoral_LB_LT
                 .and(actionState.not())
                 .whileTrue(move(config::getGroundCoralIntake, "Elbow.GroundCoral"));
 
@@ -52,6 +51,8 @@ public class ElbowStates {
                 .groundAlgae_RT
                 .and(actionState.not())
                 .whileTrue(move(config::getGroundAlgaeIntake, "Elbow.GroundAlgae"));
+
+        Robot.getOperator().antiSecretClimb_LTRSup.whileTrue(home()); // Stick the Elbow Vertical
 
         // stages elbow
         stagedCoral.whileTrue(move(config::getStage, "Elbow.Stage"));
@@ -76,6 +77,12 @@ public class ElbowStates {
                 .whileTrue(move(config::getL4Score, config::getExL4Score, "Elbow.l4Score"));
 
         // Algae
+        processorAlgae
+                .and(actionPrepState)
+                .whileTrue(move(config::getProcessorAlgae, "Elbow.processorAlgae"));
+        processorAlgae
+                .and(actionState)
+                .whileTrue(move(config::getHome, "Elbow.processorAlgaeHome"));
         L2Algae.and(actionPrepState).whileTrue(move(config::getL2Algae, "Elbow.l2Algae"));
         L2Algae.and(actionState).whileTrue(move(config::getHome, "Elbow.l2AlgaeHome"));
         L3Algae.and(actionPrepState).whileTrue(move(config::getL3Algae, "Elbow.l3Algae"));
@@ -98,15 +105,6 @@ public class ElbowStates {
 
     public static Command move(DoubleSupplier degrees, DoubleSupplier exDegrees, String name) {
         return elbow.move(degrees, exDegrees).withName(name);
-    }
-
-    public static Command stationIntake() {
-        return elbow.moveToDegrees(config::getStationIntake).withName("Elbow.StationIntake");
-    }
-
-    public static Command stationExtendedIntake() {
-        return elbow.moveToDegrees(config::getStationExtendedIntake)
-                .withName("Shoulder.stationExtendedIntake");
     }
 
     public static Command coastMode() {

@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.5939606741573034,
-        "y": 7.319733146067415
+        "x": 1.2077949438202247,
+        "y": 7.048595505617977
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.853929497151131,
-        "y": 7.127802445791926
+        "x": 1.5031798542646082,
+        "y": 6.649405709812824
       },
       "isLocked": false,
       "linkedName": "feeder"
     },
     {
       "anchor": {
-        "x": 3.6233848314606742,
-        "y": 5.627176966292135
+        "x": 3.7137640449438205,
+        "y": 5.438202247191011
       },
       "prevControl": {
-        "x": 3.416518299570553,
-        "y": 5.797268572642817
+        "x": 3.2137640449438205,
+        "y": 6.30422765097545
       },
       "nextControl": null,
       "isLocked": false,
@@ -53,6 +53,12 @@
       "command": null
     },
     {
+      "name": "twistL4R",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
       "name": "coral",
       "waypointRelativePos": 0.19929522317932777,
       "endWaypointRelativePos": null,
@@ -63,22 +69,34 @@
       "waypointRelativePos": 0.20086139389192625,
       "endWaypointRelativePos": null,
       "command": null
+    },
+    {
+      "name": "right",
+      "waypointRelativePos": 0.3010963194988236,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "shoulderL4",
+      "waypointRelativePos": 0.35,
+      "endWaypointRelativePos": null,
+      "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 2.5,
-    "maxAcceleration": 2.5,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
+    "velocity": 0.0,
     "rotation": -59.99999999999999
   },
   "reversed": false,
-  "folder": "Blue Left L4 Trough Rush",
+  "folder": "Side Start Source L4",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -53.5

@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.14,
-        "y": 7.53
+        "x": 6.975632022471911,
+        "y": 5.43
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.956383834743788,
-        "y": 7.360338266375108
+        "x": 6.443154261522245,
+        "y": 5.43863915002043
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.587078651685394,
-        "y": 5.684691011235954
+        "x": 5.34880617977528,
+        "y": 5.43
       },
       "prevControl": {
-        "x": 5.712078651685394,
-        "y": 5.901197362182064
+        "x": 5.885937873912487,
+        "y": 5.40820027830151
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,10 +31,17 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "left",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 2.5,
-    "maxAcceleration": 2.5,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -45,10 +52,10 @@
     "rotation": -119.99999999999999
   },
   "reversed": false,
-  "folder": "Blue Left L4 Trough Rush",
+  "folder": "Side Start Source L4",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -119.99999999999999
   },
   "useDefaultConstraints": true
 }

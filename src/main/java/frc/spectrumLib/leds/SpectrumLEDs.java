@@ -51,12 +51,12 @@ public class SpectrumLEDs implements SpectrumSubsystem {
                 String name,
                 AddressableLED l,
                 AddressableLEDBuffer lb,
-                int statrtingIndex,
+                int startingIndex,
                 int endingIndex) {
             this.name = name;
             this.led = l;
             this.buffer = lb;
-            this.startingIndex = statrtingIndex;
+            this.startingIndex = startingIndex;
             this.endingIndex = endingIndex;
         }
     }
@@ -147,7 +147,7 @@ public class SpectrumLEDs implements SpectrumSubsystem {
     }
 
     /**
-     * LED Patter Stripe, takes in a double percent and sets the first length number of LEDs to one
+     * LED Pattern Stripe, takes in a double percent and sets the first length number of LEDs to one
      * color and the rest of the strip to another
      */
     public LEDPattern stripe(double percent, Color color1, Color color2) {
@@ -412,6 +412,21 @@ public class SpectrumLEDs implements SpectrumSubsystem {
                 // If the countdown is complete, ensure all LEDs are turned off
                 if (progress >= 1.0) {
                     for (int i = 0; i < bufLen; i++) {
+                        writer.setLED(i, Color.kBlack);
+                    }
+                }
+            }
+        };
+    }
+
+    public LEDPattern edges(Color c, double length) {
+        return new LEDPattern() {
+            public void applyTo(LEDReader reader, LEDWriter writer) {
+                int bufLen = reader.getLength();
+                for (int i = 0; i < bufLen; i++) {
+                    if (i < length || i > bufLen - length - 1) {
+                        writer.setLED(i, c);
+                    } else {
                         writer.setLED(i, Color.kBlack);
                     }
                 }

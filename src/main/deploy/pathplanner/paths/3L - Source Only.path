@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.967415730337078,
-        "y": 5.438202247191011
+        "x": 1.2077949438202247,
+        "y": 7.048595505617977
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.717415730337078,
-        "y": 5.438202247191011
+        "x": 1.9210523950737786,
+        "y": 6.636796124135232
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "feeder"
     },
     {
       "anchor": {
-        "x": 5.21,
+        "x": 3.75,
         "y": 5.28
       },
       "prevControl": {
-        "x": 5.5499874592927405,
-        "y": 5.833993255846736
+        "x": 3.375,
+        "y": 5.929519052838329
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,7 +32,7 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.7991386061080693,
+      "minWaypointRelativePos": 0.736491777603764,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 1.0,
@@ -47,32 +47,38 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
+      "name": "sourceIntakeOff",
+      "waypointRelativePos": 0.2024275646045442,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
       "name": "coral",
-      "waypointRelativePos": 0,
+      "waypointRelativePos": 0.44675019577133573,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
       "name": "L4",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": 1.0,
+      "waypointRelativePos": 0.4483163664839445,
+      "endWaypointRelativePos": null,
       "command": null
     },
     {
       "name": "homeOff",
-      "waypointRelativePos": 0,
+      "waypointRelativePos": 0.4483163664839451,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
       "name": "actionOn",
-      "waypointRelativePos": 0.6472200469851228,
+      "waypointRelativePos": 0.7615505090054862,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
       "name": "autoAlign",
-      "waypointRelativePos": 0.8257635082223956,
+      "waypointRelativePos": 0.8241973375097761,
       "endWaypointRelativePos": null,
       "command": null
     },
@@ -98,14 +104,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": -119.99999999999999
+    "velocity": 0.0,
+    "rotation": -59.99999999999999
   },
   "reversed": false,
   "folder": "Blue Left Source",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -119.99999999999999
+    "rotation": -53.5
   },
   "useDefaultConstraints": true
 }

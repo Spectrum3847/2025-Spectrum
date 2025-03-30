@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.6233848314606742,
-        "y": 5.627176966292135
+        "x": 3.75,
+        "y": 5.29
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0141562316201322,
-        "y": 6.086782633398573
+        "x": 3.25,
+        "y": 6.156025403784438
       },
       "isLocked": false,
-      "linkedName": "trough"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.5939606741573034,
-        "y": 7.319733146067415
+        "x": 1.2077949438202247,
+        "y": 7.048595505617977
       },
       "prevControl": {
-        "x": 2.194206421412283,
-        "y": 6.889881608128485
+        "x": 1.6241708945461637,
+        "y": 6.485895703185925
       },
       "nextControl": null,
       "isLocked": false,
@@ -52,8 +52,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 2.5,
-    "maxAcceleration": 2.5,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -64,7 +64,7 @@
     "rotation": -53.5
   },
   "reversed": false,
-  "folder": "Blue Left L4 Trough Rush",
+  "folder": "Side Start Source L4",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -59.99999999999999

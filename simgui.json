@@ -2,7 +2,7 @@
   "HALProvider": {
     "Addressable LEDs": {
       "0": {
-        "columns": 29
+        "columns": 30
       },
       "window": {
         "visible": true
@@ -58,7 +58,15 @@
         },
         "right": 3466,
         "top": 291,
-        "width": 17.54825210571289,
+        "width": 17.54825210571289
+      },
+      "/SmartDashboard/Field2d": {
+        "bottom": 1476,
+        "height": 8.210550308227539,
+        "left": 150,
+        "right": 2961,
+        "top": 79,
+        "width": 16.541748046875,
         "window": {
           "visible": true
         }

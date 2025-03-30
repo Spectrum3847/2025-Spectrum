@@ -36,11 +36,14 @@ public class ElevatorStates {
         coastMode.onTrue(log(coastMode()));
         coastMode.onFalse(log(ensureBrakeMode()));
         homeAll.whileTrue(home());
+        Robot.getOperator()
+                .antiSecretClimb_LTRSup
+                .whileTrue(move(config::getFullExtend, "Elevator.fullExtend"));
 
         stationIntaking.whileTrue(
                 move(
                         config::getStationIntake,
-                        config::getStationExtendedIntake,
+                        // config::getStationExtendedIntake,
                         "Elevator.stationIntake"));
         stationIntaking.onFalse(home());
 
@@ -77,6 +80,9 @@ public class ElevatorStates {
         processorAlgae
                 .and(actionPrepState)
                 .whileTrue(move(config::getProcessorAlgae, "Elevator.processorAlgae"));
+        processorAlgae
+                .and(actionState)
+                .whileTrue(move(config::getHome, "Elevator.processorAlgaeHome"));
         L2Algae.and(actionPrepState).whileTrue(move(config::getL2Algae, "Elevator.L2Algae"));
         L2Algae.and(actionState).whileTrue(move(config::getHome, "Elevator.L2AlgaeHome"));
         L3Algae.and(actionPrepState).whileTrue(move(config::getL3Algae, "Elevator.L3Algae"));

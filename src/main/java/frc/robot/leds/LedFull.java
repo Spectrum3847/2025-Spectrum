@@ -9,7 +9,7 @@ public class LedFull extends SpectrumLEDs {
 
     public static class LedFullConfig extends Config {
         public LedFullConfig() {
-            super("LEDS", 29 * 2);
+            super("LEDS", 30 * 2);
             setLedSpacing(Meters.of(1 / 120.0));
         }
     }

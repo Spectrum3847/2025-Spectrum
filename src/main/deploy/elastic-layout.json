@@ -7,7 +7,7 @@
       "grid_layout": {
         "layouts": [
           {
-            "title": "List Layout",
+            "title": "Battery",
             "x": 1408.0,
             "y": 0.0,
             "width": 384.0,
@@ -18,7 +18,7 @@
             },
             "children": [
               {
-                "title": "BatteryVoltage",
+                "title": "Voltage",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
@@ -36,7 +36,7 @@
                 }
               },
               {
-                "title": "BrownedOut",
+                "title": "Browned Out",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
@@ -115,26 +115,6 @@
             }
           },
           {
-            "title": "Auto Visualizer",
-            "x": 256.0,
-            "y": 512.0,
-            "width": 512.0,
-            "height": 256.0,
-            "type": "Field",
-            "properties": {
-              "topic": "/SmartDashboard/Auto Visualizer",
-              "period": 0.06,
-              "field_game": "Reefscape",
-              "robot_width": 0.93,
-              "robot_length": 0.93,
-              "show_other_objects": true,
-              "show_trajectories": true,
-              "field_rotation": 0.0,
-              "robot_color": 4294198070,
-              "trajectory_color": 4294967295
-            }
-          },
-          {
             "title": "BackLL",
             "x": 512.0,
             "y": 0.0,
@@ -170,6 +150,26 @@
             "properties": {
               "topic": "/SmartDashboard/Alerts",
               "period": 0.06
+            }
+          },
+          {
+            "title": "Field2d",
+            "x": 0.0,
+            "y": 512.0,
+            "width": 768.0,
+            "height": 384.0,
+            "type": "Field",
+            "properties": {
+              "topic": "/SmartDashboard/Field2d",
+              "period": 0.06,
+              "field_game": "Reefscape",
+              "robot_width": 0.85,
+              "robot_length": 0.85,
+              "show_other_objects": false,
+              "show_trajectories": true,
+              "field_rotation": 0.0,
+              "robot_color": 4294198070,
+              "trajectory_color": 4294967295
             }
           }
         ]
@@ -290,27 +290,27 @@
             ]
           },
           {
-            "title": "Elbow",
-            "x": 1280.0,
+            "title": "ClimbTop",
+            "x": 256.0,
             "y": 384.0,
             "width": 256.0,
-            "height": 512.0,
+            "height": 640.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
             },
             "children": [
               {
-                "title": "#Tune Position Percent",
+                "title": "CurrentCommand",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
                 "height": 128.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Elbow/#Tune Position Percent",
+                  "topic": "/SmartDashboard/ClimbTop/CurrentCommand",
                   "period": 0.06,
-                  "data_type": "double",
+                  "data_type": "string",
                   "show_submit_button": false
                 }
               },
@@ -322,7 +322,90 @@
                 "height": 128.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Elbow/Motor Voltage",
+                  "topic": "/SmartDashboard/ClimbTop/Motor Voltage",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Position Degrees",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/ClimbTop/Position Degrees",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Position Rotations",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/ClimbTop/Position Rotations",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "StatorCurrent",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/ClimbTop/StatorCurrent",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              }
+            ]
+          },
+          {
+            "title": "Elbow",
+            "x": 512.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 640.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "CurrentCommand",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Elbow/CurrentCommand",
+                  "period": 0.06,
+                  "data_type": "string",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "MotorVoltage",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Elbow/MotorVoltage",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -343,14 +426,14 @@
                 }
               },
               {
-                "title": "Velocity",
+                "title": "StatorCurrent",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
                 "height": 128.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Elbow/Velocity",
+                  "topic": "/SmartDashboard/Elbow/StatorCurrent",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -360,24 +443,38 @@
           },
           {
             "title": "ElevatorFront",
-            "x": 512.0,
+            "x": 768.0,
             "y": 384.0,
             "width": 256.0,
-            "height": 512.0,
+            "height": 640.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
             },
             "children": [
               {
-                "title": "Position Percentage",
+                "title": "CurrentCommand",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
                 "height": 128.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/ElevatorFront/Position Percentage",
+                  "topic": "/SmartDashboard/ElevatorFront/CurrentCommand",
+                  "period": 0.06,
+                  "data_type": "string",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "MotorVoltage",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/ElevatorFront/MotorVoltage",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -398,14 +495,55 @@
                 }
               },
               {
-                "title": "Velocity",
+                "title": "StatorCurrent",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
                 "height": 128.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/ElevatorFront/Velocity",
+                  "topic": "/SmartDashboard/ElevatorFront/StatorCurrent",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              }
+            ]
+          },
+          {
+            "title": "Intake",
+            "x": 1024.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 640.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "CurrentCommand",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Intake/CurrentCommand",
+                  "period": 0.06,
+                  "data_type": "string",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Motor Voltage",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Intake/Motor Voltage",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -419,90 +557,21 @@
                 "height": 128.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/ElevatorFront/StatorCurrent",
+                  "topic": "/SmartDashboard/Intake/StatorCurrent",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
                 }
               },
               {
-                "title": "#FullExtend",
+                "title": "Velocity RPM",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
                 "height": 128.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/ElevatorFront/#FullExtend",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              }
-            ]
-          },
-          {
-            "title": "Shoulder",
-            "x": 1024.0,
-            "y": 384.0,
-            "width": 256.0,
-            "height": 512.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "Position Degrees",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Shoulder/Position Degrees",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "#Tune Position Percent",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Shoulder/#Tune Position Percent",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Velocity",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Shoulder/Velocity",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Motor Voltage",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Shoulder/Motor Voltage",
+                  "topic": "/SmartDashboard/Intake/Velocity RPM",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -512,38 +581,38 @@
           },
           {
             "title": "Twist",
-            "x": 768.0,
+            "x": 1280.0,
             "y": 384.0,
             "width": 256.0,
-            "height": 512.0,
+            "height": 640.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
             },
             "children": [
               {
-                "title": "Position Percent",
+                "title": "CurrentCommand",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
                 "height": 128.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Twist/Position Percent",
+                  "topic": "/SmartDashboard/Twist/CurrentCommand",
                   "period": 0.06,
-                  "data_type": "double",
+                  "data_type": "string",
                   "show_submit_button": false
                 }
               },
               {
-                "title": "Position",
+                "title": "Degrees",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
                 "height": 128.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Twist/Position",
+                  "topic": "/SmartDashboard/Twist/Degrees",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -564,28 +633,14 @@
                 }
               },
               {
-                "title": "Velocity",
+                "title": "StatorCurrent",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
                 "height": 128.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Twist/Velocity",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "#Tune Position Percent",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Twist/#Tune Position Percent",
+                  "topic": "/SmartDashboard/Twist/StatorCurrent",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -594,39 +649,39 @@
             ]
           },
           {
-            "title": "InClimbTop",
+            "title": "Shoulder",
             "x": 1536.0,
             "y": 384.0,
             "width": 256.0,
-            "height": 512.0,
+            "height": 640.0,
             "type": "List Layout",
             "properties": {
               "label_position": "TOP"
             },
             "children": [
               {
-                "title": "#Tune Position Percent",
+                "title": "CurrentCommand",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
                 "height": 128.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/InClimbTop/#Tune Position Percent",
+                  "topic": "/SmartDashboard/Shoulder/CurrentCommand",
                   "period": 0.06,
-                  "data_type": "double",
+                  "data_type": "string",
                   "show_submit_button": false
                 }
               },
               {
-                "title": "Motor Voltage",
+                "title": "MotorVoltage",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
                 "height": 128.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/InClimbTop/Motor Voltage",
+                  "topic": "/SmartDashboard/Shoulder/MotorVoltage",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -640,62 +695,7 @@
                 "height": 128.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/InClimbTop/Position Degrees",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Velocity",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/InClimbTop/Velocity",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              }
-            ]
-          },
-          {
-            "title": "CoralIntake",
-            "x": 256.0,
-            "y": 384.0,
-            "width": 256.0,
-            "height": 512.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "Coral Score Config",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/CoralIntake/Coral Score Config",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Rotations",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/CoralIntake/Rotations",
+                  "topic": "/SmartDashboard/Shoulder/Position Degrees",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -709,21 +709,7 @@
                 "height": 128.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/CoralIntake/StatorCurrent",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Velocity RPM",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/CoralIntake/Velocity RPM",
+                  "topic": "/SmartDashboard/Shoulder/StatorCurrent",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -781,7 +767,7 @@
         "containers": [
           {
             "title": "limelight-back",
-            "x": 1024.0,
+            "x": 896.0,
             "y": 0.0,
             "width": 896.0,
             "height": 896.0,
@@ -796,13 +782,41 @@
             "title": "limelight-front",
             "x": 0.0,
             "y": 0.0,
-            "width": 1024.0,
+            "width": 896.0,
             "height": 896.0,
             "type": "Camera Stream",
             "properties": {
               "topic": "/CameraPublisher/limelight-front",
               "period": 0.06,
               "rotation_turns": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Field",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "Field2d",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 1792.0,
+            "height": 1024.0,
+            "type": "Field",
+            "properties": {
+              "topic": "/SmartDashboard/Field2d",
+              "period": 0.06,
+              "field_game": "Reefscape",
+              "robot_width": 0.85,
+              "robot_length": 0.85,
+              "show_other_objects": false,
+              "show_trajectories": true,
+              "field_rotation": 0.0,
+              "robot_color": 4294198070,
+              "trajectory_color": 4294967295
             }
           }
         ]

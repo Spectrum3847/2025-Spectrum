@@ -20,14 +20,14 @@ public class Pilot extends Gamepad {
     public final Trigger noFn = fn.not();
     public final Trigger home_select = select;
 
-    public final Trigger stationIntake_LT = leftTrigger.and(teleop);
+    public final Trigger stationIntake_LT = leftTrigger.and(noFn, teleop);
     public final Trigger groundAlgae_RT = rightTrigger.and(noFn, teleop, photon.not());
     public final Trigger photonRemoveL2Algae = groundAlgae_RT.and(photon);
-    public final Trigger groundCoral_LB_RT = rightTrigger.and(fn, teleop, photon.not());
+    public final Trigger groundCoral_LB_LT = leftTrigger.and(fn, teleop, photon.not());
 
     public final Trigger l2AlgaeRemoval = X.and(teleop);
     public final Trigger l3AlgaeRemoval = Y.and(teleop);
-    public final Trigger photonRemoveL3Algae = groundCoral_LB_RT.and(photon);
+    public final Trigger photonRemoveL3Algae = rightTrigger.and(fn, teleop, photon);
 
     public final Trigger climbRoutine_start = start.and(noFn, teleop);
 
@@ -47,7 +47,9 @@ public class Pilot extends Gamepad {
     public final Trigger driving = enabled.and(leftStickX.or(leftStickY));
     public final Trigger steer = enabled.and(rightStickX.or(rightStickY));
 
-    public final Trigger fpv_LS = leftStickClick.and(enabled); // Remapped to Right back button
+    public final Trigger fpv_LS = leftStickClick.and(enabled); // Remapped to Left back button
+    public final Trigger toggleReverse =
+            rightStickClick.and(enabled); // Remapped to Right back button
 
     // DISABLED TRIGGERS
     public final Trigger coastOn_dB = disabled.and(B);

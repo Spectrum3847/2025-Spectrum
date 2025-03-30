@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "1 - Source Only"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "2 - Source Only"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3L - Source Only"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "4 - Source Only"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "5 - Source Only"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": false,
+  "folder": "Blue Left Origin",
+  "choreoAuto": false
+}

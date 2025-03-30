@@ -36,7 +36,7 @@ public class Elevator extends Mechanism {
         @Getter @Setter private double stationIntake = 0;
         @Getter @Setter private double stationExtendedIntake = 0;
 
-        @Getter @Setter private double processorAlgae = 0.3;
+        @Getter @Setter private double processorAlgae = 0;
         @Getter @Setter private double l2Algae = 1;
         @Getter @Setter private double l3Algae = 12;
         @Getter @Setter private double netAlgae = fullExtend;
@@ -66,16 +66,16 @@ public class Elevator extends Mechanism {
         /* Elevator config settings */
         @Getter private final double zeroSpeed = -0.2;
         @Getter private final double positionKp = 100;
-        @Getter private final double positionKd = 6;
+        @Getter private final double positionKd = 8; // 6
         @Getter private final double positionKa = 0.2;
         @Getter private final double positionKv = 0;
         @Getter private final double positionKs = 5;
         @Getter private final double positionKg = 25.3;
-        @Getter private final double mmCruiseVelocity = 40;
-        @Getter private final double mmAcceleration = 280;
-        @Getter private final double mmJerk = 2000;
+        @Getter private final double mmCruiseVelocity = 70;
+        @Getter private final double mmAcceleration = 400;
+        @Getter private final double mmJerk = 4500;
 
-        @Getter private double currentLimit = 40;
+        @Getter private double currentLimit = 60;
         @Getter private double torqueCurrentLimit = 160;
 
         /* Sim properties */
@@ -210,13 +210,13 @@ public class Elevator extends Mechanism {
         };
     }
 
-    public Command move(DoubleSupplier rotations, DoubleSupplier exRotations) {
+    public Command move(DoubleSupplier shrinkRotations, DoubleSupplier exRotations) {
         return run(
                 () -> {
-                    if (RobotStates.extended.getAsBoolean()) {
+                    if (!RobotStates.shrink.getAsBoolean()) {
                         setMMPositionFoc(exRotations);
                     } else {
-                        setMMPositionFoc(rotations);
+                        setMMPositionFoc(shrinkRotations);
                     }
                 });
     }

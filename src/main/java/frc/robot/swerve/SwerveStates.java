@@ -5,16 +5,14 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.reefscape.Field;
+import frc.reefscape.Zones;
 import frc.robot.Robot;
+import frc.robot.RobotStates;
 import frc.robot.pilot.Pilot;
 import frc.spectrumLib.SpectrumState;
 import frc.spectrumLib.Telemetry;
@@ -29,6 +27,25 @@ public class SwerveStates {
             log(pilotDrive().withName("SwerveCommands.pilotSteer").ignoringDisable(true));
     static SpectrumState steeringLock = new SpectrumState("SteeringLock");
 
+    public static final Trigger isFrontClosestToLeftStation =
+            new Trigger(
+                    () ->
+                            swerve.frontClosestToAngle(
+                                    Field.flipTrueAngleIfRed(
+                                            Field.CoralStation.leftFaceRobotPovDegrees)));
+    public static final Trigger isFrontClosestToRightStation =
+            new Trigger(
+                    () ->
+                            swerve.frontClosestToAngle(
+                                    Field.flipTrueAngleIfRed(
+                                            Field.CoralStation.rightFaceRobotPovDegrees)));
+
+    public static final Trigger isFrontClosestToNet =
+            new Trigger(
+                    () ->
+                            swerve.frontClosestToAngle(Field.Barge.netRobotPovDegrees)
+                                    == Zones.blueFieldSide.getAsBoolean());
+
     protected static void setupDefaultCommand() {
         swerve.setDefaultCommand(pilotSteerCommand);
     }
@@ -41,11 +58,11 @@ public class SwerveStates {
         // When driving and have never steered, it doesn't lock
         // When driving, and we stop steering it locks
         // When not driving it stops locking
-        pilot.steer.and(pilot.driving).onTrue(steeringLock.setTrue());
-        pilot.driving.onFalse(steeringLock.setFalse());
-        steeringLock
-                .and(pilot.steer.not())
-                .onTrue(log(lockToClosestFieldAngleDrive().withName("Swerve.FieldAngleLock")));
+        // pilot.steer.and(pilot.driving).onTrue(steeringLock.setTrue());
+        // pilot.driving.onFalse(steeringLock.setFalse());
+        // steeringLock
+        //         .and(pilot.steer.not())
+        //         .onTrue(log(lockToClosestFieldAngleDrive().withName("Swerve.FieldAngleLock")));
 
         pilot.fpv_LS.whileTrue(log(fpvDrive()));
 
@@ -59,34 +76,29 @@ public class SwerveStates {
         pilot.cageAim_B.whileTrue(log(cageAimDrive()));
 
 
+        RobotStates.autoAlign.onTrue(autonSwerveAlign());
+        RobotStates.clearOverrideFeedBack.onTrue(clearFeedBack());
     }
 
-    /** Pilot Commands ************************************************************************ */
-    /**
-     * Drive the robot using left stick and control orientation using the right stick Only Cardinal
-     * directions are allowed
-     *
-     * @return
-     */
-    public static Command autonSwerveAlign(double alignTime) {
-        return (new PrintCommand("! starting align !")
-                        .andThen(
-                                new InstantCommand(
-                                        () -> {
-                                            PPHolonomicDriveController.overrideXFeedback(
-                                                    SwerveStates::getTagDistanceVelocity);
-                                            PPHolonomicDriveController.overrideYFeedback(
-                                                    SwerveStates::getTagTxVelocity);
-                                        }),
-                                new PrintCommand("! clearing align !"),
-                                new WaitCommand(alignTime),
-                                new InstantCommand(
-                                        PPHolonomicDriveController::clearFeedbackOverrides),
-                                new PrintCommand("! cleared align !")))
-                .withName("autonAlign")
-                .alongWith(new PrintCommand("!! autonAlign Ran !!"));
+    /* Pilot Commands ************************************************************************ */
+
+    // TODO: make this a command FIELD RELATIVE instead of ROBOT RELATIVE
+    public static Command autonSwerveAlign() {
+        return (new InstantCommand(
+                        () -> {
+                            PPHolonomicDriveController.overrideXFeedback(
+                                    SwerveStates::getTagDistanceVelocity);
+                            PPHolonomicDriveController.overrideYFeedback(
+                                    SwerveStates::getTagTxVelocity);
+                        }))
+                .withName("Swerve.autonAlign");
     }
-    
+
+    public static Command clearFeedBack() {
+        return (new InstantCommand(() -> PPHolonomicDriveController.clearFeedbackOverrides()))
+                .withName("Swerve.clearFeedbackOverrides");
+    }
+
     public static Command reefAimDrive() {
         return fpvAimDrive(
                         SwerveStates::getTagDistanceVelocity,
@@ -128,6 +140,10 @@ public class SwerveStates {
                 () -> getAlignHeading(headingRadians));
     }
 
+    public static Command swerveTest() {
+        return drive(() -> 0.5, () -> 0, () -> 0);
+    }
+
     private static double getTagTxVelocity() {
         if (Robot.getVision().tagsInView()) {
             return swerve.calculateTagCenterAlignController(
@@ -137,7 +153,42 @@ public class SwerveStates {
     }
 
     private static double getTagDistanceVelocity() {
-        return swerve.calculateTagDistanceAlignController(() -> config.getHomeLlAimTAgoal());
+        int tagID = Robot.getVision().getClosestTagID();
+        if (tagID < 0) {
+            return 0;
+        }
+        double[][] tagIDAreas = {
+            {17, config.getEventTag17TAGoal()},
+            {18, config.getEventTag18TAGoal()},
+            {19, config.getEventTag19TAGoal()},
+            {20, config.getEventTag20TAGoal()},
+            {21, config.getEventTag21TAGoal()},
+            {22, config.getEventTag22TAGoal()},
+            {6, config.getEventTag6TAGoal()},
+            {7, config.getEventTag7TAGoal()},
+            {8, config.getEventTag8TAGoal()},
+            {9, config.getEventTag9TAGoal()},
+            {10, config.getEventTag10TAGoal()},
+            {11, config.getEventTag11TAGoal()}
+        };
+        if (tagID >= 17) {
+            tagID -= 17;
+        }
+        if (tagID < 0) {
+            tagID = 0;
+        }
+        if (tagID >= tagIDAreas.length) {
+            tagID = 11;
+        }
+
+        final int finalTagID = tagID;
+        try {
+            return swerve.calculateTagDistanceAlignController(() -> config.getHomeLlAimTAgoal());
+        } catch (Exception e) {
+            Telemetry.print("Error in getTagDistanceVelocity: " + finalTagID);
+            return config.getEventLlAimTAgoal();
+        }
+        // return swerve.calculateTagDistanceAlignController(() -> tagIDAreas[finalTagID][1]);
     }
 
     private static double getAlignToX(DoubleSupplier xGoalMeters) {

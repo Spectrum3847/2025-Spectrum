@@ -1,6 +1,5 @@
 package frc.robot.twist;
 
-import static frc.robot.RobotStates.algae;
 import static frc.robot.RobotStates.coral;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -21,8 +20,10 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 import frc.robot.RobotSim;
+import frc.robot.RobotStates;
 import frc.spectrumLib.Rio;
 import frc.spectrumLib.SpectrumCANcoder;
+import frc.spectrumLib.SpectrumCANcoderConfig;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.mechanism.Mechanism;
 import frc.spectrumLib.sim.Mount;
@@ -39,17 +40,22 @@ public class Twist extends Mechanism {
         // Positions set as percentage of Twist
         @Getter private final int initializedPosition = 20;
 
+        @Getter private final double stageDelay = 0.1;
+
         /* twist positions in percentage of max rotation || 0 is horizontal */
 
         @Getter private final double home = 0;
-        @Getter private final double coralLollipop = 90;
-        @Getter private final double stationIntake = 179.9;
-        @Getter private final double algaeIntake = stationIntake;
-        @Getter private final double groundCoralIntake = 0;
+        @Getter private final double lollipopCoral = 90;
+        @Getter private final double stationIntake = 0; // 179.9;
+        @Getter private final double algaeIntake = 179.9;
+        @Getter private final double groundAlgaeIntake = 0;
+        @Getter private final double groundCoralIntake = 179.9;
         @Getter private final double leftCoral = 90;
         @Getter private final double rightCoral = -90;
         @Getter private final double l1Coral = 0;
+        @Getter private final double processorAlgae = 0;
         @Getter private final double net = algaeIntake;
+        @Getter private final double climbPrep = 179.9;
 
         @Getter private final double initPosition = 0;
 
@@ -69,12 +75,17 @@ public class Twist extends Mechanism {
         @Getter private final double mmAcceleration = 32;
         @Getter private final double mmJerk = 0;
 
-        // Need to add auto launching positions when auton is added
+        @Getter @Setter private double sensorToMechanismRatio = 22.4;
+        @Getter @Setter private double rotorToSensorRatio = 1;
 
         /* Cancoder config settings */
-        @Getter private final double CANcoderGearRatio = 1;
-        @Getter private double CANcoderOffset = 0;
-        @Getter private boolean isCANcoderAttached = false;
+        @Getter @Setter private double CANcoderRotorToSensorRatio = 22.4;
+        // CANcoderRotorToSensorRatio / sensorToMechanismRatio;
+
+        @Getter @Setter private double CANcoderSensorToMechanismRatio = 1;
+
+        @Getter @Setter private double CANcoderOffset = 0;
+        @Getter @Setter private boolean CANcoderAttached = false;
 
         /* Sim properties */
         @Getter private double twistX = 0.525;
@@ -95,12 +106,12 @@ public class Twist extends Mechanism {
             configFeedForwardGains(positionKs, positionKv, positionKa, positionKg);
             configMotionMagic(mmCruiseVelocity, mmAcceleration, mmJerk);
             configMotionMagic(mmCruiseVelocity, mmAcceleration, mmJerk);
-            configGearRatio(22.4);
+            configGearRatio(sensorToMechanismRatio);
             configSupplyCurrentLimit(currentLimit, true);
             configStatorCurrentLimit(torqueCurrentLimit, true);
             configForwardTorqueCurrentLimit(torqueCurrentLimit);
             configReverseTorqueCurrentLimit(torqueCurrentLimit);
-            configMinMaxRotations(-.25, 0.5);
+            configMinMaxRotations(-.25, 0.75);
             configReverseSoftLimit(getMinRotations(), true);
             configForwardSoftLimit(getMaxRotations(), true);
             configNeutralBrakeMode(true);
@@ -121,6 +132,7 @@ public class Twist extends Mechanism {
 
     private TwistConfig config;
     private SpectrumCANcoder canCoder;
+    private SpectrumCANcoderConfig canCoderConfig;
     @Getter private TwistSim sim;
     CANcoderSimState canCoderSim;
 
@@ -129,11 +141,21 @@ public class Twist extends Mechanism {
         this.config = config;
 
         if (isAttached()) {
-            canCoder =
-                    new SpectrumCANcoder(44, motor, config)
-                            .setGearRatio(config.getCANcoderGearRatio())
-                            .setOffset(config.getCANcoderOffset())
-                            .setAttached(false);
+            if (config.isCANcoderAttached()) {
+                canCoderConfig =
+                        new SpectrumCANcoderConfig(
+                                config.getCANcoderRotorToSensorRatio(),
+                                config.getCANcoderSensorToMechanismRatio(),
+                                config.getCANcoderOffset(),
+                                config.isCANcoderAttached());
+                canCoder =
+                        new SpectrumCANcoder(
+                                44,
+                                canCoderConfig,
+                                motor,
+                                config,
+                                SpectrumCANcoder.CANCoderFeedbackType.FusedCANcoder);
+            }
 
             setInitialPosition();
         }
@@ -176,10 +198,16 @@ public class Twist extends Mechanism {
     }
 
     private void setInitialPosition() {
-        if (canCoder.isAttached()) {
-            motor.setPosition(
-                    canCoder.getCanCoder().getAbsolutePosition().getValueAsDouble()
-                            * config.getGearRatio());
+        if (canCoder != null) {
+            if (canCoder.isAttached()
+                    && canCoder.canCoderResponseOK(
+                            canCoder.getCanCoder().getAbsolutePosition().getStatus())) {
+                motor.setPosition(
+                        canCoder.getCanCoder().getAbsolutePosition().getValueAsDouble()
+                                / config.getCANcoderSensorToMechanismRatio());
+            } else {
+                motor.setPosition(degreesToRotations(() -> config.getInitPosition()));
+            }
         } else {
             motor.setPosition(degreesToRotations(() -> config.getInitPosition()));
         }
@@ -245,12 +273,65 @@ public class Twist extends Mechanism {
         setMMPositionFoc(() -> degreesToRotations(degrees));
     }
 
+    public Command move(DoubleSupplier targetDegrees, boolean clockwise) {
+        return run(
+                () -> {
+                    double currentDegrees = getPositionDegrees();
+                    // Normalize targetDegrees to be within 0 to 360
+                    double target = (targetDegrees.getAsDouble() % 360);
+                    // Normalize currentDegrees to be within 0 to 360
+                    double currentMod = (currentDegrees % 360);
+
+                    double output;
+
+                    if (clockwise) {
+                        // Calculate the closest clockwise position
+                        if (currentMod > target) {
+                            output = currentDegrees - (currentMod - target);
+                        } else {
+                            output = currentDegrees - (360 + currentMod - target);
+                        }
+                    } else {
+                        // Calculate the closest counterclockwise position
+                        if (currentMod < target) {
+                            output = currentDegrees + (target - currentMod);
+                        } else {
+                            output = currentDegrees + (360 + target - currentMod);
+                        }
+                    }
+
+                    final double out = output;
+                    setDegrees(() -> out);
+                });
+    }
+
+    public Command move(DoubleSupplier degrees) {
+        return run(
+                () -> {
+                    if (RobotStates.reverse.getAsBoolean()) {
+                        if (degrees.getAsDouble() + 180 >= 180
+                                && degrees.getAsDouble() - 179.9 >= 0) {
+                            setDegrees(() -> degrees.getAsDouble() - 179.9);
+                        } else {
+                            setDegrees(() -> degrees.getAsDouble() + 179.9);
+                        }
+                    } else {
+                        setDegrees(degrees);
+                    }
+                });
+    }
+
+    public DoubleSupplier getIfReversedDegrees(DoubleSupplier degrees) {
+        return () ->
+                (RobotStates.reverse.getAsBoolean())
+                        ? degrees.getAsDouble() + 180
+                        : degrees.getAsDouble();
+    }
+
     public Command twistHome() {
         return run(
                 () -> {
-                    if (algae.getAsBoolean()) {
-                        setDegrees(config::getAlgaeIntake);
-                    } else if (coral.getAsBoolean()) {
+                    if (coral.getAsBoolean()) {
                         setDegrees(config::getLeftCoral);
                     } else {
                         setDegrees(config::getHome);
@@ -298,8 +379,8 @@ public class Twist extends Mechanism {
                             1.2,
                             config.getCoralLength(), // placeholder, should really be length of
                             // forearm
-                            Math.toRadians(-180),
-                            Math.toRadians(180),
+                            Math.toRadians(-360),
+                            Math.toRadians(360),
                             false, // Simulate gravity (change back to true)
                             0);
             this.twistMotorSim = twistMotorSim;
@@ -380,7 +461,7 @@ public class Twist extends Mechanism {
                             mount.getAngle()));
 
             /* changes which side is closest to the viewer; the left prong is always closest to the viewer */
-            if (getPositionPercentage() > 0) {
+            if (getPositionPercentage() > 0 && getPositionDegrees() % 360 <= 180) {
                 leftBase.setColor(config.getCoralColor());
                 leftProng.setColor(config.getCoralColor());
                 rightBase.setColor(config.getAlgaeColor());
@@ -447,6 +528,15 @@ public class Twist extends Mechanism {
                                         config.getCoralBaseAngle(), getPositionPercentage()),
                                 getPositionPercentage()));
             }
+        }
+
+        private double getPositionPercentage() {
+            double position = getPositionDegrees() % 360;
+            if (position > 180) {
+                position -= 180;
+                position = 180 - position;
+            }
+            return (position / 180) * 100;
         }
 
         private double calculateBaseAngle(double startingAngle, double posePercent) {

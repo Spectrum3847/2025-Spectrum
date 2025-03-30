@@ -33,27 +33,27 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "leftL4",
+      "name": "",
       "waypointRelativePos": 0,
       "endWaypointRelativePos": 1.0,
       "command": null
     },
     {
-      "name": "prescore",
+      "name": "",
       "waypointRelativePos": 0.14134690681284476,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
-      "name": "score",
+      "name": "",
       "waypointRelativePos": 0.8962411902897494,
       "endWaypointRelativePos": null,
       "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 2.5,
-    "maxAcceleration": 2.5,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -64,7 +64,7 @@
     "rotation": 180.0
   },
   "reversed": false,
-  "folder": "Blue Left L4 Trough Rush",
+  "folder": "Side Start Source L4",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0

@@ -13,7 +13,7 @@
       ]
     }
   },
-  "resetOdom": true,
-  "folder": null,
+  "resetOdom": false,
+  "folder": "Source L4",
   "choreoAuto": false
 }

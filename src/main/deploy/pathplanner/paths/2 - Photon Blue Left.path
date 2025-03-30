@@ -49,7 +49,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "sourceIntake",
+      "name": "",
       "waypointRelativePos": 1.2411902897415883,
       "endWaypointRelativePos": 2.0,
       "command": null

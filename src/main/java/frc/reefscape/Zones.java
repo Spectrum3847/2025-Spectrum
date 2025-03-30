@@ -9,7 +9,8 @@ public class Zones {
 
     private static final Swerve swerve = Robot.getSwerve();
 
-    // zones
+    public static final Trigger blueFieldSide = swerve.inXzone(0, Field.getHalfLength());
+
     public static final Trigger topLeftZone =
             swerve.inXzoneAlliance(Field.Reef.center.getX(), Field.getHalfLength())
                     .and(swerve.inYzoneAlliance(Field.Reef.center.getY(), Field.getFieldWidth()));
