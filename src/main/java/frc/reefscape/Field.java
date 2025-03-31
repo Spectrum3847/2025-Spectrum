@@ -79,7 +79,8 @@ public class Field {
         }
 
         public static double getCageAngleToClimb() {
-            return Units.degreesToRadians(90);
+            double offset = 0; //offset in degrees
+            return Units.degreesToRadians(90 + offset);
         }
 
         public static double getCloseCage(double offset) {
