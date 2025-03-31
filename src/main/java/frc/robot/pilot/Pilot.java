@@ -33,9 +33,9 @@ public class Pilot extends Gamepad {
 
     public final Trigger actionReady_RB = rightBumper.and(teleop);
 
-    // vision Drive
+    // vision Drive Triggers
     public final Trigger reefAim_A = A.and(teleop);
-    public final Trigger cageAim_X = X.and(teleop);
+    public final Trigger cageAim_A = A.and(teleop, Robot.getOperator().climbPrep_start);
 
     // Drive Triggers
     public final Trigger upReorient = upDpad.and(fn, teleop);

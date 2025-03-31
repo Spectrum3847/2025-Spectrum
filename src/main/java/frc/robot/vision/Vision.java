@@ -564,9 +564,9 @@ public class Vision implements NTSendable, Subsystem {
 
         if (closestTag == -1) {
             // Return current angle if no tag seen before going through the array
-            Pose2d currentPose = Robot.getSwerve().getRobotPose();
-            int tagID = Field.Reef.getReefZoneTagID(Field.flipIfRed(currentPose));
-            closestTag = tagID;
+            //Pose2d currentPose = Robot.getSwerve().getRobotPose();
+            // int tagID = Field.Reef.getReefZoneTagID(Field.flipXifRed(currentPose));
+            // closestTag = tagID;
         }
 
         for (int i = 0; i < reefFrontAngles.length; i++) {

@@ -73,7 +73,7 @@ public class SwerveStates {
 
         // // vision aim
         pilot.reefAim_A.whileTrue(log(reefAimDrive()));
-        pilot.cageAim_X.whileTrue(log(cageAimDrive()));
+        pilot.cageAim_A.whileTrue(log(cageAimDrive()));
 
 
         RobotStates.autoAlign.onTrue(autonSwerveAlign());
