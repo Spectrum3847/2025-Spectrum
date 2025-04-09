@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
-import frc.robot.Robot;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +54,7 @@ public class Field {
         public static final double shallowHeight = Units.inchesToMeters(30.125);
 
         public static double getCageYToClimb() {
-            Pose2d robotPose = flipXifRed(Robot.getSwerve().getRobotPose());
+            Pose2d robotPose = Robot.getSwerve().getRobotPose();
             double[] cageDiffs = new double[3];
             double farCage = flipYifRed(getFarCageY(0));
             double middleCage = flipYifRed(getMiddleCageY(0));

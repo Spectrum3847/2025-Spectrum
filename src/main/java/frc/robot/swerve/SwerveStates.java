@@ -135,15 +135,19 @@ public class SwerveStates {
 
     public static Command alignToYDrive(DoubleSupplier yGoalMeters, DoubleSupplier headingRadians) {
         if (Field.isRed()) {
-            return drive(
-                    pilot::getDriveFwdPositive,
-                    () -> getAlignToY(() -> Field.flipYifRed(yGoalMeters.getAsDouble())),
-                    () -> getAlignHeading(headingRadians));
+            return resetYController()
+                    .andThen(
+                            drive(
+                                    pilot::getDriveFwdPositive,
+                                    getAlignToY(() -> Field.flipYifRed(yGoalMeters.getAsDouble())),
+                                    getAlignHeading(headingRadians)));
         } else {
-            return drive(
-                    pilot::getDriveFwdPositive,
-                    () -> getAlignToY(yGoalMeters),
-                    () -> getAlignHeading(headingRadians));
+            return resetYController()
+                    .andThen(
+                            drive(
+                                    pilot::getDriveFwdPositive,
+                                    getAlignToY(yGoalMeters),
+                                    getAlignHeading(headingRadians)));
         }
     }
 

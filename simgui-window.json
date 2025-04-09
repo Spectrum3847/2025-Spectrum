@@ -8,13 +8,13 @@
     "GLOBAL": {
       "font": "Proggy Dotted",
       "fps": "120",
-      "height": "1094",
+      "height": "1081",
       "maximized": "1",
       "style": "0",
       "userScale": "2",
-      "width": "1920",
+      "width": "956",
       "xpos": "0",
-      "ypos": "29"
+      "ypos": "34"
     }
   },
   "Table": {
@@ -48,7 +48,7 @@
     },
     "###/SmartDashboard/LeftView": {
       "Collapsed": "0",
-      "Pos": "1675,640",
+      "Pos": "937,640",
       "Size": "544,547"
     },
     "###/SmartDashboard/Scheduler": {
@@ -58,7 +58,7 @@
     },
     "###/SmartDashboard/States": {
       "Collapsed": "0",
-      "Pos": "925,1075",
+      "Pos": "925,1062",
       "Size": "378,150"
     },
     "###/SmartDashboard/Swerve Field": {
@@ -68,12 +68,12 @@
     },
     "###/SmartDashboard/VisionSystemSim-main/Sim Field": {
       "Collapsed": "0",
-      "Pos": "1037,29",
-      "Size": "1219,610"
+      "Pos": "727,258",
+      "Size": "1219,600"
     },
     "###/SmartDashboard/frontView": {
       "Collapsed": "0",
-      "Pos": "1299,640",
+      "Pos": "937,640",
       "Size": "373,555"
     },
     "###Addressable LEDs": {
@@ -88,7 +88,7 @@
     },
     "###Joysticks": {
       "Collapsed": "0",
-      "Pos": "1,473",
+      "Pos": "693,516",
       "Size": "1156,287"
     },
     "###Keyboard 0 Settings": {
