@@ -11,7 +11,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -53,53 +52,49 @@ public class Field {
         public static double getCageYToClimb() {
             Pose2d robotPose = flipXifRed(Robot.getSwerve().getRobotPose());
             double[] cageDiffs = new double[3];
-            double farCage = getFarCage(0);
-            double middleCage = getMiddleCage(0);
-            double closeCage = getCloseCage(0);
+            double farCage = flipYifRed(getFarCageY(0));
+            double middleCage = flipYifRed(getMiddleCageY(0));
+            double closeCage = flipYifRed(getCloseCageY(0));
 
-           
-            cageDiffs[0] = Math.abs(robotPose.getY() - farCage);
-            cageDiffs[1] = Math.abs(robotPose.getY() - middleCage);
-            cageDiffs[2] = Math.abs(robotPose.getY() - closeCage);
+            cageDiffs[0] = Math.abs(flipYifRed(robotPose.getY()) - farCage);
+            cageDiffs[1] = Math.abs(flipYifRed(robotPose.getY()) - middleCage);
+            cageDiffs[2] = Math.abs(flipYifRed(robotPose.getY()) - closeCage);
 
             int closestCage = indexOfSmallest(cageDiffs);
 
             if (closestCage == 0) {
                 return farCage;
-            }
-            else if (closestCage == 1) {
+            } else if (closestCage == 1) {
                 return middleCage;
-            }
-            else if (closestCage == 2) {
+            } else if (closestCage == 2) {
                 return closeCage;
-            }
-            else {
+            } else {
                 return Robot.getSwerve().getRobotPose().getY();
             }
         }
 
         public static double getCageAngleToClimb() {
-            double offset = 0; //offset in degrees
+            double offset = 0; // offset in degrees
             return Units.degreesToRadians(90 + offset);
         }
 
-        public static double getCloseCage(double offset) {
+        public static double getCloseCageY(double offset) {
             return flipYifRed(closeCage.getY()) + offset;
         }
 
-        public static double getMiddleCage(double offset) {
+        public static double getMiddleCageY(double offset) {
             return flipYifRed(middleCage.getY()) + offset;
         }
 
-        public static double getFarCage(double offset) {
+        public static double getFarCageY(double offset) {
             return flipYifRed(farCage.getY()) + offset;
         }
 
         public static int indexOfSmallest(double[] array) {
             int indexOfSmallest = 0;
             double smallestIndex = array[indexOfSmallest];
-            for(int i = 0; i < array.length; i++) {
-                if(array[i] <= smallestIndex) {
+            for (int i = 0; i < array.length; i++) {
+                if (array[i] <= smallestIndex) {
                     smallestIndex = array[i];
                     indexOfSmallest = i;
                 }

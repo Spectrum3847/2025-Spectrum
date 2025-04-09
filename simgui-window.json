@@ -1,18 +1,18 @@
 {
   "Docking": {
     "Data": [
-      "DockNode  ID=0x00000001 Pos=7,990 Size=905,316 Selected=0x48913727"
+      "DockNode  ID=0x00000001 Pos=98,702 Size=905,316 Selected=0x48913727"
     ]
   },
   "MainWindow": {
     "GLOBAL": {
       "font": "Proggy Dotted",
       "fps": "120",
-      "height": "1415",
+      "height": "1094",
       "maximized": "1",
       "style": "0",
       "userScale": "2",
-      "width": "2256",
+      "width": "1920",
       "xpos": "0",
       "ypos": "29"
     }
@@ -33,8 +33,8 @@
     },
     "###/SmartDashboard/Auto Chooser": {
       "Collapsed": "0",
-      "Pos": "377,271",
-      "Size": "307,60"
+      "Pos": "369,318",
+      "Size": "361,66"
     },
     "###/SmartDashboard/Auto Visualizer": {
       "Collapsed": "0",
@@ -43,7 +43,7 @@
     },
     "###/SmartDashboard/Field2d": {
       "Collapsed": "0",
-      "Pos": "8,639",
+      "Pos": "36,669",
       "Size": "650,348"
     },
     "###/SmartDashboard/LeftView": {
@@ -58,7 +58,7 @@
     },
     "###/SmartDashboard/States": {
       "Collapsed": "0",
-      "Pos": "925,1196",
+      "Pos": "925,1075",
       "Size": "378,150"
     },
     "###/SmartDashboard/Swerve Field": {
@@ -79,17 +79,17 @@
     "###Addressable LEDs": {
       "Collapsed": "0",
       "Pos": "592,34",
-      "Size": "416,220"
+      "Size": "491,246"
     },
     "###FMS": {
       "Collapsed": "0",
-      "Pos": "375,36",
-      "Size": "202,214"
+      "Pos": "330,36",
+      "Size": "244,244"
     },
     "###Joysticks": {
       "Collapsed": "0",
-      "Pos": "4,383",
-      "Size": "976,252"
+      "Pos": "1,473",
+      "Size": "1156,287"
     },
     "###Keyboard 0 Settings": {
       "Collapsed": "0",
@@ -104,13 +104,13 @@
     "###NetworkTables": {
       "Collapsed": "0",
       "DockId": "0x00000001,0",
-      "Pos": "7,990",
+      "Pos": "98,702",
       "Size": "905,316"
     },
     "###NetworkTables Info": {
       "Collapsed": "0",
       "DockId": "0x00000001,1",
-      "Pos": "7,990",
+      "Pos": "98,702",
       "Size": "905,316"
     },
     "###Other Devices": {
@@ -131,13 +131,13 @@
     },
     "###System Joysticks": {
       "Collapsed": "0",
-      "Pos": "684,642",
-      "Size": "232,254"
+      "Pos": "558,682",
+      "Size": "273,290"
     },
     "###Timing": {
       "Collapsed": "0",
       "Pos": "5,187",
-      "Size": "162,194"
+      "Size": "188,215"
     },
     "Debug##Default": {
       "Collapsed": "0",
@@ -147,7 +147,7 @@
     "Robot State": {
       "Collapsed": "0",
       "Pos": "193,186",
-      "Size": "118,134"
+      "Size": "137,152"
     }
   }
 }

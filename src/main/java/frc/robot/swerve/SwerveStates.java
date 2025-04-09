@@ -71,10 +71,9 @@ public class SwerveStates {
         pilot.downReorient.onTrue(log(reorientBack()));
         pilot.rightReorient.onTrue(log(reorientRight()));
 
-        // // vision aim
-        pilot.reefAim_A.whileTrue(log(reefAimDrive()));
+        // vision aim
+        // pilot.reefAim_A.whileTrue(log(reefAimDrive()));
         pilot.cageAim_A.whileTrue(log(cageAimDrive()));
-
 
         RobotStates.autoAlign.onTrue(autonSwerveAlign());
         RobotStates.clearOverrideFeedBack.onTrue(clearFeedBack());
@@ -109,9 +108,9 @@ public class SwerveStates {
 
     public static Command cageAimDrive() {
         return alignToYDrive(
-                () -> Field.Barge.getCageYToClimb(),
-                () -> Field.Barge.getCageAngleToClimb())
-        .withName("Swerve.cageAimDrive");
+                        () -> Field.Barge.getCageYToClimb(),
+                        () -> Field.Barge.getCageAngleToClimb())
+                .withName("Swerve.cageAimDrive");
     }
 
     public static Command alignToXDrive(DoubleSupplier xGoalMeters) {
@@ -129,10 +128,17 @@ public class SwerveStates {
     }
 
     public static Command alignToYDrive(DoubleSupplier yGoalMeters, DoubleSupplier headingRadians) {
-        return drive(
-                pilot::getDriveFwdPositive,
-                () -> getAlignToY(yGoalMeters),
-                () -> getAlignHeading(headingRadians));
+        if (Field.isRed()) {
+            return drive(
+                    pilot::getDriveFwdPositive,
+                    () -> getAlignToY(() -> Field.flipYifRed(yGoalMeters.getAsDouble())),
+                    () -> getAlignHeading(headingRadians));
+        } else {
+            return drive(
+                    pilot::getDriveFwdPositive,
+                    () -> getAlignToY(yGoalMeters),
+                    () -> getAlignHeading(headingRadians));
+        }
     }
 
     public static Command alignXYDrive(DoubleSupplier xGoalMeters, DoubleSupplier yGoalMeters) {
