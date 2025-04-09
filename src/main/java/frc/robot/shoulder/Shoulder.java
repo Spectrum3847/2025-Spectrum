@@ -57,11 +57,11 @@ public class Shoulder extends Mechanism {
         @Getter @Setter private double l4CoralScore = 128; // 117;
 
         @Getter @Setter private double exl1Coral = 16.9;
-        @Getter @Setter private double exl2Coral = -13.4; // -27;
-        @Getter @Setter private double exl2Score = 30;
+        @Getter @Setter private double exl2Coral = -19.33; // -13.4; // -27;
+        @Getter @Setter private double exl2Score = 25; // 30
         @Getter @Setter private double exl3Coral = -12.8; // -27;
         @Getter @Setter private double exl3Score = 30;
-        @Getter @Setter private double exl4Coral = 199.3; // 179;
+        @Getter @Setter private double exl4Coral = 193.5; // 190.3;
         @Getter @Setter private double exl4Score = 145.8; // 133;
 
         @Getter @Setter private double tolerance = 0.95;
@@ -84,6 +84,8 @@ public class Shoulder extends Mechanism {
         @Getter @Setter private double mmCruiseVelocity = 10;
         @Getter @Setter private double mmAcceleration = 50;
         @Getter @Setter private double mmJerk = 0;
+        @Getter @Setter private double slowMmAcceleration = 5;
+        @Getter @Setter private double slowMmJerk = 50;
 
         @Getter @Setter private double sensorToMechanismRatio = 61.71428571; // 102.857;
         @Getter @Setter private double rotorToSensorRatio = 1;
@@ -152,7 +154,7 @@ public class Shoulder extends Mechanism {
 
         if (isAttached()) { // && RobotStates.pm.and(RobotStates.photon,
             // RobotStates.sim).not().getAsBoolean()) {
-            if (config.isCANcoderAttached()) {
+            if (config.isCANcoderAttached() && !Robot.isSimulation()) {
                 canCoderConfig =
                         new SpectrumCANcoderConfig(
                                 config.getCANcoderRotorToSensorRatio(),
@@ -339,6 +341,17 @@ public class Shoulder extends Mechanism {
                     }
                 })
                 .withName("Shoulder.move");
+    }
+
+    public Command slowMove(DoubleSupplier degrees) {
+        return run(
+                () -> {
+                    setDynMMPositionFoc(
+                            getOffsetRotations(degrees),
+                            () -> config.getMmCruiseVelocity(),
+                            () -> config.getSlowMmAcceleration(),
+                            () -> config.getSlowMmJerk());
+                });
     }
 
     public Command move(DoubleSupplier degrees) {

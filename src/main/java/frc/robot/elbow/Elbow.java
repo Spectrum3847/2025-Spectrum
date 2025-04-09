@@ -39,51 +39,53 @@ public class Elbow extends Mechanism {
 
         @Getter private final double stationIntake = -158.7;
         @Getter private final double stationExtendedIntake = -154.4;
-        @Getter private final double groundAlgaeIntake = 76;
-        @Getter private final double groundCoralIntake = 75;
+        @Getter private final double groundAlgaeIntake = 78;
+        @Getter private final double groundCoralIntake = 77;
 
         @Getter private final double stage = 180; // -160;
         @Getter private final double l1Coral = -121.4;
-        @Getter private final double l2Coral = -118;
-        @Getter private final double l2Score = -108;
-        @Getter private final double l3Coral = -124; // -144.5;
-        @Getter private final double l3Score = -109; // -130;
-        @Getter private final double l4Coral = -133; // -128;
-        @Getter private final double l4Score = -104; // -107.6;
+        @Getter private final double l2Coral = -120.0;
+        @Getter private final double l2Score = -108.0;
+        @Getter private final double l3Coral = -125.0; // -144.5;
+        @Getter private final double l3Score = -109.0; // -130;
+        @Getter private final double l4Coral = -135.0; // -128;
+        @Getter private final double l4Score = -104.0; // -107.6;
 
         @Getter private final double exL1Coral = -130.6;
-        @Getter private final double exL2Coral = -118;
-        @Getter private final double exL2Score = -109.6; // -127;
-        @Getter private final double exL3Coral = -115.6; // -143;
+        @Getter private final double exL2Coral = -128.7; // -123;
+        @Getter private final double exL2Score = -116.0; // 109.6; // -127;
+        @Getter private final double exL3Coral = -120.6; // -143;
         @Getter private final double exL3Score = -106.4; // -127;
-        @Getter private final double exL4Coral = -132; // -126;
-        @Getter private final double exL4Score = -106.9; // -104;
+        @Getter private final double exL4Coral = -126.6; // -135;
+        @Getter private final double exL4Score = -105.0; // 6.9; // -104;
 
         @Getter private final double processorAlgae = 64.072;
-        @Getter private final double l2Algae = -86;
-        @Getter private final double l3Algae = -86;
-        @Getter private final double net = -170;
+        @Getter private final double l2Algae = -86.0;
+        @Getter private final double l3Algae = -86.0;
+        @Getter private final double net = -170.0;
 
         @Getter private final double tolerance = 0.95;
 
-        @Getter private final double offset = -90;
-        @Getter private final double initPosition = 180;
+        @Getter private final double offset = -90.0;
+        @Getter private final double initPosition = 180.0;
 
         /* Elbow config settings */
         @Getter private final double zeroSpeed = -0.1;
-        @Getter private final double holdMaxSpeedRPM = 18;
+        @Getter private final double holdMaxSpeedRPM = 18.0;
 
         @Getter private final double currentLimit = 60;
         @Getter private final double torqueCurrentLimit = 80;
         @Getter private final double positionKp = 1400;
         @Getter private final double positionKd = 160;
         @Getter private final double positionKv = 0;
-        @Getter private final double positionKs = 0.4;
+        @Getter private final double positionKs = 0.6;
         @Getter private final double positionKa = 0.002;
-        @Getter private final double positionKg = 11.66666666; // 7 * 1.6666
+        @Getter private final double positionKg = 14; // 7 * 1.6666
         @Getter private final double mmCruiseVelocity = 10;
-        @Getter private final double mmAcceleration = 50;
-        @Getter private final double mmJerk = 0;
+        @Getter private final double mmAcceleration = 20;
+        @Getter private final double mmJerk = 100;
+        @Getter private final double slowMmAcceleration = 7;
+        @Getter private final double slowMmJerk = 60;
 
         @Getter @Setter private double sensorToMechanismRatio = 61.71428571; // 102.857;
         @Getter @Setter private double rotorToSensorRatio = 1;
@@ -149,7 +151,7 @@ public class Elbow extends Mechanism {
         this.config = config;
 
         if (isAttached()) {
-            if (config.isCANcoderAttached()) {
+            if (config.isCANcoderAttached() && !Robot.isSimulation()) {
                 canCoderConfig =
                         new SpectrumCANcoderConfig(
                                 config.getCANcoderRotorToSensorRatio(),
@@ -340,6 +342,16 @@ public class Elbow extends Mechanism {
     public Command move(DoubleSupplier degrees) {
         return run(() -> setMMPositionFoc(getIfReversedOffsetInRotations(degrees)))
                 .withName("Elbow.move");
+    }
+
+    public Command slowMove(DoubleSupplier degrees) {
+        return run(
+                () ->
+                        setDynMMPositionFoc(
+                                getOffsetRotations(degrees),
+                                config::getMmCruiseVelocity,
+                                config::getSlowMmAcceleration,
+                                config::getSlowMmJerk));
     }
 
     public DoubleSupplier getIfReversedOffsetInRotations(DoubleSupplier degrees) {

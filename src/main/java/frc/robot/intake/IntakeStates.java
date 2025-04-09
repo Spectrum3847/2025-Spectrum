@@ -41,50 +41,53 @@ public class IntakeStates {
 
         netAlgae.and(actionState)
                 .whileTrue(
-                        runVoltageCurrentLimits(
-                                config::getAlgaeScoreVoltage,
-                                config::getAlgaeScoreSupplyCurrent,
-                                config::getAlgaeScoreTorqueCurrent));
+                        // runVoltageCurrentLimits(
+                        //         config::getAlgaeScoreVoltage,
+                        //         config::getAlgaeScoreSupplyCurrent,
+                        //         config::getAlgaeScoreTorqueCurrent));
+                        intake.runTorqueFOC(config::getAlgaeScoreTorqueCurrent));
 
         // hasGamePiece.onTrue(intake.getDefaultCommand());
 
         stationIntaking
                 .or(photonAlgaeRemoval)
-                // .whileTrue(runVoltageCurrentLimits(
-                //         config::getCoralIntakeVoltage,
-                //         config::getCoralIntakeSupplyCurrent,
-                //         config::getCoralIntakeTorqueCurrent));
                 .whileTrue(
-                        intake.intakeCoral(
-                                        config::getCoralIntakeTorqueCurrent,
-                                        config::getCoralIntakeSupplyCurrent)
-                                .withName("Intake.StationIntaking"));
+                        // intake.intakeCoral(
+                        //                 config::getCoralIntakeTorqueCurrent,
+                        //                 config::getCoralIntakeSupplyCurrent)
+                        //         .withName("Intake.StationIntaking"));
+                        intake.runTorqueFOC(config::getCoralIntakeTorqueCurrent));
 
         groundCoral.whileTrue(
-                intake.intakeCoral(
-                                config::getCoralGroundTorqueCurrent,
-                                config::getCoralGroundSupplyCurrent)
-                        .withName("Intake.GroundCoral"));
+                // intake.intakeCoral(
+                //                 config::getCoralGroundTorqueCurrent,
+                //                 config::getCoralGroundSupplyCurrent)
+                //         .withName("Intake.GroundCoral"));
+                intake.runTorqueFOC(config::getCoralGroundTorqueCurrent));
 
         algae.and(photon.not())
                 .whileTrue(
-                        intake.intakeAlage(
-                                        config::getAlgaeIntakeTorqueCurrent,
-                                        config::getAlgaeIntakeSupplyCurrent)
-                                .withName("Intake.Algae"));
+                        // intake.intakeAlgae(
+                        //                 config::getAlgaeIntakeTorqueCurrent,
+                        //                 config::getAlgaeIntakeSupplyCurrent)
+                        //         .withName("Intake.Algae"));
+                        intake.runTorqueFOC(config::getAlgaeIntakeTorqueCurrent));
 
         L1Coral.and(actionState)
                 .whileTrue(
-                        runVoltageCurrentLimits(
-                                config::getCoralL1ScoreVoltage,
-                                config::getCoralL1ScoreSupplyCurrent,
-                                config::getCoralL1ScoreTorqueCurrent));
-        branch.and(actionState)
+                        // runVoltageCurrentLimits(
+                        //         config::getCoralL1ScoreVoltage,
+                        //         config::getCoralL1ScoreSupplyCurrent,
+                        //         config::getCoralL1ScoreTorqueCurrent));
+                        intake.runTorqueFOC(config::getCoralL1ScoreTorqueCurrent));
+
+        branch.and(actionState, L4Coral.not())
                 .whileTrue(
-                        runVoltageCurrentLimits(
-                                config::getCoralScoreVoltage,
-                                config::getCoralScoreSupplyCurrent,
-                                config::getCoralScoreTorqueCurrent));
+                        // runVoltageCurrentLimits(
+                        //         config::getCoralScoreVoltage,
+                        //         config::getCoralScoreSupplyCurrent,
+                        //         config::getCoralScoreTorqueCurrent));
+                        intake.runTorqueFOC(config::getCoralScoreTorqueCurrent));
 
         autonScore
                 .and(photon)
@@ -99,13 +102,6 @@ public class IntakeStates {
 
         coastMode.whileTrue(log(coastMode()));
         coastMode.onFalse(log(ensureBrakeMode()));
-        Robot.getPilot()
-                .testTune_tA
-                .whileTrue(
-                        intake.intakeCoral(
-                                        config::getCoralIntakeTorqueCurrent,
-                                        config::getCoralIntakeSupplyCurrent)
-                                .withName("Intake.StationIntaking"));
     }
 
     private static Command coastMode() {

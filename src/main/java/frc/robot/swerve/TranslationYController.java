@@ -1,6 +1,8 @@
 package frc.robot.swerve;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import java.util.function.DoubleSupplier;
 
 /**
  * Uses a profiled PID Controller to quickly turn the robot to a specified angle. Once the robot is
@@ -23,22 +25,27 @@ public class TranslationYController {
                         config.getKDTranslationController(),
                         config.getTranslationConstraints());
 
-        controller.setTolerance(config.getTranslationTolerance());
+        SmartDashboard.putData("Y controller", controller);
     }
 
-    public double calculate(double goalMeters, double currentMeters) {
-        calculatedValue = controller.calculate(currentMeters, goalMeters);
+    public double calculate(DoubleSupplier goalMeters, DoubleSupplier currentMeters) {
+        calculatedValue =
+                controller.calculate(currentMeters.getAsDouble(), goalMeters.getAsDouble());
 
-        if (atSetpoint()) {
+        SmartDashboard.putNumber("Y Controller Output", calculatedValue);
+        if (atGoal(currentMeters.getAsDouble())) {
             calculatedValue = 0;
             return calculatedValue;
         } else {
-            return calculatedValue;
+            return calculatedValue + (config.getKSdrive() * Math.signum(calculatedValue));
         }
     }
 
-    public boolean atSetpoint() {
-        return controller.atSetpoint();
+    public boolean atGoal(double current) {
+        double goal = controller.getGoal().position;
+        boolean atGoal = Math.abs(current - goal) < config.getTranslationTolerance();
+        System.out.println("Y At Goal: " + atGoal + " Goal: " + goal + " Current: " + current);
+        return atGoal;
     }
 
     public void reset(double currentMeters) {

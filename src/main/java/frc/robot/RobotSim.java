@@ -35,38 +35,49 @@ public class RobotSim {
     }
 
     private void addReef() {
-        MechanismRoot2d reefBase = leftView.getRoot("Reef Base", 2, 0.35);
+        MechanismRoot2d reefBase = leftView.getRoot("Reef Base", 1.9, 0.35);
 
         @SuppressWarnings("unused")
         MechanismLigament2d mainReef =
                 reefBase.append(
                         new MechanismLigament2d(
                                 "Main Reef",
-                                Units.inchesToMeters(50) + 0.2,
+                                Units.inchesToMeters(50) + 0.5,
                                 90,
                                 5,
                                 new Color8Bit(Color.kPurple)));
 
-        MechanismRoot2d branch1Base = leftView.getRoot("Branch1 Base", 1.65, 1.2);
+        MechanismRoot2d branch1Base = leftView.getRoot("L2 Branch Base", 1.55, 1.40);
         branch1Base.append(
                 new MechanismLigament2d(
-                        "Branch1", Units.inchesToMeters(15), -30, 3, new Color8Bit(Color.kPurple)));
+                        "0L2Branch",
+                        Units.inchesToMeters(15),
+                        -30,
+                        3,
+                        new Color8Bit(Color.kPurple)));
 
-        MechanismRoot2d branch2Base = leftView.getRoot("Branch2 Base", 1.65, 1.55);
+        MechanismRoot2d branch2Base = leftView.getRoot("L3 Branch Base", 1.55, 1.85);
         branch2Base.append(
                 new MechanismLigament2d(
-                        "Branch2", Units.inchesToMeters(15), -30, 3, new Color8Bit(Color.kPurple)));
+                        "0L3Branch",
+                        Units.inchesToMeters(15),
+                        -30,
+                        3,
+                        new Color8Bit(Color.kPurple)));
 
-        MechanismRoot2d branch3Base =
-                leftView.getRoot("Branch3 Base", 1.65, 0.7 + Units.inchesToMeters(50));
+        MechanismRoot2d branch3Base = leftView.getRoot("L4 Branch Base", 1.55, 2.30);
         branch3Base.append(
                 new MechanismLigament2d(
-                        "Branch3", Units.inchesToMeters(15), -30, 3, new Color8Bit(Color.kPurple)));
+                        "0L4Branch",
+                        Units.inchesToMeters(15),
+                        -30,
+                        3,
+                        new Color8Bit(Color.kPurple)));
 
         branch3Base.append(
                 new MechanismLigament2d(
                         "Top Extension",
-                        Units.inchesToMeters(15),
+                        Units.inchesToMeters(10),
                         90,
                         3,
                         new Color8Bit(Color.kPurple)));

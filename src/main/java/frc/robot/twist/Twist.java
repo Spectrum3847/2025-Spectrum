@@ -1,34 +1,24 @@
 package frc.robot.twist;
 
-import static frc.robot.RobotStates.coral;
-
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.CANcoderSimState;
-import com.ctre.phoenix6.sim.TalonFXSimState;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NTSendableBuilder;
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.RobotSim;
 import frc.robot.RobotStates;
+import frc.robot.twist.Twist.TwistConfig;
 import frc.spectrumLib.Rio;
 import frc.spectrumLib.SpectrumCANcoder;
 import frc.spectrumLib.SpectrumCANcoderConfig;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.mechanism.Mechanism;
-import frc.spectrumLib.sim.Mount;
-import frc.spectrumLib.sim.Mount.MountType;
-import frc.spectrumLib.sim.Mountable;
 import java.util.function.DoubleSupplier;
 import lombok.*;
 
@@ -40,24 +30,26 @@ public class Twist extends Mechanism {
         // Positions set as percentage of Twist
         @Getter private final int initializedPosition = 20;
 
-        @Getter private final double stageDelay = 0.1;
+        @Getter private final double stageDelay = 0.05;
 
         /* twist positions in percentage of max rotation || 0 is horizontal */
 
-        @Getter private final double home = 0;
+        @Getter private final double home = 90;
         @Getter private final double lollipopCoral = 90;
         @Getter private final double stationIntake = 0; // 179.9;
         @Getter private final double algaeIntake = 179.9;
         @Getter private final double groundAlgaeIntake = 0;
         @Getter private final double groundCoralIntake = 179.9;
         @Getter private final double leftCoral = 90;
-        @Getter private final double rightCoral = -90;
+        @Getter private final double rightCoral = 270; // -90;
         @Getter private final double l1Coral = 0;
         @Getter private final double processorAlgae = 0;
         @Getter private final double net = algaeIntake;
         @Getter private final double climbPrep = 179.9;
 
         @Getter private final double initPosition = 0;
+        @Getter private double triggerTolerance = 5;
+        @Getter private double twistTolerance = 45;
 
         /* Twist config settings */
         @Getter private final double zeroSpeed = -0.1;
@@ -112,8 +104,8 @@ public class Twist extends Mechanism {
             configForwardTorqueCurrentLimit(torqueCurrentLimit);
             configReverseTorqueCurrentLimit(torqueCurrentLimit);
             configMinMaxRotations(-.25, 0.75);
-            configReverseSoftLimit(getMinRotations(), true);
-            configForwardSoftLimit(getMaxRotations(), true);
+            configReverseSoftLimit(getMinRotations(), false);
+            configForwardSoftLimit(getMaxRotations(), false);
             configNeutralBrakeMode(true);
             configContinuousWrap(false);
             configGravityType(true);
@@ -130,7 +122,7 @@ public class Twist extends Mechanism {
         }
     }
 
-    private TwistConfig config;
+    @Getter private TwistConfig config;
     private SpectrumCANcoder canCoder;
     private SpectrumCANcoderConfig canCoderConfig;
     @Getter private TwistSim sim;
@@ -141,7 +133,7 @@ public class Twist extends Mechanism {
         this.config = config;
 
         if (isAttached()) {
-            if (config.isCANcoderAttached()) {
+            if (config.isCANcoderAttached() && !Robot.isSimulation()) {
                 canCoderConfig =
                         new SpectrumCANcoderConfig(
                                 config.getCANcoderRotorToSensorRatio(),
@@ -281,22 +273,52 @@ public class Twist extends Mechanism {
                     double target = (targetDegrees.getAsDouble() % 360);
                     // Normalize currentDegrees to be within 0 to 360
                     double currentMod = (currentDegrees % 360);
+                    if (currentMod < 0) {
+                        currentMod += 360;
+                    }
 
-                    double output;
+                    double output = currentDegrees;
 
-                    if (clockwise) {
-                        // Calculate the closest clockwise position
-                        if (currentMod > target) {
+                    if (Math.abs(currentMod - target)
+                            < config.getTwistTolerance()) { // check if the difference is within
+                        // tolerance
+                        if (currentMod - target > 0) {
                             output = currentDegrees - (currentMod - target);
                         } else {
-                            output = currentDegrees - (360 + currentMod - target);
+                            output = currentDegrees + (target - currentMod);
+                        }
+                    } else if (Math.abs(currentMod - target) > 360 - config.getTwistTolerance()
+                            && Math.abs(Math.abs(currentMod - target) - 360)
+                                    < config.getTwistTolerance()) { // check if the difference is
+                        // within tolerance and currentMod or target is near 0 and 360
+                        if (currentMod < target) {
+                            if (currentMod - (target - 360) > 0) {
+                                output = currentDegrees + (currentMod - (target - 360));
+                            } else {
+                                output = currentDegrees - (currentMod - (target - 360));
+                            }
+                        } else {
+                            if ((currentMod - 360) - target > 0) {
+                                output = currentDegrees + ((currentMod - 360) - target);
+                            } else {
+                                output = currentDegrees - ((currentMod - 360) - target);
+                            }
                         }
                     } else {
-                        // Calculate the closest counterclockwise position
-                        if (currentMod < target) {
-                            output = currentDegrees + (target - currentMod);
+                        if (clockwise) {
+                            // Calculate the closest clockwise position
+                            if (currentMod > target) {
+                                output = currentDegrees - (currentMod - target);
+                            } else if (currentMod < target) {
+                                output = currentDegrees - (360 + currentMod - target);
+                            }
                         } else {
-                            output = currentDegrees + (360 + target - currentMod);
+                            // Calculate the closest counterclockwise position
+                            if (currentMod < target) {
+                                output = currentDegrees + (target - currentMod);
+                            } else if (currentMod > target) {
+                                output = currentDegrees + (360 + target - currentMod);
+                            }
                         }
                     }
 
@@ -304,6 +326,10 @@ public class Twist extends Mechanism {
                     setDegrees(() -> out);
                 });
     }
+
+    // public Command move(DoubleSupplier targetDegrees, BooleanSupplier clockwise) {
+    //     return move(targetDegrees, clockwise.getAsBoolean());
+    // }
 
     public Command move(DoubleSupplier degrees) {
         return run(
@@ -321,6 +347,150 @@ public class Twist extends Mechanism {
                 });
     }
 
+    public Command moveAwayFromElevatorCheckReverse(DoubleSupplier degrees) {
+        return Commands.either(
+                        moveAwayFromElevatorReversed(() -> adjustTargetToReverse(degrees))
+                                .until(() -> RobotStates.reverse.getAsBoolean() != true),
+                        moveAwayFromElevator(() -> adjustTargetToReverse(degrees))
+                                .until(() -> RobotStates.reverse.getAsBoolean() != false),
+                        () -> RobotStates.reverse.getAsBoolean())
+                .repeatedly();
+    }
+
+    public Command moveAwayFromElevator(DoubleSupplier degrees) {
+        return Commands.either(
+                move(degrees, true),
+                move(degrees, false),
+                () -> checkClockwiseFromElevator(degrees, false));
+    }
+
+    public Command moveAwayFromElevatorReversed(DoubleSupplier degrees) {
+        return Commands.either(
+                move(degrees, true),
+                move(degrees, false),
+                () -> checkClockwiseFromElevator(degrees, true));
+    }
+
+    public Command homeAwayFromElevator(DoubleSupplier degrees) {
+        return Commands.either(
+                move(degrees, true),
+                move(degrees, false),
+                () -> checkClockwiseFromElevator(degrees, !RobotStates.reverse.getAsBoolean()));
+    }
+
+    public Command moveAwayFromBranchCheckReversed(DoubleSupplier degrees) {
+        return Commands.either(
+                move(() -> adjustTargetToReverse(degrees), true),
+                move(() -> adjustTargetToReverse(degrees), false),
+                () ->
+                        checkClockwiseAwayFromBranch(
+                                () -> adjustTargetToReverse(degrees),
+                                RobotStates.reverse.getAsBoolean()));
+    }
+
+    public double adjustTargetToReverse(DoubleSupplier degrees) {
+        if (RobotStates.reverse.getAsBoolean()) {
+            if (degrees.getAsDouble() + 180 > 270) {
+                return degrees.getAsDouble() - 180;
+            }
+            return degrees.getAsDouble() + 180;
+        }
+        return degrees.getAsDouble();
+    }
+
+    private boolean checkClockwiseFromElevator(DoubleSupplier degrees, boolean reverse) {
+        double degreesMod = degrees.getAsDouble() % 360;
+        double currentMod = getPositionDegrees() % 360;
+
+        if (currentMod < 0) {
+            currentMod += 360;
+        }
+
+        // Telemetry.print("TARGET: " + degreesMod);
+        // Telemetry.print("CURRENT: " + currentMod);
+
+        // check if moving from within to past elevator
+        if (degreesMod > 180 + config.getTwistTolerance()
+                && degreesMod < 360 - config.getTwistTolerance()
+                && currentMod < 180 + config.getTwistTolerance()) {
+            if (reverse) {
+                // Telemetry.print("1: false");
+                return false;
+            }
+            // System.out.println("1: true");
+            return true;
+        }
+
+        // check if moving from past elevator back to within
+        if (degreesMod < 180 + config.getTwistTolerance()
+                && currentMod > 180 + config.getTwistTolerance()
+                && currentMod < 360 - config.getTwistTolerance()) {
+            if (reverse) {
+                // Telemetry.print("2: false");
+                return false;
+            }
+            // Telemetry.print("2: true");
+            return true;
+        }
+
+        if (degreesMod > 180 + config.getTwistTolerance()
+                && degreesMod < 360 - config.getTwistTolerance()
+                && currentMod > 180 + config.getTwistTolerance()
+                && currentMod < 360 - config.getTwistTolerance()) {
+            if (degreesMod < currentMod) {
+                // Telemetry.print("3: false");
+                return false;
+            }
+            // Telemetry.print("3: true");
+            return true;
+        }
+
+        if (degreesMod < currentMod && currentMod < 360 - config.getTwistTolerance()) {
+            // Telemetry.print("4: true");
+            return true;
+        }
+        // Telemetry.print("4: false");
+        return false;
+    }
+
+    private boolean checkClockwiseAwayFromBranch(DoubleSupplier degrees, boolean reverse) {
+        double degreesMod = degrees.getAsDouble() % 360;
+        double currentMod = getPositionDegrees() % 360;
+
+        // Telemetry.print("TARGET: " + degreesMod);
+        // Telemetry.print("CURRENT: " + currentMod);
+
+        if (currentMod < 0) {
+            currentMod += 360;
+        }
+
+        if (degreesMod < 180 && currentMod > 180) {
+            if (reverse) {
+                return false;
+            }
+            return true;
+        }
+
+        if (degreesMod > 180 && currentMod < 180) {
+            if (reverse) {
+                return true;
+            }
+            return false;
+        }
+
+        if (degreesMod > 180 && currentMod > 180) {
+            if (degreesMod < currentMod) {
+                return false;
+            }
+            return true;
+        }
+
+        if (degreesMod < currentMod) {
+            return true;
+        }
+        return false;
+    }
+
     public DoubleSupplier getIfReversedDegrees(DoubleSupplier degrees) {
         return () ->
                 (RobotStates.reverse.getAsBoolean())
@@ -329,14 +499,14 @@ public class Twist extends Mechanism {
     }
 
     public Command twistHome() {
-        return run(
-                () -> {
-                    if (coral.getAsBoolean()) {
-                        setDegrees(config::getLeftCoral);
-                    } else {
-                        setDegrees(config::getHome);
-                    }
-                });
+        return homeAwayFromElevator(config::getHome).withName("Twist.home");
+    }
+
+    public Trigger atDegrees(DoubleSupplier target, DoubleSupplier tolerance) {
+        return new Trigger(
+                () ->
+                        Math.abs(((getPositionDegrees() % 360) + 360) % 360 - target.getAsDouble())
+                                < tolerance.getAsDouble());
     }
 
     // --------------------------------------------------------------------------------
@@ -344,7 +514,7 @@ public class Twist extends Mechanism {
     // --------------------------------------------------------------------------------
     private void simulationInit() {
         if (isAttached()) {
-            sim = new TwistSim(motor.getSimState(), RobotSim.leftView);
+            sim = new TwistSim(motor.getSimState(), RobotSim.leftView, this);
 
             // m_CANcoder.setPosition(0);
         }
@@ -355,200 +525,6 @@ public class Twist extends Mechanism {
         if (isAttached()) {
             sim.simulationPeriodic();
             // m_CANcoder.getSimState().setRawPosition(sim.getAngleRads() / 0.202);
-        }
-    }
-
-    class TwistSim implements Mountable {
-        private SingleJointedArmSim armSim;
-        private TalonFXSimState twistMotorSim;
-        MechanismRoot2d root;
-        MechanismLigament2d leftBase;
-        MechanismLigament2d leftProng;
-        MechanismLigament2d rightBase;
-        MechanismLigament2d rightProng;
-        Mount mount;
-        double initMountX;
-        double initMountY;
-        double initMountAngle;
-
-        public TwistSim(TalonFXSimState twistMotorSim, Mechanism2d mech) {
-            armSim =
-                    new SingleJointedArmSim(
-                            DCMotor.getKrakenX60Foc(config.getNumMotors()),
-                            config.getSimRatio(),
-                            1.2,
-                            config.getCoralLength(), // placeholder, should really be length of
-                            // forearm
-                            Math.toRadians(-360),
-                            Math.toRadians(360),
-                            false, // Simulate gravity (change back to true)
-                            0);
-            this.twistMotorSim = twistMotorSim;
-
-            root = mech.getRoot("Claw pivot", config.getTwistX(), config.getTwistY());
-            leftBase =
-                    root.append(
-                            new MechanismLigament2d(
-                                    "3LeftTwistBase",
-                                    config.getCoralLength(),
-                                    config.getCoralBaseAngle(),
-                                    config.getCoralLineWeight() / 2,
-                                    config.getCoralColor()));
-            rightBase =
-                    root.append(
-                            new MechanismLigament2d(
-                                    "2RightTwistBase",
-                                    config.getAlgaeLength(),
-                                    config.getAlgaeBaseAngle(),
-                                    config.getAlgaeLineWeight(),
-                                    config.getAlgaeColor()));
-            leftProng =
-                    leftBase.append(
-                            new MechanismLigament2d(
-                                    "3LeftTwistProng",
-                                    0.075,
-                                    -config.getCoralBaseAngle(),
-                                    config.getCoralLineWeight(),
-                                    config.getCoralColor()));
-            rightProng =
-                    rightBase.append(
-                            new MechanismLigament2d(
-                                    "2RightTwistProng",
-                                    0.075,
-                                    -config.getAlgaeBaseAngle(),
-                                    config.getAlgaeLineWeight(),
-                                    config.getAlgaeColor()));
-
-            mount = Robot.getElbow().getSim();
-            initMountX = Robot.getElbow().getConfig().getElbowX();
-            initMountY = Robot.getElbow().getConfig().getElbowY();
-            initMountAngle = Robot.getElbow().getConfig().getStartingAngle();
-        }
-
-        public void simulationPeriodic() {
-            armSim.setInput(twistMotorSim.getMotorVoltage());
-            armSim.update(TimedRobot.kDefaultPeriod);
-            twistMotorSim.setRawRotorPosition(
-                    (Units.radiansToRotations(armSim.getAngleRads() - 0)) * config.getSimRatio());
-            twistMotorSim.setRotorVelocity(
-                    Units.radiansToRotations(armSim.getVelocityRadPerSec()) * config.getSimRatio());
-
-            /* updates position and angle based on elbow */
-            root.setPosition(
-                    getUpdatedX(
-                            MountType.ARM,
-                            config.getTwistX(),
-                            config.getTwistY(),
-                            initMountX,
-                            initMountY,
-                            initMountAngle,
-                            mount.getMountX(),
-                            mount.getMountY(),
-                            mount.getDisplacementX(),
-                            mount.getDisplacementY(),
-                            mount.getAngle()),
-                    getUpdatedY(
-                            MountType.ARM,
-                            config.getTwistX(),
-                            config.getTwistY(),
-                            initMountX,
-                            initMountY,
-                            initMountAngle,
-                            mount.getMountX(),
-                            mount.getMountY(),
-                            mount.getDisplacementX(),
-                            mount.getDisplacementY(),
-                            mount.getAngle()));
-
-            /* changes which side is closest to the viewer; the left prong is always closest to the viewer */
-            if (getPositionPercentage() > 0 && getPositionDegrees() % 360 <= 180) {
-                leftBase.setColor(config.getCoralColor());
-                leftProng.setColor(config.getCoralColor());
-                rightBase.setColor(config.getAlgaeColor());
-                rightProng.setColor(config.getAlgaeColor());
-                leftBase.setLineWeight(2 * config.getCoralLineWeight() / 3);
-                leftProng.setLineWeight(config.getCoralLineWeight());
-                rightBase.setLineWeight(config.getAlgaeLineWeight());
-                rightProng.setLineWeight(config.getAlgaeLineWeight());
-                leftBase.setAngle(
-                        calculateBaseAngle(config.getCoralBaseAngle(), getPositionPercentage())
-                                + Math.toDegrees(mount.getAngle()));
-                leftProng.setAngle(
-                        calculateBaseAngle(-config.getCoralBaseAngle(), getPositionPercentage()));
-                rightBase.setAngle(
-                        calculateBaseAngle(config.getAlgaeBaseAngle(), getPositionPercentage())
-                                + Math.toDegrees(mount.getAngle()));
-                rightProng.setAngle(
-                        calculateBaseAngle(-config.getAlgaeBaseAngle(), getPositionPercentage()));
-                leftBase.setLength(
-                        calculateBaseLength(
-                                config.getCoralLength(),
-                                config.getCoralBaseAngle(),
-                                calculateBaseAngle(
-                                        config.getCoralBaseAngle(), getPositionPercentage()),
-                                getPositionPercentage()));
-                rightBase.setLength(
-                        calculateBaseLength(
-                                config.getAlgaeLength(),
-                                config.getAlgaeBaseAngle(),
-                                calculateBaseAngle(
-                                        config.getAlgaeBaseAngle(), getPositionPercentage()),
-                                getPositionPercentage()));
-            } else {
-                leftBase.setColor(config.getAlgaeColor());
-                leftProng.setColor(config.getAlgaeColor());
-                rightBase.setColor(config.getCoralColor());
-                rightProng.setColor(config.getCoralColor());
-                leftBase.setLineWeight(config.getAlgaeLineWeight());
-                leftProng.setLineWeight(config.getAlgaeLineWeight());
-                rightBase.setLineWeight(2 * config.getCoralLineWeight() / 3);
-                rightProng.setLineWeight(config.getCoralLineWeight());
-                leftBase.setAngle(
-                        calculateBaseAngle(config.getAlgaeBaseAngle(), getPositionPercentage())
-                                + Math.toDegrees(mount.getAngle()));
-                leftProng.setAngle(
-                        calculateBaseAngle(-config.getAlgaeBaseAngle(), getPositionPercentage()));
-                rightBase.setAngle(
-                        calculateBaseAngle(config.getCoralBaseAngle(), getPositionPercentage())
-                                + Math.toDegrees(mount.getAngle()));
-                rightProng.setAngle(
-                        calculateBaseAngle(-config.getCoralBaseAngle(), getPositionPercentage()));
-                leftBase.setLength(
-                        calculateBaseLength(
-                                config.getAlgaeLength(),
-                                config.getAlgaeBaseAngle(),
-                                calculateBaseAngle(
-                                        config.getAlgaeBaseAngle(), getPositionPercentage()),
-                                getPositionPercentage()));
-                rightBase.setLength(
-                        calculateBaseLength(
-                                config.getCoralLength(),
-                                config.getCoralBaseAngle(),
-                                calculateBaseAngle(
-                                        config.getCoralBaseAngle(), getPositionPercentage()),
-                                getPositionPercentage()));
-            }
-        }
-
-        private double getPositionPercentage() {
-            double position = getPositionDegrees() % 360;
-            if (position > 180) {
-                position -= 180;
-                position = 180 - position;
-            }
-            return (position / 180) * 100;
-        }
-
-        private double calculateBaseAngle(double startingAngle, double posePercent) {
-            return startingAngle * ((Math.abs(posePercent) - 50) / 50);
-        }
-
-        @SuppressWarnings("unused ")
-        private double calculateBaseLength(
-                double startingLength, double startingAngle, double angle, double posePercent) {
-            double startingVerticalLeg =
-                    Math.cos(Units.degreesToRadians(startingAngle)) * startingLength;
-            return startingVerticalLeg / Math.cos(Units.degreesToRadians(angle));
         }
     }
 }

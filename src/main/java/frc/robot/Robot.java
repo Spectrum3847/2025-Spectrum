@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.auton.Auton;
 import frc.robot.climb.Climb;
 import frc.robot.climb.Climb.ClimbConfig;
@@ -37,7 +38,6 @@ import frc.robot.shoulder.Shoulder;
 import frc.robot.shoulder.Shoulder.ShoulderConfig;
 import frc.robot.swerve.Swerve;
 import frc.robot.swerve.SwerveConfig;
-import frc.robot.swerve.SwerveStates;
 import frc.robot.twist.Twist;
 import frc.robot.twist.Twist.TwistConfig;
 import frc.robot.vision.Vision;
@@ -189,13 +189,13 @@ public class Robot extends SpectrumRobot {
         RobotStates.clearStates().schedule();
     }
 
-    public void setupAutoVisualizer() {
+    public void setupSmartDashboardData() {
         SmartDashboard.putData("Field2d", field2d);
     }
 
     @Override // Deprecated
     public void robotInit() {
-        setupAutoVisualizer();
+        setupSmartDashboardData();
         WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
     }
 
@@ -229,20 +229,23 @@ public class Robot extends SpectrumRobot {
     @Override
     public void disabledInit() {
         Telemetry.print("### Disabled Init Starting ### ");
+        clearCommandsAndButtons();
         resetCommandsAndButtons();
 
         if (!commandInit) {
             Command AutonStartCommand =
-                    FollowPathCommand.warmupCommand()
-                            .andThen(
-                                    PathfindingCommand.warmupCommand()
-                                            .andThen(
-                                                    SwerveStates.reefAimDrive()
-                                                            .ignoringDisable(true)
-                                                            .withTimeout(0.5),
-                                                    auton.sourceL4(false)
-                                                            .ignoringDisable(true)
-                                                            .withTimeout(0.5)));
+                    (FollowPathCommand.warmupCommand()
+                                    .andThen(
+                                            PathfindingCommand.warmupCommand(),
+                                            auton.SpectrumAuton("Side Start L4", false)
+                                                    .withTimeout(.5),
+                                            new InstantCommand(
+                                                    () -> {
+                                                        SmartDashboard.putBoolean(
+                                                                "Initialized?", true);
+                                                        clearCommandsAndButtons();
+                                                    })))
+                            .ignoringDisable(true);
             AutonStartCommand.schedule();
             commandInit = true;
         }

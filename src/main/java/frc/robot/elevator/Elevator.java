@@ -50,8 +50,8 @@ public class Elevator extends Mechanism {
         @Getter @Setter private double l4Score = l4Coral - 3;
 
         @Getter @Setter private double exl1Coral = 0.3;
-        @Getter @Setter private double exl2Coral = 8.6; // 1
-        @Getter @Setter private double exl2Score = 6.2; // 0.3;
+        @Getter @Setter private double exl2Coral = 5.53; // 8.6;
+        @Getter @Setter private double exl2Score = 3.44; // 6.2; // 0.3;
         @Getter @Setter private double exl3Coral = 20; // 12.8;
         @Getter @Setter private double exl3Score = 17.6; // 11.8;
         @Getter @Setter private double exl4Coral = fullExtend;
@@ -74,6 +74,8 @@ public class Elevator extends Mechanism {
         @Getter private final double mmCruiseVelocity = 70;
         @Getter private final double mmAcceleration = 400;
         @Getter private final double mmJerk = 4500;
+        @Getter private final double slowMmAcceleration = 75;
+        @Getter private final double slowMmJerk = 750;
 
         @Getter private double currentLimit = 60;
         @Getter private double torqueCurrentLimit = 160;
@@ -217,6 +219,25 @@ public class Elevator extends Mechanism {
                         setMMPositionFoc(exRotations);
                     } else {
                         setMMPositionFoc(shrinkRotations);
+                    }
+                });
+    }
+
+    public Command slowMove(DoubleSupplier shrinkRotations, DoubleSupplier exRotations) {
+        return run(
+                () -> {
+                    if (!RobotStates.shrink.getAsBoolean()) {
+                        setDynMMPositionFoc(
+                                exRotations,
+                                () -> config.getMmCruiseVelocity(),
+                                () -> config.getSlowMmAcceleration(),
+                                () -> config.getSlowMmJerk());
+                    } else {
+                        setDynMMPositionFoc(
+                                shrinkRotations,
+                                () -> config.getMmCruiseVelocity(),
+                                () -> config.getSlowMmAcceleration(),
+                                () -> config.getSlowMmJerk());
                     }
                 });
     }

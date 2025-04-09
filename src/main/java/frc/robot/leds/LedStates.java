@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.RobotStates;
+import frc.robot.vision.VisionStates;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.leds.SpectrumLEDs;
 import frc.spectrumLib.util.Util;
@@ -30,8 +31,8 @@ public class LedStates {
         // homeFinishLED(RobotStates.isAtHome.and(Util.teleop, RobotStates.staged.not()), 8);
 
         // // Coral and Algae Led Commands
-        // coralModeLED(RobotStates.coral.and(Util.teleop), 6);
-        // algaeModeLED(RobotStates.algae.and(Util.teleop), 6);
+        coralModeLED(RobotStates.coral.and(Util.teleop), 6);
+        algaeModeLED(RobotStates.algae.and(Util.teleop), 6);
         // coralStagedLED(RobotStates.stagedCoral.and(Util.teleop), 7);
         // algaeStagedLED(RobotStates.stagedAlgae.and(Util.teleop), 7);
         // hasCoralLED(IntakeStates.hasCoral.and(Util.teleop), 7);
@@ -43,6 +44,12 @@ public class LedStates {
 
         // Climb Led Commands
         // climbReadyLED(ClimbStates.isLatched.and(RobotStates.climbPrep, Util.teleop), 6);
+
+        // Limelight Led Commands
+        seesTagDefault(VisionStates.seeingTag.and(Util.teleop), 5);
+        seesTagAndCoralMode(VisionStates.seeingTag.and(RobotStates.coral, Util.teleop), 7);
+        seesTagAndAlgaeMode(VisionStates.seeingTag.and(RobotStates.algae, Util.teleop), 7);
+        seesTagAndRightCoral(VisionStates.seeingTag.and(RobotStates.rightScore, Util.teleop), 9);
     }
 
     /** Default LED commands for each mode */
@@ -150,9 +157,12 @@ public class LedStates {
     }
 
     static void coralModeLED(Trigger trigger, int priority) {
-        withReverseLedCommand(
-                "right.CoralMode", right, right.solid(Color.kCoral), priority, trigger);
-        withReverseLedCommand("left.CoralMode", left, left.solid(Color.kCoral), priority, trigger);
+        // withReverseLedCommand(
+        //         "right.CoralMode", right, right.solid(Color.kCoral), priority, trigger);
+        // withReverseLedCommand("left.CoralMode", left, left.solid(Color.kCoral), priority,
+        // trigger);
+        ledCommand("right.CoralMode", right, right.solid(Color.kCoral), priority, trigger);
+        ledCommand("left.CoralMode", left, left.solid(Color.kCoral), priority, trigger);
     }
 
     static void algaeModeLED(Trigger trigger, int priority) {
@@ -160,6 +170,8 @@ public class LedStates {
         //         "right.AlgaeMode", right, right.solid(Color.kMediumSeaGreen), priority, trigger);
         // withReverseLedCommand(
         //         "left.AlgaeMode", left, left.solid(Color.kMediumSeaGreen), priority, trigger);
+        ledCommand("right.AlgaeMode", right, right.solid(Color.kMediumSeaGreen), priority, trigger);
+        ledCommand("left.AlgaeMode", left, left.solid(Color.kMediumSeaGreen), priority, trigger);
     }
 
     static void coralStagedLED(Trigger trigger, int priority) {
@@ -217,6 +229,56 @@ public class LedStates {
                 trigger);
         withReverseLedCommand(
                 "left.HasAlgae", left, left.breathe(Color.kMediumSeaGreen, 1), priority, trigger);
+    }
+
+    static void seesTagDefault(Trigger trigger, int priority) {
+        ledCommand("right.SeesTag", right, right.bounce(Color.kYellow, 3), priority, trigger);
+        ledCommand("left.SeesTag", left, left.bounce(Color.kYellow, 3), priority, trigger);
+    }
+
+    static void seesTagAndCoralMode(Trigger trigger, int priority) {
+        ledCommand(
+                "right.SeesTagAndCoralMode",
+                right,
+                right.edges(Color.kYellow, 5).overlayOn(right.solid(Color.kCoral)),
+                priority,
+                trigger);
+        ledCommand(
+                "left.SeesTagAndCoralMode",
+                left,
+                left.edges(Color.kYellow, 5).overlayOn(left.solid(Color.kCoral)),
+                priority,
+                trigger);
+    }
+
+    static void seesTagAndAlgaeMode(Trigger trigger, int priority) {
+        ledCommand(
+                "right.SeesTagAndAlgaeMode",
+                right,
+                right.edges(Color.kYellow, 5).overlayOn(right.solid(Color.kMediumSeaGreen)),
+                priority,
+                trigger);
+        ledCommand(
+                "left.SeesTagAndAlgaeMode",
+                left,
+                left.edges(Color.kYellow, 5).overlayOn(left.solid(Color.kMediumSeaGreen)),
+                priority,
+                trigger);
+    }
+
+    static void seesTagAndRightCoral(Trigger trigger, int priority) {
+        ledCommand(
+                "right.SeesTagAndRightCoral",
+                right,
+                right.edges(Color.kYellow, 5).overlayOn(right.solid(Color.kGreen)),
+                priority,
+                trigger);
+        ledCommand(
+                "left.SeesTagAndRightCoral",
+                left,
+                left.edges(Color.kYellow, 5).overlayOn(left.solid(Color.kGreen)),
+                priority,
+                trigger);
     }
 
     // Log Command
