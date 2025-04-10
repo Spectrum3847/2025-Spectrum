@@ -59,6 +59,7 @@ public class Field {
             double farCage = flipYifRed(getFarCageY(0));
             double middleCage = flipYifRed(getMiddleCageY(0));
             double closeCage = flipYifRed(getCloseCageY(0));
+            double targetCage = Robot.getSwerve().getRobotPose().getY();
 
             cageDiffs[0] = Math.abs(flipYifRed(robotPose.getY()) - farCage);
             cageDiffs[1] = Math.abs(flipYifRed(robotPose.getY()) - middleCage);
@@ -67,14 +68,15 @@ public class Field {
             int closestCage = indexOfSmallest(cageDiffs);
 
             if (closestCage == 0) {
-                return farCage;
+                targetCage = farCage;
             } else if (closestCage == 1) {
-                return middleCage;
+                targetCage = middleCage;
             } else if (closestCage == 2) {
-                return closeCage;
+                targetCage = closeCage;
             } else {
-                return Robot.getSwerve().getRobotPose().getY();
+                return targetCage;
             }
+            return flipYifRed(targetCage);
         }
 
         public static double getCageAngleToClimb() {

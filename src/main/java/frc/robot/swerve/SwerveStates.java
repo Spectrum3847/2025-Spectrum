@@ -139,7 +139,9 @@ public class SwerveStates {
                     .andThen(
                             drive(
                                     pilot::getDriveFwdPositive,
-                                    getAlignToY(() -> Field.flipYifRed(yGoalMeters.getAsDouble())),
+                                    () ->
+                                            -getAlignToY(() -> yGoalMeters.getAsDouble())
+                                                    .getAsDouble(),
                                     getAlignHeading(headingRadians)));
         } else {
             return resetYController()
