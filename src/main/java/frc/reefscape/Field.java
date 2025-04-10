@@ -73,14 +73,15 @@ public class Field {
                 targetCage = middleCage;
             } else if (closestCage == 2) {
                 targetCage = closeCage;
-            } else {
-                return targetCage;
             }
             return flipYifRed(targetCage);
         }
 
         public static double getCageAngleToClimb() {
             double offset = 0; // offset in degrees
+            if (Field.isRed()) {
+                return Units.degreesToRadians(-90 + offset);
+            }
             return Units.degreesToRadians(90 + offset);
         }
 
