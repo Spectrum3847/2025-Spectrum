@@ -17,7 +17,6 @@ import frc.robot.pilot.Pilot;
 import frc.spectrumLib.SpectrumState;
 import frc.spectrumLib.Telemetry;
 import java.util.function.DoubleSupplier;
-import frc.reefscape.Field;
 
 public class SwerveStates {
     static Swerve swerve = Robot.getSwerve();
@@ -85,7 +84,7 @@ public class SwerveStates {
         //                 backReefOffset::getY,
         //                 () -> Math.toRadians(180))); // alignToYDrive(() -> Field.fieldWidth /
         // 2));
-        
+
     }
 
     /** Pilot Commands ************************************************************************ */
@@ -112,26 +111,29 @@ public class SwerveStates {
     }
 
     public static Command netAimDrive() {
-        if (Field.isBlue()) {
-                return aimDrive(getAlignToX(() -> Field.Barge.bargeXBlue.getX()),
-                        pilot::getDriveLeftPositive,
-                        pilot::getDriveCCWPositive);
+        if (Field.isRed()) {
+            return alignToXDrive(() -> Field.Barge.bargeXRed.getX());
+        } else {
+            return alignToXDrive(() -> Field.Barge.bargeXBlue.getX());
         }
-        else {
-                return aimDrive(getAlignToX(() -> Field.Barge.bargeXRed.getX()),
-                        pilot::getDriveLeftPositive,
-                        pilot::getDriveCCWPositive);
-        }
-        
     }
 
     public static Command alignToXDrive(DoubleSupplier xGoalMeters) {
-        return resetXController()
-                .andThen(
-                        drive(
-                                getAlignToX(xGoalMeters),
-                                pilot::getDriveLeftPositive,
-                                pilot::getDriveCCWPositive));
+        if (Field.isRed()) {
+            return resetXController()
+                    .andThen(
+                            drive(
+                                    () -> -getAlignToX(xGoalMeters).getAsDouble(),
+                                    pilot::getDriveLeftPositive,
+                                    pilot::getDriveCCWPositive));
+        } else {
+            return resetXController()
+                    .andThen(
+                            drive(
+                                    getAlignToX(xGoalMeters),
+                                    pilot::getDriveLeftPositive,
+                                    pilot::getDriveCCWPositive));
+        }
     }
 
     public static Command alignToYDrive(DoubleSupplier yGoalMeters) {
