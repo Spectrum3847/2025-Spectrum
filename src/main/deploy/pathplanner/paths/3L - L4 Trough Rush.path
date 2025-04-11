@@ -47,26 +47,26 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "clearStates",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "coral",
-      "waypointRelativePos": 0.19929522317932777,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
       "name": "sourceIntakeOff",
       "waypointRelativePos": 0.3026624902114333,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
+      "name": "clearStates",
+      "waypointRelativePos": 0.396632732967882,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
       "name": "left",
-      "waypointRelativePos": 0.3966327329678886,
+      "waypointRelativePos": 0.5015661707126092,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "coral",
+      "waypointRelativePos": 0.5031323414252147,
       "endWaypointRelativePos": null,
       "command": null
     }
@@ -84,7 +84,7 @@
     "rotation": -59.99999999999999
   },
   "reversed": false,
-  "folder": "Side Start Source L4",
+  "folder": "Houston 2 Coral",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -53.5

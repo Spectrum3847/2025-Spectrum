@@ -8,7 +8,6 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NTSendable;
 import edu.wpi.first.networktables.NTSendableBuilder;
 import edu.wpi.first.util.sendable.SendableRegistry;
@@ -18,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.reefscape.Field;
 import frc.robot.Robot;
+import frc.robot.RobotStates;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.Telemetry.PrintPriority;
 import frc.spectrumLib.util.Util;
@@ -125,6 +125,7 @@ public class Vision implements NTSendable, Subsystem {
         setLimeLightOrientation();
         disabledLimelightUpdates();
         enabledLimelightUpdates();
+        autonLimelightUpdates();
 
         Robot.getField2d().getObject(frontLL.getCameraName()).setPose(getFrontMegaTag2Pose());
         Robot.getField2d().getObject(backLL.getCameraName()).setPose(getBackMegaTag2Pose());
@@ -154,10 +155,10 @@ public class Vision implements NTSendable, Subsystem {
     @Override
     public void initSendable(NTSendableBuilder builder) {
         builder.addDoubleProperty("FrontTX", frontLL::getTagTx, null);
-        builder.addDoubleProperty("FrontTY", frontLL::getTagTA, null);
+        builder.addDoubleProperty("FrontTA", frontLL::getTagTA, null);
         builder.addDoubleProperty("FrontTagID", frontLL::getClosestTagID, null);
         builder.addDoubleProperty("BackTX", backLL::getTagTx, null);
-        builder.addDoubleProperty("BackTY", backLL::getTagTA, null);
+        builder.addDoubleProperty("BackTA", backLL::getTagTA, null);
         builder.addDoubleProperty("BackTagID", backLL::getClosestTagID, null);
     }
 
@@ -213,6 +214,37 @@ public class Vision implements NTSendable, Subsystem {
 
             try {
                 addMegaTag1_VisionInput(frontLL, false);
+            } catch (Exception e) {
+                Telemetry.print("FRONT MT1: Vision pose not present but tried to access it");
+            }
+        }
+    }
+
+    private void autonLimelightUpdates() {
+        if (Util.autoMode.getAsBoolean() && RobotStates.poseUpdate.getAsBoolean()) {
+            for (Limelight limelight : allLimelights) {
+                limelight.setIMUmode(3);
+            }
+            try {
+                addMegaTag2_VisionInputAuton(backLL);
+            } catch (Exception e) {
+                Telemetry.print("REAR MT2: Vision pose not present but tried to access it");
+            }
+
+            try {
+                addMegaTag2_VisionInputAuton(frontLL);
+            } catch (Exception e) {
+                Telemetry.print("FRONT MT2: Vision pose not present but tried to access it");
+            }
+
+            try {
+                addMegaTag1_VisionInputAuton(backLL, false);
+            } catch (Exception e) {
+                Telemetry.print("REAR MT1: Vision pose not present but tried to access it");
+            }
+
+            try {
+                addMegaTag1_VisionInputAuton(frontLL, false);
             } catch (Exception e) {
                 Telemetry.print("FRONT MT1: Vision pose not present but tried to access it");
             }
@@ -278,19 +310,17 @@ public class Vision implements NTSendable, Subsystem {
                 ll.sendValidStatus("Strong Multi integration");
                 xyStds = 0.1;
                 degStds = 0.1;
-            } else if (multiTags && targetSize > 0.1) {
+            } else if (multiTags && targetSize > 0.2) {
                 ll.sendValidStatus("Multi integration");
                 xyStds = 0.25;
                 degStds = 8;
-            } else if (targetSize > 0.8
-                    && (mt1PoseDifference < 0.5 || DriverStation.isDisabled())) {
-                // Integrate if the target is very big and we are close to pose or disabled
+            } else if (targetSize > 2 && (mt1PoseDifference < 0.5)) {
+                // Integrate if the target is very big and we are close to pose
                 ll.sendValidStatus("Close integration");
                 xyStds = 0.5;
                 degStds = 999999;
-            } else if (targetSize > 0.1
-                    && (mt1PoseDifference < 0.25 || DriverStation.isDisabled())) {
-                // Integrate if we are very close to pose or disabled and target is large enough
+            } else if (targetSize > 1 && (mt1PoseDifference < 0.25)) {
+                // Integrate if we are very close to pose and target is large enough
                 ll.sendValidStatus("Proximity integration");
                 xyStds = 1.0;
                 degStds = 999999;
@@ -316,7 +346,119 @@ public class Vision implements NTSendable, Subsystem {
                 xyStds = 999999;
             }
 
-            if (integrateXY) {
+            if (integrateXY) { // If we are disabled just use this pose
+                xyStds = 0.01;
+                degStds = 0.01;
+            }
+
+            Pose2d integratedPose =
+                    new Pose2d(megaTag1Pose2d.getTranslation(), megaTag1Pose2d.getRotation());
+            Robot.getSwerve()
+                    .addVisionMeasurement(
+                            integratedPose,
+                            Utils.fpgaToCurrentTime(ll.getMegaTag1PoseTimestamp()),
+                            VecBuilder.fill(xyStds, xyStds, degStds));
+        } else {
+            ll.setTagStatus("no tags");
+            ll.sendInvalidStatus("no tag found rejection");
+        }
+    }
+
+    @SuppressWarnings("all")
+    private void addMegaTag1_VisionInputAuton(Limelight ll, boolean integrateXY) {
+        double xyStds;
+        double degStds;
+
+        // integrate vision
+        if (ll.targetInView()) {
+            boolean multiTags = ll.multipleTagsInView();
+            double targetSize = ll.getTargetSize();
+            Pose3d megaTag1Pose3d = ll.getMegaTag1_Pose3d();
+            Pose2d megaTag1Pose2d = megaTag1Pose3d.toPose2d();
+            RawFiducial[] tags = ll.getRawFiducial();
+            double highestAmbiguity = 2;
+            ChassisSpeeds robotSpeed = Robot.getSwerve().getCurrentRobotChassisSpeeds();
+
+            // distance from current pose to vision estimated MT2 pose
+            double mt1PoseDifference =
+                    Robot.getSwerve()
+                            .getRobotPose()
+                            .getTranslation()
+                            .getDistance(megaTag1Pose2d.getTranslation());
+
+            /* rejections */
+            // reject mt1 pose if individual tag ambiguity is too high
+            ll.setTagStatus("");
+            for (RawFiducial tag : tags) {
+                // search for highest ambiguity tag for later checks
+                if (highestAmbiguity == 2 || tag.ambiguity > highestAmbiguity) {
+                    highestAmbiguity = tag.ambiguity;
+                }
+                // ambiguity rejection check
+                if (tag.ambiguity > 0.9) {
+                    return;
+                }
+            }
+
+            /* rejections */
+            if (rejectionCheck(megaTag1Pose2d, targetSize)) {
+                return;
+            }
+
+            if (Math.abs(megaTag1Pose3d.getRotation().getX()) > 5
+                    || Math.abs(megaTag1Pose3d.getRotation().getY()) > 5) {
+                // reject if pose is 5 degrees titled in roll or pitch
+                ll.sendInvalidStatus("roll/pitch rejection");
+                return;
+            }
+
+            /* integrations */
+            // if almost stationary and extremely close to tag
+            if (targetSize > 0.2) {
+                ll.sendValidStatus("Stationary close integration");
+                xyStds = 0.1;
+                degStds = 0.1;
+            } else if (multiTags && targetSize > 2) {
+                ll.sendValidStatus("Strong Multi integration");
+                xyStds = 0.1;
+                degStds = 0.1;
+            } else if (multiTags && targetSize > 0.2) {
+                ll.sendValidStatus("Multi integration");
+                xyStds = 0.25;
+                degStds = 8;
+            } else if (targetSize > 2 && (mt1PoseDifference < 0.5)) {
+                // Integrate if the target is very big and we are close to pose
+                ll.sendValidStatus("Close integration");
+                xyStds = 0.5;
+                degStds = 999999;
+            } else if (targetSize > 1 && (mt1PoseDifference < 0.25)) {
+                // Integrate if we are very close to pose and target is large enough
+                ll.sendValidStatus("Proximity integration");
+                xyStds = 1.0;
+                degStds = 999999;
+            } else if (highestAmbiguity < 0.25 && targetSize >= 0.03) {
+                ll.sendValidStatus("Stable integration");
+                xyStds = 1.5;
+                degStds = 999999;
+            } else {
+                // Shouldn't integrate
+                return;
+            }
+
+            // strict with degree std and ambiguity and rotation because this is megatag1
+            if (highestAmbiguity > 0.5) {
+                degStds = 15;
+            }
+
+            if (robotSpeed.omegaRadiansPerSecond >= 0.5) {
+                degStds = 50;
+            }
+
+            if (!integrateXY) {
+                xyStds = 999999;
+            }
+
+            if (integrateXY) { // If we are disabled just use this pose
                 xyStds = 0.01;
                 degStds = 0.01;
             }
@@ -368,15 +510,77 @@ public class Vision implements NTSendable, Subsystem {
             } else if (multiTags && targetSize > 2) {
                 ll.sendValidStatus("Strong Multi integration");
                 xyStds = 0.1;
-            } else if (multiTags && targetSize > 0.1) {
+            } else if (multiTags && targetSize > 0.2) {
                 ll.sendValidStatus("Multi integration");
                 xyStds = 0.25;
+            } else if (targetSize > 2 && (mt2PoseDifference < 0.5 || DriverStation.isDisabled())) {
+                // Integrate if the target is very big and we are close to pose or disabled
+                ll.sendValidStatus("Close integration");
+                xyStds = 0.5;
+            } else if (targetSize > 1 && (mt2PoseDifference < 0.25 || DriverStation.isDisabled())) {
+                // Integrate if we are very close to pose or disabled and target is large enough
+                ll.sendValidStatus("Proximity integration");
+                xyStds = 0.0;
+            } else if (highestAmbiguity < 0.25 && targetSize >= 0.03) {
+                ll.sendValidStatus("Stable integration");
+                xyStds = 0.5;
+            } else {
+                // Shouldn't integrate
+                return;
+            }
+
+            Pose2d integratedPose =
+                    new Pose2d(megaTag2Pose2d.getTranslation(), megaTag2Pose2d.getRotation());
+            Robot.getSwerve()
+                    .addVisionMeasurement(
+                            integratedPose,
+                            Utils.fpgaToCurrentTime(ll.getMegaTag2PoseTimestamp()),
+                            VecBuilder.fill(xyStds, xyStds, degStds));
+        } else {
+            ll.setTagStatus("no tags");
+            ll.sendInvalidStatus("no tag found rejection");
+        }
+    }
+
+    @SuppressWarnings("all")
+    private void addMegaTag2_VisionInputAuton(Limelight ll) {
+        double xyStds;
+        double degStds = 99999;
+
+        // integrate vision
+        if (ll.targetInView()) {
+            boolean multiTags = ll.multipleTagsInView();
+            double targetSize = ll.getTargetSize();
+            Pose2d megaTag2Pose2d = ll.getMegaTag2_Pose2d();
+            double highestAmbiguity = 2;
+            ChassisSpeeds robotSpeed = Robot.getSwerve().getCurrentRobotChassisSpeeds();
+
+            // distance from current pose to vision estimated MT2 pose
+            double mt2PoseDifference =
+                    Robot.getSwerve()
+                            .getRobotPose()
+                            .getTranslation()
+                            .getDistance(megaTag2Pose2d.getTranslation());
+
+            /* rejections */
+            if (rejectionCheck(megaTag2Pose2d, targetSize)) {
+                return;
+            }
+
+            /* integrations */
+            // if almost stationary and extremely close to tag
+            if (targetSize > 0.2) {
+                ll.sendValidStatus("Stationary close integration");
+                xyStds = 0.1;
             } else if (multiTags && targetSize > 2) {
                 ll.sendValidStatus("Strong Multi integration");
                 xyStds = 0.1;
             } else if (multiTags && targetSize > 0.1) {
                 ll.sendValidStatus("Multi integration");
                 xyStds = 0.25;
+            } else if (multiTags && targetSize > 2) {
+                ll.sendValidStatus("Strong Multi integration");
+                xyStds = 0.1;
             } else if (targetSize > 0.8
                     && (mt2PoseDifference < 0.5 || DriverStation.isDisabled())) {
                 // Integrate if the target is very big and we are close to pose or disabled
@@ -632,8 +836,6 @@ public class Vision implements NTSendable, Subsystem {
             return 0;
         }
     }
-
-    
 
     // ------------------------------------------------------------------------------
     // VisionStates Commands

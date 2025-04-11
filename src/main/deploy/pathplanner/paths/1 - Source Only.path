@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.967415730337078,
-        "y": 5.438202247191011
+        "x": 6.99,
+        "y": 7.1354
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.717415730337078,
-        "y": 5.438202247191011
+        "x": 6.745598304862615,
+        "y": 7.014878882863553
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.21,
-        "y": 5.28
+        "x": 5.19,
+        "y": 5.3
       },
       "prevControl": {
-        "x": 5.5499874592927405,
-        "y": 5.833993255846736
+        "x": 5.539999999999996,
+        "y": 5.90621778264911
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,11 +31,11 @@
   "rotationTargets": [],
   "constraintZones": [
     {
-      "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.7991386061080693,
+      "name": "Align Override",
+      "minWaypointRelativePos": 0.6534847298355476,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
-        "maxVelocity": 1.0,
+        "maxVelocity": 4.0,
         "maxAcceleration": 1.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
@@ -55,36 +55,24 @@
     {
       "name": "L4",
       "waypointRelativePos": 0,
-      "endWaypointRelativePos": 1.0,
-      "command": null
-    },
-    {
-      "name": "homeOff",
-      "waypointRelativePos": 0,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
       "name": "actionOn",
-      "waypointRelativePos": 0.6472200469851228,
+      "waypointRelativePos": 0.49373531714957164,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
-      "name": "autoAlign",
-      "waypointRelativePos": 0.8257635082223956,
-      "endWaypointRelativePos": null,
+      "name": "poseUpdate",
+      "waypointRelativePos": 0.5000000000000009,
+      "endWaypointRelativePos": 1.0,
       "command": null
     },
     {
       "name": "actionOff",
-      "waypointRelativePos": 1.0,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "home",
-      "waypointRelativePos": 1.0,
+      "waypointRelativePos": 0.98,
       "endWaypointRelativePos": null,
       "command": null
     }
@@ -99,7 +87,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -119.99999999999999
+    "rotation": -123.00000000000001
   },
   "reversed": false,
   "folder": "Blue Left Source",

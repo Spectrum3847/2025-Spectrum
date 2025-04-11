@@ -11,12 +11,6 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "3L - L4 Trough Rush"
@@ -26,6 +20,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "Source L4",
+  "folder": "Houston 2 Coral",
   "choreoAuto": false
 }

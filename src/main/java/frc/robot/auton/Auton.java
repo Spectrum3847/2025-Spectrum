@@ -47,10 +47,10 @@ public class Auton {
     public static final EventTrigger autonShoulderL4 = new EventTrigger("shoulderL4");
     public static final EventTrigger autonTwistL4R = new EventTrigger("twistL4R");
     public static final EventTrigger autonTwistL4L = new EventTrigger("twistL4L");
-    public static final EventTrigger autonSwerveAlign = new EventTrigger("autoAlign");
-    public static final EventTrigger autonClearFeedback = new EventTrigger("clearFeedBack");
+    public static final EventTrigger autonPoseUpdate = new EventTrigger("poseUpdate");
     public static final EventTrigger autonL4 = new EventTrigger("L4");
     public static final EventTrigger autonHomeOff = new EventTrigger("homeOff");
+    public static final EventTrigger autonReverse = new EventTrigger("reverse");
 
     private final SendableChooser<Command> pathChooser = new SendableChooser<>();
     private boolean autoMessagePrinted = true;
@@ -68,15 +68,13 @@ public class Auton {
         // pathChooser.addOption("3 Meter", SpectrumAuton("3 Meter", false));
         // pathChooser.addOption("5 Meter", SpectrumAuton("5 Meter", false));
 
-        // pathChooser.addOption("test", test());
+        pathChooser.addOption("Left | 2 L4 Coral", sourceL4(false));
+        pathChooser.addOption("Right | 2 L4 Coral", sourceL4(true));
 
-        pathChooser.addOption("Left | Source L4", sourceL4(false));
-        pathChooser.addOption("Right | Source L4", sourceL4(true));
+        pathChooser.addOption("Left | 3 L4 Coral", SpectrumAuton("Side Start L4", false));
+        pathChooser.addOption("Right | 3 L4 Coral", SpectrumAuton("Side Start L4", true));
 
         pathChooser.addOption("Drive Forward", SpectrumAuton("Drive Forward", false));
-
-        // pathChooser.addOption("Left | Algae Rush", centerAlgae(false));
-        // pathChooser.addOption("Right | Algae Rush", centerAlgae(true));
 
         SmartDashboard.putData("Auto Chooser", pathChooser);
     }
@@ -100,7 +98,7 @@ public class Auton {
     public void exit() {
         printAutoDuration();
     }
-    
+
     public Command sourceL4(boolean mirrored) {
         return (RobotStates.homeAll
                         .setFalse()
@@ -113,86 +111,8 @@ public class Auton {
                 .withName("Blue Left - Source L4");
     }
 
-    public Command centerAlgae(boolean mirrored) {
-        return (SpectrumAuton("1 - Blue Center Algae", mirrored)
-                .withTimeout(1)
-                .andThen(
-                        aimHighAlgae(1.5),
-                        SpectrumAuton("2 - Blue Center Algae", mirrored),
-                        algaeNet(),
-                        SpectrumAuton("3 - Blue Center Algae", mirrored),
-                        aimLowAlgae(1.5),
-                        SpectrumAuton("4 - Blue Center Algae", mirrored),
-                        algaeNet(),
-                        SpectrumAuton("5 - Blue Center Algae", mirrored),
-                        aimLowAlgae(1.5),
-                        SpectrumAuton("6 - Blue Center Algae", mirrored),
-                        algaeNet())
-                .withName("Blue Center Algae Rush"));
-    }
-
     public Command aimL4score(double alignTime) {
-        return SwerveStates.reefAimDrive().withTimeout(alignTime).alongWith(l4score());
-    }
-
-    public Command aimL1score(double alignTime) {
-        return SwerveStates.reefAimDrive().withTimeout(alignTime).alongWith(l1score());
-    }
-
-    public Command aimLowAlgae(double alignTime) {
-        return SwerveStates.reefAimDrive().withTimeout(alignTime).alongWith(lowAlgae());
-    }
-
-    public Command aimHighAlgae(double alignTime) {
-        return SwerveStates.reefAimDrive().withTimeout(alignTime).alongWith(highAlgae());
-    }
-
-    public Command algaeNet() {
-        return Commands.waitSeconds(0.05)
-                .andThen(
-                        RobotStates.algae
-                                .setTrue()
-                                .alongWith(RobotStates.l4.setTrue(), RobotStates.homeAll.setFalse())
-                                .andThen(
-                                        Commands.waitSeconds(0.05),
-                                        RobotStates.actionPrepState.setTrue(),
-                                        Commands.waitSeconds(1.1),
-                                        RobotStates.actionPrepState.setFalse(),
-                                        Commands.waitSeconds(0.5),
-                                        RobotStates.clearStates(),
-                                        RobotStates.homeAll.setTrue()));
-    }
-
-    public Command lowAlgae() {
-        return Commands.waitSeconds(0.05)
-                .andThen(
-                        RobotStates.algae
-                                .setTrue()
-                                .alongWith(RobotStates.l2.setTrue(), RobotStates.homeAll.setFalse())
-                                .andThen(
-                                        Commands.waitSeconds(0.05),
-                                        RobotStates.actionPrepState.setTrue(),
-                                        Commands.waitSeconds(1.1),
-                                        RobotStates.actionPrepState.setFalse(),
-                                        Commands.waitSeconds(0.5),
-                                        RobotStates.clearStates(),
-                                        RobotStates.homeAll.setTrue()));
-    }
-
-    public Command highAlgae() {
-        return Commands.waitSeconds(0.05)
-                .andThen(
-                        RobotStates.algae
-                                .setTrue()
-                                .alongWith(RobotStates.l3.setTrue(), RobotStates.homeAll.setFalse())
-                                .andThen(
-                                        Commands.waitSeconds(0.05),
-                                        RobotStates.actionPrepState.setTrue(),
-                                        Commands.waitSeconds(1.1),
-                                        RobotStates.actionPrepState.setFalse(),
-                                        Commands.waitSeconds(0.5),
-                                        RobotStates.clearStates(),
-                                        RobotStates.homeAll.setTrue()));
+        return SwerveStates.reefAimDriveVision().withTimeout(alignTime).alongWith(l4score());
     }
 
     public Command l4score() {
@@ -204,28 +124,11 @@ public class Auton {
                                 .andThen(
                                         Commands.waitSeconds(0.05),
                                         RobotStates.actionPrepState.setTrue(),
-                                        Commands.waitSeconds(1.1),
+                                        Commands.waitSeconds(0.9),
                                         RobotStates.actionPrepState.setFalse(),
                                         Commands.waitSeconds(0.5),
-                                        RobotStates.clearStates(),
-                                        RobotStates.homeAll.setTrue(),
-                                        Commands.waitSeconds(.5)));
-    }
-
-    public Command l1score() {
-        return Commands.waitSeconds(0.05)
-                .andThen(
-                        RobotStates.coral
-                                .setTrue()
-                                .alongWith(RobotStates.l1.setTrue(), RobotStates.homeAll.setFalse())
-                                .andThen(
-                                        Commands.waitSeconds(0.05),
-                                        RobotStates.actionPrepState.setTrue(),
-                                        Commands.waitSeconds(1.1),
-                                        RobotStates.actionPrepState.setFalse(),
-                                        Commands.waitSeconds(0.5),
-                                        RobotStates.clearStates(),
-                                        RobotStates.homeAll.setTrue()));
+                                        RobotStates.homeAll.toggleToTrue(),
+                                        Commands.waitSeconds(0.5)));
     }
 
     /**

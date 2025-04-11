@@ -33,9 +33,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.reefscape.Field;
-import frc.reefscape.HomeOffsets;
-import frc.reefscape.StateChampsOffsets;
-import frc.reefscape.WorldsChampsOffsets;
 import frc.robot.Robot;
 import frc.spectrumLib.SpectrumSubsystem;
 import frc.spectrumLib.Telemetry;
@@ -58,9 +55,6 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
     private TagDistanceAlignController tagDistanceAlignController;
     private TranslationXController xController;
     private TranslationYController yController;
-    private HomeOffsets homeOffsets = new HomeOffsets();
-    private StateChampsOffsets stateChampsOffsets = new StateChampsOffsets();
-    private WorldsChampsOffsets worldsChampsOffsets = new WorldsChampsOffsets();
 
     @Getter
     protected SwerveModuleState[] setpoints =
@@ -146,6 +140,8 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
     public void initSendable(NTSendableBuilder builder) {
         builder.addDoubleProperty("Pose X", () -> getRobotPose().getX(), null);
         builder.addDoubleProperty("Pose Y", () -> getRobotPose().getY(), null);
+        builder.addDoubleProperty(
+                "Pose Rotation Degrees", () -> getRobotPose().getRotation().getDegrees(), null);
 
         SmartDashboard.putData(
                 "Swerve Drive",
@@ -367,23 +363,6 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
         double diff = Math.abs(angle1 - angle2) % 360;
         return diff > 180 ? 360 - diff : diff;
     }
-    // --------------------------------------------------------------------------------
-    // Offsets
-    // --------------------------------------------------------------------------------
-    public double homeOffsets(int tagID) {
-
-        return homeOffsets.getTagOffset(tagID);
-    }
-
-    public double stateChampsOffset(int tagID) {
-
-        return stateChampsOffsets.getTagOffset(tagID);
-    }
-
-    public double worldsChampsOffset(int tagID) {
-
-        return worldsChampsOffsets.getTagOffset(tagID);
-    }
 
     // --------------------------------------------------------------------------------
     // Rotation Controller
@@ -411,15 +390,27 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
     // --------------------------------------------------------------------------------
     // Tag Center Align Controller
     // --------------------------------------------------------------------------------
+    // void resetTagCenterAlignController(double currentMeters) {
+    //     tagCenterAlignController.reset(currentMeters);
+    // }
+
     double calculateTagCenterAlignController(
             DoubleSupplier targetMeters, DoubleSupplier currentMeters) {
         return tagCenterAlignController.calculate(
                 targetMeters.getAsDouble(), currentMeters.getAsDouble());
     }
 
+    public boolean atTagCenterGoal(double currentMeters) {
+        return tagCenterAlignController.atGoal(currentMeters);
+    }
+
     // --------------------------------------------------------------------------------
     // Tag Distance Align Controller
     // --------------------------------------------------------------------------------
+    void resetTagDistanceAlignController(double currentMeters) {
+        tagDistanceAlignController.reset(currentMeters);
+    }
+
     double calculateTagDistanceAlignController(DoubleSupplier targetArea) {
         boolean front = true;
         if (Robot.getVision().frontLL.targetInView()) {
@@ -437,6 +428,10 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
         } else {
             return 0;
         }
+    }
+
+    public boolean atTagDistanceGoal(double currentArea) {
+        return tagDistanceAlignController.atGoal(currentArea);
     }
 
     // --------------------------------------------------------------------------------

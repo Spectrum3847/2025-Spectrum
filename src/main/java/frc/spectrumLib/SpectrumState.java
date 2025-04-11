@@ -72,6 +72,14 @@ public class SpectrumState extends Trigger {
                 .withName(name + " state: SetTrueForTime->" + time.getAsDouble());
     }
 
+    public Command setFalseForTime(DoubleSupplier time) {
+        return Commands.runOnce(() -> setState(false))
+                .alongWith(new WaitCommand(time.getAsDouble()))
+                .andThen(() -> setState(true))
+                .ignoringDisable(false)
+                .withName(name + " state: SetFalseForTime->" + time.getAsDouble());
+    }
+
     /**
      * Command to set state to false, and then to true, ensuring your state will trigger actions
      *

@@ -8,6 +8,7 @@ import frc.robot.Robot;
 import frc.robot.elbow.Elbow.ElbowConfig;
 import frc.robot.elevator.ElevatorStates;
 import frc.spectrumLib.Telemetry;
+import frc.spectrumLib.util.Util;
 import java.util.function.DoubleSupplier;
 
 public class ElbowStates {
@@ -34,6 +35,7 @@ public class ElbowStates {
         coastMode.onFalse(log(ensureBrakeMode()));
 
         homeAll.whileTrue(home());
+        homeAll.and(Util.autoMode).whileTrue(slowHome());
 
         stationIntaking
                 .and(actionState.not())
@@ -42,6 +44,7 @@ public class ElbowStates {
                                 config::getStationIntake,
                                 // config::getStationExtendedIntake,
                                 "Elbow.StationIntake"));
+
         Robot.getPilot()
                 .groundCoral_LB_LT
                 .and(actionState.not())
@@ -76,7 +79,18 @@ public class ElbowStates {
         L4Coral.and(actionState)
                 .whileTrue(move(config::getL4Score, config::getExL4Score, "Elbow.l4Score"));
 
+        // L4Coral.and(actionPrepState, ElevatorStates.isL4Coral, Util.autoMode)
+        //         .whileTrue(slowMove(config::getExL4Coral, "Elbow.l4Coral"));
+        // L4Coral.and(actionState, Util.autoMode)
+        //         .whileTrue(slowMove(config::getExL4Score, "Elbow.l4Score"));
+
         // Algae
+        processorAlgae
+                .and(actionPrepState)
+                .whileTrue(move(config::getProcessorAlgae, "Elbow.processorAlgae"));
+        processorAlgae
+                .and(actionState)
+                .whileTrue(move(config::getHome, "Elbow.processorAlgaeHome"));
         L2Algae.and(actionPrepState).whileTrue(move(config::getL2Algae, "Elbow.l2Algae"));
         L2Algae.and(actionState).whileTrue(move(config::getHome, "Elbow.l2AlgaeHome"));
         L3Algae.and(actionPrepState).whileTrue(move(config::getL3Algae, "Elbow.l3Algae"));
@@ -91,6 +105,10 @@ public class ElbowStates {
         return move(config::getHome, "Elbow.home");
     }
 
+    private static Command slowHome() {
+        return slowMove(config::getHome, "Elbow.home");
+    }
+
     // missing auton Elbow commands, add when auton is added
 
     public static Command move(DoubleSupplier degrees, String name) {
@@ -101,13 +119,8 @@ public class ElbowStates {
         return elbow.move(degrees, exDegrees).withName(name);
     }
 
-    public static Command stationIntake() {
-        return elbow.moveToDegrees(config::getStationIntake).withName("Elbow.StationIntake");
-    }
-
-    public static Command stationExtendedIntake() {
-        return elbow.moveToDegrees(config::getStationExtendedIntake)
-                .withName("Shoulder.stationExtendedIntake");
+    public static Command slowMove(DoubleSupplier degrees, String name) {
+        return elbow.slowMove(degrees).withName(name);
     }
 
     public static Command coastMode() {

@@ -8,7 +8,7 @@
         "layouts": [
           {
             "title": "Battery",
-            "x": 1408.0,
+            "x": 1536.0,
             "y": 0.0,
             "width": 384.0,
             "height": 256.0,
@@ -75,7 +75,7 @@
           },
           {
             "title": "MatchTime",
-            "x": 1024.0,
+            "x": 1152.0,
             "y": 128.0,
             "width": 384.0,
             "height": 384.0,
@@ -104,7 +104,7 @@
           },
           {
             "title": "FMSInfo",
-            "x": 1024.0,
+            "x": 1152.0,
             "y": 0.0,
             "width": 384.0,
             "height": 128.0,
@@ -116,10 +116,10 @@
           },
           {
             "title": "BackLL",
-            "x": 512.0,
-            "y": 0.0,
-            "width": 512.0,
-            "height": 512.0,
+            "x": 0.0,
+            "y": 256.0,
+            "width": 384.0,
+            "height": 256.0,
             "type": "Camera Stream",
             "properties": {
               "topic": "/CameraPublisher/limelight-back",
@@ -131,8 +131,8 @@
             "title": "FrontLL",
             "x": 0.0,
             "y": 0.0,
-            "width": 512.0,
-            "height": 512.0,
+            "width": 384.0,
+            "height": 256.0,
             "type": "Camera Stream",
             "properties": {
               "topic": "/CameraPublisher/limelight-front",
@@ -142,10 +142,10 @@
           },
           {
             "title": "Alerts",
-            "x": 1408.0,
+            "x": 1536.0,
             "y": 256.0,
             "width": 384.0,
-            "height": 512.0,
+            "height": 256.0,
             "type": "Alerts",
             "properties": {
               "topic": "/SmartDashboard/Alerts",
@@ -171,6 +171,37 @@
               "robot_color": 4294198070,
               "trajectory_color": 4294967295
             }
+          },
+          {
+            "title": "States",
+            "x": 1408.0,
+            "y": 512.0,
+            "width": 384.0,
+            "height": 384.0,
+            "type": "Alerts",
+            "properties": {
+              "topic": "/SmartDashboard/States",
+              "period": 0.06
+            }
+          },
+          {
+            "title": "limelight-top",
+            "x": 384.0,
+            "y": 0.0,
+            "width": 768.0,
+            "height": 512.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/limelight-top",
+              "period": 0.06,
+              "rotation_turns": 0,
+              "compression": 100,
+              "fps": 120,
+              "resolution": [
+                1280.0,
+                800.0
+              ]
+            }
           }
         ]
       }
@@ -179,47 +210,6 @@
       "name": "Diagnostic",
       "grid_layout": {
         "layouts": [
-          {
-            "title": "Odometry",
-            "x": 640.0,
-            "y": 0.0,
-            "width": 384.0,
-            "height": 384.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "RobotX",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/AdvantageKit/RealOutputs/Odometry/RobotX",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "RobotY",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/AdvantageKit/RealOutputs/Odometry/RobotY",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              }
-            ]
-          },
           {
             "title": "Swerve Velocities",
             "x": 1408.0,
@@ -282,6 +272,20 @@
                 "type": "Text Display",
                 "properties": {
                   "topic": "/SmartDashboard/Swerve Drive/Back Right Velocity",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Robot Angle",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Swerve Drive/Robot Angle",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -716,6 +720,47 @@
                 }
               }
             ]
+          },
+          {
+            "title": "Swerve",
+            "x": 768.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 384.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "Pose X",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Swerve/Pose X",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Pose Y",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Swerve/Pose Y",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              }
+            ]
           }
         ],
         "containers": [
@@ -747,13 +792,25 @@
           },
           {
             "title": "Alerts",
-            "x": 256.0,
+            "x": 512.0,
             "y": 0.0,
-            "width": 384.0,
+            "width": 256.0,
             "height": 384.0,
             "type": "Alerts",
             "properties": {
               "topic": "/SmartDashboard/Alerts",
+              "period": 0.06
+            }
+          },
+          {
+            "title": "States",
+            "x": 256.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 384.0,
+            "type": "Alerts",
+            "properties": {
+              "topic": "/SmartDashboard/States",
               "period": 0.06
             }
           }
@@ -767,10 +824,10 @@
         "containers": [
           {
             "title": "limelight-back",
-            "x": 896.0,
+            "x": 1408.0,
             "y": 0.0,
-            "width": 896.0,
-            "height": 896.0,
+            "width": 512.0,
+            "height": 384.0,
             "type": "Camera Stream",
             "properties": {
               "topic": "/CameraPublisher/limelight-back",
@@ -782,11 +839,24 @@
             "title": "limelight-front",
             "x": 0.0,
             "y": 0.0,
-            "width": 896.0,
-            "height": 896.0,
+            "width": 512.0,
+            "height": 384.0,
             "type": "Camera Stream",
             "properties": {
               "topic": "/CameraPublisher/limelight-front",
+              "period": 0.06,
+              "rotation_turns": 0
+            }
+          },
+          {
+            "title": "limelight-top",
+            "x": 512.0,
+            "y": 0.0,
+            "width": 896.0,
+            "height": 640.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/limelight-top",
               "period": 0.06,
               "rotation_turns": 0
             }

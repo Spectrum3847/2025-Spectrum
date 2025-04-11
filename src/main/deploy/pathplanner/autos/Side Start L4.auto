@@ -7,61 +7,55 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1 - L4 Trough Rush"
+            "pathName": "1 - Source Only"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "2 - L4 Trough Rush"
+            "pathName": "2 - Source Only"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3L - L4 Trough Rush"
+            "pathName": "3L - Source Only"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "4 - L4 Trough Rush"
+            "pathName": "4 - Source Only"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3L - L4 Trough Rush"
+            "pathName": "3R - Source Only"
           }
         },
         {
-          "type": "path",
+          "type": "wait",
           "data": {
-            "pathName": "4 - L4 Trough Rush"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "3L - L4 Trough Rush"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "4 - L4 Trough Rush"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "3L - L4 Trough Rush"
+            "waitTime": 0.5
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Blue Center Origin",
+  "folder": "Blue Left Origin",
   "choreoAuto": false
 }
