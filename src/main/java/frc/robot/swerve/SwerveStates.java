@@ -77,9 +77,8 @@ public class SwerveStates {
 
         // // vision aim
         // pilot.reefAim_A.whileTrue(log(reefAimDrive()));
-        pilot.reefVision_A.whileTrue(log(reefAimDriveVision()));
         // pilot.reefAim_A.and(RobotStates.netAlgae).whileTrue(log(netAimDrive()));
-        pilot.reefAim_A.whileTrue(log(netAimDrive()));
+        // pilot.reefAim_A.whileTrue(log(netAimDrive()));
         // pilot.reefAim_A.whileTrue(log(reefAimDrive()));
         // pilot.reefVision_A.whileTrue(log(reefAimDriveVisionTA()));
         pilot.reefVision_A.whileTrue(log(reefAimDriveVisionXY()));
