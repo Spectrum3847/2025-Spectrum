@@ -78,14 +78,16 @@ public class Elbow extends Mechanism {
         @Getter private final double positionKp = 1400;
         @Getter private final double positionKd = 160;
         @Getter private final double positionKv = 0;
-        @Getter private final double positionKs = 0.6;
+        @Getter private final double positionKs = 0.7;
         @Getter private final double positionKa = 0.002;
-        @Getter private final double positionKg = 14; // 7 * 1.6666
-        @Getter private final double mmCruiseVelocity = 10;
+        @Getter private final double positionKg = 22; // 7 * 1.6666
+        @Getter private final double mmCruiseVelocity = 1;
         @Getter private final double mmAcceleration = 20;
         @Getter private final double mmJerk = 100;
         @Getter private final double slowMmAcceleration = 7;
         @Getter private final double slowMmJerk = 60;
+        @Getter private final double groundMmAcceleration = 3;
+        @Getter private final double groundMmJerk = 60;
 
         @Getter @Setter private double sensorToMechanismRatio = 61.71428571; // 102.857;
         @Getter @Setter private double rotorToSensorRatio = 1;
@@ -352,6 +354,16 @@ public class Elbow extends Mechanism {
                                 config::getMmCruiseVelocity,
                                 config::getSlowMmAcceleration,
                                 config::getSlowMmJerk));
+    }
+
+    public Command groundMove(DoubleSupplier degrees) {
+        return run(
+                () ->
+                        setDynMMPositionFoc(
+                                getIfReversedOffsetInRotations(degrees),
+                                config::getMmCruiseVelocity,
+                                config::getGroundMmAcceleration,
+                                config::getGroundMmJerk));
     }
 
     public DoubleSupplier getIfReversedOffsetInRotations(DoubleSupplier degrees) {

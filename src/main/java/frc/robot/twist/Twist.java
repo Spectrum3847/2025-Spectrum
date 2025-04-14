@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.reefscape.Field;
 import frc.robot.Robot;
 import frc.robot.RobotSim;
 import frc.robot.RobotStates;
@@ -373,7 +374,14 @@ public class Twist extends Mechanism {
     // @deprecated
     public double netTurretDegrees() {
         // uses the robot pose to always point the twist away from the driver station
-        return -Robot.getSwerve().getRobotPose().getRotation().getDegrees() + 180;
+        double offset = 180;
+        if (!Field.isBlue()) {
+            offset += 180;
+        }
+        if (Field.isBlue() != Robot.getSwerve().inXzone(0, Field.getHalfLength()).getAsBoolean()) {
+            offset += 180;
+        }
+        return (-Robot.getSwerve().getRobotPose().getRotation().getDegrees() + offset) % 360;
     }
 
     public Command netTurret() {

@@ -48,7 +48,7 @@ public class ElbowStates {
         Robot.getPilot()
                 .groundCoral_LB_LT
                 .and(actionState.not())
-                .whileTrue(move(config::getGroundCoralIntake, "Elbow.GroundCoral"));
+                .whileTrue(groundMove(config::getGroundCoralIntake, "Elbow.GroundCoral"));
 
         Robot.getPilot()
                 .groundAlgae_RT
@@ -121,6 +121,10 @@ public class ElbowStates {
 
     public static Command slowMove(DoubleSupplier degrees, String name) {
         return elbow.slowMove(degrees).withName(name);
+    }
+
+    public static Command groundMove(DoubleSupplier degrees, String name) {
+        return elbow.groundMove(degrees).withName(name);
     }
 
     public static Command coastMode() {

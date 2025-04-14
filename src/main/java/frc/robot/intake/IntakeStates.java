@@ -81,6 +81,10 @@ public class IntakeStates {
                         //         config::getCoralL1ScoreTorqueCurrent));
                         intake.runTorqueFOC(config::getCoralL1ScoreTorqueCurrent));
 
+        Robot.getOperator()
+                .processorScore_LT
+                .whileTrue(intake.runTorqueFOC(config::getCoralIntakeTorqueCurrent));
+
         branch.and(actionState, L4Coral.not())
                 .whileTrue(
                         // runVoltageCurrentLimits(

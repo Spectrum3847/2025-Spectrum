@@ -26,7 +26,7 @@ public class Climb extends Mechanism {
 
     public static class ClimbConfig extends Config {
 
-        @Getter private final double maxRotations = 0.335; // 0.36;
+        @Getter private final double maxRotations = 0.315; // 0.36;
         @Getter private final double minRotations = -0.06;
         /* Climb positions in degrees || 0 is horizontal */
         @Getter private final double home = 90;

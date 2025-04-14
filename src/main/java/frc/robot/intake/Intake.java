@@ -44,7 +44,7 @@ public class Intake extends Mechanism {
 
         @Getter @Setter private double coralGroundVoltage = 12.0;
         @Getter @Setter private double coralGroundSupplyCurrent = 40.0;
-        @Getter @Setter private double coralGroundTorqueCurrent = 2038470.0;
+        @Getter @Setter private double coralGroundTorqueCurrent = 200.0;
 
         @Getter @Setter private double coralScoreVoltage = -1;
         @Getter @Setter private double coralScoreSupplyCurrent = 12.0;
