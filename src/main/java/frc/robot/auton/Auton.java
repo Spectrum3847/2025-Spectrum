@@ -112,7 +112,7 @@ public class Auton {
     }
 
     public Command aimL4score(double alignTime) {
-        return SwerveStates.reefAimDriveVision().withTimeout(alignTime).alongWith(l4score());
+        return SwerveStates.reefAimDriveVisionTA().withTimeout(alignTime).alongWith(l4score());
     }
 
     public Command l4score() {

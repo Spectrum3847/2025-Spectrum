@@ -23,7 +23,8 @@ public class IntakeStates {
     public static final Trigger hasCoral =
             hasGamePiece.and(intake.aboveVelocityRPM(() -> 0, () -> 0));
     public static final Trigger hasAlgae =
-            hasGamePiece.and(intake.belowVelocityRPM(() -> 0, () -> 0));
+            algae.and(netAlgae.not(), intake.aboveCurrent(config::getHasAlgaeCurrent, () -> 0));
+    // hasGamePiece.and(intake.belowVelocityRPM(() -> 0, () -> 0));
 
     public static void setupDefaultCommand() {
         intake.setDefaultCommand(
@@ -81,13 +82,19 @@ public class IntakeStates {
                         //         config::getCoralL1ScoreTorqueCurrent));
                         intake.runTorqueFOC(config::getCoralL1ScoreTorqueCurrent));
 
+        Robot.getOperator()
+                .processorScore_LT
+                .whileTrue(intake.runTorqueFOC(config::getCoralIntakeTorqueCurrent));
+
         branch.and(actionState, L4Coral.not())
-                .whileTrue(
-                        // runVoltageCurrentLimits(
-                        //         config::getCoralScoreVoltage,
-                        //         config::getCoralScoreSupplyCurrent,
-                        //         config::getCoralScoreTorqueCurrent));
-                        intake.runTorqueFOC(config::getCoralScoreTorqueCurrent));
+                .onTrue(
+                        new WaitCommand(config.getScoreDelay())
+                                .andThen(
+                                        // runVoltageCurrentLimits(
+                                        //         config::getCoralScoreVoltage,
+                                        //         config::getCoralScoreSupplyCurrent,
+                                        //         config::getCoralScoreTorqueCurrent));
+                                        intake.runTorqueFOC(config::getCoralScoreTorqueCurrent)));
 
         autonScore
                 .and(photon)

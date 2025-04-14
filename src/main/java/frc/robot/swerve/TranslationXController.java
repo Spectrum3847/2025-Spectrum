@@ -24,8 +24,7 @@ public class TranslationXController {
                         config.getKDTranslationController(),
                         config.getTranslationConstraints());
 
-        controller.setTolerance(config.getTranslationTolerance());
-        ;
+        controller.setTolerance(0.0);
         SmartDashboard.putData("X controller", controller);
     }
 
@@ -43,7 +42,7 @@ public class TranslationXController {
     public boolean atGoal(double current) {
         double goal = controller.getGoal().position;
         boolean atGoal = Math.abs(current - goal) < config.getTranslationTolerance();
-        System.out.println("X At Goal: " + atGoal + " Goal: " + goal + " Current: " + current);
+        // System.out.println("X At Goal: " + atGoal + " Goal: " + goal + " Current: " + current);
         return atGoal;
     }
 

@@ -32,10 +32,11 @@ public class Shoulder extends Mechanism {
         @Getter private final int initializedPosition = 0;
 
         @Getter private final double scoreDelay = 0.3;
+        @Getter private final double prescoreDelay = 0.3;
 
         /* Shoulder positions in degrees || 0 is vertical down || positions should be towards front of robot */
 
-        @Getter @Setter private double climbPrep = 110; // -56.7;
+        @Getter @Setter private double climbPrep = 45; // 110;
         @Getter @Setter private double home = 0;
 
         @Getter @Setter private double stationIntake = -9.2;
@@ -56,15 +57,15 @@ public class Shoulder extends Mechanism {
         @Getter @Setter private double l4Coral = 170; // 158.5;
         @Getter @Setter private double l4CoralScore = 128; // 117;
 
-        @Getter @Setter private double exl1Coral = 16.9;
-        @Getter @Setter private double exl2Coral = -19.33; // -13.4; // -27;
-        @Getter @Setter private double exl2Score = 25; // 30
-        @Getter @Setter private double exl3Coral = -12.8; // -27;
-        @Getter @Setter private double exl3Score = 30;
-        @Getter @Setter private double exl4Coral = 193.5; // 190.3;
-        @Getter @Setter private double exl4Score = 145.8; // 133;
+        @Getter @Setter private double exL1Coral = 16.9;
+        @Getter @Setter private double exL2Coral = -19.8; // -19.33; // -13.4; // -27;
+        @Getter @Setter private double exL2Score = 25; // 30
+        @Getter @Setter private double exL3Coral = -19.8; // -27;
+        @Getter @Setter private double exL3Score = 30;
+        @Getter @Setter private double exL4Coral = 193.5; // 190.3;
+        @Getter @Setter private double exL4Score = 145.8; // 133;
 
-        @Getter @Setter private double tolerance = 0.95;
+        @Getter @Setter private double tolerance = 3.5;
 
         @Getter @Setter private double offset = -90;
         @Getter @Setter private double initPosition = 0;

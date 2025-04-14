@@ -22,7 +22,9 @@ public class Intake extends Mechanism {
     public static class IntakeConfig extends Config {
 
         @Getter private double hasGamePieceVelocity = 50;
-        @Getter private double hasGamePieceCurrent = 50;
+        @Getter private double hasGamePieceCurrent = 80;
+        @Getter private double hasAlgaeCurrent = 80;
+        @Getter private double scoreDelay = 0.2;
 
         // Algae Voltages and Current
         @Getter @Setter private double algaeIntakeVoltage = -9.0;
@@ -36,15 +38,15 @@ public class Intake extends Mechanism {
         // Coral Voltages and Current
         @Getter @Setter private double coralHoldVoltage = 9.0;
         @Getter @Setter private double coralHoldSupplyCurrent = 30.0;
-        @Getter @Setter private double coralHoldTorqueCurrent = 40.0;
+        @Getter @Setter private double coralHoldTorqueCurrent = 28.0;
 
         @Getter @Setter private double coralIntakeVoltage = 12.0;
         @Getter @Setter private double coralIntakeSupplyCurrent = 30.0;
-        @Getter @Setter private double coralIntakeTorqueCurrent = 200.0;
+        @Getter @Setter private double coralIntakeTorqueCurrent = 100.0;
 
         @Getter @Setter private double coralGroundVoltage = 12.0;
         @Getter @Setter private double coralGroundSupplyCurrent = 40.0;
-        @Getter @Setter private double coralGroundTorqueCurrent = 2038470.0;
+        @Getter @Setter private double coralGroundTorqueCurrent = 200.0;
 
         @Getter @Setter private double coralScoreVoltage = -1;
         @Getter @Setter private double coralScoreSupplyCurrent = 12.0;

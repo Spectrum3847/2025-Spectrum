@@ -48,17 +48,18 @@ public class SwerveConfig {
     private LinearVelocity speedAt12Volts =
             MetersPerSecond.of((95 / driveGearRatio) * 2 * Math.PI * wheelRadius.in(Meters));
 
-    @Getter private double kSdrive = 0.13;
+    @Getter private double kSdrive = 0.13; // 0.13
+    @Getter private double kSsteer = 0.3; // 0.2
 
     // -----------------------------------------------------------------------
     // PID Controller Constants
     // -----------------------------------------------------------------------
     @Getter private double maxAngularVelocity = 2 * Math.PI; // rad/s
     @Getter private double maxAngularAcceleration = Math.pow(maxAngularVelocity, 2); // rad/s^2
-    @Getter private double kPRotationController = 8.0;
+    @Getter private double kPRotationController = 2.7; // 4.5 // 6.5 // 8.0;
     @Getter private double kIRotationController = 0.0;
-    @Getter private double kDRotationController = 0.2;
-    @Getter private double rotationTolerance = (Math.PI / 360); // rads
+    @Getter private double kDRotationController = 0.0; // 0.2
+    @Getter private double rotationTolerance = Units.degreesToRadians(0.3); // rads
 
     @Getter private double kPHoldController = 12.0;
     @Getter private double kIHoldController = 0.0;
@@ -67,7 +68,8 @@ public class SwerveConfig {
     @Getter private double kPTranslationController = 2;
     @Getter private double kITranslationController = 0.0;
     @Getter private double kDTranslationController = 0.0;
-    @Getter private double translationTolerance = Units.inchesToMeters(0.25);
+
+    @Getter private double translationTolerance = Units.inchesToMeters(0.5); // 0.5
 
     @Getter
     private Constraints translationConstraints =
@@ -178,8 +180,8 @@ public class SwerveConfig {
                     TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
             constantCreator;
 
-    private final double wheelBaseInches = 21.5;
-    private final double trackWidthInches = 18.5;
+    private final double wheelBaseInches = 23.75;
+    private final double trackWidthInches = 23.75;
 
     // Front Left
     @Getter private int frontLeftDriveMotorId = 1;

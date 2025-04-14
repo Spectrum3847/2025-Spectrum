@@ -300,12 +300,12 @@ public class Robot extends SpectrumRobot {
     @Override
     public void autonomousInit() {
         try {
-            Telemetry.print("@@@ Auton Init Starting @@@ ");
+            // Telemetry.print("@@@ Auton Init Starting @@@ ");
             clearCommandsAndButtons();
 
             auton.init();
 
-            Telemetry.print("@@@ Auton Init Complete @@@ ");
+            // Telemetry.print("@@@ Auton Init Complete @@@ ");
         } catch (Throwable t) {
             // intercept error and log it
             CrashTracker.logThrowableCrash(t);

@@ -21,12 +21,20 @@ public class ElevatorStates {
             elevator.atPercentage(config::getElevatorIsHighHeight, config::getTriggerTolerance);
     public static final Trigger isHome =
             elevator.atRotations(config::getHome, config::getTriggerTolerance);
+
+    public static final Trigger isL1Coral =
+            elevator.atRotations(config::getExl1Coral, config::getTriggerTolerance);
     public static final Trigger isL2Coral =
             elevator.atRotations(config::getExl2Coral, config::getTriggerTolerance);
     public static final Trigger isL3Coral =
             elevator.atRotations(config::getExl3Coral, config::getTriggerTolerance);
     public static final Trigger isL4Coral =
             elevator.atRotations(config::getExl4Coral, config::getTriggerTolerance);
+
+    public static final Trigger isL2Algae =
+            elevator.atRotations(config::getL2Algae, config::getTriggerTolerance);
+    public static final Trigger isL3Algae =
+            elevator.atRotations(config::getL3Algae, config::getTriggerTolerance);
 
     public static void setupDefaultCommand() {
         elevator.setDefaultCommand(holdPosition().withName("Elevator.default"));
@@ -64,7 +72,7 @@ public class ElevatorStates {
                 .onFalse(home());
 
         (stagedCoral.or(stagedAlgae))
-                .and(actionState.not())
+                .and(actionState.not(), actionPrepState.not().debounce(getActionPrepToActionTime()))
                 .whileTrue(move(config::getHome, "Elevator.Stage"));
 
         L1Coral.and(actionPrepState)

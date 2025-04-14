@@ -25,6 +25,7 @@ public class TranslationYController {
                         config.getKDTranslationController(),
                         config.getTranslationConstraints());
 
+        controller.setTolerance(0.0);
         SmartDashboard.putData("Y controller", controller);
     }
 
@@ -44,7 +45,7 @@ public class TranslationYController {
     public boolean atGoal(double current) {
         double goal = controller.getGoal().position;
         boolean atGoal = Math.abs(current - goal) < config.getTranslationTolerance();
-        System.out.println("Y At Goal: " + atGoal + " Goal: " + goal + " Current: " + current);
+        // System.out.println("Y At Goal: " + atGoal + " Goal: " + goal + " Current: " + current);
         return atGoal;
     }
 

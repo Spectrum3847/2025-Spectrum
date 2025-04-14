@@ -44,6 +44,8 @@ public class Operator extends Gamepad {
     public final Trigger antiSecretClimb_LTRSup =
             leftTriggerOnly.and(rightYTrigger(Threshold.LESS, -0.5));
 
+    public final Trigger processorScore_LT = leftTriggerOnly;
+
     // DISABLED TRIGGERS
     public final Trigger coastOn_dB = disabled.and(B);
     public final Trigger coastOff_dA = disabled.and(A);

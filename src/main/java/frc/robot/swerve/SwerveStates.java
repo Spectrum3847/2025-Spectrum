@@ -9,8 +9,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.reefscape.Field;
-import frc.reefscape.HomeOffsets;
+import frc.reefscape.FieldHelpers;
+import frc.reefscape.TagProperties;
 import frc.reefscape.Zones;
+import frc.reefscape.offsets.HomeOffsets;
 import frc.robot.Robot;
 import frc.robot.pilot.Pilot;
 import frc.spectrumLib.SpectrumState;
@@ -31,13 +33,13 @@ public class SwerveStates {
             new Trigger(
                     () ->
                             swerve.frontClosestToAngle(
-                                    Field.flipAngleIfRed(
+                                    FieldHelpers.flipAngleIfRed(
                                             Field.CoralStation.leftFaceRobotPovDegrees)));
     public static final Trigger isFrontClosestToRightStation =
             new Trigger(
                     () ->
                             swerve.frontClosestToAngle(
-                                    Field.flipAngleIfRed(
+                                    FieldHelpers.flipAngleIfRed(
                                             Field.CoralStation.rightFaceRobotPovDegrees)));
 
     public static final Trigger isFrontClosestToNet =
@@ -45,6 +47,8 @@ public class SwerveStates {
                     () ->
                             swerve.frontClosestToAngle(Field.Barge.netRobotPovDegrees)
                                     == Zones.blueFieldSide.getAsBoolean());
+
+    public static final Trigger isAlignedToReef = new Trigger(() -> Zones.atReef());
 
     protected static void setupDefaultCommand() {
         swerve.setDefaultCommand(pilotSteerCommand);
@@ -76,6 +80,11 @@ public class SwerveStates {
         pilot.reefVision_A.whileTrue(log(reefAimDriveVision()));
         // pilot.reefAim_A.and(RobotStates.netAlgae).whileTrue(log(netAimDrive()));
         pilot.reefAim_A.whileTrue(log(netAimDrive()));
+        // pilot.reefAim_A.whileTrue(log(reefAimDrive()));
+        // pilot.reefVision_A.whileTrue(log(reefAimDriveVisionTA()));
+        pilot.reefVision_A.whileTrue(log(reefAimDriveVisionXY()));
+        pilot.reefAlignScore_B.whileTrue(log(reefAimDriveVisionXY()));
+
         // Pose2d backReefOffset = Field.Reef.getOffsetPosition(21, Units.inchesToMeters(24));
         // pilot.cageAim_B.whileTrue(
         //         alignDrive(
@@ -93,12 +102,20 @@ public class SwerveStates {
      *
      * @return
      */
-    public static Command reefAimDriveVision() {
+    public static Command reefAimDriveVisionTA() {
         return fpvAimDrive(
                         SwerveStates::getTagDistanceVelocity,
                         SwerveStates::getTagTxVelocity,
-                        Robot.getVision()::getReefTagAngle)
-                .withName("Swerve.reefAimDrive");
+                        () -> FieldHelpers.getReefTagAngle())
+                .withName("Swerve.reefAimDriveVisionTA");
+    }
+
+    public static Command reefAimDriveVisionXY() {
+        return alignDrive(
+                        () -> FieldHelpers.getReefOffsetFromTagX(),
+                        () -> FieldHelpers.getReefOffsetFromTagY(),
+                        () -> FieldHelpers.getReefTagAngle())
+                .withName("Swerve.reefAimDriveVisionXY");
     }
 
     public static Command reefAimDrive() {
@@ -182,7 +199,7 @@ public class SwerveStates {
     }
 
     private static double getTagDistanceVelocity() {
-        double[][] tagAreaOffsets = HomeOffsets.getTagAreaOffsets();
+        TagProperties[] tagAreaOffsets = HomeOffsets.getReefTagOffsets();
         int tagIndex = Robot.getVision().getClosestTagID();
         if (tagIndex < 0) {
             return 0.0;
@@ -190,9 +207,9 @@ public class SwerveStates {
             tagIndex -= 17;
         }
 
-        final double tagAreaOffset = tagAreaOffsets[tagIndex][1];
+        final double tagAreaOffset = tagAreaOffsets[tagIndex].getTaGoal();
 
-        System.out.println("Tag Area Offset: " + tagAreaOffset);
+        // System.out.println("Tag Area Offset: " + tagAreaOffset);
         SmartDashboard.putNumber("Tag Area Offset: ", tagAreaOffset);
         return swerve.calculateTagDistanceAlignController(() -> tagAreaOffset);
     }

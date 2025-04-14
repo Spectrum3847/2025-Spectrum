@@ -50,14 +50,14 @@ public class Elevator extends Mechanism {
         @Getter @Setter private double l4Score = l4Coral - 3;
 
         @Getter @Setter private double exl1Coral = 0.3;
-        @Getter @Setter private double exl2Coral = 5.53; // 8.6;
-        @Getter @Setter private double exl2Score = 3.44; // 6.2; // 0.3;
-        @Getter @Setter private double exl3Coral = 20; // 12.8;
-        @Getter @Setter private double exl3Score = 17.6; // 11.8;
+        @Getter @Setter private double exl2Coral = 6.4; // 5.53; // 8.6;
+        @Getter @Setter private double exl2Score = 4.1; // 3.44; // 6.2; // 0.3;
+        @Getter @Setter private double exl3Coral = 16.9; // 20; // 12.8;
+        @Getter @Setter private double exl3Score = 14.6; // 17.6; // 11.8;
         @Getter @Setter private double exl4Coral = fullExtend;
         @Getter @Setter private double exl4Score = exl4Coral - 3;
 
-        @Getter private double triggerTolerance = 0.95;
+        @Getter private double triggerTolerance = 1.15;
         @Getter private double elevatorIsUpHeight = 5;
         @Getter private double elevatorIsHighHeight = 10;
         @Getter private double initPosition = 0;
