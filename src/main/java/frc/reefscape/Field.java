@@ -116,7 +116,20 @@ public class Field {
             }
             return indexOfSmallest;
         }
+
+        // TODO: Add a method to get which side of the barge the robot is on
+        
+        public static double bargeAlign(Pose2d robotPose) {
+            double x = Field.Barge.bargeXBlue.getX();
+            double robotX = robotPose.getX();
+
+            if (robotX >= halfLength) {
+                x = bargeXRed.getX();
+            }
+            return x;
+        }
     }
+
 
     public static class CoralStation {
         public static final double leftFaceRobotPovDegrees = 144.011;

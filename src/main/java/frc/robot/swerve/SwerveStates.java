@@ -110,17 +110,11 @@ public class SwerveStates {
     }
 
     public static Command netAimDrive() {
-        double poseX = Robot.getSwerve().getRobotPose().getX();
-        if (poseX > Field.fieldWidth / 2) {
-            return alignToXDrive(() -> Field.getFieldLength() - Field.Barge.bargeXBlue.getX());
-        } else {
-            return alignToXDrive(() -> Field.Barge.bargeXBlue.getX());
-        }
+        return alignToXDrive(() -> zones.getBargeAlignX());
     }
 
     public static Command alignToXDrive(DoubleSupplier xGoalMeters) {
-        double poseX = Robot.getSwerve().getRobotPose().getX();
-        if (poseX > Field.fieldWidth / 2) {
+        if (Field.isRed()) {
             return resetXController()
                     .andThen(
                             drive(
