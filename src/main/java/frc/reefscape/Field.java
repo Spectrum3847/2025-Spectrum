@@ -49,8 +49,12 @@ public class Field {
         public static final Translation2d closeCage =
                 new Translation2d(Units.inchesToMeters(345.428), Units.inchesToMeters(199.947));
 
-        public static final Translation2d bargeXBlue = new Translation2d(Units.inchesToMeters(325.68), Units.inchesToMeters(241.64));
-        public static final Translation2d bargeXRed = new Translation2d(Field.flipXifRed(Units.inchesToMeters(325.68)), Field.flipYifRed(Units.inchesToMeters(241.64)));
+        public static final Translation2d bargeXBlue =
+                new Translation2d(Units.inchesToMeters(325.68), Units.inchesToMeters(241.64));
+        public static final Translation2d bargeXRed =
+                new Translation2d(
+                        Field.flipXifRed(Units.inchesToMeters(325.68)),
+                        Field.flipYifRed(Units.inchesToMeters(241.64)));
         // Measured from floor to bottom of cage
         public static final double deepHeight = Units.inchesToMeters(3.125);
         public static final double shallowHeight = Units.inchesToMeters(30.125);

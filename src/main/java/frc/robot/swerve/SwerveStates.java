@@ -12,7 +12,6 @@ import frc.reefscape.Field;
 import frc.reefscape.HomeOffsets;
 import frc.reefscape.Zones;
 import frc.robot.Robot;
-import frc.robot.RobotStates;
 import frc.robot.pilot.Pilot;
 import frc.spectrumLib.SpectrumState;
 import frc.spectrumLib.Telemetry;
@@ -73,10 +72,10 @@ public class SwerveStates {
         pilot.rightReorient.onTrue(log(reorientRight()));
 
         // // vision aim
-        pilot.reefAim_A.whileTrue(log(reefAimDrive()));
+        // pilot.reefAim_A.whileTrue(log(reefAimDrive()));
         pilot.reefVision_A.whileTrue(log(reefAimDriveVision()));
-        pilot.reefAim_A.and(RobotStates.netAlgae).whileTrue(log(netAimDrive()));
-
+        // pilot.reefAim_A.and(RobotStates.netAlgae).whileTrue(log(netAimDrive()));
+        pilot.reefAim_A.whileTrue(log(netAimDrive()));
         // Pose2d backReefOffset = Field.Reef.getOffsetPosition(21, Units.inchesToMeters(24));
         // pilot.cageAim_B.whileTrue(
         //         alignDrive(
@@ -111,15 +110,17 @@ public class SwerveStates {
     }
 
     public static Command netAimDrive() {
-        if (Field.isRed()) {
-            return alignToXDrive(() -> Field.Barge.bargeXRed.getX());
+        double poseX = Robot.getSwerve().getRobotPose().getX();
+        if (poseX > Field.fieldWidth / 2) {
+            return alignToXDrive(() -> Field.getFieldLength() - Field.Barge.bargeXBlue.getX());
         } else {
             return alignToXDrive(() -> Field.Barge.bargeXBlue.getX());
         }
     }
 
     public static Command alignToXDrive(DoubleSupplier xGoalMeters) {
-        if (Field.isRed()) {
+        double poseX = Robot.getSwerve().getRobotPose().getX();
+        if (poseX > Field.fieldWidth / 2) {
             return resetXController()
                     .andThen(
                             drive(
@@ -130,7 +131,7 @@ public class SwerveStates {
             return resetXController()
                     .andThen(
                             drive(
-                                    getAlignToX(xGoalMeters),
+                                    () -> getAlignToX(xGoalMeters).getAsDouble(),
                                     pilot::getDriveLeftPositive,
                                     pilot::getDriveCCWPositive));
         }
