@@ -63,6 +63,17 @@ public class Zones {
             new Trigger(() -> Zones.withinReefRange(reefRangeRadius));
 
     // -------------------------------------------------------------
+    // Barge Align Helper
+    // -------------------------------------------------------------
+
+    public double getBargeAlignX() {
+        double bargeAlignX = Field.Barge.bargeAlign(Robot.getSwerve().getRobotPose());
+
+        SmartDashboard.putNumber("Barge Align X", bargeAlignX);
+        return bargeAlignX;
+    }
+
+    // -------------------------------------------------------------
     // Reef Offsets Helper
     // -------------------------------------------------------------
 

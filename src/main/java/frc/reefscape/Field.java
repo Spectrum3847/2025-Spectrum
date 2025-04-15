@@ -48,6 +48,12 @@ public class Field {
         public static final Translation2d closeCage =
                 new Translation2d(Units.inchesToMeters(345.428), Units.inchesToMeters(199.947));
 
+        public static final Translation2d bargeXBlue =
+                new Translation2d(Units.inchesToMeters(325.68), Units.inchesToMeters(241.64));
+        public static final Translation2d bargeXRed =
+                new Translation2d(
+                        FieldHelpers.flipXifRed(Units.inchesToMeters(325.68)),
+                        FieldHelpers.flipYifRed(Units.inchesToMeters(241.64)));
         // Measured from floor to bottom of cage
         public static final double deepHeight = Units.inchesToMeters(3.125);
         public static final double shallowHeight = Units.inchesToMeters(30.125);
@@ -96,6 +102,35 @@ public class Field {
                 // Robot Y if no target zone found
                 return Robot.getSwerve().getRobotPose().getY();
             }
+        }
+
+        public static int indexOfSmallest(double[] array) {
+            int indexOfSmallest = 0;
+            double smallestIndex = array[indexOfSmallest];
+            for (int i = 0; i < array.length; i++) {
+                if (array[i] <= smallestIndex) {
+                    smallestIndex = array[i];
+                    indexOfSmallest = i;
+                }
+            }
+            return indexOfSmallest;
+        }
+
+        // TODO: Add a method to get which side of the barge the robot is on
+
+        public static double bargeAlign(Pose2d robotPose) {
+            double targetX = bargeXBlue.getX();
+            double oppositeX = bargeXRed.getX();
+            if (isRed()) {
+                targetX = bargeXRed.getX();
+                oppositeX = bargeXBlue.getX();
+            }
+            double robotX = robotPose.getX();
+
+            if (robotX >= halfLength) {
+                targetX = Field.fieldLength - oppositeX;
+            }
+            return targetX;
         }
     }
 
