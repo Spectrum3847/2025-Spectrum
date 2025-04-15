@@ -119,13 +119,18 @@ public class Field {
         // TODO: Add a method to get which side of the barge the robot is on
 
         public static double bargeAlign(Pose2d robotPose) {
-            double x = Field.Barge.bargeXBlue.getX();
+            double targetX = bargeXBlue.getX();
+            double oppositeX = bargeXRed.getX();
+            if (isRed()) {
+                targetX = bargeXRed.getX();
+                oppositeX = bargeXBlue.getX();
+            }
             double robotX = robotPose.getX();
 
             if (robotX >= halfLength) {
-                x = bargeXRed.getX();
+                targetX = Field.fieldLength - oppositeX;
             }
-            return x;
+            return targetX;
         }
     }
 

@@ -41,6 +41,7 @@ public class Pilot extends Gamepad {
     public final Trigger reefVision_A = A.and(teleop); // , tagsInView); // remove tags in view
     public final Trigger reefAlignScore_B = B.and(teleop);
     // public final Trigger cageAim_B = B.and(teleop);
+    public final Trigger bargeAlign_A = A.and(teleop);
 
     // Drive Triggers
     public final Trigger upReorient = upDpad.and(fn, teleop);

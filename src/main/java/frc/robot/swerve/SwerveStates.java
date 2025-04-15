@@ -81,8 +81,9 @@ public class SwerveStates {
         // pilot.reefAim_A.whileTrue(log(netAimDrive()));
         // pilot.reefAim_A.whileTrue(log(reefAimDrive()));
         // pilot.reefVision_A.whileTrue(log(reefAimDriveVisionTA()));
-        pilot.reefVision_A.whileTrue(log(reefAimDriveVisionXY()));
-        pilot.reefAlignScore_B.whileTrue(log(reefAimDriveVisionXY()));
+        // pilot.reefVision_A.whileTrue(log(reefAimDriveVisionXY()));
+        // pilot.reefAlignScore_B.whileTrue(log(reefAimDriveVisionXY()));
+        pilot.bargeAlign_A.whileTrue(log(netAimDrive()));
 
         // Pose2d backReefOffset = Field.Reef.getOffsetPosition(21, Units.inchesToMeters(24));
         // pilot.cageAim_B.whileTrue(

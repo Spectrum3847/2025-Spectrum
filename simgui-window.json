@@ -1,18 +1,18 @@
 {
   "Docking": {
     "Data": [
-      "DockNode  ID=0x00000001 Pos=7,664 Size=905,316 Selected=0x48913727"
+      "DockNode  ID=0x00000001 Pos=-64,877 Size=905,316 Selected=0x48913727"
     ]
   },
   "MainWindow": {
     "GLOBAL": {
       "font": "Proggy Dotted",
       "fps": "120",
-      "height": "1415",
+      "height": "1170",
       "maximized": "0",
       "style": "0",
       "userScale": "2",
-      "width": "2256",
+      "width": "1924",
       "xpos": "0",
       "ypos": "29"
     }
@@ -34,7 +34,7 @@
     "###/SmartDashboard/Auto Chooser": {
       "Collapsed": "0",
       "Pos": "339,253",
-      "Size": "307,60"
+      "Size": "361,66"
     },
     "###/SmartDashboard/Field2d": {
       "Collapsed": "0",
@@ -48,7 +48,7 @@
     },
     "###/SmartDashboard/Scheduler": {
       "Collapsed": "0",
-      "Pos": "920,644",
+      "Pos": "414,331",
       "Size": "372,548"
     },
     "###/SmartDashboard/States": {
@@ -74,17 +74,17 @@
     "###Addressable LEDs": {
       "Collapsed": "0",
       "Pos": "585,29",
-      "Size": "416,220"
+      "Size": "491,246"
     },
     "###FMS": {
       "Collapsed": "0",
-      "Pos": "368,30",
-      "Size": "210,214"
+      "Pos": "562,299",
+      "Size": "244,244"
     },
     "###Joysticks": {
       "Collapsed": "0",
-      "Pos": "6,384",
-      "Size": "976,252"
+      "Pos": "87,735",
+      "Size": "1156,287"
     },
     "###Keyboard 0 Settings": {
       "Collapsed": "0",
@@ -99,13 +99,13 @@
     "###NetworkTables": {
       "Collapsed": "0",
       "DockId": "0x00000001,0",
-      "Pos": "7,664",
+      "Pos": "-64,877",
       "Size": "905,316"
     },
     "###NetworkTables Info": {
       "Collapsed": "0",
       "DockId": "0x00000001,1",
-      "Pos": "7,664",
+      "Pos": "-64,877",
       "Size": "905,316"
     },
     "###Other Devices": {
@@ -126,13 +126,13 @@
     },
     "###System Joysticks": {
       "Collapsed": "0",
-      "Pos": "684,642",
-      "Size": "232,254"
+      "Pos": "721,421",
+      "Size": "273,290"
     },
     "###Timing": {
       "Collapsed": "0",
       "Pos": "5,187",
-      "Size": "162,194"
+      "Size": "188,215"
     },
     "Debug##Default": {
       "Collapsed": "0",
@@ -142,7 +142,7 @@
     "Robot State": {
       "Collapsed": "0",
       "Pos": "193,186",
-      "Size": "118,134"
+      "Size": "137,152"
     }
   }
 }
