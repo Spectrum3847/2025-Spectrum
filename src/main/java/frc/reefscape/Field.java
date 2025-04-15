@@ -52,8 +52,8 @@ public class Field {
                 new Translation2d(Units.inchesToMeters(325.68), Units.inchesToMeters(241.64));
         public static final Translation2d bargeXRed =
                 new Translation2d(
-                        Field.flipXifRed(Units.inchesToMeters(325.68)),
-                        Field.flipYifRed(Units.inchesToMeters(241.64)));
+                        FieldHelpers.flipXifRed(Units.inchesToMeters(325.68)),
+                        FieldHelpers.flipYifRed(Units.inchesToMeters(241.64)));
         // Measured from floor to bottom of cage
         public static final double deepHeight = Units.inchesToMeters(3.125);
         public static final double shallowHeight = Units.inchesToMeters(30.125);
@@ -117,7 +117,7 @@ public class Field {
         }
 
         // TODO: Add a method to get which side of the barge the robot is on
-        
+
         public static double bargeAlign(Pose2d robotPose) {
             double x = Field.Barge.bargeXBlue.getX();
             double robotX = robotPose.getX();
@@ -128,7 +128,6 @@ public class Field {
             return x;
         }
     }
-
 
     public static class CoralStation {
         public static final double leftFaceRobotPovDegrees = 144.011;
