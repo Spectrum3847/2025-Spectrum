@@ -56,7 +56,7 @@ public class LedStates {
             String name, SpectrumLEDs sLeds, LEDPattern pattern, Trigger trigger) {
         int priority = -1;
         return trigger.and(sLeds.checkPriority(priority), sLeds.defaultTrigger)
-                // .onTrue(sLeds.setPattern(pattern, priority).withName(name));
+                // .onTrue(sLEDs.setPattern(pattern, priority).withName(name));
                 .onTrue(
                         setPatternWithReverseCheck(
                                 name, sLeds, pattern, priority, () -> sLeds == left));
@@ -179,8 +179,8 @@ public class LedStates {
 
     //LEDs are in photon purple when in L2
     static void secretLTwoLED(Trigger trigger, int priority) {
-        ledCommand("right.SecretLTwo", right, right.chase(new Color("#d1acfb"), 10, 10), priority, trigger);
-        ledCommand("right.SecretLTwo", left, left.chase(new Color("#d1acfb"), 10, 10), priority, trigger);
+        ledCommand("right.SecretLTwo", right, right.chase(new Color("#d1ACFB"), 10, 10), priority, trigger);
+        ledCommand("right.SecretLTwo", left, left.chase(new Color("#d1ACFB"), 10, 10), priority, trigger);
     
     }
 
