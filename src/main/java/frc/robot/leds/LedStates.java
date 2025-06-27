@@ -190,12 +190,6 @@ public class LedStates {
         ledCommand("left.SecretLFour", left, left.rainbow(100, 100), priority, trigger);
     }
 
-    //we climbed! aqua lights!!
-    /**static void climbed(Trigger trigger, int priority) {
-        ledCommand("right.climbed", right, right.chase(Color.kAqua, 100.0, 5.5), priority, trigger);
-        ledCommand("left.climbed", left, left.chase(Color.kAqua, 100.0, 5.5), priority, trigger);
-    } */
-
     // Log Command
     protected static Command log(Command cmd) {
         return Telemetry.log(cmd);
