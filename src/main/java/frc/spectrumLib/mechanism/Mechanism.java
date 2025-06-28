@@ -34,6 +34,8 @@ import frc.spectrumLib.talonFX.TalonFXFactory;
 import frc.spectrumLib.util.CanDeviceId;
 import frc.spectrumLib.util.Conversions;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
+
 import lombok.*;
 
 /**
@@ -48,6 +50,9 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
     public Config config;
 
     Alert currentAlert = new Alert("", AlertType.kWarning);
+    Alert disconnectedAlert =
+            new Alert(getName() + " motor " + config.getId() + " disconnected", AlertType.kWarning);
+    Alert unlicensedAlert = new Alert(getName() + " motor " + config.getId() + " unlicensed", AlertType.kWarning);
     private double target = 0;
 
     private final CachedDouble cachedRotations;
@@ -469,15 +474,35 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
         }
     }
 
+    protected void checkMotorOK(Supplier<StatusCode> motorRequest) {
+        if (motorRequest.get().isOK()) {
+            disconnectedAlert.set(false);
+            unlicensedAlert.set(false);
+            return;
+        }
+
+        if (motorRequest.get().isOK()) {
+            return;
+        }
+
+        disconnectedAlert.set(true);
+
+        if (motorRequest.get().value == StatusCode.UnlicensedDevice.value) {
+                unlicensedAlert.set(true);
+        }
+    }
+
     /**
      * Sets the mechanism position of the motor
      *
      * @param rotations rotations
      */
     protected void setMotorPosition(DoubleSupplier rotations) {
-        if (isAttached()) {
-            motor.setPosition(rotations.getAsDouble());
+        if (!isAttached()) {
+            disconnectedAlert.set(false);
+            return;
         }
+        checkMotorOK(() -> motor.setPosition(rotations.getAsDouble()));
     }
 
     /**
@@ -488,8 +513,10 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
     protected void setMMVelocityFOC(DoubleSupplier velocityRPS) {
         if (isAttached()) {
             target = velocityRPS.getAsDouble();
-            MotionMagicVelocityTorqueCurrentFOC mm = config.mmVelocityFOC.withVelocity(target);
-            motor.setControl(mm);
+            MotionMagicVelocityTorqueCurrentFOC mm =
+                    config.mmVelocityFOC.withVelocity(target);
+
+            checkMotorOK(() -> motor.setControl(mm));
         }
     }
 
@@ -502,7 +529,7 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
         if (isAttached()) {
             target = velocityRPS.getAsDouble();
             VelocityTorqueCurrentFOC output = config.velocityTorqueCurrentFOC.withVelocity(target);
-            motor.setControl(output);
+            checkMotorOK(() -> motor.setControl(output));
         }
     }
 
@@ -515,7 +542,7 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
         if (isAttached()) {
             target = Conversions.RPMtoRPS(velocityRPS.getAsDouble());
             VelocityTorqueCurrentFOC output = config.velocityTorqueCurrentFOC.withVelocity(target);
-            motor.setControl(output);
+            checkMotorOK(() -> motor.setControl(output));
         }
     }
 
@@ -528,7 +555,7 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
         if (isAttached()) {
             target = velocityRPS.getAsDouble();
             VelocityVoltage output = config.velocityControl.withVelocity(target);
-            motor.setControl(output);
+            checkMotorOK(() -> motor.setControl(output));
         }
     }
 
@@ -541,7 +568,7 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
         if (isAttached()) {
             target = rotations.getAsDouble();
             MotionMagicTorqueCurrentFOC mm = config.mmPositionFOC.withPosition(target);
-            motor.setControl(mm);
+            checkMotorOK(() -> motor.setControl(mm));
         }
     }
 
@@ -567,7 +594,7 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
                             .withVelocity(velocity.getAsDouble())
                             .withAcceleration(acceleration.getAsDouble())
                             .withJerk(jerk.getAsDouble());
-            motor.setControl(mm);
+            checkMotorOK(() -> motor.setControl(mm));
         }
     }
 
@@ -591,7 +618,7 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
             target = rotations.getAsDouble();
             MotionMagicVoltage mm =
                     config.mmPositionVoltageSlot.withSlot(slot).withPosition(target);
-            motor.setControl(mm);
+            checkMotorOK(() -> motor.setControl(mm));
         }
     }
 
@@ -605,21 +632,21 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
             VoltageOut output =
                     config.voltageControl.withOutput(
                             config.voltageCompSaturation * percent.getAsDouble());
-            motor.setControl(output);
+            checkMotorOK(() -> motor.setControl(output));
         }
     }
 
     public void setVoltageOutput(DoubleSupplier voltage) {
         if (isAttached()) {
             VoltageOut output = config.voltageControl.withOutput(voltage.getAsDouble());
-            motor.setControl(output);
+            checkMotorOK(() -> motor.setControl(output));
         }
     }
 
     public void setTorqueCurrentFoc(DoubleSupplier current) {
         if (isAttached()) {
             TorqueCurrentFOC output = config.torqueCurrentFOC.withOutput(current.getAsDouble());
-            motor.setControl(output);
+            checkMotorOK(() -> motor.setControl(output));
         }
     }
 
