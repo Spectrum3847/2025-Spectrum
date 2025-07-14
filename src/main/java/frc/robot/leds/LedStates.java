@@ -28,6 +28,9 @@ public class LedStates {
         teleopPattern(Util.teleop.and(Util.dsAttached));
         autoPattern(Util.autoMode.and(Util.dsAttached));
         testModePattern(Util.testMode.and(Util.dsAttached));
+        // temporary for testing:
+        climbed(Trigger.constant(true), 50); 
+
 
         // General Led Commands
         homeFinishLED(RobotStates.isAtHome.and(Util.teleop, RobotStates.staged.not()), 8);

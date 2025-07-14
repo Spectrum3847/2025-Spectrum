@@ -258,4 +258,10 @@ public class RobotStates {
                         homeAll.setFalse())
                 .withName("Clear States");
     }
+
+    // temporary for testing:
+        if (RobotStates.climbFinish) {
+                system.out.println("climbed");
+        }
 }
+
