@@ -259,9 +259,5 @@ public class RobotStates {
                 .withName("Clear States");
     }
 
-    // temporary for testing:
-        if (RobotStates.climbFinish) {
-                system.out.println("climbed");
-        }
 }
 
