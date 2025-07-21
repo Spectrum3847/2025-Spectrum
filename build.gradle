@@ -1,7 +1,7 @@
 plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2025.3.2"
-    id 'com.diffplug.spotless' version '7.1.0'
+    id 'com.diffplug.spotless' version '7.2.0'
     id "com.peterabeles.gversion" version "1.10.3"
     id "io.freefair.lombok" version "8.14"
     id("com.github.spotbugs") version "6.0.24"
