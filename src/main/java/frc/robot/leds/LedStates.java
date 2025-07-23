@@ -49,7 +49,6 @@ public class LedStates {
 
         // Climb Led Commands
         climbReadyLED(ClimbStates.isLatched.and(RobotStates.climbPrep, Util.teleop), 6);
-        climbed(RobotStates.climbFinish.and(Util.teleop), 20);
     }
 
     /** Default LED commands for each mode */
@@ -227,12 +226,6 @@ public class LedStates {
         ledCommand("right.SecretLFour", right, right.rainbow(100, 100), priority, trigger);
         ledCommand("left.SecretLFour", left, left.rainbow(100, 100), priority, trigger);
     }
-
-    // we climbed! aqua lights!!
-      static void climbed(Trigger trigger, int priority) { 
-        ledCommand("right.climbed", right, right.chase(Color.kAqua, 100.0, 5.5), priority, trigger); 
-        ledCommand("left.climbed", left, left.chase(Color.kAqua, 100.0, 5.5), priority, trigger); 
-      }  
 }
      
 
