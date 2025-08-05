@@ -46,7 +46,8 @@ public class SwerveConfig {
     // Theoretical free speed (m/s) at 12v applied output;
     @Getter @Setter
     private LinearVelocity speedAt12Volts =
-            MetersPerSecond.of((95 / driveGearRatio) * 2 * Math.PI * wheelRadius.in(Meters));
+            MetersPerSecond.of(
+                    (95 / driveGearRatio) * 2 * Math.PI * wheelRadius.in(Meters)); // 4.28699874;
 
     @Getter private double kSdrive = 0.10; // 0.13
     @Getter private double kSsteer = 0.25; // 0.2
@@ -74,7 +75,7 @@ public class SwerveConfig {
     @Getter
     private Constraints translationConstraints =
             new Constraints(
-                    speedAt12Volts.baseUnitMagnitude() / 2,
+                    speedAt12Volts.baseUnitMagnitude() * 0.8,
                     speedAt12Volts.baseUnitMagnitude() * 10);
 
     @Getter private double kPTagCenterController = 1.3;
