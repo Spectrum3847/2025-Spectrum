@@ -60,9 +60,10 @@ public class SwerveConfig {
     @Getter private double kPRotationController = 1.85; // 4.5 // 6.5 // 8.0;
     @Getter private double kIRotationController = 0.0;
     @Getter private double kDRotationController = 0.0; // 0.2
-    @Getter private double rotationTolerance = Units.degreesToRadians(0.2); // rads
+    @Getter private double rotationTolerance = Units.degreesToRadians(1); // rads
+    @Getter private double rotationVelocityTolerance = Units.degreesToRadians(3); // rads/s
 
-    @Getter private double kPHoldController = 12.0;
+    @Getter private double kPHoldController = 0.7;
     @Getter private double kIHoldController = 0.0;
     @Getter private double kDHoldController = 0.0;
 
@@ -70,13 +71,14 @@ public class SwerveConfig {
     @Getter private double kITranslationController = 0.0;
     @Getter private double kDTranslationController = 0.0;
 
-    @Getter private double translationTolerance = Units.inchesToMeters(0.5); // 0.5
+    @Getter private double translationTolerance = Units.inchesToMeters(0.4); // 0.4
+    @Getter private double translationVelocityTolerance = Units.inchesToMeters(0.8); // 0.75
 
     @Getter
     private Constraints translationConstraints =
             new Constraints(
-                    speedAt12Volts.baseUnitMagnitude() * 0.8,
-                    speedAt12Volts.baseUnitMagnitude() * 10);
+                    speedAt12Volts.baseUnitMagnitude() * 0.9,
+                    Math.pow(speedAt12Volts.baseUnitMagnitude(), 2));
 
     @Getter private double kPTagCenterController = 1.3;
     @Getter private double kITagCenterController = 0.0;

@@ -20,11 +20,16 @@
       "/SmartDashboard/Alerts": "Alerts",
       "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/Field2d": "Field2d",
+      "/SmartDashboard/Hold Controller": "PIDController",
       "/SmartDashboard/LeftView": "Mechanism2d",
+      "/SmartDashboard/Rotation Controller": "ProfiledPIDController",
+      "/SmartDashboard/Rotation Motion Controller": "ProfiledPIDController",
       "/SmartDashboard/Scheduler": "Scheduler",
       "/SmartDashboard/States": "Alerts",
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d",
+      "/SmartDashboard/X Controller": "ProfiledPIDController",
       "/SmartDashboard/X controller": "ProfiledPIDController",
+      "/SmartDashboard/Y Controller": "ProfiledPIDController",
       "/SmartDashboard/Y controller": "ProfiledPIDController",
       "/SmartDashboard/frontView": "Mechanism2d",
       "/SmartDashboard/tagCenterController": "PIDController",
@@ -91,7 +96,17 @@
           "visible": true
         }
       },
+      "/SmartDashboard/Hold Controller": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/LeftView": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Rotation Controller": {
         "window": {
           "visible": true
         }
@@ -144,6 +159,16 @@
           "visible": true
         }
       },
+      "/SmartDashboard/X Controller": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Y Controller": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/frontView": {
         "window": {
           "visible": true
@@ -156,26 +181,20 @@
       "CameraPublisher": {
         "open": true
       },
-      "Pose2d##v_SwervePose": {
-        "Translation2d##v_translation": {
-          "open": true
-        },
-        "open": true
-      },
-      "Robot": {
-        "open": true
-      },
       "SmartDashboard": {
-        "Elbow": {
+        "open": true
+      },
+      "SwerveModuleState[]##v_SwerveStates": {
+        "SwerveModuleState##v_[0]": {
           "open": true
         },
-        "ElevatorFront": {
+        "SwerveModuleState##v_[1]": {
           "open": true
         },
-        "Shoulder": {
+        "SwerveModuleState##v_[2]": {
           "open": true
         },
-        "Twist": {
+        "SwerveModuleState##v_[3]": {
           "open": true
         },
         "open": true
@@ -184,5 +203,72 @@
   },
   "NetworkTables Info": {
     "visible": true
+  },
+  "Plot": {
+    "Plot <0>": {
+      "plots": [
+        {
+          "axis": [
+            {
+              "autoFit": true
+            }
+          ],
+          "backgroundColor": [
+            0.0,
+            0.0,
+            0.0,
+            0.8500000238418579
+          ],
+          "height": 629,
+          "series": [
+            {
+              "color": [
+                0.2980392277240753,
+                0.44705885648727417,
+                0.6901960968971252,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/X Controller Output"
+            },
+            {
+              "color": [
+                0.8666667342185974,
+                0.5176470875740051,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:SwerveStates[0]/speed"
+            },
+            {
+              "color": [
+                0.3333333432674408,
+                0.658823549747467,
+                0.4078431725502014,
+                1.0
+              ],
+              "id": "NT:SwerveStates[1]/speed"
+            },
+            {
+              "color": [
+                0.7686275243759155,
+                0.30588236451148987,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:SwerveStates[2]/speed"
+            },
+            {
+              "color": [
+                0.5058823823928833,
+                0.44705885648727417,
+                0.7019608020782471,
+                1.0
+              ],
+              "id": "NT:SwerveStates[3]/speed"
+            }
+          ]
+        }
+      ]
+    }
   }
 }

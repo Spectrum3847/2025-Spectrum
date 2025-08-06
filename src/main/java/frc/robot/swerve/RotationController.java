@@ -3,36 +3,32 @@ package frc.robot.swerve;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/**
- * Uses a profiled PID Controller to quickly turn the robot to a specified angle. Once the robot is
- * within a certain tolerance of the goal angle, a PID controller is used to hold the robot at that
- * angle.
- */
 public class RotationController {
-    Swerve swerve;
-    SwerveConfig config;
-    ProfiledPIDController controller;
-    PIDController holdController;
-    Constraints constraints;
+    private final ProfiledPIDController motionController;
+    private final PIDController holdController;
+    private final SwerveConfig config;
 
-    double calculatedValue = 0;
+    private double lastOutput = 0.0;
+    private final double deadband = 1e-3;
 
     public RotationController(SwerveConfig config) {
         this.config = config;
-        constraints =
-                new Constraints(config.getMaxAngularVelocity(), config.getMaxAngularAcceleration());
-        controller =
+
+        motionController =
                 new ProfiledPIDController(
                         config.getKPRotationController(),
                         config.getKIRotationController(),
                         config.getKDRotationController(),
-                        constraints);
+                        new Constraints(
+                                config.getMaxAngularVelocity(),
+                                config.getMaxAngularAcceleration()));
 
-        controller.enableContinuousInput(-Math.PI, Math.PI);
-        controller.setTolerance(0);
+        motionController.enableContinuousInput(-Math.PI, Math.PI);
+        motionController.setTolerance(config.getRotationTolerance());
+        SmartDashboard.putData("Rotation Controller", motionController);
 
-        // Hold controller is standard PID
         holdController =
                 new PIDController(
                         config.getKPHoldController(),
@@ -40,53 +36,50 @@ public class RotationController {
                         config.getKDHoldController());
 
         holdController.enableContinuousInput(-Math.PI, Math.PI);
-        holdController.setTolerance(
-                config.getRotationTolerance() / 2); // Half the tolerance of turn controller
+        holdController.setTolerance(config.getRotationTolerance() / 2.0);
+        SmartDashboard.putData("Hold Controller", holdController);
     }
 
-    public double calculate(double goalRadians, double currentRadians, boolean isHoldController) {
-        double measurement = currentRadians;
-        calculatedValue = controller.calculate(measurement, goalRadians);
+    public double calculate(double goalRadians, double currentRadians, boolean useHold) {
+        double output;
 
-        if (atGoal(currentRadians)) {
-            if (isHoldController) {
-                calculatedValue = calculateHold(goalRadians, currentRadians);
-                return calculatedValue + (config.getKSsteer() * Math.signum(calculatedValue));
-            }
-            calculatedValue = 0;
-            return calculatedValue;
+        if (useHold && atGoal()) {
+            output = holdController.calculate(currentRadians, goalRadians);
         } else {
-            return calculatedValue + (config.getKSsteer() * Math.signum(calculatedValue));
+            output = motionController.calculate(currentRadians, goalRadians);
         }
+
+        SmartDashboard.putNumber("Rotation Output (raw)", output);
+
+        if (Math.abs(output) > deadband) {
+            output += config.getKSsteer() * Math.signum(output);
+        }
+
+        lastOutput = output;
+        SmartDashboard.putNumber("Rotation Output (final)", output);
+
+        return output;
     }
 
     public double calculate(double goalRadians, double currentRadians) {
-        return calculate(goalRadians, currentRadians, false);
+        return calculate(goalRadians, currentRadians, true);
     }
 
-    public double calculateHold(double goalRadians, double currentRadians) {
-        calculatedValue = holdController.calculate(currentRadians, goalRadians);
-        return calculatedValue;
+    public boolean atGoal() {
+        return motionController.atGoal();
     }
 
     public boolean atSetpoint() {
-        return controller.atSetpoint();
-    }
-
-    public boolean atGoal(double current) {
-        double goal = controller.getGoal().position;
-        boolean atGoal = Math.abs(current - goal) < config.getRotationTolerance();
-        // System.out.println(
-        //         "Rotation At Goal: " + atGoal + " Goal: " + goal + " Current: " + current);
-        return atGoal;
+        return motionController.atSetpoint();
     }
 
     public void reset(double currentRadians) {
-        controller.reset(currentRadians);
+        motionController.reset(currentRadians);
         holdController.reset();
+        lastOutput = 0.0;
     }
 
     public void updatePID(double kP, double kI, double kD) {
-        controller.setPID(kP, kI, kD);
+        motionController.setPID(kP, kI, kD);
     }
 }
