@@ -181,13 +181,19 @@
       "CameraPublisher": {
         "open": true
       },
+      "Pose2d##v_SwervePose": {
+        "Rotation2d##v_rotation": {
+          "open": true
+        },
+        "open": true
+      },
       "SmartDashboard": {
+        "Rotation Controller": {
+          "open": true
+        },
         "open": true
       },
       "SwerveModuleState[]##v_SwerveStates": {
-        "SwerveModuleState##v_[0]": {
-          "open": true
-        },
         "SwerveModuleState##v_[1]": {
           "open": true
         },
@@ -196,8 +202,7 @@
         },
         "SwerveModuleState##v_[3]": {
           "open": true
-        },
-        "open": true
+        }
       }
     }
   },
@@ -219,7 +224,7 @@
             0.0,
             0.8500000238418579
           ],
-          "height": 629,
+          "height": 299,
           "series": [
             {
               "color": [
@@ -228,7 +233,8 @@
                 0.6901960968971252,
                 1.0
               ],
-              "id": "NT:/SmartDashboard/X Controller Output"
+              "id": "NT:/SmartDashboard/X Controller Output",
+              "weight": 3.0
             },
             {
               "color": [
@@ -237,7 +243,8 @@
                 0.32156863808631897,
                 1.0
               ],
-              "id": "NT:SwerveStates[0]/speed"
+              "id": "NT:/SmartDashboard/Y Controller Output",
+              "weight": 3.0
             },
             {
               "color": [
@@ -246,7 +253,7 @@
                 0.4078431725502014,
                 1.0
               ],
-              "id": "NT:SwerveStates[1]/speed"
+              "id": "NT:/SmartDashboard/Swerve Drive/Back Left Velocity"
             },
             {
               "color": [
@@ -255,7 +262,7 @@
                 0.32156863808631897,
                 1.0
               ],
-              "id": "NT:SwerveStates[2]/speed"
+              "id": "NT:/SmartDashboard/Swerve Drive/Back Right Velocity"
             },
             {
               "color": [
@@ -264,11 +271,57 @@
                 0.7019608020782471,
                 1.0
               ],
-              "id": "NT:SwerveStates[3]/speed"
+              "id": "NT:/SmartDashboard/Swerve Drive/Front Left Velocity"
+            },
+            {
+              "color": [
+                0.5764706134796143,
+                0.4705882668495178,
+                0.3764706254005432,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/Swerve Drive/Front Right Velocity"
+            }
+          ]
+        },
+        {
+          "axis": [
+            {
+              "autoFit": true
+            }
+          ],
+          "backgroundColor": [
+            0.0,
+            0.0,
+            0.0,
+            0.8500000238418579
+          ],
+          "height": 299,
+          "series": [
+            {
+              "color": [
+                0.2980392277240753,
+                0.44705885648727417,
+                0.6901960968971252,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/Swerve Drive/Robot Angle"
+            },
+            {
+              "color": [
+                0.8666667342185974,
+                0.5176470875740051,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:SwervePose/rotation/value"
             }
           ]
         }
-      ]
+      ],
+      "window": {
+        "visible": false
+      }
     }
   }
 }

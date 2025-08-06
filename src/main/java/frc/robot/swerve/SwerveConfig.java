@@ -63,11 +63,11 @@ public class SwerveConfig {
     @Getter private double rotationTolerance = Units.degreesToRadians(1); // rads
     @Getter private double rotationVelocityTolerance = Units.degreesToRadians(3); // rads/s
 
-    @Getter private double kPHoldController = 0.7;
+    @Getter private double kPHoldController = 0.3;
     @Getter private double kIHoldController = 0.0;
     @Getter private double kDHoldController = 0.0;
 
-    @Getter private double kPTranslationController = 1.7;
+    @Getter private double kPTranslationController = 3.0;
     @Getter private double kITranslationController = 0.0;
     @Getter private double kDTranslationController = 0.0;
 
