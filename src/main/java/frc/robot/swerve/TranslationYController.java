@@ -31,11 +31,11 @@ public class TranslationYController {
     }
 
     public double calculate(double goalMeters, double currentMeters) {
-        double output = controller.calculate(currentMeters, goalMeters);
-
         if (controller.atGoal()) {
             return 0.0;
         }
+
+        double output = controller.calculate(currentMeters, goalMeters);
 
         if (Math.abs(output) > deadband) {
             output += config.getKSdrive() * Math.signum(output);
@@ -47,10 +47,10 @@ public class TranslationYController {
                         -config.getTranslationConstraints().maxVelocity,
                         config.getTranslationConstraints().maxVelocity);
 
-        SmartDashboard.putNumber("Y Controller Output", output);
-        SmartDashboard.putBoolean("Y At Goal", controller.atGoal());
-        SmartDashboard.putNumber("Y Error", goalMeters - currentMeters);
-        SmartDashboard.putNumber("Y Setpoint Velocity", controller.getSetpoint().velocity);
+        // SmartDashboard.putNumber("Y Controller Output", output);
+        // SmartDashboard.putBoolean("Y At Goal", controller.atGoal());
+        // SmartDashboard.putNumber("Y Position Error", controller.getPositionError());
+        // SmartDashboard.putNumber("Y Tolerance", controller.getPositionTolerance());
         return output;
     }
 

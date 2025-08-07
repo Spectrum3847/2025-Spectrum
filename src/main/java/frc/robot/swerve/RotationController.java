@@ -49,14 +49,15 @@ public class RotationController {
             output = motionController.calculate(currentRadians, goalRadians);
         }
 
-        SmartDashboard.putNumber("Rotation Output (raw)", output);
+        // SmartDashboard.putNumber("Rotation Output (raw)", output);
 
         if (Math.abs(output) > deadband) {
             output += config.getKSsteer() * Math.signum(output);
         }
 
         lastOutput = output;
-        SmartDashboard.putNumber("Rotation Output (final)", output);
+        // SmartDashboard.putNumber("Rotation Output (final)", output);
+        // SmartDashboard.putBoolean("Rotation At Goal", motionController.atGoal());
 
         return output;
     }

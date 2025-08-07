@@ -57,13 +57,13 @@ public class SwerveConfig {
     // -----------------------------------------------------------------------
     @Getter private double maxAngularVelocity = 2 * Math.PI; // rad/s
     @Getter private double maxAngularAcceleration = Math.pow(maxAngularVelocity, 2); // rad/s^2
-    @Getter private double kPRotationController = 1.85; // 4.5 // 6.5 // 8.0;
+    @Getter private double kPRotationController = 2; // 4.5 // 6.5 // 8.0;
     @Getter private double kIRotationController = 0.0;
     @Getter private double kDRotationController = 0.0; // 0.2
     @Getter private double rotationTolerance = Units.degreesToRadians(1); // rads
     @Getter private double rotationVelocityTolerance = Units.degreesToRadians(3); // rads/s
 
-    @Getter private double kPHoldController = 0.3;
+    @Getter private double kPHoldController = 0.15;
     @Getter private double kIHoldController = 0.0;
     @Getter private double kDHoldController = 0.0;
 
@@ -71,7 +71,7 @@ public class SwerveConfig {
     @Getter private double kITranslationController = 0.0;
     @Getter private double kDTranslationController = 0.0;
 
-    @Getter private double translationTolerance = Units.inchesToMeters(0.4); // 0.4
+    @Getter private double translationTolerance = Units.inchesToMeters(0.6); // 0.4
     @Getter private double translationVelocityTolerance = Units.inchesToMeters(0.8); // 0.75
 
     @Getter

@@ -28,11 +28,11 @@ public class TranslationXController {
     }
 
     public double calculate(double goalMeters, double currentMeters) {
-        double output = controller.calculate(currentMeters, goalMeters);
-
         if (controller.atGoal()) {
             return 0.0;
         }
+
+        double output = controller.calculate(currentMeters, goalMeters);
 
         if (Math.abs(output) > deadband) {
             output += config.getKSdrive() * Math.signum(output);
@@ -44,10 +44,10 @@ public class TranslationXController {
                         -config.getTranslationConstraints().maxVelocity,
                         config.getTranslationConstraints().maxVelocity);
 
-        SmartDashboard.putNumber("X Controller Output", output);
-        SmartDashboard.putBoolean("X At Goal", controller.atGoal());
-        SmartDashboard.putNumber("X Error", goalMeters - currentMeters);
-        SmartDashboard.putNumber("X Setpoint Velocity", controller.getSetpoint().velocity);
+        // SmartDashboard.putNumber("X Controller Output", output);
+        // SmartDashboard.putBoolean("X At Goal", controller.atGoal());
+        // SmartDashboard.putNumber("X Position Error", controller.getPositionError());
+        // SmartDashboard.putNumber("X Tolerance", controller.getPositionTolerance());
         return output;
     }
 

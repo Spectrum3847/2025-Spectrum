@@ -188,9 +188,6 @@
         "open": true
       },
       "SmartDashboard": {
-        "Rotation Controller": {
-          "open": true
-        },
         "open": true
       },
       "SwerveModuleState[]##v_SwerveStates": {
@@ -318,10 +315,7 @@
             }
           ]
         }
-      ],
-      "window": {
-        "visible": false
-      }
+      ]
     }
   }
 }
