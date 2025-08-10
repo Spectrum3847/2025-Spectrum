@@ -428,11 +428,11 @@ public class SpectrumLEDs implements SpectrumSubsystem {
             public void applyTo(LEDReader reader, LEDWriter writer) {
                 int bufLen = reader.getLength();
                 long currentTime = System.currentTimeMillis();
-                // double cycleTime =
-                        // durationInSeconds
-                                //* 1000; // Convert time to milliseconds for the entire cycle
-                // double phase =
-                //         (currentTime % cycleTime) / cycleTime; // Phase of the cycle from 0 to 1
+                double cycleTime =
+                        durationInSeconds
+                                * 1000; // Convert time to milliseconds for the entire cycle
+                double phase =
+                        (currentTime % cycleTime) / cycleTime; // Phase of the cycle from 0 to 1
 
                 // Determine direction and position based on the phase
                 boolean backwards = phase > 0.5;
@@ -469,4 +469,3 @@ public class SpectrumLEDs implements SpectrumSubsystem {
     // atBrightness(Dimensionless relativeBrightness)
     // progressMaskLayer(DoubleSupplier progressSupplier)
     // steps(Map<? extends Number, Color> steps)
-}
