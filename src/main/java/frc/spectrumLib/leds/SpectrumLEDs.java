@@ -419,20 +419,18 @@ public class SpectrumLEDs implements SpectrumSubsystem {
         };
     }
 
-    public LEDPattern rainbowBlink(double blink) {
-
-
+    public LEDPattern rainbowBlink(double blink, double durationInSeconds, Color c) {
 
         return new LEDPattern() {
             @Override
             public void applyTo(LEDReader reader, LEDWriter writer) {
                 int bufLen = reader.getLength();
                 long currentTime = System.currentTimeMillis();
-                // double cycleTime =
-                        // durationInSeconds
-                                //* 1000; // Convert time to milliseconds for the entire cycle
-                // double phase =
-                //         (currentTime % cycleTime) / cycleTime; // Phase of the cycle from 0 to 1
+                double cycleTime =
+                        durationInSeconds
+                                * 1000; // Convert time to milliseconds for the entire cycle
+                double phase =
+                        (currentTime % cycleTime) / cycleTime; // Phase of the cycle from 0 to 1
 
                 // Determine direction and position based on the phase
                 boolean backwards = phase > 0.5;
@@ -450,10 +448,10 @@ public class SpectrumLEDs implements SpectrumSubsystem {
                         writer.setLED(led, Color.kBlack);
                     }
                 }
-            };
+            }
         };
     }
-    } 
+}
 
     // LEDPattern Methods
     // reversed()
@@ -469,4 +467,3 @@ public class SpectrumLEDs implements SpectrumSubsystem {
     // atBrightness(Dimensionless relativeBrightness)
     // progressMaskLayer(DoubleSupplier progressSupplier)
     // steps(Map<? extends Number, Color> steps)
-}
