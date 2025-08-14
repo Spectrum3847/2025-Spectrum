@@ -258,6 +258,4 @@ public class RobotStates {
                         homeAll.setFalse())
                 .withName("Clear States");
     }
-
 }
-
