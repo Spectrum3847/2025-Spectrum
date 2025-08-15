@@ -419,9 +419,7 @@ public class SpectrumLEDs implements SpectrumSubsystem {
         };
     }
 
-    public LEDPattern rainbowBlink(double blink) {
-
-
+    public LEDPattern rainbowBlink(double blink, Color c, double durationInSeconds) {
 
         return new LEDPattern() {
             @Override
@@ -441,7 +439,7 @@ public class SpectrumLEDs implements SpectrumSubsystem {
 
                 for (int led = 0; led < bufLen; led++) {
                     if (led == ledPosition) {
-                        writer.setLED(led, c);
+                        writer.setLED(led, c); // Use the provided color
                     } else if (led == ledPosition - 1 || led == ledPosition + 1) {
                         writer.setLED(led, new Color(c.red * 0.66, c.green * 0.66, c.blue * 0.66));
                     } else if (led == ledPosition - 2 || led == ledPosition + 2) {
