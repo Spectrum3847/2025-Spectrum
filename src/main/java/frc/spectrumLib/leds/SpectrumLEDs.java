@@ -451,7 +451,7 @@ public class SpectrumLEDs implements SpectrumSubsystem {
             };
         };
     }
-    } 
+}
 
     // LEDPattern Methods
     // reversed()

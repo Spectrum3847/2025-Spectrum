@@ -48,7 +48,7 @@ public class LedStates {
 
         // Climb Led Commands
         climbReadyLED(ClimbStates.isLatched.and(RobotStates.climbPrep, Util.teleop), 6);
-        //climbed(RobotStates.climbFinish, 20);
+        // climbed(RobotStates.climbFinish, 20);
     }
 
     /** Default LED commands for each mode */
@@ -63,8 +63,10 @@ public class LedStates {
     }
 
     static void disabledPattern(Trigger trigger) {
-        ledDefaultCommand("right.disabledPattern", right, right.ombre(right.purple, right.white), trigger);
-        ledDefaultCommand("left.disabledPattern", left, left.ombre(left.purple, left.white), trigger);
+        ledDefaultCommand(
+                "right.disabledPattern", right, right.ombre(right.purple, right.white), trigger);
+        ledDefaultCommand(
+                "left.disabledPattern", left, left.ombre(left.purple, left.white), trigger);
     }
 
     static void teleopPattern(Trigger trigger) {
@@ -73,8 +75,10 @@ public class LedStates {
     }
 
     static void autoPattern(Trigger trigger) {
-        ledDefaultCommand("right.autoPattern", right, right.countdown(Timer::getFPGATimestamp, 15), trigger);
-        ledDefaultCommand("left.autoPattern", left, left.countdown(Timer::getFPGATimestamp, 15), trigger);
+        ledDefaultCommand(
+                "right.autoPattern", right, right.countdown(Timer::getFPGATimestamp, 15), trigger);
+        ledDefaultCommand(
+                "left.autoPattern", left, left.countdown(Timer::getFPGATimestamp, 15), trigger);
     }
 
     static void testModePattern(Trigger trigger) {
@@ -123,13 +127,27 @@ public class LedStates {
     }
 
     static void homeFinishLED(Trigger trigger, int priority) {
-        withReverseLedCommand("right.HomeFinish", right, right.bounce(right.purple, 3).blend(right.solid(right.purple).atBrightness(Percent.of(75))), priority, trigger);
-        withReverseLedCommand("left.HomeFinish", left, right.bounce(right.purple, 3).blend(right.solid(right.purple).atBrightness(Percent.of(75))), priority, trigger);
+        withReverseLedCommand(
+                "right.HomeFinish",
+                right,
+                right.bounce(right.purple, 3)
+                        .blend(right.solid(right.purple).atBrightness(Percent.of(75))),
+                priority,
+                trigger);
+        withReverseLedCommand(
+                "left.HomeFinish",
+                left,
+                right.bounce(right.purple, 3)
+                        .blend(right.solid(right.purple).atBrightness(Percent.of(75))),
+                priority,
+                trigger);
     }
 
     static void elevatorUpLED(Trigger trigger, int priority) {
-        withReverseLedCommand("right.ElevatorUp", right, right.blink(Color.kBlue, 0.25), priority, trigger);
-        withReverseLedCommand("left.ElevatorUp", left, left.blink(Color.kBlue, 0.25), priority, trigger);
+        withReverseLedCommand(
+                "right.ElevatorUp", right, right.blink(Color.kBlue, 0.25), priority, trigger);
+        withReverseLedCommand(
+                "left.ElevatorUp", left, left.blink(Color.kBlue, 0.25), priority, trigger);
     }
 
     static void climbReadyLED(Trigger trigger, int priority) {
@@ -138,53 +156,72 @@ public class LedStates {
     }
 
     static void coralModeLED(Trigger trigger, int priority) {
-        withReverseLedCommand("right.CoralMode", right, right.solid(Color.kCoral), priority, trigger);
+        withReverseLedCommand(
+                "right.CoralMode", right, right.solid(Color.kCoral), priority, trigger);
         withReverseLedCommand("left.CoralMode", left, left.solid(Color.kCoral), priority, trigger);
     }
 
     static void algaeModeLED(Trigger trigger, int priority) {
-        withReverseLedCommand("right.AlgaeMode", right, right.solid(Color.kMediumSeaGreen), priority, trigger);
-        withReverseLedCommand("left.AlgaeMode", left, left.solid(Color.kMediumSeaGreen), priority, trigger);
+        withReverseLedCommand(
+                "right.AlgaeMode", right, right.solid(Color.kMediumSeaGreen), priority, trigger);
+        withReverseLedCommand(
+                "left.AlgaeMode", left, left.solid(Color.kMediumSeaGreen), priority, trigger);
     }
 
     static void hasCoralLED(Trigger trigger, int priority) {
-        withReverseLedCommand("right.HasCoral", right, right.breathe(Color.kCoral, 1), priority, trigger);
-        withReverseLedCommand("left.HasCoral", left, left.breathe(Color.kCoral, 1), priority, trigger);
+        withReverseLedCommand(
+                "right.HasCoral", right, right.breathe(Color.kCoral, 1), priority, trigger);
+        withReverseLedCommand(
+                "left.HasCoral", left, left.breathe(Color.kCoral, 1), priority, trigger);
     }
 
     static void hasAlgaeLED(Trigger trigger, int priority) {
-        withReverseLedCommand("right.HasAlgae", right, right.breathe(Color.kMediumSeaGreen, 1), priority, trigger);
-        withReverseLedCommand("left.HasAlgae", left, left.breathe(Color.kMediumSeaGreen, 1), priority, trigger);
+        withReverseLedCommand(
+                "right.HasAlgae",
+                right,
+                right.breathe(Color.kMediumSeaGreen, 1),
+                priority,
+                trigger);
+        withReverseLedCommand(
+                "left.HasAlgae", left, left.breathe(Color.kMediumSeaGreen, 1), priority, trigger);
     }
 
-  
-    
-    //when the elevator is home, the lights blink purple
+    // when the elevator is home, the lights blink purple
     static void elevatorHomeLED(Trigger trigger, int priority) {
         ledCommand("right.ElevatorHome", right, right.blink(Color.kPurple, 2), priority, trigger);
         ledCommand("left.ElevatorHome", left, left.blink(Color.kPurple, 2), priority, trigger);
     }
 
-    //when the elevator is not home, the lights blink purple, but faster
+    // when the elevator is not home, the lights blink purple, but faster
     static void elevatorNotHomeLED(Trigger trigger, int priority) {
-        ledCommand("right.ElevatorNotHome", right, right.blink(Color.kPurple, 0.5), priority, trigger);
+        ledCommand(
+                "right.ElevatorNotHome", right, right.blink(Color.kPurple, 0.5), priority, trigger);
         ledCommand("left.ElevatorNotHome", left, left.blink(Color.kPurple, 0.5), priority, trigger);
     }
 
-    //LEDS are magenta when in L3
+    // LEDS are magenta when in L3
     static void secretLThreeLED(Trigger trigger, int priority) {
         ledCommand("right.SecretLThree", right, right.bounce(Color.kMagenta, 1), priority, trigger);
         ledCommand("left.SecretLThree", left, left.bounce(Color.kMagenta, 2), priority, trigger);
     }
 
-    //LEDs are in photon purple when in L2
+    // LEDs are in photon purple when in L2
     static void secretLTwoLED(Trigger trigger, int priority) {
-        ledCommand("right.SecretLTwo", right, right.chase(new Color("#d1ACFB"), 10, 10), priority, trigger);
-        ledCommand("right.SecretLTwo", left, left.chase(new Color("#d1ACFB"), 10, 10), priority, trigger);
-    
+        ledCommand(
+                "right.SecretLTwo",
+                right,
+                right.chase(new Color("#d1ACFB"), 10, 10),
+                priority,
+                trigger);
+        ledCommand(
+                "right.SecretLTwo",
+                left,
+                left.chase(new Color("#d1ACFB"), 10, 10),
+                priority,
+                trigger);
     }
 
-    //LEDS are rainbow while in L4
+    // LEDS are rainbow while in L4
     static void secretLFourLED(Trigger trigger, int priority) {
         ledCommand("right.SecretLFour", right, right.rainbow(100, 100), priority, trigger);
         ledCommand("left.SecretLFour", left, left.rainbow(100, 100), priority, trigger);
