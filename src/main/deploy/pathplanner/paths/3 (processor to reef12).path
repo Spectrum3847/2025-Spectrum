@@ -31,30 +31,7 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-<<<<<<< Updated upstream
   "eventMarkers": [],
-=======
-  "eventMarkers": [
-    {
-      "name": "rightL4",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "score",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "home",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
->>>>>>> Stashed changes
   "globalConstraints": {
     "maxVelocity": 2.5,
     "maxAcceleration": 2.5,
