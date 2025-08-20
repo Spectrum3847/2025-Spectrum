@@ -128,7 +128,7 @@ public class Auton {
         return SpectrumAuton("SecretAuto", mirrored)
             .withTimeout(1)
             .andThen(
-                aimL4Score(),
+                aimL4score(),
                 SpectrumAuton("SecretAuto", mirrored),
                 aimL4score()
             );
