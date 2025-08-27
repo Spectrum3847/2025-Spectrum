@@ -1,7 +1,7 @@
 {
   "Docking": {
     "Data": [
-      "DockNode  ID=0x00000001 Pos=21,1073 Size=905,316 Selected=0x48913727"
+      "DockNode  ID=0x00000001 Pos=29,1062 Size=905,297 Selected=0x48913727"
     ]
   },
   "MainWindow": {
@@ -43,7 +43,7 @@
     },
     "###/SmartDashboard/LeftView": {
       "Collapsed": "0",
-      "Pos": "1720,643",
+      "Pos": "1720,630",
       "Size": "544,547"
     },
     "###/SmartDashboard/Scheduler": {
@@ -63,17 +63,17 @@
     },
     "###/SmartDashboard/VisionSystemSim-main/Sim Field": {
       "Collapsed": "0",
-      "Pos": "1037,29",
+      "Pos": "1012,55",
       "Size": "1219,610"
     },
     "###/SmartDashboard/frontView": {
       "Collapsed": "0",
-      "Pos": "1345,647",
+      "Pos": "1342,629",
       "Size": "373,555"
     },
     "###Addressable LEDs": {
       "Collapsed": "0",
-      "Pos": "2237,83",
+      "Pos": "779,79",
       "Size": "402,220"
     },
     "###FMS": {
@@ -99,14 +99,14 @@
     "###NetworkTables": {
       "Collapsed": "0",
       "DockId": "0x00000001,0",
-      "Pos": "21,1073",
-      "Size": "905,316"
+      "Pos": "29,1062",
+      "Size": "905,297"
     },
     "###NetworkTables Info": {
       "Collapsed": "0",
       "DockId": "0x00000001,1",
-      "Pos": "21,1073",
-      "Size": "905,316"
+      "Pos": "29,1062",
+      "Size": "905,297"
     },
     "###Other Devices": {
       "Collapsed": "0",
@@ -126,7 +126,7 @@
     },
     "###System Joysticks": {
       "Collapsed": "0",
-      "Pos": "228,384",
+      "Pos": "369,364",
       "Size": "232,254"
     },
     "###Timing": {
