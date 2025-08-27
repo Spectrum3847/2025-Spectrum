@@ -10,9 +10,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * angle.
  */
 public class TranslationYController {
-    Swerve swerve;
-    SwerveConfig config;
-    ProfiledPIDController controller;
+    private final SwerveConfig config;
+    private final ProfiledPIDController controller;
     private final double deadband = 1e-3;
 
     double calculatedValue = 0;

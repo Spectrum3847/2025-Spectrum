@@ -145,8 +145,7 @@ public class Auton {
     public Command autoScore() {
         return (Commands.race(SwerveStates.reefAimDriveVisionXY(), Commands.waitSeconds(5))
                         .until(autonAutoScoreMode.not())
-                        .andThen(autoScoreFallback()))
-                .onlyWhile(autonAutoScoreMode)
+                        .andThen(autoScoreFallback().onlyWhile(autonAutoScoreMode)))
                 .withName("Auton.autoScore");
     }
 
