@@ -136,7 +136,7 @@ public class Auton {
     public Command testAuto(boolean mirrored) {
         return SpectrumAuton("TestAuto", mirrored)
                 .withTimeout(2)
-                .andThen(aimL4score(), SpectrumAuton("TestAuto", mirrored), aimL4score());
+                .andThen(SpectrumAuton("TestAuto", mirrored));
     }
 
     public Command aimL4score() {
