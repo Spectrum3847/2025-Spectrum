@@ -1,7 +1,7 @@
 {
   "Docking": {
     "Data": [
-      "DockNode  ID=0x00000001 Pos=7,990 Size=905,316 Selected=0x48913727"
+      "DockNode  ID=0x00000001 Pos=29,1062 Size=905,297 Selected=0x48913727"
     ]
   },
   "MainWindow": {
@@ -33,7 +33,7 @@
     },
     "###/SmartDashboard/Auto Chooser": {
       "Collapsed": "0",
-      "Pos": "443,244",
+      "Pos": "407,272",
       "Size": "307,60"
     },
     "###/SmartDashboard/Auto Visualizer": {
@@ -43,18 +43,18 @@
     },
     "###/SmartDashboard/LeftView": {
       "Collapsed": "0",
-      "Pos": "1720,643",
+      "Pos": "1720,630",
       "Size": "544,547"
     },
     "###/SmartDashboard/Scheduler": {
       "Collapsed": "0",
-      "Pos": "801,568",
-      "Size": "372,548"
+      "Pos": "692,614",
+      "Size": "302,404"
     },
     "###/SmartDashboard/States": {
       "Collapsed": "0",
-      "Pos": "942,1164",
-      "Size": "378,150"
+      "Pos": "864,1182",
+      "Size": "378,124"
     },
     "###/SmartDashboard/Swerve Field": {
       "Collapsed": "0",
@@ -63,27 +63,27 @@
     },
     "###/SmartDashboard/VisionSystemSim-main/Sim Field": {
       "Collapsed": "0",
-      "Pos": "1037,29",
+      "Pos": "1012,55",
       "Size": "1219,610"
     },
     "###/SmartDashboard/frontView": {
       "Collapsed": "0",
-      "Pos": "1345,647",
+      "Pos": "1342,629",
       "Size": "373,555"
     },
     "###Addressable LEDs": {
       "Collapsed": "0",
-      "Pos": "2237,83",
+      "Pos": "602,18",
       "Size": "402,220"
     },
     "###FMS": {
       "Collapsed": "0",
-      "Pos": "2237,347",
+      "Pos": "692,359",
       "Size": "202,214"
     },
     "###Joysticks": {
       "Collapsed": "0",
-      "Pos": "981,1036",
+      "Pos": "1214,1089",
       "Size": "976,252"
     },
     "###Keyboard 0 Settings": {
@@ -99,14 +99,14 @@
     "###NetworkTables": {
       "Collapsed": "0",
       "DockId": "0x00000001,0",
-      "Pos": "7,990",
-      "Size": "905,316"
+      "Pos": "29,1062",
+      "Size": "905,297"
     },
     "###NetworkTables Info": {
       "Collapsed": "0",
       "DockId": "0x00000001,1",
-      "Pos": "7,990",
-      "Size": "905,316"
+      "Pos": "29,1062",
+      "Size": "905,297"
     },
     "###Other Devices": {
       "Collapsed": "0",
@@ -126,7 +126,7 @@
     },
     "###System Joysticks": {
       "Collapsed": "0",
-      "Pos": "264,402",
+      "Pos": "369,364",
       "Size": "232,254"
     },
     "###Timing": {

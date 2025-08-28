@@ -56,7 +56,7 @@ public class LedStates {
             String name, SpectrumLEDs sLeds, LEDPattern pattern, Trigger trigger) {
         int priority = -1;
         return trigger.and(sLeds.checkPriority(priority), sLeds.defaultTrigger)
-                // .onTrue(sLeds.setPattern(pattern, priority).withName(name));
+                // .onTrue(sLEDs.setPattern(pattern, priority).withName(name));
                 .onTrue(
                         setPatternWithReverseCheck(
                                 name, sLeds, pattern, priority, () -> sLeds == left));
@@ -210,13 +210,13 @@ public class LedStates {
         ledCommand(
                 "right.SecretLTwo",
                 right,
-                right.chase(new Color("#d1acfb"), 10, 10),
+                right.chase(new Color("#d1ACFB"), 10, 10),
                 priority,
                 trigger);
         ledCommand(
                 "right.SecretLTwo",
                 left,
-                left.chase(new Color("#d1acfb"), 10, 10),
+                left.chase(new Color("#d1ACFB"), 10, 10),
                 priority,
                 trigger);
     }
@@ -226,13 +226,6 @@ public class LedStates {
         ledCommand("right.SecretLFour", right, right.rainbow(100, 100), priority, trigger);
         ledCommand("left.SecretLFour", left, left.rainbow(100, 100), priority, trigger);
     }
-
-    // we climbed! aqua lights!!
-    /**
-     * static void climbed(Trigger trigger, int priority) { ledCommand("right.climbed", right,
-     * right.chase(Color.kAqua, 100.0, 5.5), priority, trigger); ledCommand("left.climbed", left,
-     * left.chase(Color.kAqua, 100.0, 5.5), priority, trigger); }
-     */
 
     // Log Command
     protected static Command log(Command cmd) {

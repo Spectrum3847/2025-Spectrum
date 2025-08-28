@@ -419,20 +419,39 @@ public class SpectrumLEDs implements SpectrumSubsystem {
         };
     }
 
-    public LEDPattern edges(Color c, double length) {
+    public LEDPattern rainbowBlink(double blink, Color c, double durationInSeconds) {
+
         return new LEDPattern() {
+            @Override
             public void applyTo(LEDReader reader, LEDWriter writer) {
                 int bufLen = reader.getLength();
-                for (int i = 0; i < bufLen; i++) {
-                    if (i < length || i > bufLen - length - 1) {
-                        writer.setLED(i, c);
+                long currentTime = System.currentTimeMillis();
+                double cycleTime =
+                        durationInSeconds
+                                * 1000; // Convert time to milliseconds for the entire cycle
+                double phase =
+                        (currentTime % cycleTime) / cycleTime; // Phase of the cycle from 0 to 1
+
+                // Determine direction and position based on the phase
+                boolean backwards = phase > 0.5;
+                double position = backwards ? 2 * (1 - phase) : 2 * phase;
+                int ledPosition = (int) (position * bufLen);
+
+                for (int led = 0; led < bufLen; led++) {
+                    if (led == ledPosition) {
+                        writer.setLED(led, c); // Use the provided color
+                    } else if (led == ledPosition - 1 || led == ledPosition + 1) {
+                        writer.setLED(led, new Color(c.red * 0.66, c.green * 0.66, c.blue * 0.66));
+                    } else if (led == ledPosition - 2 || led == ledPosition + 2) {
+                        writer.setLED(led, new Color(c.red * 0.33, c.green * 0.33, c.blue * 0.33));
                     } else {
-                        writer.setLED(i, Color.kBlack);
+                        writer.setLED(led, Color.kBlack);
                     }
                 }
-            }
+            };
         };
     }
+}
 
     // LEDPattern Methods
     // reversed()
@@ -448,4 +467,3 @@ public class SpectrumLEDs implements SpectrumSubsystem {
     // atBrightness(Dimensionless relativeBrightness)
     // progressMaskLayer(DoubleSupplier progressSupplier)
     // steps(Map<? extends Number, Color> steps)
-}
