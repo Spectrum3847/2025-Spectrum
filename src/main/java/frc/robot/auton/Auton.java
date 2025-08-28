@@ -130,13 +130,13 @@ public class Auton {
     public Command secretAuto(boolean mirrored) {
         return SpectrumAuton("SecretAuto", mirrored)
                 .withTimeout(2)
-                .andThen(aimL4score(), SpectrumAuton("SecretAuto", mirrored), aimL4score());
+                .andThen(SpectrumAuton("SecretAuto", mirrored));
     }
 
     public Command testAuto(boolean mirrored) {
         return SpectrumAuton("TestAuto", mirrored)
                 .withTimeout(2)
-                .andThen(aimL4score(), SpectrumAuton("TestAuto", mirrored));
+                .andThen(aimL4score(), SpectrumAuton("TestAuto", mirrored), aimL4score());
     }
 
     public Command aimL4score() {
