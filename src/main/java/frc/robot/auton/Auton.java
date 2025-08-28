@@ -129,7 +129,6 @@ public class Auton {
 
     public Command secretAuto(boolean mirrored) {
         return SpectrumAuton("SecretAuto", mirrored)
-                .withTimeout(2)
                 .andThen(aimL4score(), SpectrumAuton("SecretAuto", mirrored), aimL4score());
     }
 
