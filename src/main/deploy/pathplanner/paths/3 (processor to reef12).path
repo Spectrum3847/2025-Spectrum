@@ -33,6 +33,12 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
+      "name": "home",
+      "waypointRelativePos": 0.023884103367266228,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
       "name": "rightL4",
       "waypointRelativePos": 0.9181675802662485,
       "endWaypointRelativePos": null,
@@ -40,12 +46,6 @@
     },
     {
       "name": "score",
-      "waypointRelativePos": 1.0,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "home",
       "waypointRelativePos": 1.0,
       "endWaypointRelativePos": null,
       "command": null
