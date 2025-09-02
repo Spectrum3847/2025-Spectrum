@@ -1,0 +1,37 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "2 (reef12 to processor)"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3 (processor to reef12)"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "4 (reef12 to processor)"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "5 (processor to reef10)"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "def not secret auto",
+  "choreoAuto": false
+}
