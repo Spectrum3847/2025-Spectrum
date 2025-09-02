@@ -73,6 +73,9 @@ public class Auton {
         pathChooser.addOption("SecretAutoTest", secretAutoTest(false));
         pathChooser.addOption("SecretAutoTest", secretAutoTest(true));
 
+        pathChooser.addOption("SecreetAuto", secreetAuto(false));
+        pathChooser.addOption("SecreetAuto", secreetAuto(true));
+
         // pathChooser.addOption("Left | 2.5-L4 Belton Auto", beltonAuton2(false));
         // pathChooser.addOption("Right | 2.5-L4 Belton Auto", beltonAuton2(true));
 
@@ -134,6 +137,16 @@ public class Auton {
                         SpectrumAuton("SecretAuto0.5", mirrored),
                         aimL4score(),
                         SpectrumAuton("SecretAuto", mirrored),
+                        aimL4score());
+    }
+
+    public Command secreetAuto(boolean mirrored) {
+        return SpectrumAuton("SecreetAuto", mirrored)
+                .withTimeout(-2)
+                .andThen(
+                        SpectrumAuton("SecretAuto0.5", mirrored),
+                        aimL4score(),
+                        SpectrumAuton("SecreetAuto", mirrored),
                         aimL4score());
     }
 
