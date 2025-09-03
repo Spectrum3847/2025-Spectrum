@@ -30,7 +30,7 @@ public class RotationController {
                         constraints);
 
         controller.enableContinuousInput(-Math.PI, Math.PI);
-        controller.setTolerance(config.getRotationTolerance());
+        controller.setTolerance(0);
 
         // Hold controller is standard PID
         holdController =
@@ -48,15 +48,15 @@ public class RotationController {
         double measurement = currentRadians;
         calculatedValue = controller.calculate(measurement, goalRadians);
 
-        if (atSetpoint()) {
+        if (atGoal(currentRadians)) {
             if (isHoldController) {
                 calculatedValue = calculateHold(goalRadians, currentRadians);
-                return calculatedValue;
+                return calculatedValue + (config.getKSsteer() * Math.signum(calculatedValue));
             }
             calculatedValue = 0;
             return calculatedValue;
         } else {
-            return calculatedValue;
+            return calculatedValue + (config.getKSsteer() * Math.signum(calculatedValue));
         }
     }
 
@@ -71,6 +71,14 @@ public class RotationController {
 
     public boolean atSetpoint() {
         return controller.atSetpoint();
+    }
+
+    public boolean atGoal(double current) {
+        double goal = controller.getGoal().position;
+        boolean atGoal = Math.abs(current - goal) < config.getRotationTolerance();
+        // System.out.println(
+        //         "Rotation At Goal: " + atGoal + " Goal: " + goal + " Current: " + current);
+        return atGoal;
     }
 
     public void reset(double currentRadians) {

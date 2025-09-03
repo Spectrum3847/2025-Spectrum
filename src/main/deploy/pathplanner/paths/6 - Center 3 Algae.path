@@ -1,0 +1,83 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.19,
+        "y": 2.82
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.634482312233032,
+        "y": 2.6936241730158956
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.6305477528089884,
+        "y": 4.164676966292135
+      },
+      "prevControl": {
+        "x": 6.6305477528089884,
+        "y": 3.7646769662921353
+      },
+      "nextControl": {
+        "x": 6.6305477528089884,
+        "y": 4.564676966292136
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.6305477528089884,
+        "y": 5.298525280898876
+      },
+      "prevControl": {
+        "x": 6.6305477528089884,
+        "y": 5.048525280898876
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "poseUpdate",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": 1.0000000000000293,
+      "command": null
+    },
+    {
+      "name": "home",
+      "waypointRelativePos": 0.5113547376663989,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 8.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "reversed": false,
+  "folder": "Worlds 3 Algae",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 119.99999999999999
+  },
+  "useDefaultConstraints": false
+}

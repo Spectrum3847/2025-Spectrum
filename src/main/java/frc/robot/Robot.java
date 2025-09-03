@@ -1,17 +1,23 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.auton.Auton;
 import frc.robot.climb.Climb;
 import frc.robot.climb.Climb.ClimbConfig;
@@ -47,6 +53,7 @@ import frc.spectrumLib.util.CrashTracker;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import org.json.simple.parser.ParseException;
@@ -90,6 +97,7 @@ public class Robot extends SpectrumRobot {
     @Getter private static Elbow elbow;
     @Getter private static Shoulder shoulder;
     @Getter private static Twist twist;
+    public static boolean commandInit = false;
 
     public Robot() {
         super();
@@ -184,13 +192,13 @@ public class Robot extends SpectrumRobot {
         RobotStates.clearStates().schedule();
     }
 
-    public void setupAutoVisualizer() {
+    public void setupSmartDashboardData() {
         SmartDashboard.putData("Field2d", field2d);
     }
 
     @Override // Deprecated
     public void robotInit() {
-        setupAutoVisualizer();
+        setupSmartDashboardData();
         WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
     }
 
@@ -224,7 +232,20 @@ public class Robot extends SpectrumRobot {
     @Override
     public void disabledInit() {
         Telemetry.print("### Disabled Init Starting ### ");
+        clearCommandsAndButtons();
         resetCommandsAndButtons();
+
+        if (!commandInit) {
+            Command autonStartCommand =
+                    Commands.sequence(
+                                    FollowPathCommand.warmupCommand(),
+                                    PathfindingCommand.warmupCommand(),
+                                    new InstantCommand(
+                                            () -> SmartDashboard.putBoolean("Initialized?", true)))
+                            .ignoringDisable(true);
+            autonStartCommand.schedule();
+            commandInit = true;
+        }
 
         Telemetry.print("### Disabled Init Complete ### ");
     }
@@ -235,14 +256,27 @@ public class Robot extends SpectrumRobot {
         String newAutoName;
         List<PathPlannerPath> pathPlannerPaths = new ArrayList<>();
         newAutoName = (auton.getAutonomousCommand()).getName();
+
         if (!autoName.equals(newAutoName)) {
             autoName = newAutoName;
+
             if (AutoBuilder.getAllAutoNames().contains(autoName)) {
                 try {
                     pathPlannerPaths = PathPlannerAuto.getPathGroupFromAutoFile(autoName);
                 } catch (IOException | ParseException e) {
                     Telemetry.print("Could not load path planner paths");
                 }
+
+                // Flip the paths if on red alliance
+                Optional<Alliance> alliance = DriverStation.getAlliance();
+                if (alliance.isPresent() && alliance.get() == Alliance.Red) {
+                    pathPlannerPaths =
+                            pathPlannerPaths.stream()
+                                    .map(PathPlannerPath::flipPath)
+                                    .collect(Collectors.toList());
+                }
+
+                // Convert path points to poses
                 List<Pose2d> poses = new ArrayList<>();
                 for (PathPlannerPath path : pathPlannerPaths) {
                     poses.addAll(
@@ -276,12 +310,7 @@ public class Robot extends SpectrumRobot {
     @Override
     public void autonomousInit() {
         try {
-            Telemetry.print("@@@ Auton Init Starting @@@ ");
-            clearCommandsAndButtons();
-
             auton.init();
-
-            Telemetry.print("@@@ Auton Init Complete @@@ ");
         } catch (Throwable t) {
             // intercept error and log it
             CrashTracker.logThrowableCrash(t);
@@ -303,6 +332,7 @@ public class Robot extends SpectrumRobot {
         try {
             Telemetry.print("!!! Teleop Init Starting !!! ");
             resetCommandsAndButtons();
+            field2d.getObject("path").setPoses(new ArrayList<>()); // clears auto visualizer
 
             Telemetry.print("!!! Teleop Init Complete !!! ");
         } catch (Throwable t) {

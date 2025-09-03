@@ -1,7 +1,8 @@
 package frc.robot.swerve;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
 /**
@@ -12,42 +13,48 @@ import frc.robot.Robot;
 public class TagCenterAlignController {
     Swerve swerve;
     SwerveConfig config;
-    ProfiledPIDController controller;
+    PIDController controller;
     Constraints constraints;
 
     double calculatedValue = 0;
+    double maxVelocity;
 
     public TagCenterAlignController(SwerveConfig config) {
         this.config = config;
-        double maxVelocity = Robot.getConfig().swerve.getSpeedAt12Volts().baseUnitMagnitude();
-        constraints = new Constraints(maxVelocity / 4, maxVelocity / 40);
+        maxVelocity = Robot.getConfig().swerve.getSpeedAt12Volts().baseUnitMagnitude() * 0.5;
         controller =
-                new ProfiledPIDController(
+                new PIDController(
                         config.getKPTagCenterController(),
                         config.getKITagCenterController(),
-                        config.getKDTagController(),
-                        constraints);
+                        config.getKDTagCenterController());
+        controller.setTolerance(0.0);
 
-        controller.setTolerance(config.getTagCenterTolerance());
+        SmartDashboard.putData("tagCenterController", controller);
     }
 
     public double calculate(double goalMeters, double currentMeters) {
         calculatedValue = controller.calculate(currentMeters, goalMeters);
 
-        if (atSetpoint()) {
+        if (atGoal(currentMeters)) {
             calculatedValue = 0;
             return calculatedValue;
         } else {
-            return calculatedValue;
+            if (Math.abs(calculatedValue) > maxVelocity) {
+                calculatedValue = maxVelocity * Math.signum(calculatedValue);
+            }
+            return calculatedValue + (config.getKSdrive() * Math.signum(calculatedValue));
         }
+    }
+
+    public boolean atGoal(double current) {
+        double goal = controller.getSetpoint();
+        boolean atGoal = Math.abs(current - goal) < config.getTagCenterTolerance();
+        System.out.println("At Goal: " + atGoal + " Goal: " + goal + " Current: " + current);
+        return atGoal;
     }
 
     public boolean atSetpoint() {
         return controller.atSetpoint();
-    }
-
-    public void reset(double currentMeters) {
-        controller.reset(currentMeters);
     }
 
     public void updatePID(double kP, double kI, double kD) {

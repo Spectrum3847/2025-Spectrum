@@ -1,0 +1,25 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "4 - L4 Trough Rush"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "5 - L4 Trough Rush"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Houston 2 Coral",
+  "choreoAuto": false
+}

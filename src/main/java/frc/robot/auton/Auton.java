@@ -1,7 +1,8 @@
 package frc.robot.auton;
 
+import static frc.robot.RobotStates.autonAutoScoreMode;
+
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.events.EventTrigger;
 import com.pathplanner.lib.path.PathConstraints;
@@ -32,18 +33,26 @@ public class Auton {
     public static final EventTrigger autonSourceIntakeOff = new EventTrigger("sourceIntakeOff");
     public static final EventTrigger autonLowAlgae = new EventTrigger("lowAlgae");
     public static final EventTrigger autonHighAlgae = new EventTrigger("highAlgae");
-    public static final EventTrigger autonPreScore = new EventTrigger("prescore");
-    public static final EventTrigger autonScore = new EventTrigger("score");
-    public static final EventTrigger autonLeftL4 = new EventTrigger("leftL4");
-    public static final EventTrigger autonRightL4 = new EventTrigger("rightL4");
-    public static final EventTrigger autonL1 = new EventTrigger("L1");
     public static final EventTrigger autonNet = new EventTrigger("net");
-    public static final EventTrigger autonProcessor = new EventTrigger("processor");
     public static final EventTrigger autonClearStates = new EventTrigger("clearStates");
-    public static final EventTrigger autonCoral = new EventTrigger("coral");
     public static final EventTrigger autonHome = new EventTrigger("home");
     public static final EventTrigger autonActionOn = new EventTrigger("actionOn");
     public static final EventTrigger autonActionOff = new EventTrigger("actionOff");
+    public static final EventTrigger autonShoulderL4 = new EventTrigger("shoulderL4");
+    public static final EventTrigger autonTwistL4R = new EventTrigger("twistL4R");
+    public static final EventTrigger autonTwistL4L = new EventTrigger("twistL4L");
+    public static final EventTrigger autonLeft = new EventTrigger("left");
+    public static final EventTrigger autonRight = new EventTrigger("right");
+    public static final EventTrigger autonCoral = new EventTrigger("coral");
+    public static final EventTrigger autonAtL4Coral = new EventTrigger("atL4Coral");
+    public static final EventTrigger autonAlgae = new EventTrigger("algae");
+    public static final EventTrigger autonL1 = new EventTrigger("L1");
+    public static final EventTrigger autonL2 = new EventTrigger("L2");
+    public static final EventTrigger autonL3 = new EventTrigger("L3");
+    public static final EventTrigger autonL4 = new EventTrigger("L4");
+    public static final EventTrigger autonReverse = new EventTrigger("reverse");
+    public static final EventTrigger autonPoseUpdate = new EventTrigger("poseUpdate");
+    public static final EventTrigger autonAutoScore = new EventTrigger("autoScore");
 
     private final SendableChooser<Command> pathChooser = new SendableChooser<>();
     private boolean autoMessagePrinted = true;
@@ -61,12 +70,13 @@ public class Auton {
         // pathChooser.addOption("3 Meter", SpectrumAuton("3 Meter", false));
         // pathChooser.addOption("5 Meter", SpectrumAuton("5 Meter", false));
 
-        pathChooser.addOption("Left | Belton L4", beltonAuton(false));
-        pathChooser.addOption("Right | Belton L4", beltonAuton(true));
+        // pathChooser.addOption("Left | 2 L4 Coral", houston2coral(false));
+        // pathChooser.addOption("Right | 2 L4 Coral", houston2coral(true));
 
-        pathChooser.addOption("Left | Belton L1", beltonAutonL1(false));
-        pathChooser.addOption("Right | Belton L1", beltonAutonL1(true));
+        pathChooser.addOption("Left | 3 L4 Coral", worlds3coral(false));
+        pathChooser.addOption("Right | 3 L4 Coral", worlds3coral(true));
 
+<<<<<<< HEAD
         pathChooser.addOption("roiSecretAuto", secretAuto(false));
         pathChooser.addOption("lefSecretAuto", secretAuto(true));
 
@@ -75,16 +85,18 @@ public class Auton {
 
         // pathChooser.addOption("Left | 2.5-L4 Belton Auto", beltonAuton2(false));
         // pathChooser.addOption("Right | 2.5-L4 Belton Auto", beltonAuton2(true));
+=======
+        pathChooser.addOption("Center | 3 Net Algae", worlds3algae(false));
+
+        pathChooser.addOption("test", practiceAuto());
+
+        pathChooser.addOption("Drive Forward", SpectrumAuton("Drive Forward", false));
+>>>>>>> main
 
         SmartDashboard.putData("Auto Chooser", pathChooser);
     }
 
-    public static void setupNamedCommands() {
-        NamedCommands.registerCommand("autonAlign", SwerveStates.autonSwerveAlign(2));
-    }
-
     public Auton() {
-        setupNamedCommands();
         setupSelectors(); // runs the command to start the chooser for auto on shuffleboard
         Telemetry.print("Auton Subsystem Initialized: ");
     }
@@ -104,29 +116,78 @@ public class Auton {
         printAutoDuration();
     }
 
-    public Command beltonAuton(boolean mirrored) {
-        return SpectrumAuton("L4-SideStart", mirrored)
-                .withTimeout(2)
-                .andThen(aimL4score(), SpectrumAuton("TroughRush", mirrored), aimL4score());
+    public Command houston2coral(boolean mirrored) {
+        return Commands.sequence(
+                        SpectrumAuton("H2C-Start", mirrored, 2),
+                        fullSequenceAimL4Score(1.5),
+                        SpectrumAuton("H2C-Leg1", mirrored),
+                        fullSequenceAimL4Score(1.5),
+                        SpectrumAuton("H2C-Leg2", mirrored))
+                .withName("Houston 2 Coral");
     }
 
-    public Command beltonAutonL1(boolean mirrored) {
-        return SpectrumAuton("L4-SideStart", mirrored)
-                .withTimeout(2)
-                .andThen(aimL4score(), SpectrumAuton("TroughRush", mirrored), aimL1score());
+    public Command worlds3coral(boolean mirrored) {
+        return Commands.sequence(
+                        SpectrumAuton("W3C-Start", mirrored, 2),
+                        autoScore(),
+                        SpectrumAuton("W3C-Leg1", mirrored),
+                        autoScore(),
+                        SpectrumAuton("W3C-Leg2", mirrored),
+                        autoScore(),
+                        RobotStates.homeAll.toggleToTrue(),
+                        RobotStates.autonClearStates())
+                .withName("Worlds 3 Coral");
     }
 
-    public Command beltonAuton2(boolean mirrored) {
-        return SpectrumAuton("L4-SideStart", mirrored)
-                .withTimeout(2)
+    public Command worlds3algae(boolean mirrored) {
+        return Commands.sequence(
+                        SpectrumAuton("W3A-Start", mirrored),
+                        autoScoreThenAlgae(),
+                        SpectrumAuton("W3A-End", mirrored))
+                .withName("W3A-Full");
+    }
+
+    public Command practiceAuto() {
+        return Commands.sequence(
+                        SpectrumAuton("1", false),
+                        autoScore(),
+                        RobotStates.homeAll.toggleToTrue(),
+                        RobotStates.autonClearStates(),
+                        SpectrumAuton("2", false),
+                        autoScore(),
+                        RobotStates.homeAll.toggleToTrue(),
+                        RobotStates.autonClearStates())
+                .withName("test");
+    }
+
+    public Command aimScore(double alignTime) {
+        return SwerveStates.reefAimDriveVisionXY()
+                .withTimeout(alignTime)
+                .alongWith(autonScore())
+                .withName("Auton.aimL4Score");
+    }
+
+    // vision aligns until autoScore scored or 5 seconds have passed without auto scoring
+    public Command autoScore() {
+        return (SwerveStates.reefAimDriveVisionXY().withTimeout(5))
+                .until(autonAutoScoreMode.not())
                 .andThen(
-                        aimL4score(),
-                        SpectrumAuton("TroughRush", mirrored),
-                        aimL4score(),
-                        SpectrumAuton("TroughRush2", mirrored),
-                        aimL4score());
+                        Commands.sequence(
+                                        RobotStates.actionPrepState.setFalse(),
+                                        RobotStates.actionState
+                                                .setTrueForTimeWithCancel(
+                                                        () -> 0.75, RobotStates.actionPrepState)
+                                                .andThen(
+                                                        autonAutoScoreMode
+                                                                .setFalse()
+                                                                .onlyIf(
+                                                                        RobotStates.actionPrepState
+                                                                                .not())))
+                                .onlyWhile(autonAutoScoreMode))
+                .withName("Auton.autoScore");
     }
 
+<<<<<<< HEAD
     public Command secretAuto(boolean mirrored) {
         return SpectrumAuton("SecretAuto", mirrored)
             .withTimeout(-2)
@@ -162,48 +223,67 @@ public class Auton {
 
     public Command aimL4score() {
         return SwerveStates.reefAimDrive().withTimeout(1.2).alongWith(l4score());
+=======
+    public Command aimScoreThenAlgae(double alignTime) {
+        return Commands.sequence(
+                        aimScore(alignTime),
+                        Commands.waitSeconds(0.5),
+                        RobotStates.clearStates(),
+                        RobotStates.l2.setTrue(),
+                        RobotStates.algae.setTrue(),
+                        Commands.waitSeconds(0.05),
+                        SwerveStates.autonAlgaeReefAimDriveVisionXY().withTimeout(.25),
+                        RobotStates.actionPrepState.setTrue(),
+                        Commands.waitSeconds(0.2),
+                        SwerveStates.autonAlgaeDriveIntake(0.4))
+                .withName("Auton.aimL4ScoreThenAlgae");
+>>>>>>> main
     }
 
-    public Command aimL1score() {
-        return SwerveStates.reefAimDrive().withTimeout(1.2).alongWith(l1score());
+    public Command autoScoreThenAlgae() {
+        return Commands.sequence(
+                        autoScore(),
+                        RobotStates.clearStates(),
+                        RobotStates.l2.setTrue(),
+                        RobotStates.algae.setTrue(),
+                        Commands.waitSeconds(0.05),
+                        SwerveStates.autonAlgaeReefAimDriveVisionXY().withTimeout(.25),
+                        RobotStates.actionPrepState.setTrue(),
+                        Commands.waitSeconds(0.2),
+                        SwerveStates.autonAlgaeDriveIntake(0.5))
+                .withName("Auton.autoL4ScoreThenAlgae");
     }
 
-    public Command l4score() {
-        return Commands.waitSeconds(0.05)
+    public Command fullSequenceAimL4Score(double alignTime) {
+        return SwerveStates.reefAimDriveVisionXY()
+                .withTimeout(alignTime)
+                .alongWith(fullSequenceL4score())
+                .withName("Auton.oldAimL4Score");
+    }
+
+    public Command autonScore() {
+        return Commands.sequence(Commands.waitSeconds(.75), RobotStates.actionPrepState.setFalse())
+                .withName("Auton.L4Score");
+    }
+
+    public Command fullSequenceL4score() {
+        return Commands.waitSeconds(0.15)
                 .andThen(
                         RobotStates.coral
                                 .setTrue()
-                                .alongWith(
-                                        RobotStates.l4.setTrue(),
-                                        RobotStates.shrinkState.setTrue(),
-                                        RobotStates.homeAll.setFalse())
+                                .alongWith(RobotStates.l4.setTrue(), RobotStates.homeAll.setFalse())
                                 .andThen(
                                         Commands.waitSeconds(0.05),
                                         RobotStates.actionPrepState.setTrue(),
-                                        Commands.waitSeconds(1.1),
+                                        Commands.waitSeconds(0.9),
                                         RobotStates.actionPrepState.setFalse(),
                                         Commands.waitSeconds(0.5),
-                                        RobotStates.clearStates(),
-                                        RobotStates.homeAll.setTrue()));
+                                        RobotStates.homeAll.toggleToTrue(),
+                                        Commands.waitSeconds(0.5)));
     }
 
-    public Command l1score() {
-        return Commands.waitSeconds(0.05)
-                .andThen(
-                        RobotStates.coral
-                                .setTrue()
-                                .alongWith(
-                                        RobotStates.l1.setTrue(),
-                                        RobotStates.shrinkState.setTrue(),
-                                        RobotStates.homeAll.setFalse())
-                                .andThen(
-                                        Commands.waitSeconds(0.05),
-                                        RobotStates.actionPrepState.setTrue(),
-                                        Commands.waitSeconds(1.1),
-                                        RobotStates.actionPrepState.setFalse(),
-                                        Commands.waitSeconds(0.5),
-                                        RobotStates.clearStates(),
-                                        RobotStates.homeAll.setTrue()));
+    public Command autonCoralL4Stage() {
+        return Commands.sequence(RobotStates.coral.setTrue(), RobotStates.l4.setTrue());
     }
 
     /**
@@ -218,9 +298,14 @@ public class Auton {
      */
     public Command SpectrumAuton(String autoName, boolean mirrored) {
         Command autoCommand = new PathPlannerAuto(autoName, mirrored);
-        return (Commands.waitSeconds(0.01)
-                        .andThen(autoCommand)
-                        .alongWith(Commands.print(autoName + " Auto Selected")))
+        return (Commands.waitSeconds(0.01).andThen(autoCommand)).withName(autoName);
+    }
+
+    public Command SpectrumAuton(String autoName, boolean mirrored, double duration) {
+        Command autoCommand = new PathPlannerAuto(autoName, mirrored);
+        return Commands.waitSeconds(0.01)
+                .andThen(autoCommand)
+                .withTimeout(duration)
                 .withName(autoName);
     }
 

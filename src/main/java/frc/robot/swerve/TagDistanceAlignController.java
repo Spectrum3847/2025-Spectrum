@@ -2,6 +2,7 @@ package frc.robot.swerve;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Uses a profiled PID Controller to quickly turn the robot to a specified angle. Once the robot is
@@ -24,22 +25,26 @@ public class TagDistanceAlignController {
                         config.getKITagDistanceController(),
                         config.getKDTagDistanceController());
 
-        controller.setTolerance(config.getTagDistanceTolerance());
+        controller.setTolerance(0.0);
+        SmartDashboard.putData("tagDistanceController", controller);
     }
 
     public double calculate(double goalArea, double currentArea) {
         calculatedValue = controller.calculate(currentArea, goalArea);
 
-        if (atSetpoint()) {
+        if (atGoal(currentArea)) {
             calculatedValue = 0;
             return calculatedValue;
         } else {
-            return calculatedValue;
+            return calculatedValue + (config.getKSdrive() * Math.signum(calculatedValue));
         }
     }
 
-    public boolean atSetpoint() {
-        return controller.atSetpoint();
+    public boolean atGoal(double current) {
+        double goal = controller.getSetpoint();
+        boolean atGoal = Math.abs(current - goal) < config.getTagDistanceTolerance();
+        System.out.println("At Goal: " + atGoal + " Goal: " + goal + " Current: " + current);
+        return atGoal;
     }
 
     public void reset(double current) {

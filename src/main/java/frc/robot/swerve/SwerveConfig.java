@@ -8,6 +8,7 @@ import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.ClosedLoopOutputType;
@@ -22,16 +23,16 @@ import lombok.Setter;
 
 public class SwerveConfig {
 
-    // Make this number smaller to move further from reef, make it bigger to move closer
-    @Getter private final double homeLlAimTAgoal = 7.9;
-    @Getter private final double eventLlAimTAgoal = 8.1;
+    @Getter
+    private final double scoreOffsetFromReef =
+            Units.inchesToMeters(8.0 + 18.5); // Offset + half of robot length with bumpers
 
     @Getter private final double simLoopPeriod = 0.005; // 5 ms
     @Getter @Setter private double robotWidth = Units.inchesToMeters(29.5);
     @Getter @Setter private double robotLength = Units.inchesToMeters(29.5);
 
     @Getter @Setter private double maxAngularRate = 1.5 * Math.PI; // rad/s
-    @Getter @Setter private double deadband = 0.02;
+    @Getter @Setter private double deadband = 0.00;
 
     @Getter @Setter
     private double driveGearRatio = (50.0 / 14.0) * (17.0 / 27.0) * (45.0 / 15.0); // 6.74603174603;
@@ -40,48 +41,51 @@ public class SwerveConfig {
 
     @Getter @Setter
     // Estimated at first, then fudge-factored to make odom match record
-    private Distance wheelRadius = Inches.of(3.815 / 2);
+    private Distance wheelRadius = Inches.of(3.815 / 2); // 0.0484505 m
 
     // Theoretical free speed (m/s) at 12v applied output;
-    // This needs to be tuned to your individual robot
     @Getter @Setter
     private LinearVelocity speedAt12Volts =
             MetersPerSecond.of((95 / driveGearRatio) * 2 * Math.PI * wheelRadius.in(Meters));
+
+    @Getter private double kSdrive = 0.10; // 0.13
+    @Getter private double kSsteer = 0.25; // 0.2
 
     // -----------------------------------------------------------------------
     // PID Controller Constants
     // -----------------------------------------------------------------------
     @Getter private double maxAngularVelocity = 2 * Math.PI; // rad/s
     @Getter private double maxAngularAcceleration = Math.pow(maxAngularVelocity, 2); // rad/s^2
-    @Getter private double kPRotationController = 8.0;
+    @Getter private double kPRotationController = 1.85; // 4.5 // 6.5 // 8.0;
     @Getter private double kIRotationController = 0.0;
-    @Getter private double kDRotationController = 0.2;
-    @Getter private double rotationTolerance = (Math.PI / 360); // rads
+    @Getter private double kDRotationController = 0.0; // 0.2
+    @Getter private double rotationTolerance = Units.degreesToRadians(0.2); // rads
 
     @Getter private double kPHoldController = 12.0;
     @Getter private double kIHoldController = 0.0;
     @Getter private double kDHoldController = 0.0;
 
-    @Getter private double kPTranslationController = 4;
+    @Getter private double kPTranslationController = 1.7;
     @Getter private double kITranslationController = 0.0;
     @Getter private double kDTranslationController = 0.0;
-    @Getter private double translationTolerance = 0.001;
+
+    @Getter private double translationTolerance = Units.inchesToMeters(0.5); // 0.5
 
     @Getter
     private Constraints translationConstraints =
             new Constraints(
                     speedAt12Volts.baseUnitMagnitude() / 2,
-                    speedAt12Volts.baseUnitMagnitude() / 20);
+                    speedAt12Volts.baseUnitMagnitude() * 10);
 
-    @Getter private double kPTagCenterController = 3.3;
+    @Getter private double kPTagCenterController = 1.3;
     @Getter private double kITagCenterController = 0.0;
-    @Getter private double kDTagController = 0.0;
-    @Getter private double tagCenterTolerance = 0.00001; // meters
+    @Getter private double kDTagCenterController = 0.00;
+    @Getter private double tagCenterTolerance = Units.inchesToMeters(0.5); // meters
 
-    @Getter private double kPTagDistanceController = 0.15;
+    @Getter private double kPTagDistanceController = 0.1; // 0.15;
     @Getter private double kITagDistanceController = 0.0;
-    @Getter private double kDTagDistanceController = 0.0;
-    @Getter private double tagDistanceTolerance = 0.2; // meters
+    @Getter private double kDTagDistanceController = 0.00;
+    @Getter private double tagDistanceTolerance = 0.3; // Area
 
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     @Getter private final Rotation2d blueAlliancePerspectiveRotation = Rotation2d.fromDegrees(0);
@@ -94,19 +98,38 @@ public class SwerveConfig {
     // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
     @Getter
     private Slot0Configs steerGains =
-            new Slot0Configs().withKP(100).withKI(0).withKD(2.0).withKS(0.2).withKV(1.5).withKA(0);
+            new Slot0Configs()
+                    .withKP(4000.0)
+                    .withKI(0)
+                    .withKD(50.0)
+                    .withKS(0.15)
+                    .withKV(1.5)
+                    .withKA(0)
+                    .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
+    // new Slot0Configs().withKP(100).withKI(0).withKD(0.5).withKS(0.1).withKV(1.91).withKA(0);
     // When using closed-loop control, the drive motor uses the control
     // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
     @Getter
     private Slot0Configs driveGains =
-            new Slot0Configs().withKP(0.1).withKI(0).withKD(0).withKS(0).withKV(0.12).withKA(0);
+            new Slot0Configs()
+                    .withKP(50.0)
+                    .withKI(0)
+                    .withKD(0.0)
+                    .withKS(2.261118000000002)
+                    .withKA(0.0)
+                    .withKV(0.0);
+    // new Slot0Configs().withKP(0.1).withKI(0).withKD(0).withKS(0).withKV(0.124).withKA(0);
 
     // The closed-loop output type to use for the steer motors;
     // This affects the PID/FF gains for the steer motors
-    @Getter private ClosedLoopOutputType steerClosedLoopOutput = ClosedLoopOutputType.Voltage;
+    @Getter
+    private ClosedLoopOutputType steerClosedLoopOutput =
+            ClosedLoopOutputType.TorqueCurrentFOC; // .Voltage;
     // The closed-loop output type to use for the drive motors;
     // This affects the PID/FF gains for the drive motors
-    @Getter private ClosedLoopOutputType driveClosedLoopOutput = ClosedLoopOutputType.Voltage;
+    @Getter
+    private ClosedLoopOutputType driveClosedLoopOutput =
+            ClosedLoopOutputType.TorqueCurrentFOC; // .Voltage;
 
     // The stator current at which the wheels start to slip;
     // This needs to be tuned to your individual robot
@@ -157,8 +180,8 @@ public class SwerveConfig {
                     TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
             constantCreator;
 
-    private final double wheelBaseInches = 21.5;
-    private final double trackWidthInches = 18.5;
+    private final double wheelBaseInches = 23.75;
+    private final double trackWidthInches = 23.75;
 
     // Front Left
     @Getter private int frontLeftDriveMotorId = 1;

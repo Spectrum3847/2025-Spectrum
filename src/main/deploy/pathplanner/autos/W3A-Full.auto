@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "1 - Center 3 Algae"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "2 - Center 3 Algae"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3 - Center 3 Algae"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "4 - Center 3 Algae"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Leave Auto Line"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Worlds 3 Algae",
+  "choreoAuto": false
+}

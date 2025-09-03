@@ -8,11 +8,16 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.reefscape.Zones;
 import frc.robot.Robot;
 import frc.robot.RobotStates;
+<<<<<<< HEAD
 import frc.robot.climb.ClimbStates;
 import frc.robot.elevator.ElevatorStates;
 import frc.robot.intake.IntakeStates;
+=======
+import frc.robot.vision.VisionStates;
+>>>>>>> main
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.leds.SpectrumLEDs;
 import frc.spectrumLib.util.Util;
@@ -30,16 +35,24 @@ public class LedStates {
         testModePattern(Util.testMode.and(Util.dsAttached));
 
         // General Led Commands
+<<<<<<< HEAD
         homeFinishLED(RobotStates.isAtHome.and(Util.teleop, RobotStates.staged.not()), 8);
         secretLThreeLED(ElevatorStates.isL3Coral, 20);
         secretLTwoLED(ElevatorStates.isL2Coral, 20);
         secretLFourLED(ElevatorStates.isL4Coral, 20);
+=======
+        // homeFinishLED(RobotStates.isAtHome.and(Util.teleop, RobotStates.staged.not()), 8);
+>>>>>>> main
 
-        // Coral and Algae Led Commands
+        // // Coral and Algae Led Commands
         coralModeLED(RobotStates.coral.and(Util.teleop), 6);
         algaeModeLED(RobotStates.algae.and(Util.teleop), 6);
-        hasCoralLED(IntakeStates.hasCoral.and(Util.teleop), 7);
-        hasAlgaeLED(IntakeStates.hasAlgae.and(Util.teleop), 7);
+        // coralStagedLED(RobotStates.stagedCoral.and(Util.teleop), 7);
+        // algaeStagedLED(RobotStates.stagedAlgae.and(Util.teleop), 7);
+        // hasCoralLED(IntakeStates.hasCoral.and(Util.teleop), 7);
+        // // hasAlgaeLED(IntakeStates.hasAlgae.and(Util.teleop), 7);
+        rightCoralLED(RobotStates.rightScore.and(Util.teleop), 8);
+        netAlgaeZoneLED(Zones.netAlgaeZone.and(RobotStates.netAlgae, Util.teleop), 8);
 
         // Elevator Led Commands
         elevatorHomeLED(ElevatorStates.isHome, 17);
@@ -47,8 +60,18 @@ public class LedStates {
         // elevatorUpLED(ElevatorStates.isUp.and(Util.teleop), 6);
 
         // Climb Led Commands
+<<<<<<< HEAD
         climbReadyLED(ClimbStates.isLatched.and(RobotStates.climbPrep, Util.teleop), 6);
         // climbed(RobotStates.climbFinish, 20);
+=======
+        // climbReadyLED(ClimbStates.isLatched.and(RobotStates.climbPrep, Util.teleop), 6);
+
+        // Limelight Led Commands
+        seesTagDefaultLED(VisionStates.seeingTag.and(Util.teleop), 5);
+        seesTagAndCoralModeLED(VisionStates.seeingTag.and(RobotStates.coral, Util.teleop), 7);
+        seesTagAndAlgaeModeLED(VisionStates.seeingTag.and(RobotStates.algae, Util.teleop), 7);
+        seesTagAndRightCoralLED(VisionStates.seeingTag.and(RobotStates.rightScore, Util.teleop), 9);
+>>>>>>> main
     }
 
     /** Default LED commands for each mode */
@@ -56,10 +79,15 @@ public class LedStates {
             String name, SpectrumLEDs sLeds, LEDPattern pattern, Trigger trigger) {
         int priority = -1;
         return trigger.and(sLeds.checkPriority(priority), sLeds.defaultTrigger)
+<<<<<<< HEAD
                 // .onTrue(sLEDs.setPattern(pattern, priority).withName(name));
                 .onTrue(
                         setPatternWithReverseCheck(
                                 name, sLeds, pattern, priority, () -> sLeds == left));
+=======
+                // .onTrue(sLeds.setPattern(pattern, priority).withName(name));
+                .onTrue(sLeds.setPattern(pattern, priority));
+>>>>>>> main
     }
 
     static void disabledPattern(Trigger trigger) {
@@ -115,7 +143,8 @@ public class LedStates {
                                                 RobotStates.reverse.getAsBoolean()
                                                                 != front.getAsBoolean()
                                                         && !RobotStates.photon.getAsBoolean()),
-                        sLed.setPattern(pattern.atBrightness(Percent.of(25)), priority)
+                        // sLed.setPattern(pattern.atBrightness(Percent.of(25)), priority)
+                        sLed.setPattern(sLed.edges(Color.kOrange, 3).overlayOn(pattern), priority)
                                 .until(
                                         () ->
                                                 RobotStates.reverse.getAsBoolean()
@@ -156,16 +185,60 @@ public class LedStates {
     }
 
     static void coralModeLED(Trigger trigger, int priority) {
-        withReverseLedCommand(
-                "right.CoralMode", right, right.solid(Color.kCoral), priority, trigger);
-        withReverseLedCommand("left.CoralMode", left, left.solid(Color.kCoral), priority, trigger);
+        // withReverseLedCommand(
+        //         "right.CoralMode", right, right.solid(Color.kCoral), priority, trigger);
+        // withReverseLedCommand("left.CoralMode", left, left.solid(Color.kCoral), priority,
+        // trigger);
+        ledCommand("right.CoralMode", right, right.solid(Color.kCoral), priority, trigger);
+        ledCommand("left.CoralMode", left, left.solid(Color.kCoral), priority, trigger);
     }
 
     static void algaeModeLED(Trigger trigger, int priority) {
+        // withReverseLedCommand(
+        //         "right.AlgaeMode", right, right.solid(Color.kMediumSeaGreen), priority, trigger);
+        // withReverseLedCommand(
+        //         "left.AlgaeMode", left, left.solid(Color.kMediumSeaGreen), priority, trigger);
+        ledCommand("right.AlgaeMode", right, right.solid(Color.kMediumSeaGreen), priority, trigger);
+        ledCommand("left.AlgaeMode", left, left.solid(Color.kMediumSeaGreen), priority, trigger);
+    }
+
+    static void coralStagedLED(Trigger trigger, int priority) {
         withReverseLedCommand(
-                "right.AlgaeMode", right, right.solid(Color.kMediumSeaGreen), priority, trigger);
+                "right.CoralStaged", right, right.breathe(Color.kCoral, 1), priority, trigger);
         withReverseLedCommand(
-                "left.AlgaeMode", left, left.solid(Color.kMediumSeaGreen), priority, trigger);
+                "left.CoralStaged", left, left.breathe(Color.kCoral, 1), priority, trigger);
+    }
+
+    static void algaeStagedLED(Trigger trigger, int priority) {
+        withReverseLedCommand(
+                "right.AlgaeStaged",
+                right,
+                right.breathe(Color.kMediumSeaGreen, 1),
+                priority,
+                trigger);
+        withReverseLedCommand(
+                "left.AlgaeStaged",
+                left,
+                left.breathe(Color.kMediumSeaGreen, 1),
+                priority,
+                trigger);
+    }
+
+    static void rightCoralLED(Trigger trigger, int priority) {
+        // withReverseLedCommand(
+        //         "right.RightCoral",
+        //         right,
+        //         right.edges(Color.kGreen, 5).overlayOn(right.breathe(Color.kCoral, 1)),
+        //         priority,
+        //         trigger);
+        // withReverseLedCommand(
+        //         "left.RightCoral",
+        //         left,
+        //         left.edges(Color.kGreen, 5).overlayOn(left.breathe(Color.kCoral, 1)),
+        //         priority,
+        //         trigger);
+        ledCommand("right.RightCoral", right, right.solid(Color.kGreen), priority, trigger);
+        ledCommand("left.LeftCoral", left, left.solid(Color.kGreen), priority, trigger);
     }
 
     static void hasCoralLED(Trigger trigger, int priority) {
@@ -186,6 +259,7 @@ public class LedStates {
                 "left.HasAlgae", left, left.breathe(Color.kMediumSeaGreen, 1), priority, trigger);
     }
 
+<<<<<<< HEAD
     // when the elevator is home, the lights blink purple
     static void elevatorHomeLED(Trigger trigger, int priority) {
         ledCommand("right.ElevatorHome", right, right.blink(Color.kPurple, 2), priority, trigger);
@@ -217,14 +291,78 @@ public class LedStates {
                 "right.SecretLTwo",
                 left,
                 left.chase(new Color("#d1ACFB"), 10, 10),
+=======
+    static void seesTagDefaultLED(Trigger trigger, int priority) {
+        ledCommand("right.SeesTag", right, right.bounce(Color.kYellow, 3), priority, trigger);
+        ledCommand("left.SeesTag", left, left.bounce(Color.kYellow, 3), priority, trigger);
+    }
+
+    static void seesTagAndCoralModeLED(Trigger trigger, int priority) {
+        ledCommand(
+                "right.SeesTagAndCoralMode",
+                right,
+                right.edges(Color.kYellow, 5).overlayOn(right.solid(Color.kCoral)),
+                priority,
+                trigger);
+        ledCommand(
+                "left.SeesTagAndCoralMode",
+                left,
+                left.edges(Color.kYellow, 5).overlayOn(left.solid(Color.kCoral)),
+>>>>>>> main
                 priority,
                 trigger);
     }
 
+<<<<<<< HEAD
     // LEDS are rainbow while in L4
     static void secretLFourLED(Trigger trigger, int priority) {
         ledCommand("right.SecretLFour", right, right.rainbow(100, 100), priority, trigger);
         ledCommand("left.SecretLFour", left, left.rainbow(100, 100), priority, trigger);
+=======
+    static void seesTagAndAlgaeModeLED(Trigger trigger, int priority) {
+        ledCommand(
+                "right.SeesTagAndAlgaeMode",
+                right,
+                right.edges(Color.kYellow, 5).overlayOn(right.solid(Color.kMediumSeaGreen)),
+                priority,
+                trigger);
+        ledCommand(
+                "left.SeesTagAndAlgaeMode",
+                left,
+                left.edges(Color.kYellow, 5).overlayOn(left.solid(Color.kMediumSeaGreen)),
+                priority,
+                trigger);
+    }
+
+    static void seesTagAndRightCoralLED(Trigger trigger, int priority) {
+        ledCommand(
+                "right.SeesTagAndRightCoral",
+                right,
+                right.edges(Color.kYellow, 5).overlayOn(right.solid(Color.kGreen)),
+                priority,
+                trigger);
+        ledCommand(
+                "left.SeesTagAndRightCoral",
+                left,
+                left.edges(Color.kYellow, 5).overlayOn(left.solid(Color.kGreen)),
+                priority,
+                trigger);
+    }
+
+    static void netAlgaeZoneLED(Trigger trigger, int priority) {
+        ledCommand(
+                "right.netAlgaeZone",
+                right,
+                right.edges(Color.kHotPink, 5).overlayOn(right.solid(Color.kGreen)),
+                priority,
+                trigger);
+        ledCommand(
+                "left.netAlgaeZone",
+                left,
+                left.edges(Color.kHotPink, 5).overlayOn(left.solid(Color.kGreen)),
+                priority,
+                trigger);
+>>>>>>> main
     }
 
     // Log Command

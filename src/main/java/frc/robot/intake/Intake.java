@@ -22,12 +22,14 @@ public class Intake extends Mechanism {
     public static class IntakeConfig extends Config {
 
         @Getter private double hasGamePieceVelocity = 50;
-        @Getter private double hasGamePieceCurrent = 50;
+        @Getter private double hasGamePieceCurrent = 80;
+        @Getter private double hasAlgaeCurrent = 80;
+        @Getter private double scoreDelay = 0.2;
 
         // Algae Voltages and Current
         @Getter @Setter private double algaeIntakeVoltage = -9.0;
         @Getter @Setter private double algaeIntakeSupplyCurrent = 30.0;
-        @Getter @Setter private double algaeIntakeTorqueCurrent = 80.0;
+        @Getter @Setter private double algaeIntakeTorqueCurrent = -85.0;
 
         @Getter @Setter private double algaeScoreVoltage = 12.0;
         @Getter @Setter private double algaeScoreSupplyCurrent = 30.0;
@@ -36,27 +38,27 @@ public class Intake extends Mechanism {
         // Coral Voltages and Current
         @Getter @Setter private double coralHoldVoltage = 9.0;
         @Getter @Setter private double coralHoldSupplyCurrent = 30.0;
-        @Getter @Setter private double coralHoldTorqueCurrent = 15.0;
+        @Getter @Setter private double coralHoldTorqueCurrent = 28.0;
 
         @Getter @Setter private double coralIntakeVoltage = 12.0;
         @Getter @Setter private double coralIntakeSupplyCurrent = 30.0;
-        @Getter @Setter private double coralIntakeTorqueCurrent = 180.0;
+        @Getter @Setter private double coralIntakeTorqueCurrent = 100.0;
 
         @Getter @Setter private double coralGroundVoltage = 12.0;
         @Getter @Setter private double coralGroundSupplyCurrent = 40.0;
-        @Getter @Setter private double coralGroundTorqueCurrent = 180.0;
+        @Getter @Setter private double coralGroundTorqueCurrent = 200.0;
 
         @Getter @Setter private double coralScoreVoltage = -1;
         @Getter @Setter private double coralScoreSupplyCurrent = 12.0;
-        @Getter @Setter private double coralScoreTorqueCurrent = 40.0;
+        @Getter @Setter private double coralScoreTorqueCurrent = -25.0;
 
         @Getter @Setter private double coralL1ScoreVoltage = -8;
         @Getter @Setter private double coralL1ScoreSupplyCurrent = 15.0;
-        @Getter @Setter private double coralL1ScoreTorqueCurrent = 60.0;
+        @Getter @Setter private double coralL1ScoreTorqueCurrent = -30.0;
 
         /* Intake config values */
-        @Getter private double currentLimit = 15;
-        @Getter private double torqueCurrentLimit = 100;
+        @Getter private double currentLimit = 44;
+        @Getter private double torqueCurrentLimit = 200;
         @Getter private double velocityKp = 12; // 0.156152;
         @Getter private double velocityKv = 0.2; // 0.12;
         @Getter private double velocityKs = 14;
@@ -127,15 +129,13 @@ public class Intake extends Mechanism {
         return run(
                 () -> {
                     if (RobotStates.coral.getAsBoolean()) {
-                        setVoltageOutput(() -> config.getCoralHoldVoltage());
-                        setCurrentLimits(
-                                () -> config.getCoralHoldSupplyCurrent(),
-                                () -> config.getCoralHoldTorqueCurrent());
+                        // setVoltageOutput(() -> config.getCoralHoldVoltage());
+                        // setCurrentLimits(
+                        //         () -> config.getCoralHoldSupplyCurrent(),
+                        //         () -> config.getCoralHoldTorqueCurrent());
+                        setTorqueCurrentFoc(config::getCoralHoldTorqueCurrent);
                     } else if (RobotStates.algae.getAsBoolean()) {
-                        runVoltage(() -> config.getAlgaeIntakeVoltage());
-                        setCurrentLimits(
-                                () -> config.getAlgaeIntakeSupplyCurrent(),
-                                () -> config.getAlgaeIntakeTorqueCurrent());
+                        setTorqueCurrentFoc(config::getAlgaeIntakeTorqueCurrent);
                     } else {
                         stop();
                     }
@@ -147,6 +147,10 @@ public class Intake extends Mechanism {
         double motorCurrent = getStatorCurrent();
         return (Math.abs(motorOutput) < config.hasGamePieceVelocity
                 && Math.abs(motorCurrent) > config.hasGamePieceCurrent);
+    }
+
+    public Command runTorqueFOC(DoubleSupplier torque) {
+        return run(() -> setTorqueCurrentFoc(torque));
     }
 
     public Command intakeCoral(DoubleSupplier torque, DoubleSupplier current) {
@@ -168,7 +172,7 @@ public class Intake extends Mechanism {
                 this);
     }
 
-    public Command intakeAlage(DoubleSupplier torque, DoubleSupplier current) {
+    public Command intakeAlgae(DoubleSupplier torque, DoubleSupplier current) {
         return new FunctionalCommand(
                 () -> setCurrentLimits(current, torque),
                 () -> {

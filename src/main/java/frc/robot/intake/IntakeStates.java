@@ -1,7 +1,6 @@
 package frc.robot.intake;
 
 import static frc.robot.RobotStates.*;
-import static frc.robot.auton.Auton.autonScore;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -23,7 +22,8 @@ public class IntakeStates {
     public static final Trigger hasCoral =
             hasGamePiece.and(intake.aboveVelocityRPM(() -> 0, () -> 0));
     public static final Trigger hasAlgae =
-            hasGamePiece.and(intake.belowVelocityRPM(() -> 0, () -> 0));
+            algae.and(netAlgae.not(), intake.aboveCurrent(config::getHasAlgaeCurrent, () -> 0));
+    // hasGamePiece.and(intake.belowVelocityRPM(() -> 0, () -> 0));
 
     public static void setupDefaultCommand() {
         intake.setDefaultCommand(
@@ -41,71 +41,62 @@ public class IntakeStates {
 
         netAlgae.and(actionState)
                 .whileTrue(
-                        runVoltageCurrentLimits(
-                                config::getAlgaeScoreVoltage,
-                                config::getAlgaeScoreSupplyCurrent,
-                                config::getAlgaeScoreTorqueCurrent));
+                        // runVoltageCurrentLimits(
+                        //         config::getAlgaeScoreVoltage,
+                        //         config::getAlgaeScoreSupplyCurrent,
+                        //         config::getAlgaeScoreTorqueCurrent));
+                        intake.runTorqueFOC(config::getAlgaeScoreTorqueCurrent));
 
         // hasGamePiece.onTrue(intake.getDefaultCommand());
 
         stationIntaking
                 .or(photonAlgaeRemoval)
-                // .whileTrue(runVoltageCurrentLimits(
-                //         config::getCoralIntakeVoltage,
-                //         config::getCoralIntakeSupplyCurrent,
-                //         config::getCoralIntakeTorqueCurrent));
                 .whileTrue(
-                        intake.intakeCoral(
-                                        config::getCoralIntakeTorqueCurrent,
-                                        config::getCoralIntakeSupplyCurrent)
-                                .withName("Intake.StationIntaking"));
+                        // intake.intakeCoral(
+                        //                 config::getCoralIntakeTorqueCurrent,
+                        //                 config::getCoralIntakeSupplyCurrent)
+                        //         .withName("Intake.StationIntaking"));
+                        intake.runTorqueFOC(config::getCoralIntakeTorqueCurrent));
 
         groundCoral.whileTrue(
-                intake.intakeCoral(
-                                config::getCoralGroundTorqueCurrent,
-                                config::getCoralGroundSupplyCurrent)
-                        .withName("Intake.GroundCoral"));
+                // intake.intakeCoral(
+                //                 config::getCoralGroundTorqueCurrent,
+                //                 config::getCoralGroundSupplyCurrent)
+                //         .withName("Intake.GroundCoral"));
+                intake.runTorqueFOC(config::getCoralGroundTorqueCurrent));
 
         algae.and(photon.not())
                 .whileTrue(
-                        intake.intakeAlage(
-                                        config::getAlgaeIntakeTorqueCurrent,
-                                        config::getAlgaeIntakeSupplyCurrent)
-                                .withName("Intake.Algae"));
+                        // intake.intakeAlgae(
+                        //                 config::getAlgaeIntakeTorqueCurrent,
+                        //                 config::getAlgaeIntakeSupplyCurrent)
+                        //         .withName("Intake.Algae"));
+                        intake.runTorqueFOC(config::getAlgaeIntakeTorqueCurrent));
 
         L1Coral.and(actionState)
                 .whileTrue(
-                        runVoltageCurrentLimits(
-                                config::getCoralL1ScoreVoltage,
-                                config::getCoralL1ScoreSupplyCurrent,
-                                config::getCoralL1ScoreTorqueCurrent));
-        branch.and(actionState)
-                .whileTrue(
-                        runVoltageCurrentLimits(
-                                config::getCoralScoreVoltage,
-                                config::getCoralScoreSupplyCurrent,
-                                config::getCoralScoreTorqueCurrent));
+                        // runVoltageCurrentLimits(
+                        //         config::getCoralL1ScoreVoltage,
+                        //         config::getCoralL1ScoreSupplyCurrent,
+                        //         config::getCoralL1ScoreTorqueCurrent));
+                        intake.runTorqueFOC(config::getCoralL1ScoreTorqueCurrent));
 
-        autonScore
-                .and(photon)
+        Robot.getOperator()
+                .processorScore_LT
+                .whileTrue(intake.runTorqueFOC(config::getCoralIntakeTorqueCurrent));
+
+        branch.and(actionState, L4Coral.not())
                 .onTrue(
-                        new WaitCommand(2.0)
+                        new WaitCommand(config.getScoreDelay())
                                 .andThen(
-                                        runVoltageCurrentLimits(
-                                                        config::getCoralScoreVoltage,
-                                                        config::getCoralScoreSupplyCurrent,
-                                                        config::getCoralScoreTorqueCurrent)
-                                                .repeatedly()));
+                                        // runVoltageCurrentLimits(
+                                        //         config::getCoralScoreVoltage,
+                                        //         config::getCoralScoreSupplyCurrent,
+                                        //         config::getCoralScoreTorqueCurrent));
+                                        intake.runTorqueFOC(config::getCoralScoreTorqueCurrent)));
 
         coastMode.whileTrue(log(coastMode()));
         coastMode.onFalse(log(ensureBrakeMode()));
-        Robot.getPilot()
-                .testTune_tA
-                .whileTrue(
-                        intake.intakeCoral(
-                                        config::getCoralIntakeTorqueCurrent,
-                                        config::getCoralIntakeSupplyCurrent)
-                                .withName("Intake.StationIntaking"));
     }
 
     private static Command coastMode() {

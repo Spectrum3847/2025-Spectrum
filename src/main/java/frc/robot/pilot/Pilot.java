@@ -33,9 +33,14 @@ public class Pilot extends Gamepad {
 
     public final Trigger actionReady_RB = rightBumper.and(teleop);
 
+    // Vision Triggers
+    public final Trigger tagsInView = new Trigger(() -> Robot.getVision().tagsInView());
+
     // vision Drive
-    public final Trigger reefAim_A = A.and(teleop);
-    public final Trigger cageAim_B = B.and(teleop);
+    // public final Trigger reefAim_A = A.and(teleop, tagsInView.not()); // turn off
+    public final Trigger reefVision_A = A.and(teleop); // , tagsInView); // remove tags in view
+    public final Trigger reefAlignScore_B = B.and(teleop);
+    // public final Trigger cageAim_B = B.and(teleop);
 
     // Drive Triggers
     public final Trigger upReorient = upDpad.and(fn, teleop);
@@ -47,7 +52,9 @@ public class Pilot extends Gamepad {
     public final Trigger driving = enabled.and(leftStickX.or(leftStickY));
     public final Trigger steer = enabled.and(rightStickX.or(rightStickY));
 
-    public final Trigger fpv_LS = leftStickClick.and(enabled); // Remapped to Right back button
+    public final Trigger fpv_LS = leftStickClick.and(enabled); // Remapped to Left back button
+    public final Trigger toggleReverse =
+            rightStickClick.and(enabled); // Remapped to Right back button
 
     // DISABLED TRIGGERS
     public final Trigger coastOn_dB = disabled.and(B);

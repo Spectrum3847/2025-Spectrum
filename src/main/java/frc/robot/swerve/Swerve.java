@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.reefscape.Field;
+import frc.reefscape.FieldHelpers;
 import frc.robot.Robot;
 import frc.spectrumLib.SpectrumSubsystem;
 import frc.spectrumLib.Telemetry;
@@ -138,6 +139,11 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
      */
     @Override
     public void initSendable(NTSendableBuilder builder) {
+        builder.addDoubleProperty("Pose X", () -> getRobotPose().getX(), null);
+        builder.addDoubleProperty("Pose Y", () -> getRobotPose().getY(), null);
+        builder.addDoubleProperty(
+                "Pose Rotation Degrees", () -> getRobotPose().getRotation().getDegrees(), null);
+
         SmartDashboard.putData(
                 "Swerve Drive",
                 new Sendable() {
@@ -213,7 +219,11 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
      */
     public Trigger inXzoneAlliance(double minXmeter, double maxXmeter) {
         return new Trigger(
-                () -> Util.inRange(Field.flipXifRed(getRobotPose().getX()), minXmeter, maxXmeter));
+                () ->
+                        Util.inRange(
+                                FieldHelpers.flipXifRed(getRobotPose().getX()),
+                                minXmeter,
+                                maxXmeter));
     }
 
     /**
@@ -226,7 +236,11 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
      */
     public Trigger inYzoneAlliance(double minYmeter, double maxYmeter) {
         return new Trigger(
-                () -> Util.inRange(Field.flipYifRed(getRobotPose().getY()), minYmeter, maxYmeter));
+                () ->
+                        Util.inRange(
+                                FieldHelpers.flipYifRed(getRobotPose().getY()),
+                                minYmeter,
+                                maxYmeter));
     }
 
     // Used to set a control request to the swerve module, ignores disable so commands are
@@ -270,7 +284,7 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
         return runOnce(
                 () -> {
                     double output;
-                    output = Field.flipTrueAngleIfRed(angleDegrees);
+                    output = FieldHelpers.flipAngleIfRed(angleDegrees);
                     reorient(output);
                 });
     }
@@ -317,10 +331,10 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
 
         // Step 4: Find the nearest angle from the table
         double closestAngle = angleTable[0];
-        double minDifference = getAngleDifference(angleDegrees, closestAngle);
+        double minDifference = getRotationDifference(angleDegrees, closestAngle);
 
         for (double angle : angleTable) {
-            double difference = getAngleDifference(angleDegrees, angle);
+            double difference = getRotationDifference(angleDegrees, angle);
             if (difference < minDifference) {
                 minDifference = difference;
                 closestAngle = angle;
@@ -347,14 +361,14 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
         } else {
             flippedHeading = heading + 180;
         }
-        double frontDifference = getAngleDifference(heading, angleDegrees);
-        double flippedDifference = getAngleDifference(flippedHeading, angleDegrees);
+        double frontDifference = getRotationDifference(heading, angleDegrees);
+        double flippedDifference = getRotationDifference(flippedHeading, angleDegrees);
 
         return frontDifference < flippedDifference;
     }
 
     // Helper method to calculate the shortest angle difference
-    private double getAngleDifference(double angle1, double angle2) {
+    public double getRotationDifference(double angle1, double angle2) {
         double diff = Math.abs(angle1 - angle2) % 360;
         return diff > 180 ? 360 - diff : diff;
     }
@@ -385,14 +399,18 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
     // --------------------------------------------------------------------------------
     // Tag Center Align Controller
     // --------------------------------------------------------------------------------
-    void resetTagCenterAlignController(double currentMeters) {
-        tagCenterAlignController.reset(currentMeters);
-    }
+    // void resetTagCenterAlignController(double currentMeters) {
+    //     tagCenterAlignController.reset(currentMeters);
+    // }
 
     double calculateTagCenterAlignController(
             DoubleSupplier targetMeters, DoubleSupplier currentMeters) {
         return tagCenterAlignController.calculate(
                 targetMeters.getAsDouble(), currentMeters.getAsDouble());
+    }
+
+    public boolean atTagCenterGoal(double currentMeters) {
+        return tagCenterAlignController.atGoal(currentMeters);
     }
 
     // --------------------------------------------------------------------------------
@@ -421,6 +439,10 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
         }
     }
 
+    public boolean atTagDistanceGoal(double currentArea) {
+        return tagDistanceAlignController.atGoal(currentArea);
+    }
+
     // --------------------------------------------------------------------------------
     // Translation X Controller
     // --------------------------------------------------------------------------------
@@ -428,8 +450,8 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
         xController.reset(getRobotPose().getX());
     }
 
-    double calculateXController(DoubleSupplier targetMeters) {
-        return xController.calculate(targetMeters.getAsDouble(), getRobotPose().getX());
+    DoubleSupplier calculateXController(DoubleSupplier targetMeters) {
+        return () -> xController.calculate(targetMeters.getAsDouble(), getRobotPose().getX());
     }
 
     // --------------------------------------------------------------------------------
@@ -439,8 +461,8 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
         yController.reset(getRobotPose().getY());
     }
 
-    double calculateYController(DoubleSupplier targetMeters) {
-        return yController.calculate(targetMeters.getAsDouble(), getRobotPose().getY());
+    DoubleSupplier calculateYController(DoubleSupplier targetMeters) {
+        return () -> yController.calculate(targetMeters, getRobotPose()::getY);
     }
 
     // --------------------------------------------------------------------------------
@@ -472,9 +494,7 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
                                 AutoRequest.withSpeeds(
                                         speeds)), // Consumer of ChassisSpeeds to drive the robot
                 new PPHolonomicDriveController(
-                        new PIDConstants(2.5, 0, 0),
-                        new PIDConstants(8, 0, 0.2),
-                        Robot.kDefaultPeriod),
+                        new PIDConstants(6, 0, 0), new PIDConstants(8, 0, 0), Robot.kDefaultPeriod),
                 robotConfig,
                 () ->
                         DriverStation.getAlliance().orElse(Alliance.Blue)

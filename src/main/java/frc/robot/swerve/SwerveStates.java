@@ -4,12 +4,15 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.reefscape.Field;
+import frc.reefscape.FieldHelpers;
+import frc.reefscape.TagProperties;
+import frc.reefscape.Zones;
+import frc.reefscape.offsets.HomeOffsets;
 import frc.robot.Robot;
 import frc.robot.pilot.Pilot;
 import frc.spectrumLib.SpectrumState;
@@ -20,10 +23,32 @@ public class SwerveStates {
     static Swerve swerve = Robot.getSwerve();
     static SwerveConfig config = Robot.getConfig().swerve;
     static Pilot pilot = Robot.getPilot();
+    static Zones zones = new Zones();
 
     static Command pilotSteerCommand =
             log(pilotDrive().withName("SwerveCommands.pilotSteer").ignoringDisable(true));
     static SpectrumState steeringLock = new SpectrumState("SteeringLock");
+
+    public static final Trigger isFrontClosestToLeftStation =
+            new Trigger(
+                    () ->
+                            swerve.frontClosestToAngle(
+                                    FieldHelpers.flipAngleIfRed(
+                                            Field.CoralStation.leftFaceRobotPovDegrees)));
+    public static final Trigger isFrontClosestToRightStation =
+            new Trigger(
+                    () ->
+                            swerve.frontClosestToAngle(
+                                    FieldHelpers.flipAngleIfRed(
+                                            Field.CoralStation.rightFaceRobotPovDegrees)));
+
+    public static final Trigger isFrontClosestToNet =
+            new Trigger(
+                    () ->
+                            swerve.frontClosestToAngle(Field.Barge.netRobotPovDegrees)
+                                    == Zones.blueFieldSide.getAsBoolean());
+
+    public static final Trigger isAlignedToReef = new Trigger(() -> Zones.atReef());
 
     protected static void setupDefaultCommand() {
         swerve.setDefaultCommand(pilotSteerCommand);
@@ -37,11 +62,11 @@ public class SwerveStates {
         // When driving and have never steered, it doesn't lock
         // When driving, and we stop steering it locks
         // When not driving it stops locking
-        pilot.steer.and(pilot.driving).onTrue(steeringLock.setTrue());
-        pilot.driving.onFalse(steeringLock.setFalse());
-        steeringLock
-                .and(pilot.steer.not())
-                .onTrue(log(lockToClosestFieldAngleDrive().withName("Swerve.FieldAngleLock")));
+        // pilot.steer.and(pilot.driving).onTrue(steeringLock.setTrue());
+        // pilot.driving.onFalse(steeringLock.setFalse());
+        // steeringLock
+        //         .and(pilot.steer.not())
+        //         .onTrue(log(lockToClosestFieldAngleDrive().withName("Swerve.FieldAngleLock")));
 
         pilot.fpv_LS.whileTrue(log(fpvDrive()));
 
@@ -51,70 +76,115 @@ public class SwerveStates {
         pilot.rightReorient.onTrue(log(reorientRight()));
 
         // // vision aim
-        pilot.reefAim_A.whileTrue(log(reefAimDrive()));
+        // pilot.reefAim_A.whileTrue(log(reefAimDrive()));
+        // pilot.reefVision_A.whileTrue(log(reefAimDriveVisionTA()));
+        pilot.reefVision_A.whileTrue(log(reefAimDriveVisionXY()));
+        pilot.reefAlignScore_B.whileTrue(log(reefAimDriveVisionXY()));
+
+        // Pose2d backReefOffset = Field.Reef.getOffsetPosition(21, Units.inchesToMeters(24));
+        // pilot.cageAim_B.whileTrue(
+        //         alignDrive(
+        //                 backReefOffset::getX,
+        //                 backReefOffset::getY,
+        //                 () -> Math.toRadians(180))); // alignToYDrive(() -> Field.fieldWidth /
+        // 2));
     }
 
     /** Pilot Commands ************************************************************************ */
-    /**
-     * Drive the robot using left stick and control orientation using the right stick Only Cardinal
-     * directions are allowed
-     *
-     * @return
-     */
-    public static Command autonSwerveAlign(double alignTime) {
-        return (new PrintCommand("! starting align !")
-                        .andThen(
-                                new InstantCommand(
-                                        () -> {
-                                            PPHolonomicDriveController.overrideXFeedback(
-                                                    SwerveStates::getTagDistanceVelocity);
-                                            PPHolonomicDriveController.overrideYFeedback(
-                                                    SwerveStates::getTagTxVelocity);
-                                        }),
-                                new PrintCommand("! clearing align !"),
-                                new WaitCommand(alignTime),
-                                new InstantCommand(
-                                        PPHolonomicDriveController::clearFeedbackOverrides),
-                                new PrintCommand("! cleared align !")))
-                .withName("autonAlign")
-                .alongWith(new PrintCommand("!! autonAlign Ran !!"));
+    /** Drive the robot using left stick and control orientation using the right stick. */
+    protected static Command pilotDrive() {
+        return drive(
+                        pilot::getDriveFwdPositive,
+                        pilot::getDriveLeftPositive,
+                        pilot::getDriveCCWPositive)
+                .withName("Swerve.PilotDrive");
     }
 
-    public static Command reefAimDrive() {
+    public static Command autonAlgaeDriveIntake(double timeout) {
+        return fpvAimDrive(() -> 0.75, () -> 0, FieldHelpers::getReefTagAngle).withTimeout(timeout);
+    }
+
+    public static Command reefAimDriveVisionTA() {
         return fpvAimDrive(
                         SwerveStates::getTagDistanceVelocity,
                         SwerveStates::getTagTxVelocity,
-                        Robot.getVision()::getReefTagAngle)
+                        () -> FieldHelpers.getReefTagAngle())
+                .withName("Swerve.reefAimDriveVisionTA");
+    }
+
+    public static Command autonAlgaeReefAimDriveVisionXY() {
+        return alignDrive(
+                        () -> FieldHelpers.getReefOffsetFromTagX() + 0.05,
+                        () -> FieldHelpers.getReefOffsetFromTagY(),
+                        () -> FieldHelpers.getReefTagAngle())
+                .withName("Swerve.reefAimDriveVisionXY");
+    }
+
+    public static Command reefAimDriveVisionXY() {
+        return alignDrive(
+                        () -> FieldHelpers.getReefOffsetFromTagX(),
+                        () -> FieldHelpers.getReefOffsetFromTagY(),
+                        () -> FieldHelpers.getReefTagAngle())
+                .withName("Swerve.reefAimDriveVisionXY");
+    }
+
+    public static Command reefAimDrive() {
+        return alignDrive(
+                        () -> zones.getScoreReefPoseX(),
+                        () -> zones.getScoreReefPoseY(),
+                        () -> zones.getScoreReefPoseAngle())
                 .withName("Swerve.reefAimDrive");
     }
 
     public static Command alignToXDrive(DoubleSupplier xGoalMeters) {
-        return drive(
-                () -> getAlignToX(xGoalMeters),
-                pilot::getDriveLeftPositive,
-                pilot::getDriveCCWPositive);
+        return resetXController()
+                .andThen(
+                        drive(
+                                getAlignToX(xGoalMeters),
+                                pilot::getDriveLeftPositive,
+                                pilot::getDriveCCWPositive));
     }
 
     public static Command alignToYDrive(DoubleSupplier yGoalMeters) {
-        return drive(
-                pilot::getDriveFwdPositive,
-                () -> getAlignToY(yGoalMeters),
-                pilot::getDriveCCWPositive);
+        return resetYController()
+                .andThen(
+                        drive(
+                                pilot::getDriveFwdPositive,
+                                getAlignToY(yGoalMeters),
+                                pilot::getDriveCCWPositive));
     }
 
     public static Command alignXYDrive(DoubleSupplier xGoalMeters, DoubleSupplier yGoalMeters) {
-        return drive(
-                () -> getAlignToX(xGoalMeters),
-                () -> getAlignToY(yGoalMeters),
-                pilot::getDriveCCWPositive);
+        return resetXController()
+                .alongWith(resetYController())
+                .andThen(
+                        drive(
+                                getAlignToX(xGoalMeters),
+                                getAlignToY(yGoalMeters),
+                                pilot::getDriveCCWPositive));
     }
 
     public static Command alignDrive(
             DoubleSupplier xGoalMeters, DoubleSupplier yGoalMeters, DoubleSupplier headingRadians) {
-        return drive(
-                () -> getAlignToX(xGoalMeters),
-                () -> getAlignToY(yGoalMeters),
-                () -> getAlignHeading(headingRadians));
+        if (Field.isRed()) {
+            return resetXController()
+                    .andThen(
+                            resetYController(),
+                            resetTurnController(),
+                            drive(
+                                    () -> -getAlignToX(xGoalMeters).getAsDouble(),
+                                    () -> -getAlignToY(yGoalMeters).getAsDouble(),
+                                    () -> getAlignHeading(headingRadians).getAsDouble()));
+        }
+
+        return resetXController()
+                .andThen(
+                        resetYController(),
+                        resetTurnController(),
+                        drive(
+                                getAlignToX(xGoalMeters),
+                                getAlignToY(yGoalMeters),
+                                getAlignHeading(headingRadians)));
     }
 
     private static double getTagTxVelocity() {
@@ -126,19 +196,31 @@ public class SwerveStates {
     }
 
     private static double getTagDistanceVelocity() {
-        return swerve.calculateTagDistanceAlignController(() -> config.getHomeLlAimTAgoal());
+        TagProperties[] tagAreaOffsets = HomeOffsets.getReefTagOffsets();
+        int tagIndex = Robot.getVision().getClosestTagID();
+        if (tagIndex < 0) {
+            return 0.0;
+        } else if (tagIndex >= 17) {
+            tagIndex -= 17;
+        }
+
+        final double tagAreaOffset = tagAreaOffsets[tagIndex].getTaGoal();
+
+        // System.out.println("Tag Area Offset: " + tagAreaOffset);
+        SmartDashboard.putNumber("Tag Area Offset: ", tagAreaOffset);
+        return swerve.calculateTagDistanceAlignController(() -> tagAreaOffset);
     }
 
-    private static double getAlignToX(DoubleSupplier xGoalMeters) {
+    private static DoubleSupplier getAlignToX(DoubleSupplier xGoalMeters) {
         return swerve.calculateXController(xGoalMeters);
     }
 
-    private static double getAlignToY(DoubleSupplier yGoalMeters) {
+    private static DoubleSupplier getAlignToY(DoubleSupplier yGoalMeters) {
         return swerve.calculateYController(yGoalMeters);
     }
 
-    private static double getAlignHeading(DoubleSupplier headingRadians) {
-        return swerve.calculateRotationController(headingRadians);
+    private static DoubleSupplier getAlignHeading(DoubleSupplier headingRadians) {
+        return () -> swerve.calculateRotationController(headingRadians);
     }
 
     protected static Command snapSteerDrive() {
@@ -147,14 +229,6 @@ public class SwerveStates {
                         pilot::getDriveLeftPositive,
                         pilot::chooseCardinalDirections)
                 .withName("Swerve.PilotStickSteer");
-    }
-
-    protected static Command pilotDrive() {
-        return drive(
-                        pilot::getDriveFwdPositive,
-                        pilot::getDriveLeftPositive,
-                        pilot::getDriveCCWPositive)
-                .withName("Swerve.PilotDrive");
     }
 
     protected static Command fpvDrive() {
@@ -202,6 +276,14 @@ public class SwerveStates {
      * ************************************************************************* Helper Commands
      * ************************************************************************
      */
+    protected static Command resetXController() {
+        return swerve.runOnce(() -> swerve.resetXController()).withName("ResetXController");
+    }
+
+    protected static Command resetYController() {
+        return swerve.runOnce(() -> swerve.resetYController()).withName("ResetYController");
+    }
+
     protected static Command resetTurnController() {
         return swerve.runOnce(() -> swerve.resetRotationController())
                 .withName("ResetTurnController");
@@ -248,7 +330,7 @@ public class SwerveStates {
     protected static Command fpvAimDrive(
             DoubleSupplier velocityX, DoubleSupplier velocityY, DoubleSupplier targetRadians) {
         return resetTurnController()
-                .andThen(fpvDrive(velocityX, velocityY, () -> getAlignHeading(targetRadians)))
+                .andThen(fpvDrive(velocityX, velocityY, getAlignHeading(targetRadians)))
                 .withName("Swerve.fpvAimDrive");
     }
 
@@ -259,7 +341,7 @@ public class SwerveStates {
     protected static Command aimDrive(
             DoubleSupplier velocityX, DoubleSupplier velocityY, DoubleSupplier targetRadians) {
         return resetTurnController()
-                .andThen(drive(velocityX, velocityY, () -> getAlignHeading(targetRadians)))
+                .andThen(drive(velocityX, velocityY, getAlignHeading(targetRadians)))
                 .withName("Swerve.aimDrive");
     }
 
@@ -313,7 +395,7 @@ public class SwerveStates {
                     && Math.abs(velocityY.getAsDouble()) < 0.5) {
                 return 0;
             } else {
-                return getAlignHeading(heading::getAsDouble);
+                return getAlignHeading(heading::getAsDouble).getAsDouble();
             }
         };
     }

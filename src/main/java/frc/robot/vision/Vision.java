@@ -1,6 +1,8 @@
 package frc.robot.vision;
 
 import com.ctre.phoenix6.Utils;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -8,7 +10,6 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NTSendable;
 import edu.wpi.first.networktables.NTSendableBuilder;
 import edu.wpi.first.util.sendable.SendableRegistry;
@@ -16,14 +17,17 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.reefscape.Field;
+import frc.reefscape.FieldHelpers;
+import frc.reefscape.offsets.HomeOffsets;
 import frc.robot.Robot;
+import frc.robot.RobotStates;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.Telemetry.PrintPriority;
 import frc.spectrumLib.util.Util;
 import frc.spectrumLib.vision.Limelight;
 import frc.spectrumLib.vision.Limelight.LimelightConfig;
 import frc.spectrumLib.vision.LimelightHelpers.RawFiducial;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import lombok.Getter;
@@ -58,7 +62,7 @@ public class Vision implements NTSendable, Subsystem {
 
         @Getter double visionStdDevX = 0.5;
         @Getter double visionStdDevY = 0.5;
-        @Getter double visionStdDevTheta = 0.5;
+        @Getter double visionStdDevTheta = 0.2;
 
         @Getter
         final Matrix<N3, N1> visionStdMatrix =
@@ -67,6 +71,9 @@ public class Vision implements NTSendable, Subsystem {
 
     /** Limelights */
     @Getter public final Limelight frontLL;
+
+    // private static final HomeOffsets offsets;
+    private static final HomeOffsets offsets = new HomeOffsets();
 
     public final Limelight backLL;
 
@@ -80,6 +87,8 @@ public class Vision implements NTSendable, Subsystem {
 
     int[] blueTags = {17, 18, 19, 20, 21, 22};
     int[] redTags = {6, 7, 8, 9, 10, 11};
+
+    @Getter private static AprilTagFieldLayout tagLayout;
 
     private VisionConfig config;
 
@@ -99,6 +108,15 @@ public class Vision implements NTSendable, Subsystem {
         for (Limelight limelight : allLimelights) {
             limelight.setLEDMode(false);
             limelight.setIMUmode(1);
+        }
+
+        /* Get the April Tag Field Layout */
+        try {
+            tagLayout =
+                    AprilTagFieldLayout.loadFromResource(
+                            AprilTagFields.k2025ReefscapeAndyMark.m_resourceFile);
+        } catch (IOException e) {
+            System.err.println(e);
         }
 
         this.register();
@@ -125,6 +143,7 @@ public class Vision implements NTSendable, Subsystem {
         setLimeLightOrientation();
         disabledLimelightUpdates();
         enabledLimelightUpdates();
+        autonLimelightUpdates();
 
         Robot.getField2d().getObject(frontLL.getCameraName()).setPose(getFrontMegaTag2Pose());
         Robot.getField2d().getObject(backLL.getCameraName()).setPose(getBackMegaTag2Pose());
@@ -154,10 +173,10 @@ public class Vision implements NTSendable, Subsystem {
     @Override
     public void initSendable(NTSendableBuilder builder) {
         builder.addDoubleProperty("FrontTX", frontLL::getTagTx, null);
-        builder.addDoubleProperty("FrontTY", frontLL::getTagTA, null);
+        builder.addDoubleProperty("FrontTA", frontLL::getTagTA, null);
         builder.addDoubleProperty("FrontTagID", frontLL::getClosestTagID, null);
         builder.addDoubleProperty("BackTX", backLL::getTagTx, null);
-        builder.addDoubleProperty("BackTY", backLL::getTagTA, null);
+        builder.addDoubleProperty("BackTA", backLL::getTagTA, null);
         builder.addDoubleProperty("BackTagID", backLL::getClosestTagID, null);
     }
 
@@ -191,7 +210,7 @@ public class Vision implements NTSendable, Subsystem {
     private void enabledLimelightUpdates() {
         if (Util.teleop.getAsBoolean()) {
             for (Limelight limelight : allLimelights) {
-                limelight.setIMUmode(3);
+                limelight.setIMUmode(1);
             }
             try {
                 addMegaTag2_VisionInput(backLL);
@@ -213,6 +232,37 @@ public class Vision implements NTSendable, Subsystem {
 
             try {
                 addMegaTag1_VisionInput(frontLL, false);
+            } catch (Exception e) {
+                Telemetry.print("FRONT MT1: Vision pose not present but tried to access it");
+            }
+        }
+    }
+
+    private void autonLimelightUpdates() {
+        if (Util.autoMode.getAsBoolean() && RobotStates.poseUpdate.getAsBoolean()) {
+            for (Limelight limelight : allLimelights) {
+                limelight.setIMUmode(1);
+            }
+            try {
+                addMegaTag2_VisionInputAuton(backLL);
+            } catch (Exception e) {
+                Telemetry.print("REAR MT2: Vision pose not present but tried to access it");
+            }
+
+            try {
+                addMegaTag2_VisionInputAuton(frontLL);
+            } catch (Exception e) {
+                Telemetry.print("FRONT MT2: Vision pose not present but tried to access it");
+            }
+
+            try {
+                addMegaTag1_VisionInputAuton(backLL, false);
+            } catch (Exception e) {
+                Telemetry.print("REAR MT1: Vision pose not present but tried to access it");
+            }
+
+            try {
+                addMegaTag1_VisionInputAuton(frontLL, false);
             } catch (Exception e) {
                 Telemetry.print("FRONT MT1: Vision pose not present but tried to access it");
             }
@@ -270,27 +320,25 @@ public class Vision implements NTSendable, Subsystem {
             /* integrations */
             // if almost stationary and extremely close to tag
             if (robotSpeed.vxMetersPerSecond + robotSpeed.vyMetersPerSecond <= 0.2
-                    && targetSize > 0.4) {
+                    && targetSize > 4) {
                 ll.sendValidStatus("Stationary close integration");
                 xyStds = 0.1;
                 degStds = 0.1;
-            } else if (multiTags && targetSize > 0.1) {
-                ll.sendValidStatus("Multi integration");
-                xyStds = 0.25;
-                degStds = 8;
             } else if (multiTags && targetSize > 2) {
                 ll.sendValidStatus("Strong Multi integration");
                 xyStds = 0.1;
                 degStds = 0.1;
-            } else if (targetSize > 0.8
-                    && (mt1PoseDifference < 0.5 || DriverStation.isDisabled())) {
-                // Integrate if the target is very big and we are close to pose or disabled
+            } else if (multiTags && targetSize > 0.2) {
+                ll.sendValidStatus("Multi integration");
+                xyStds = 0.25;
+                degStds = 8;
+            } else if (targetSize > 2 && (mt1PoseDifference < 0.5)) {
+                // Integrate if the target is very big and we are close to pose
                 ll.sendValidStatus("Close integration");
                 xyStds = 0.5;
                 degStds = 999999;
-            } else if (targetSize > 0.1
-                    && (mt1PoseDifference < 0.25 || DriverStation.isDisabled())) {
-                // Integrate if we are very close to pose or disabled and target is large enough
+            } else if (targetSize > 1 && (mt1PoseDifference < 0.25)) {
+                // Integrate if we are very close to pose and target is large enough
                 ll.sendValidStatus("Proximity integration");
                 xyStds = 1.0;
                 degStds = 999999;
@@ -314,6 +362,123 @@ public class Vision implements NTSendable, Subsystem {
 
             if (!integrateXY) {
                 xyStds = 999999;
+            }
+
+            if (integrateXY) { // If we are disabled just use this pose
+                xyStds = 0.01;
+                degStds = 0.01;
+            }
+
+            Pose2d integratedPose =
+                    new Pose2d(megaTag1Pose2d.getTranslation(), megaTag1Pose2d.getRotation());
+            Robot.getSwerve()
+                    .addVisionMeasurement(
+                            integratedPose,
+                            Utils.fpgaToCurrentTime(ll.getMegaTag1PoseTimestamp()),
+                            VecBuilder.fill(xyStds, xyStds, degStds));
+        } else {
+            ll.setTagStatus("no tags");
+            ll.sendInvalidStatus("no tag found rejection");
+        }
+    }
+
+    @SuppressWarnings("all")
+    private void addMegaTag1_VisionInputAuton(Limelight ll, boolean integrateXY) {
+        double xyStds;
+        double degStds;
+
+        // integrate vision
+        if (ll.targetInView()) {
+            boolean multiTags = ll.multipleTagsInView();
+            double targetSize = ll.getTargetSize();
+            Pose3d megaTag1Pose3d = ll.getMegaTag1_Pose3d();
+            Pose2d megaTag1Pose2d = megaTag1Pose3d.toPose2d();
+            RawFiducial[] tags = ll.getRawFiducial();
+            double highestAmbiguity = 2;
+            ChassisSpeeds robotSpeed = Robot.getSwerve().getCurrentRobotChassisSpeeds();
+
+            // distance from current pose to vision estimated MT2 pose
+            double mt1PoseDifference =
+                    Robot.getSwerve()
+                            .getRobotPose()
+                            .getTranslation()
+                            .getDistance(megaTag1Pose2d.getTranslation());
+
+            /* rejections */
+            // reject mt1 pose if individual tag ambiguity is too high
+            ll.setTagStatus("");
+            for (RawFiducial tag : tags) {
+                // search for highest ambiguity tag for later checks
+                if (highestAmbiguity == 2 || tag.ambiguity > highestAmbiguity) {
+                    highestAmbiguity = tag.ambiguity;
+                }
+                // ambiguity rejection check
+                if (tag.ambiguity > 0.9) {
+                    return;
+                }
+            }
+
+            /* rejections */
+            if (rejectionCheck(megaTag1Pose2d, targetSize)) {
+                return;
+            }
+
+            if (Math.abs(megaTag1Pose3d.getRotation().getX()) > 5
+                    || Math.abs(megaTag1Pose3d.getRotation().getY()) > 5) {
+                // reject if pose is 5 degrees titled in roll or pitch
+                ll.sendInvalidStatus("roll/pitch rejection");
+                return;
+            }
+
+            /* integrations */
+            // if almost stationary and extremely close to tag
+            if (targetSize > 2) {
+                ll.sendValidStatus("Stationary close integration");
+                xyStds = 0.1;
+                degStds = 0.1;
+            } else if (multiTags && targetSize > 2) {
+                ll.sendValidStatus("Strong Multi integration");
+                xyStds = 0.1;
+                degStds = 0.1;
+            } else if (multiTags && targetSize > 0.2) {
+                ll.sendValidStatus("Multi integration");
+                xyStds = 0.25;
+                degStds = 8;
+            } else if (targetSize > 2 && (mt1PoseDifference < 0.5)) {
+                // Integrate if the target is very big and we are close to pose
+                ll.sendValidStatus("Close integration");
+                xyStds = 0.5;
+                degStds = 999999;
+            } else if (targetSize > 1 && (mt1PoseDifference < 0.25)) {
+                // Integrate if we are very close to pose and target is large enough
+                ll.sendValidStatus("Proximity integration");
+                xyStds = 1.0;
+                degStds = 999999;
+            } else if (highestAmbiguity < 0.25 && targetSize >= 0.03) {
+                ll.sendValidStatus("Stable integration");
+                xyStds = 1.5;
+                degStds = 999999;
+            } else {
+                // Shouldn't integrate
+                return;
+            }
+
+            // strict with degree std and ambiguity and rotation because this is megatag1
+            if (highestAmbiguity > 0.5) {
+                degStds = 15;
+            }
+
+            if (robotSpeed.omegaRadiansPerSecond >= 0.5) {
+                degStds = 50;
+            }
+
+            if (!integrateXY) {
+                xyStds = 999999;
+            }
+
+            if (integrateXY) { // If we are disabled just use this pose
+                xyStds = 0.01;
+                degStds = 0.01;
             }
 
             Pose2d integratedPose =
@@ -357,15 +522,80 @@ public class Vision implements NTSendable, Subsystem {
             /* integrations */
             // if almost stationary and extremely close to tag
             if (robotSpeed.vxMetersPerSecond + robotSpeed.vyMetersPerSecond <= 0.2
-                    && targetSize > 0.4) {
+                    && targetSize > 4) {
                 ll.sendValidStatus("Stationary close integration");
+                xyStds = 0.1;
+            } else if (multiTags && targetSize > 2) {
+                ll.sendValidStatus("Strong Multi integration");
+                xyStds = 0.1;
+            } else if (multiTags && targetSize > 0.2) {
+                ll.sendValidStatus("Multi integration");
+                xyStds = 0.25;
+            } else if (targetSize > 2 && (mt2PoseDifference < 0.5 || DriverStation.isDisabled())) {
+                // Integrate if the target is very big and we are close to pose or disabled
+                ll.sendValidStatus("Close integration");
+                xyStds = 0.5;
+            } else if (targetSize > 1 && (mt2PoseDifference < 0.25 || DriverStation.isDisabled())) {
+                // Integrate if we are very close to pose or disabled and target is large enough
+                ll.sendValidStatus("Proximity integration");
+                xyStds = 0.0;
+            } else if (highestAmbiguity < 0.25 && targetSize >= 0.03) {
+                ll.sendValidStatus("Stable integration");
+                xyStds = 0.5;
+            } else {
+                // Shouldn't integrate
+                return;
+            }
+
+            Pose2d integratedPose =
+                    new Pose2d(megaTag2Pose2d.getTranslation(), megaTag2Pose2d.getRotation());
+            Robot.getSwerve()
+                    .addVisionMeasurement(
+                            integratedPose,
+                            Utils.fpgaToCurrentTime(ll.getMegaTag2PoseTimestamp()),
+                            VecBuilder.fill(xyStds, xyStds, degStds));
+        } else {
+            ll.setTagStatus("no tags");
+            ll.sendInvalidStatus("no tag found rejection");
+        }
+    }
+
+    @SuppressWarnings("all")
+    private void addMegaTag2_VisionInputAuton(Limelight ll) {
+        double xyStds;
+        double degStds = 99999;
+
+        // integrate vision
+        if (ll.targetInView()) {
+            boolean multiTags = ll.multipleTagsInView();
+            double targetSize = ll.getTargetSize();
+            Pose2d megaTag2Pose2d = ll.getMegaTag2_Pose2d();
+            double highestAmbiguity = 2;
+            ChassisSpeeds robotSpeed = Robot.getSwerve().getCurrentRobotChassisSpeeds();
+
+            // distance from current pose to vision estimated MT2 pose
+            double mt2PoseDifference =
+                    Robot.getSwerve()
+                            .getRobotPose()
+                            .getTranslation()
+                            .getDistance(megaTag2Pose2d.getTranslation());
+
+            /* rejections */
+            if (rejectionCheck(megaTag2Pose2d, targetSize)) {
+                return;
+            }
+
+            /* integrations */
+            // if almost stationary and extremely close to tag
+            if (targetSize > 2) {
+                ll.sendValidStatus("Stationary close integration");
+                xyStds = 0.1;
+            } else if (multiTags && targetSize > 2) {
+                ll.sendValidStatus("Strong Multi integration");
                 xyStds = 0.1;
             } else if (multiTags && targetSize > 0.1) {
                 ll.sendValidStatus("Multi integration");
                 xyStds = 0.25;
-            } else if (multiTags && targetSize > 2) {
-                ll.sendValidStatus("Strong Multi integration");
-                xyStds = 0.1;
             } else if (targetSize > 0.8
                     && (mt2PoseDifference < 0.5 || DriverStation.isDisabled())) {
                 // Integrate if the target is very big and we are close to pose or disabled
@@ -399,7 +629,7 @@ public class Vision implements NTSendable, Subsystem {
 
     private boolean rejectionCheck(Pose2d pose, double targetSize) {
         /* rejections */
-        if (Field.poseOutOfField(pose)) {
+        if (FieldHelpers.poseOutOfField(pose)) {
             return true;
         }
 
@@ -459,7 +689,7 @@ public class Vision implements NTSendable, Subsystem {
             Pose2d pose;
 
             // Check if the vision pose is bad and don't trust it
-            if (Field.poseOutOfField(botpose3D)) { // pose out of field
+            if (FieldHelpers.poseOutOfField(botpose3D)) { // pose out of field
                 Telemetry.log("Pose out of field", reject);
                 reject = true;
             } else if (Math.abs(botpose3D.getZ()) > 0.25) { // when in air
@@ -522,61 +752,24 @@ public class Vision implements NTSendable, Subsystem {
         int closestTagIDFront = (int) frontLL.getClosestTagID();
         int closestTagIDBack = (int) backLL.getClosestTagID();
 
-        if (closestTagIDFront == -1) {
-            return (int) closestTagIDBack;
+        if (frontLL.getTagTA() < 2) {
+            closestTagIDFront = -1;
         }
-        return (int) closestTagIDFront;
+
+        if (backLL.getTagTA() < 2) {
+            closestTagIDBack = -1;
+        }
+
+        if (closestTagIDFront == -1) {
+            return closestTagIDBack;
+        }
+        return closestTagIDFront;
     }
 
     public boolean isRearTagClosest() {
-        int closestTagIDBack = (int) backLL.getClosestTagID();
-        return getClosestTagID() != -1 && closestTagIDBack == getClosestTagID();
-    }
-
-    // ------------------------------------------------------------------------------
-    // Calculation Functions
-    // ------------------------------------------------------------------------------
-
-    /**
-     * Get the angle the robot should turn to based on the id the limelight is seeing.
-     *
-     * @return
-     */
-    public double getReefTagAngle() {
-        double[][] reefFrontAngles = {
-            {17, 60}, {18, 0}, {19, -60}, {20, -120}, {21, 180}, {22, 120},
-            {6, 120}, {7, 180}, {8, -120}, {9, -60}, {10, 0}, {11, 60}
-        };
-
-        // int closetFrontTag = (int) frontLL.getClosestTagID();
-        // int closetRearTag = (int) backLL.getClosestTagID();
-        // int closetTag = closetFrontTag;
-        // boolean rearTag = false;
-
-        // if (closetTag == -1) {
-        //     closetTag = closetRearTag;
-        //     rearTag = true;
-        // }
-
         int closetTag = getClosestTagID();
-        boolean rearTag = isRearTagClosest();
-
-        if (closetTag == -1) {
-            // Return current angle if no tag seen before going through the array
-            return Robot.getSwerve().getRobotPose().getRotation().getRadians();
-        }
-
-        for (int i = 0; i < reefFrontAngles.length; i++) {
-            if (closetTag == reefFrontAngles[i][0]) {
-                if (rearTag) {
-                    return Math.toRadians(reefFrontAngles[i][1] + 180);
-                }
-                return Math.toRadians(reefFrontAngles[i][1]);
-            }
-        }
-
-        // Return current angle if no tag is found
-        return Robot.getSwerve().getRobotPose().getRotation().getRadians();
+        int closestTagIDBack = (int) backLL.getClosestTagID();
+        return closetTag != -1 && closestTagIDBack == closetTag;
     }
 
     public boolean tagsInView() {
@@ -629,119 +822,22 @@ public class Vision implements NTSendable, Subsystem {
         }
     }
 
-    public String getCageToClimb() {
-        Pose2d robotPose = frontLL.getMegaTag2_Pose2d();
-        double[] cageDiffs = new double[3];
+    public Pose2d getReefOffsetFromTag() {
+        int closestTagID = Robot.getVision().getClosestTagID();
 
-        if (Field.isBlue()) {
-            cageDiffs[0] = Math.abs(robotPose.getY() - Units.inchesToMeters(286.779));
-            cageDiffs[1] = Math.abs(robotPose.getY() - Units.inchesToMeters(242.855));
-            cageDiffs[2] = Math.abs(robotPose.getY() - Units.inchesToMeters(199.947));
-
-            if (indexOfSmallest(cageDiffs) == 0) {
-                return "B1";
-            } else if (indexOfSmallest(cageDiffs) == 1) {
-                return "B2";
-            } else if (indexOfSmallest(cageDiffs) == 2) {
-                return "B3";
-            } else {
-                return "Nothing";
-            }
-        } else {
-            cageDiffs[0] =
-                    Math.abs(
-                            Field.flipYifRed(robotPose.getY())
-                                    - Field.flipYifRed(Units.inchesToMeters(286.779)));
-            cageDiffs[1] =
-                    Math.abs(
-                            Field.flipYifRed(robotPose.getY())
-                                    - Field.flipYifRed(Units.inchesToMeters(242.855)));
-            cageDiffs[2] =
-                    Math.abs(
-                            Field.flipYifRed(robotPose.getY())
-                                    - Field.flipYifRed(Units.inchesToMeters(199.947)));
-
-            if (indexOfSmallest(cageDiffs) == 0) {
-                return "R1";
-            } else if (indexOfSmallest(cageDiffs) == 1) {
-                return "R2";
-            } else if (indexOfSmallest(cageDiffs) == 2) {
-                return "R3";
-            } else {
-                return "Nothing";
+        if (closestTagID < 6 || closestTagID == 16 || closestTagID > 22) {
+            closestTagID = FieldHelpers.getReefZoneTagID(Robot.getSwerve().getRobotPose());
+            if (closestTagID < 0) {
+                return Robot.getSwerve().getRobotPose();
             }
         }
+
+        double reefTagDistanceOffset = offsets.getReefTagDistanceOffset(closestTagID);
+        double reefTagCenterOffset = offsets.getReefTagCenterOffset(closestTagID);
+
+        return FieldHelpers.getXYOffsetFromTag(
+                closestTagID, reefTagDistanceOffset, reefTagCenterOffset);
     }
-
-    public static double indexOfSmallest(double[] array) {
-        int indexOfSmallest = 0;
-        double smallestIndex = array[indexOfSmallest];
-        for (int i = 0; i < array.length; i++) {
-            if (array[i] <= smallestIndex) {
-                smallestIndex = array[i];
-                indexOfSmallest = i;
-            }
-        }
-        return indexOfSmallest;
-    }
-
-    /**
-     * Gets a field-relative position for the score to the reef the robot should align, adjusted for
-     * the robot's movement.
-     *
-     * @return A {@link Translation2d} representing a field relative position in meters.
-     */
-    // public Translation2d getAdjustedReefPos() {
-
-    //     int reefID = closestReefFace(); // must call closestReefFace before this method gets
-    // passed
-    //     Pose2d[] reefFaces = Field.Reef.getCenterFaces();
-    //     double NORM_FUDGE = 0.075;
-    //     // double tunableNoteVelocity = 1;
-    //     // double tunableNormFudge = 0;
-    //     // double tunableStrafeFudge = 1;
-    //     // TODO: fudges may be subject to removal
-    //     double tunableReefYFudge = 0.0;
-    //     double tunableReefXFudge = 0.0;
-
-    //     Translation2d robotPos = Robot.getSwerve().getRobotPose().getTranslation();
-    //     Translation2d targetPose =
-    //             Field.flipXifRed(reefFaces[reefID].getTranslation()); // given reef face
-    //     double xDifference = Math.abs(robotPos.getX() - targetPose.getX());
-    //     double spinYFudge =
-    //             (xDifference < 5.8)
-    //                     ? 0.05
-    //                     : 0.8; // change spin fudge for score distances vs. feed distances
-
-    //     ChassisSpeeds robotVel =
-    //             Robot.getSwerve().getCurrentRobotChassisSpeeds(); // get current robot velocity
-
-    //     double distance = robotPos.getDistance(reefFaces[fieldReefID].getTranslation());
-    //     double normFactor =
-    //             Math.hypot(robotVel.vxMetersPerSecond, robotVel.vyMetersPerSecond) < NORM_FUDGE
-    //                     ? 0.0
-    //                     : Math.abs(
-    //                             MathUtil.angleModulus(
-    //
-    // robotPos.minus(targetPose).getAngle().getRadians()
-    //                                                     - Math.atan2(
-    //                                                             robotVel.vyMetersPerSecond,
-    //                                                             robotVel.vxMetersPerSecond))
-    //                                     / Math.PI);
-
-    //     double x =
-    //             reefFaces[fieldReefID].getX()
-    //                     + (Field.isBlue() ? tunableReefXFudge : -tunableReefXFudge);
-    //     // - (robotVel.vxMetersPerSecond * (distance / tunableNoteVelocity));
-    //     //      * (1.0 - (tunableNormFudge * normFactor)));
-    //     double y =
-    //             reefFaces[fieldReefID].getY()
-    //                     + (Field.isBlue() ? -spinYFudge : spinYFudge)
-    //                     + tunableReefYFudge;
-    //     // - (robotVel.vyMetersPerSecond * (distance / tunableNoteVelocity));
-    //     //       * tunableStrafeFudge);
-    //     return new Translation2d(x, y);
-    // }
 
     // ------------------------------------------------------------------------------
     // VisionStates Commands

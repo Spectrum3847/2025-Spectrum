@@ -1,0 +1,19 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "1 - W3C"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": false,
+  "folder": "Worlds 3 Coral",
+  "choreoAuto": false
+}

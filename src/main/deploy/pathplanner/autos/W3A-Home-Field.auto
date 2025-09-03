@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Copy of 2 - Center 3 Algae"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Copy of 3 - Center 3 Algae"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Copy of 4 - Center 3 Algae"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Copy of 5 - Center 3 Algae"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Copy of 6 - Center 3 Algae"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Worlds 3 Algae",
+  "choreoAuto": false
+}

@@ -45,7 +45,8 @@ public class ClimbStates {
                                 .andThen(closeLatch())
                                 .withName("Climb.prepClimber"));
 
-        homeAll.and(climb.getLatched().not(), climbPrep.not()).whileTrue(log(home()));
+        // homeAll.and(climb.getLatched().not(), climbPrep.not()).whileTrue(log(home()));
+        homeAll.whileTrue(log(home().alongWith(openLatch())));
     }
 
     public static Command runClimb(DoubleSupplier speed) {

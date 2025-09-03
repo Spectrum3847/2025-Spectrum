@@ -8,6 +8,7 @@ import frc.robot.Robot;
 import frc.robot.elbow.Elbow.ElbowConfig;
 import frc.robot.elevator.ElevatorStates;
 import frc.spectrumLib.Telemetry;
+import frc.spectrumLib.util.Util;
 import java.util.function.DoubleSupplier;
 
 public class ElbowStates {
@@ -23,6 +24,44 @@ public class ElbowStates {
     public static final Trigger scoreL4 =
             elbow.atDegrees(() -> (config.getL4Coral() - 12), config::getTolerance);
 
+    public static final Trigger isL1Coral =
+            elbow.atDegrees(config::getExL1Coral, config::getTolerance)
+                    .and(reverse.not())
+                    .or(
+                            elbow.atDegrees(() -> -config.getExL1Coral(), config::getTolerance)
+                                    .and(reverse));
+    public static final Trigger isL2Coral =
+            elbow.atDegrees(config::getExL2Coral, config::getTolerance)
+                    .and(reverse.not())
+                    .or(
+                            elbow.atDegrees(() -> -config.getExL2Coral(), config::getTolerance)
+                                    .and(reverse));
+    public static final Trigger isL3Coral =
+            elbow.atDegrees(config::getExL3Coral, config::getTolerance)
+                    .and(reverse.not())
+                    .or(
+                            elbow.atDegrees(() -> -config.getExL3Coral(), config::getTolerance)
+                                    .and(reverse));
+    public static final Trigger isL4Coral =
+            elbow.atDegrees(config::getExL4Coral, config::getTolerance)
+                    .and(reverse.not())
+                    .or(
+                            elbow.atDegrees(() -> -config.getExL4Coral(), config::getTolerance)
+                                    .and(reverse));
+
+    public static final Trigger isL2Algae =
+            elbow.atDegrees(config::getL2Algae, config::getTolerance)
+                    .and(reverse.not())
+                    .or(
+                            elbow.atDegrees(() -> -config.getL2Algae(), config::getTolerance)
+                                    .and(reverse));
+    public static final Trigger isL3Algae =
+            elbow.atDegrees(config::getL3Algae, config::getTolerance)
+                    .and(reverse.not())
+                    .or(
+                            elbow.atDegrees(() -> -config.getL3Algae(), config::getTolerance)
+                                    .and(reverse));
+
     public static final Trigger atTarget = elbow.atTargetPosition(() -> 0.001);
 
     public static void setupDefaultCommand() {
@@ -33,7 +72,8 @@ public class ElbowStates {
         coastMode.onTrue(log(coastMode()));
         coastMode.onFalse(log(ensureBrakeMode()));
 
-        homeAll.whileTrue(home());
+        homeAll.and(Util.autoMode.not()).whileTrue(home());
+        homeAll.and(Util.autoMode).whileTrue(slowHome());
 
         stationIntaking
                 .and(actionState.not())
@@ -42,18 +82,26 @@ public class ElbowStates {
                                 config::getStationIntake,
                                 // config::getStationExtendedIntake,
                                 "Elbow.StationIntake"));
+
         Robot.getPilot()
                 .groundCoral_LB_LT
                 .and(actionState.not())
-                .whileTrue(move(config::getGroundCoralIntake, "Elbow.GroundCoral"));
+                .whileTrue(groundMove(config::getGroundCoralIntake, "Elbow.GroundCoral"));
 
         Robot.getPilot()
                 .groundAlgae_RT
                 .and(actionState.not())
                 .whileTrue(move(config::getGroundAlgaeIntake, "Elbow.GroundAlgae"));
 
+        Robot.getOperator().antiSecretClimb_LTRSup.whileTrue(home()); // Stick the Elbow Vertical
+
         // stages elbow
-        stagedCoral.whileTrue(move(config::getStage, "Elbow.Stage"));
+        stagedCoral
+                .and(
+                        actionPrepState.not().debounce(getActionPrepToActionTime()),
+                        actionState.not(),
+                        Util.autoMode.not())
+                .whileTrue(move(config::getStage, "Elbow.Stage"));
 
         L1Coral.and(actionPrepState)
                 .whileTrue(move(config::getL1Coral, config::getExL1Coral, "Elbow.L1Coral"));
@@ -74,19 +122,35 @@ public class ElbowStates {
         L4Coral.and(actionState)
                 .whileTrue(move(config::getL4Score, config::getExL4Score, "Elbow.l4Score"));
 
+        L4Coral.and(actionPrepState, ElevatorStates.isL4Coral, Util.autoMode)
+                .whileTrue(slowMove(config::getExL4Coral, "Elbow.slowL4Coral"));
+        // L4Coral.and(actionState, Util.autoMode)
+        //         .whileTrue(slowMove(config::getExL4Score, "Elbow.l4Score"));
+
         // Algae
+        processorAlgae
+                .and(actionPrepState)
+                .whileTrue(move(config::getProcessorAlgae, "Elbow.processorAlgae"));
+        processorAlgae
+                .and(actionState)
+                .whileTrue(move(config::getHome, "Elbow.processorAlgaeHome"));
         L2Algae.and(actionPrepState).whileTrue(move(config::getL2Algae, "Elbow.l2Algae"));
         L2Algae.and(actionState).whileTrue(move(config::getHome, "Elbow.l2AlgaeHome"));
         L3Algae.and(actionPrepState).whileTrue(move(config::getL3Algae, "Elbow.l3Algae"));
         L3Algae.and(actionState).whileTrue(move(config::getHome, "Elbow.l3AlgaeHome"));
 
-        netAlgae.whileTrue(move(config::getNet, "Elbow.netAlgae"));
+        netAlgae.and(Util.autoMode.not()).whileTrue(move(config::getNet, "Elbow.netAlgae"));
+        netAlgae.and(Util.autoMode).whileTrue(slowMove(config::getNet, "Elbow.slowNetAlgae"));
 
         climbPrep.whileTrue(move(config::getClimbPrep, "Elbow.climbPrep"));
     }
 
     private static Command home() {
         return move(config::getHome, "Elbow.home");
+    }
+
+    private static Command slowHome() {
+        return slowMove(config::getHome, "Elbow.slowHome");
     }
 
     // missing auton Elbow commands, add when auton is added
@@ -99,13 +163,12 @@ public class ElbowStates {
         return elbow.move(degrees, exDegrees).withName(name);
     }
 
-    public static Command stationIntake() {
-        return elbow.moveToDegrees(config::getStationIntake).withName("Elbow.StationIntake");
+    public static Command slowMove(DoubleSupplier degrees, String name) {
+        return elbow.slowMove(degrees).withName(name);
     }
 
-    public static Command stationExtendedIntake() {
-        return elbow.moveToDegrees(config::getStationExtendedIntake)
-                .withName("Shoulder.stationExtendedIntake");
+    public static Command groundMove(DoubleSupplier degrees, String name) {
+        return elbow.groundMove(degrees).withName(name);
     }
 
     public static Command coastMode() {

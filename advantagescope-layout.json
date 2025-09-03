@@ -9,7 +9,6 @@
         "sidebar": {
           "width": 300,
           "expanded": [
-            "/SmartDashboard/Auto Visualizer",
             "/SmartDashboard/Auto Chooser",
             "/SmartDashboard/VisionSystemSim-main",
             "/SmartDashboard/VisionSystemSim-main/Sim Field",
