@@ -132,10 +132,9 @@ public class Auton {
                 .withName("TEST FULL");
     }
 
-    // Secreet auto is a test auto for secret auto SecretAutoTest is to test on the robot :D
     public Command secretAuto(boolean mirrored) {
-        return SpectrumAuton("SecreetAuto0.5", mirrored)
-                .andThen(aimL4score(), SpectrumAuton("SecreetAuto", mirrored), aimL4score());
+        return SpectrumAuton("SecretAuto0.5", mirrored)
+                .andThen(aimL4score(), SpectrumAuton("SecretAuto", mirrored), aimL4score());
     }
 
     public Command aimL4score() {
