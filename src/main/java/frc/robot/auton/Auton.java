@@ -73,9 +73,6 @@ public class Auton {
         pathChooser.addOption("SecretAutoTest", secretAutoTest(false));
         pathChooser.addOption("SecretAutoTest", secretAutoTest(true));
 
-        pathChooser.addOption("SecreetAuto", secreetAuto(false));
-        pathChooser.addOption("SecreetAuto", secreetAuto(true));
-
         // pathChooser.addOption("Left | 2.5-L4 Belton Auto", beltonAuton2(false));
         // pathChooser.addOption("Right | 2.5-L4 Belton Auto", beltonAuton2(true));
 
@@ -130,33 +127,15 @@ public class Auton {
                         aimL4score());
     }
 
-    public Command secretAuto(boolean mirrored) {
-        return SpectrumAuton("SecretAuto", mirrored)
-                .withTimeout(-2)
-                .andThen(
-                        SpectrumAuton("SecretAuto0.5", mirrored),
-                        aimL4score(),
-                        SpectrumAuton("SecretAuto", mirrored),
-                        aimL4score());
+    public Command secretAutoTest(boolean mirrored) {
+        return (SpectrumAuton("TEST1", mirrored).andThen(SpectrumAuton("TEST2", mirrored)))
+                .withName("TEST FULL");
     }
 
     // Secreet auto is a test auto for secret auto SecretAutoTest is to test on the robot :D
-    public Command secreetAuto(boolean mirrored) {
-        return SpectrumAuton("SecreetAuto", mirrored)
-                .withTimeout(-2)
-                .andThen(
-                        SpectrumAuton("SecretAuto0.5", mirrored),
-                        aimL4score(),
-                        SpectrumAuton("SecreetAuto", mirrored),
-                        aimL4score());
-    }
-
-    public Command secretAutoTest(boolean mirrored) {
-        return SpectrumAuton("SecretAutoTest", mirrored)
-                .withTimeout(-2)
-                .andThen(
-                        SpectrumAuton("SecretAutoTest0.5", mirrored),
-                        SpectrumAuton("SecretAutoTest", mirrored));
+    public Command secretAuto(boolean mirrored) {
+        return SpectrumAuton("SecreetAuto0.5", mirrored)
+                .andThen(aimL4score(), SpectrumAuton("SecreetAuto", mirrored), aimL4score());
     }
 
     public Command aimL4score() {
