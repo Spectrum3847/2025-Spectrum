@@ -76,7 +76,6 @@ public class Auton {
         pathChooser.addOption("Left | 3 L4 Coral", worlds3coral(false));
         pathChooser.addOption("Right | 3 L4 Coral", worlds3coral(true));
 
-<<<<<<< HEAD
         pathChooser.addOption("roiSecretAuto", secretAuto(false));
         pathChooser.addOption("lefSecretAuto", secretAuto(true));
 
@@ -85,13 +84,12 @@ public class Auton {
 
         // pathChooser.addOption("Left | 2.5-L4 Belton Auto", beltonAuton2(false));
         // pathChooser.addOption("Right | 2.5-L4 Belton Auto", beltonAuton2(true));
-=======
+        
         pathChooser.addOption("Center | 3 Net Algae", worlds3algae(false));
 
         pathChooser.addOption("test", practiceAuto());
 
         pathChooser.addOption("Drive Forward", SpectrumAuton("Drive Forward", false));
->>>>>>> main
 
         SmartDashboard.putData("Auto Chooser", pathChooser);
     }
@@ -187,7 +185,6 @@ public class Auton {
                 .withName("Auton.autoScore");
     }
 
-<<<<<<< HEAD
     public Command secretAuto(boolean mirrored) {
         return SpectrumAuton("SecretAuto", mirrored)
             .withTimeout(-2)
@@ -223,7 +220,6 @@ public class Auton {
 
     public Command aimL4score() {
         return SwerveStates.reefAimDrive().withTimeout(1.2).alongWith(l4score());
-=======
     public Command aimScoreThenAlgae(double alignTime) {
         return Commands.sequence(
                         aimScore(alignTime),
@@ -237,7 +233,6 @@ public class Auton {
                         Commands.waitSeconds(0.2),
                         SwerveStates.autonAlgaeDriveIntake(0.4))
                 .withName("Auton.aimL4ScoreThenAlgae");
->>>>>>> main
     }
 
     public Command autoScoreThenAlgae() {
