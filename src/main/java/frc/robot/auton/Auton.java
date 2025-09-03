@@ -127,15 +127,38 @@ public class Auton {
                         aimL4score());
     }
 
-    public Command secretAutoTest(boolean mirrored) {
-        return (SpectrumAuton("TEST1", mirrored).andThen(SpectrumAuton("TEST2", mirrored)))
-                .withName("TEST FULL");
+    public Command secretAuto(boolean mirrored) {
+        return SpectrumAuton("SecretAuto", mirrored)
+            .withTimeout(-2)
+            .andThen(
+                SpectrumAuton("SecretAuto0.5"),
+                aimL4score(),
+                SpectrumAuton("SecretAuto"),
+                aimL4score()
+            );
     }
 
-    public Command secretAuto(boolean mirrored) {
-        return (SpectrumAuton("SecretAuto0.5", mirrored)
-                .andThen(SpectrumAuton("SecretAuto", mirrored)));
+    public Command secretAutoTest(boolean mirrored) {
+        return SpectrumAuton("SecretAutoTest", mirrored)
+            .withTimeout(-2)
+            .andThen(
+                SpectrumAuton("SecretAutoTest0.5"),
+                aimL4score(),
+                SpectrumAuton("SecretAutoTest"),
+                aimL4score()
+            );
     }
+
+    // Aaron's code (To see the difference between ours and his) 
+    // public Command secretAutoTest(boolean mirrored) {
+    //     return (SpectrumAuton("TEST1", mirrored).andThen(SpectrumAuton("TEST2", mirrored)))
+    //             .withName("TEST FULL");
+    // }
+
+    // public Command secretAuto(boolean mirrored) {
+    //     return (SpectrumAuton("SecretAuto0.5", mirrored)
+    //             .andThen(SpectrumAuton("SecretAuto", mirrored)));
+    // }
 
     public Command aimL4score() {
         return SwerveStates.reefAimDrive().withTimeout(1.2).alongWith(l4score());
