@@ -67,11 +67,11 @@ public class Auton {
         pathChooser.addOption("Left | Belton L1", beltonAutonL1(false));
         pathChooser.addOption("Right | Belton L1", beltonAutonL1(true));
 
-        pathChooser.addOption("SecretAuto", secretAuto(false));
-        pathChooser.addOption("SecretAuto", secretAuto(true));
+        pathChooser.addOption("lefSecretAuto", secretAuto(false));
+        pathChooser.addOption("roiSecretAuto", secretAuto(true));
 
-        pathChooser.addOption("SecretAutoTest", secretAutoTest(false));
-        pathChooser.addOption("SecretAutoTest", secretAutoTest(true));
+        pathChooser.addOption("lefSecretAutoTest", secretAutoTest(false));
+        pathChooser.addOption("roiSecretAutoTest", secretAutoTest(true));
 
         // pathChooser.addOption("Left | 2.5-L4 Belton Auto", beltonAuton2(false));
         // pathChooser.addOption("Right | 2.5-L4 Belton Auto", beltonAuton2(true));
