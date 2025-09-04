@@ -67,7 +67,7 @@
   "folder": "def not secret auto",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }
