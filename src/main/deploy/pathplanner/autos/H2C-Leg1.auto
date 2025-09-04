@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "2 - L4 Trough Rush"
+            "pathName": null
           }
         },
         {
@@ -20,6 +20,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "Houston 2 Coral",
+  "folder": null,
   "choreoAuto": false
 }

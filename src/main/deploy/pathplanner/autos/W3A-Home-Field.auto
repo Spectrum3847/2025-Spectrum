@@ -38,6 +38,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "Worlds 3 Algae",
+  "folder": null,
   "choreoAuto": false
 }

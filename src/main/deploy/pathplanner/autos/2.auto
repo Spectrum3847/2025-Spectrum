@@ -32,6 +32,6 @@
     }
   },
   "resetOdom": false,
-  "folder": "118 Practice Field Test",
+  "folder": null,
   "choreoAuto": false
 }

@@ -20,6 +20,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "Houston 2 Coral",
+  "folder": null,
   "choreoAuto": false
 }

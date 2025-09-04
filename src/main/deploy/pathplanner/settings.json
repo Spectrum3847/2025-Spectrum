@@ -5,7 +5,9 @@
   "pathFolders": [
     "def not secret auto"
   ],
-  "autoFolders": [],
+  "autoFolders": [
+    "def not secret auto"
+  ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,

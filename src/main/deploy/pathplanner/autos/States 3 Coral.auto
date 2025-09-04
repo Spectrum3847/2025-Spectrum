@@ -56,6 +56,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "Blue Left Origin",
+  "folder": null,
   "choreoAuto": false
 }
