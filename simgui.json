@@ -137,10 +137,7 @@
         "visibleTargetPoses": {
           "image": "./images/tag-green.png"
         },
-        "width": 17.54825210571289,
-        "window": {
-          "visible": true
-        }
+        "width": 17.54825210571289
       },
       "/SmartDashboard/frontView": {
         "window": {

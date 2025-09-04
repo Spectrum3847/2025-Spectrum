@@ -6,7 +6,7 @@
     "GLOBAL": {
       "font": "Proggy Dotted",
       "fps": "120",
-      "height": "1050",
+      "height": "974",
       "maximized": "1",
       "style": "0",
       "userScale": "2",
@@ -56,7 +56,7 @@
     },
     "###/SmartDashboard/VisionSystemSim-main/Sim Field": {
       "Collapsed": "0",
-      "Pos": "1130,48",
+      "Pos": "355,536",
       "Size": "751,418"
     },
     "###/SmartDashboard/frontView": {
@@ -71,8 +71,8 @@
     },
     "###FMS": {
       "Collapsed": "0",
-      "Pos": "699,320",
-      "Size": "235,244"
+      "Pos": "673,327",
+      "Size": "388,176"
     },
     "###Joysticks": {
       "Collapsed": "0",
@@ -106,7 +106,7 @@
     },
     "Robot State": {
       "Collapsed": "0",
-      "Pos": "5,20",
+      "Pos": "4,56",
       "Size": "137,152"
     }
   }

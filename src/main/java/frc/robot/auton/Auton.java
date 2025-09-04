@@ -82,6 +82,12 @@ public class Auton {
         pathChooser.addOption("roiSecretAutoTest", secretAutoTest(false));
         pathChooser.addOption("lefSecretAutoTest", secretAutoTest(true));
 
+        // pathChooser.addOption("roiSecretAuto2", secretAuto2(false));
+        // pathChooser.addOption("lefSecretAuto2", secretAuto2(true));
+
+        // pathChooser.addOption("roiSecretAutoTest2", secretAutoTest2(false));
+        // pathChooser.addOption("lefSecretAutoTest2", secretAutoTest2(true));
+
         // pathChooser.addOption("Left | 2.5-L4 Belton Auto", beltonAuton2(false));
         // pathChooser.addOption("Right | 2.5-L4 Belton Auto", beltonAuton2(true));
 
@@ -146,7 +152,8 @@ public class Auton {
     }
 
     public Command secretAuto(boolean mirrored) {
-        return SpectrumAuton("SecretAuto", mirrored)
+        return SpectrumAuton("SecretAuto0.5", mirrored)
+                .andThen(SpectrumAuton("SecretAuto", mirrored))
                 .withTimeout(-2)
                 .andThen(
                         SpectrumAuton("SecretAuto0.5", mirrored),
@@ -156,25 +163,20 @@ public class Auton {
     }
 
     public Command secretAutoTest(boolean mirrored) {
-        return SpectrumAuton("SecretAutoTest", mirrored)
-                .withTimeout(-2)
-                .andThen(
-                        SpectrumAuton("SecretAutoTest0.5", mirrored),
-                        fullSequenceL4score(),
-                        SpectrumAuton("SecretAutoTest", mirrored),
-                        fullSequenceL4score());
+        return (SpectrumAuton("TEST1", mirrored).andThen(SpectrumAuton("TEST2", mirrored)))
+                .withName("TEST FULL");
     }
 
     // Aaron's code (To see the difference between ours and his)
-    // public Command secretAutoTest(boolean mirrored) {
-    //     return (SpectrumAuton("TEST1", mirrored).andThen(SpectrumAuton("TEST2", mirrored)))
-    //             .withName("TEST FULL");
-    // }
+    public Command secretAutoTest2(boolean mirrored) {
+        return (SpectrumAuton("TEST1", mirrored).andThen(SpectrumAuton("TEST2", mirrored)))
+                .withName("TEST FULL");
+    }
 
-    // public Command secretAuto(boolean mirrored) {
-    //     return (SpectrumAuton("SecretAuto0.5", mirrored)
-    //             .andThen(SpectrumAuton("SecretAuto", mirrored)));
-    // }
+    public Command secretAuto2(boolean mirrored) {
+        return (SpectrumAuton("SecretAuto0.5", mirrored)
+                .andThen(SpectrumAuton("SecretAuto", mirrored)));
+    }
 
     public Command practiceAuto() {
         return Commands.sequence(
