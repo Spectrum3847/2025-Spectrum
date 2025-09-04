@@ -419,7 +419,6 @@ public class SpectrumLEDs implements SpectrumSubsystem {
         };
     }
 
-<<<<<<< HEAD
     public LEDPattern rainbowBlink(double blink, Color c, double durationInSeconds) {
 
         return new LEDPattern() {
@@ -452,8 +451,7 @@ public class SpectrumLEDs implements SpectrumSubsystem {
             };
         };
     }
-}
-=======
+
     public LEDPattern edges(Color c, double length) {
         return new LEDPattern() {
             public void applyTo(LEDReader reader, LEDWriter writer) {
@@ -468,7 +466,7 @@ public class SpectrumLEDs implements SpectrumSubsystem {
             }
         };
     }
->>>>>>> main
+}
 
     // LEDPattern Methods
     // reversed()

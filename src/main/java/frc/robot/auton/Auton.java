@@ -84,7 +84,7 @@ public class Auton {
 
         // pathChooser.addOption("Left | 2.5-L4 Belton Auto", beltonAuton2(false));
         // pathChooser.addOption("Right | 2.5-L4 Belton Auto", beltonAuton2(true));
-        
+
         pathChooser.addOption("Center | 3 Net Algae", worlds3algae(false));
 
         pathChooser.addOption("test", practiceAuto());
@@ -145,6 +145,37 @@ public class Auton {
                 .withName("W3A-Full");
     }
 
+    public Command secretAuto(boolean mirrored) {
+        return SpectrumAuton("SecretAuto", mirrored)
+                .withTimeout(-2)
+                .andThen(
+                        SpectrumAuton("SecretAuto0.5", mirrored),
+                        fullSequenceL4score(),
+                        SpectrumAuton("SecretAuto", mirrored),
+                        fullSequenceL4score());
+    }
+
+    public Command secretAutoTest(boolean mirrored) {
+        return SpectrumAuton("SecretAutoTest", mirrored)
+                .withTimeout(-2)
+                .andThen(
+                        SpectrumAuton("SecretAutoTest0.5", mirrored),
+                        fullSequenceL4score(),
+                        SpectrumAuton("SecretAutoTest", mirrored),
+                        fullSequenceL4score());
+    }
+
+    // Aaron's code (To see the difference between ours and his)
+    // public Command secretAutoTest(boolean mirrored) {
+    //     return (SpectrumAuton("TEST1", mirrored).andThen(SpectrumAuton("TEST2", mirrored)))
+    //             .withName("TEST FULL");
+    // }
+
+    // public Command secretAuto(boolean mirrored) {
+    //     return (SpectrumAuton("SecretAuto0.5", mirrored)
+    //             .andThen(SpectrumAuton("SecretAuto", mirrored)));
+    // }
+
     public Command practiceAuto() {
         return Commands.sequence(
                         SpectrumAuton("1", false),
@@ -185,41 +216,6 @@ public class Auton {
                 .withName("Auton.autoScore");
     }
 
-    public Command secretAuto(boolean mirrored) {
-        return SpectrumAuton("SecretAuto", mirrored)
-            .withTimeout(-2)
-            .andThen(
-                SpectrumAuton("SecretAuto0.5"),
-                aimL4score(),
-                SpectrumAuton("SecretAuto"),
-                aimL4score()
-            );
-    }
-
-    public Command secretAutoTest(boolean mirrored) {
-        return SpectrumAuton("SecretAutoTest", mirrored)
-            .withTimeout(-2)
-            .andThen(
-                SpectrumAuton("SecretAutoTest0.5"),
-                aimL4score(),
-                SpectrumAuton("SecretAutoTest"),
-                aimL4score()
-            );
-    }
-
-    // Aaron's code (To see the difference between ours and his) 
-    // public Command secretAutoTest(boolean mirrored) {
-    //     return (SpectrumAuton("TEST1", mirrored).andThen(SpectrumAuton("TEST2", mirrored)))
-    //             .withName("TEST FULL");
-    // }
-
-    // public Command secretAuto(boolean mirrored) {
-    //     return (SpectrumAuton("SecretAuto0.5", mirrored)
-    //             .andThen(SpectrumAuton("SecretAuto", mirrored)));
-    // }
-
-    public Command aimL4score() {
-        return SwerveStates.reefAimDrive().withTimeout(1.2).alongWith(l4score());
     public Command aimScoreThenAlgae(double alignTime) {
         return Commands.sequence(
                         aimScore(alignTime),
