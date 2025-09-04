@@ -462,7 +462,7 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
     }
 
     DoubleSupplier calculateYController(DoubleSupplier targetMeters) {
-        return () -> yController.calculate(targetMeters, getRobotPose()::getY);
+        return () -> yController.calculate(targetMeters.getAsDouble(), getRobotPose().getY());
     }
 
     // --------------------------------------------------------------------------------

@@ -78,8 +78,6 @@ public class Auton {
 
         pathChooser.addOption("Center | 3 Net Algae", worlds3algae(false));
 
-        pathChooser.addOption("test", practiceAuto());
-
         pathChooser.addOption("Drive Forward", SpectrumAuton("Drive Forward", false));
 
         SmartDashboard.putData("Auto Chooser", pathChooser);
@@ -117,7 +115,7 @@ public class Auton {
 
     public Command worlds3coral(boolean mirrored) {
         return Commands.sequence(
-                        SpectrumAuton("W3C-Start", mirrored, 2),
+                        SpectrumAuton("W3C-Start", mirrored),
                         autoScore(),
                         SpectrumAuton("W3C-Leg1", mirrored),
                         autoScore(),
@@ -136,19 +134,6 @@ public class Auton {
                 .withName("W3A-Full");
     }
 
-    public Command practiceAuto() {
-        return Commands.sequence(
-                        SpectrumAuton("1", false),
-                        autoScore(),
-                        RobotStates.homeAll.toggleToTrue(),
-                        RobotStates.autonClearStates(),
-                        SpectrumAuton("2", false),
-                        autoScore(),
-                        RobotStates.homeAll.toggleToTrue(),
-                        RobotStates.autonClearStates())
-                .withName("test");
-    }
-
     public Command aimScore(double alignTime) {
         return SwerveStates.reefAimDriveVisionXY()
                 .withTimeout(alignTime)
@@ -158,21 +143,9 @@ public class Auton {
 
     // vision aligns until autoScore scored or 5 seconds have passed without auto scoring
     public Command autoScore() {
-        return (SwerveStates.reefAimDriveVisionXY().withTimeout(5))
-                .until(autonAutoScoreMode.not())
-                .andThen(
-                        Commands.sequence(
-                                        RobotStates.actionPrepState.setFalse(),
-                                        RobotStates.actionState
-                                                .setTrueForTimeWithCancel(
-                                                        () -> 0.75, RobotStates.actionPrepState)
-                                                .andThen(
-                                                        autonAutoScoreMode
-                                                                .setFalse()
-                                                                .onlyIf(
-                                                                        RobotStates.actionPrepState
-                                                                                .not())))
-                                .onlyWhile(autonAutoScoreMode))
+        return (Commands.race(SwerveStates.reefAimDriveVisionXY(), Commands.waitSeconds(5))
+                        .until(autonAutoScoreMode.not())
+                        .andThen(autoScoreFallback().onlyWhile(autonAutoScoreMode)))
                 .withName("Auton.autoScore");
     }
 
@@ -231,6 +204,19 @@ public class Auton {
                                         Commands.waitSeconds(0.5),
                                         RobotStates.homeAll.toggleToTrue(),
                                         Commands.waitSeconds(0.5)));
+    }
+
+    public Command autoScoreFallback() {
+        return Commands.sequence(
+                        RobotStates.actionPrepState.setFalse(),
+                        RobotStates.actionState
+                                .setTrueForTimeWithCancel(
+                                        RobotStates::getAutonScoreTime, RobotStates.actionPrepState)
+                                .andThen(
+                                        autonAutoScoreMode
+                                                .setFalse()
+                                                .onlyIf(RobotStates.actionPrepState.not())))
+                .withName("Auton.autoScoreFallback");
     }
 
     public Command autonCoralL4Stage() {

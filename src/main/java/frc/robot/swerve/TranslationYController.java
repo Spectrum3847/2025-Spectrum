@@ -1,8 +1,8 @@
 package frc.robot.swerve;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import java.util.function.DoubleSupplier;
 
 /**
  * Uses a profiled PID Controller to quickly turn the robot to a specified angle. Once the robot is
@@ -10,43 +10,51 @@ import java.util.function.DoubleSupplier;
  * angle.
  */
 public class TranslationYController {
-    Swerve swerve;
-    SwerveConfig config;
-    ProfiledPIDController controller;
+    private final SwerveConfig config;
+    private final ProfiledPIDController controller;
+    private final double deadband = 1e-3;
 
     double calculatedValue = 0;
 
     public TranslationYController(SwerveConfig config) {
         this.config = config;
-        controller =
+        this.controller =
                 new ProfiledPIDController(
                         config.getKPTranslationController(),
                         config.getKITranslationController(),
                         config.getKDTranslationController(),
                         config.getTranslationConstraints());
 
-        controller.setTolerance(0.0);
-        SmartDashboard.putData("Y controller", controller);
+        controller.setTolerance(config.getTranslationTolerance());
+        SmartDashboard.putData("Y Controller", controller);
     }
 
-    public double calculate(DoubleSupplier goalMeters, DoubleSupplier currentMeters) {
-        calculatedValue =
-                controller.calculate(currentMeters.getAsDouble(), goalMeters.getAsDouble());
-
-        SmartDashboard.putNumber("Y Controller Output", calculatedValue);
-        if (atGoal(currentMeters.getAsDouble())) {
-            calculatedValue = 0;
-            return calculatedValue;
-        } else {
-            return calculatedValue + (config.getKSdrive() * Math.signum(calculatedValue));
+    public double calculate(double goalMeters, double currentMeters) {
+        if (controller.atGoal()) {
+            return 0.0;
         }
+
+        double output = controller.calculate(currentMeters, goalMeters);
+
+        if (Math.abs(output) > deadband) {
+            output += config.getKSdrive() * Math.signum(output);
+        }
+
+        output =
+                MathUtil.clamp(
+                        output,
+                        -config.getTranslationConstraints().maxVelocity,
+                        config.getTranslationConstraints().maxVelocity);
+
+        // SmartDashboard.putNumber("Y Controller Output", output);
+        // SmartDashboard.putBoolean("Y At Goal", controller.atGoal());
+        // SmartDashboard.putNumber("Y Position Error", controller.getPositionError());
+        // SmartDashboard.putNumber("Y Tolerance", controller.getPositionTolerance());
+        return output;
     }
 
-    public boolean atGoal(double current) {
-        double goal = controller.getGoal().position;
-        boolean atGoal = Math.abs(current - goal) < config.getTranslationTolerance();
-        // System.out.println("Y At Goal: " + atGoal + " Goal: " + goal + " Current: " + current);
-        return atGoal;
+    public boolean atGoal() {
+        return controller.atGoal();
     }
 
     public void reset(double currentMeters) {

@@ -1,7 +1,7 @@
 {
   "Docking": {
     "Data": [
-      "DockNode  ID=0x00000001 Pos=1,988 Size=905,316 Selected=0x48913727"
+      "DockNode  ID=0x00000001 Pos=17,1001 Size=905,373 Selected=0x48913727"
     ]
   },
   "MainWindow": {
@@ -41,10 +41,25 @@
       "Pos": "5,641",
       "Size": "676,348"
     },
+    "###/SmartDashboard/Hold Controller": {
+      "Collapsed": "0",
+      "Pos": "1732,1139",
+      "Size": "320,188"
+    },
     "###/SmartDashboard/LeftView": {
       "Collapsed": "0",
       "Pos": "1711,642",
       "Size": "544,547"
+    },
+    "###/SmartDashboard/Rotation Controller": {
+      "Collapsed": "0",
+      "Pos": "1520,1143",
+      "Size": "351,240"
+    },
+    "###/SmartDashboard/Rotation Motion Controller": {
+      "Collapsed": "0",
+      "Pos": "439,1119",
+      "Size": "405,78"
     },
     "###/SmartDashboard/Scheduler": {
       "Collapsed": "0",
@@ -65,6 +80,16 @@
       "Collapsed": "0",
       "Pos": "1037,29",
       "Size": "1219,610"
+    },
+    "###/SmartDashboard/X Controller": {
+      "Collapsed": "0",
+      "Pos": "1111,1144",
+      "Size": "297,240"
+    },
+    "###/SmartDashboard/Y Controller": {
+      "Collapsed": "0",
+      "Pos": "1313,1143",
+      "Size": "297,240"
     },
     "###/SmartDashboard/frontView": {
       "Collapsed": "0",
@@ -99,14 +124,14 @@
     "###NetworkTables": {
       "Collapsed": "0",
       "DockId": "0x00000001,0",
-      "Pos": "1,988",
-      "Size": "905,316"
+      "Pos": "17,1001",
+      "Size": "905,373"
     },
     "###NetworkTables Info": {
       "Collapsed": "0",
       "DockId": "0x00000001,1",
-      "Pos": "1,988",
-      "Size": "905,316"
+      "Pos": "17,1001",
+      "Size": "905,373"
     },
     "###Other Devices": {
       "Collapsed": "0",
@@ -118,6 +143,11 @@
       "Collapsed": "0",
       "Pos": "910,20",
       "Size": "158,60"
+    },
+    "###Plot <0>": {
+      "Collapsed": "0",
+      "Pos": "232,294",
+      "Size": "1144,697"
     },
     "###RoboRIO": {
       "Collapsed": "0",

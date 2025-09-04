@@ -46,7 +46,8 @@ public class SwerveConfig {
     // Theoretical free speed (m/s) at 12v applied output;
     @Getter @Setter
     private LinearVelocity speedAt12Volts =
-            MetersPerSecond.of((95 / driveGearRatio) * 2 * Math.PI * wheelRadius.in(Meters));
+            MetersPerSecond.of(
+                    (95 / driveGearRatio) * 2 * Math.PI * wheelRadius.in(Meters)); // 4.28699874;
 
     @Getter private double kSdrive = 0.10; // 0.13
     @Getter private double kSsteer = 0.25; // 0.2
@@ -56,26 +57,28 @@ public class SwerveConfig {
     // -----------------------------------------------------------------------
     @Getter private double maxAngularVelocity = 2 * Math.PI; // rad/s
     @Getter private double maxAngularAcceleration = Math.pow(maxAngularVelocity, 2); // rad/s^2
-    @Getter private double kPRotationController = 1.85; // 4.5 // 6.5 // 8.0;
+    @Getter private double kPRotationController = 2; // 4.5 // 6.5 // 8.0;
     @Getter private double kIRotationController = 0.0;
     @Getter private double kDRotationController = 0.0; // 0.2
-    @Getter private double rotationTolerance = Units.degreesToRadians(0.2); // rads
+    @Getter private double rotationTolerance = Units.degreesToRadians(1); // rads
+    @Getter private double rotationVelocityTolerance = Units.degreesToRadians(3); // rads/s
 
-    @Getter private double kPHoldController = 12.0;
+    @Getter private double kPHoldController = 0.15;
     @Getter private double kIHoldController = 0.0;
     @Getter private double kDHoldController = 0.0;
 
-    @Getter private double kPTranslationController = 1.7;
+    @Getter private double kPTranslationController = 3.0;
     @Getter private double kITranslationController = 0.0;
     @Getter private double kDTranslationController = 0.0;
 
-    @Getter private double translationTolerance = Units.inchesToMeters(0.5); // 0.5
+    @Getter private double translationTolerance = Units.inchesToMeters(0.6); // 0.4
+    @Getter private double translationVelocityTolerance = Units.inchesToMeters(0.8); // 0.75
 
     @Getter
     private Constraints translationConstraints =
             new Constraints(
-                    speedAt12Volts.baseUnitMagnitude() / 2,
-                    speedAt12Volts.baseUnitMagnitude() * 10);
+                    speedAt12Volts.baseUnitMagnitude() * 0.9,
+                    Math.pow(speedAt12Volts.baseUnitMagnitude(), 2));
 
     @Getter private double kPTagCenterController = 1.3;
     @Getter private double kITagCenterController = 0.0;

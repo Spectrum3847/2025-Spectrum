@@ -1,5 +1,6 @@
 package frc.robot.swerve;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -9,41 +10,49 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * angle.
  */
 public class TranslationXController {
-    Swerve swerve;
-    SwerveConfig config;
-    ProfiledPIDController controller;
-
-    double calculatedValue = 0;
+    private final SwerveConfig config;
+    private final ProfiledPIDController controller;
+    private final double deadband = 1e-3;
 
     public TranslationXController(SwerveConfig config) {
         this.config = config;
-        controller =
+        this.controller =
                 new ProfiledPIDController(
                         config.getKPTranslationController(),
                         config.getKITranslationController(),
                         config.getKDTranslationController(),
                         config.getTranslationConstraints());
 
-        controller.setTolerance(0.0);
-        SmartDashboard.putData("X controller", controller);
+        controller.setTolerance(config.getTranslationTolerance());
+        SmartDashboard.putData("X Controller", controller);
     }
 
     public double calculate(double goalMeters, double currentMeters) {
-        calculatedValue = controller.calculate(currentMeters, goalMeters);
-
-        if (atGoal(currentMeters)) {
-            calculatedValue = 0;
-            return calculatedValue;
-        } else {
-            return calculatedValue + (config.getKSdrive() * Math.signum(calculatedValue));
+        if (controller.atGoal()) {
+            return 0.0;
         }
+
+        double output = controller.calculate(currentMeters, goalMeters);
+
+        if (Math.abs(output) > deadband) {
+            output += config.getKSdrive() * Math.signum(output);
+        }
+
+        output =
+                MathUtil.clamp(
+                        output,
+                        -config.getTranslationConstraints().maxVelocity,
+                        config.getTranslationConstraints().maxVelocity);
+
+        // SmartDashboard.putNumber("X Controller Output", output);
+        // SmartDashboard.putBoolean("X At Goal", controller.atGoal());
+        // SmartDashboard.putNumber("X Position Error", controller.getPositionError());
+        // SmartDashboard.putNumber("X Tolerance", controller.getPositionTolerance());
+        return output;
     }
 
-    public boolean atGoal(double current) {
-        double goal = controller.getGoal().position;
-        boolean atGoal = Math.abs(current - goal) < config.getTranslationTolerance();
-        // System.out.println("X At Goal: " + atGoal + " Goal: " + goal + " Current: " + current);
-        return atGoal;
+    public boolean atGoal() {
+        return controller.atGoal();
     }
 
     public void reset(double currentMeters) {

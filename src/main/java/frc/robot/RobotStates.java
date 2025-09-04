@@ -26,6 +26,7 @@ public class RobotStates {
     private static final Operator operator = Robot.getOperator();
 
     @Getter private static double scoreTime = 2.0;
+    @Getter private static double autonScoreTime = 0.75;
     @Getter private static double twistAtReefDelay = 0.2;
     @Getter private static double scoreAfterAlignTime = 0.03;
     @Getter private static double autonScoreAfterAlignTime = 0.05;
@@ -350,19 +351,12 @@ public class RobotStates {
                                 .andThen(autoScoreMode.setFalse().onlyIf(actionPrepState.not())));
 
         aligned.debounce(autonScoreAfterAlignTime)
-                .and(
-                        autonAutoScoreMode,
-                        actionPrepState,
-                        completeStagedCoral,
-                        pilot.actionReady_RB.not())
+                .and(autonAutoScoreMode, actionPrepState, completeStagedCoral)
                 .onTrue(
                         actionPrepState.setFalse(),
                         actionState
-                                .setTrueForTimeWithCancel(() -> 0.5, actionPrepState)
-                                .andThen(
-                                        autonAutoScoreMode
-                                                .setFalse()
-                                                .onlyIf(actionPrepState.not())));
+                                .setTrueForTime(RobotStates::getAutonScoreTime)
+                                .andThen(autonAutoScoreMode.setFalse()));
     }
 
     private RobotStates() {
