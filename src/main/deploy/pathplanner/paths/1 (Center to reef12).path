@@ -8,19 +8,19 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.750767045454545,
-        "y": 4.000071022727272
+        "x": 6.7,
+        "y": 4.0
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.055407303370787,
+        "x": 5.957,
         "y": 4.0
       },
       "prevControl": {
-        "x": 6.555407303370787,
+        "x": 6.457,
         "y": 4.0
       },
       "nextControl": null,
@@ -31,7 +31,36 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
+<<<<<<< Updated upstream
   "eventMarkers": [],
+=======
+  "eventMarkers": [
+    {
+      "name": "coral",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "rightL4",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "score",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "home",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+>>>>>>> Stashed changes
   "globalConstraints": {
     "maxVelocity": 2.5,
     "maxAcceleration": 2.5,
