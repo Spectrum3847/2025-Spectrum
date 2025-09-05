@@ -20,6 +20,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Worlds 3 Coral",
   "choreoAuto": false
 }
