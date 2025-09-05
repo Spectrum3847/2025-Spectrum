@@ -7,25 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "TEST 1 (Center to reef12)"
+            "pathName": "4 - L4 Trough Rush"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "TEST 2 (reef12 to processor)"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "TEST 3 (processor to reef10)"
+            "pathName": "3 - L4 Trough Rush"
           }
         }
       ]
     }
   },
-  "resetOdom": true,
-  "folder": "def not secret auto",
+  "resetOdom": false,
+  "folder": null,
   "choreoAuto": false
 }

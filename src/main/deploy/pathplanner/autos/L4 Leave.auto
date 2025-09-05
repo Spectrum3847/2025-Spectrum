@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1 Meter"
+            "pathName": "L4 Leave"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Config Autos",
+  "folder": "Photon",
   "choreoAuto": false
 }

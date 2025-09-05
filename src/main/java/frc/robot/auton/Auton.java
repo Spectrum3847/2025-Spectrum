@@ -82,6 +82,9 @@ public class Auton {
         pathChooser.addOption("roiSecretAutoTest", secretAutoTest(false));
         pathChooser.addOption("lefSecretAutoTest", secretAutoTest(true));
 
+        pathChooser.addOption("roiSockretAuto", sockretAuto(false));
+        pathChooser.addOption("lefSockretAuto", sockretAuto(true));
+
         // pathChooser.addOption("roiSecretAuto2", secretAuto2(false));
         // pathChooser.addOption("lefSecretAuto2", secretAuto2(true));
 
@@ -165,6 +168,11 @@ public class Auton {
     public Command secretAutoTest(boolean mirrored) {
         return (SpectrumAuton("TEST1", mirrored).andThen(SpectrumAuton("TEST2", mirrored)))
                 .withName("TEST FULL");
+    }
+
+    public Command sockretAuto(boolean mirrored) {
+        return (SpectrumAuton("SpectrumAuto0.5").andThen(SpectrumAuton("SockretAuto", mirrored)))
+                .withName("Sockret Auto");
     }
 
     // Aaron's code (To see the difference between ours and his)

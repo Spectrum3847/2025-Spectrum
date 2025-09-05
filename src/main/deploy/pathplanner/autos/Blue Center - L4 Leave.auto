@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1 Meter"
+            "pathName": "1 - L4 Trough Rush"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Config Autos",
+  "folder": "Blue Center Origin",
   "choreoAuto": false
 }
