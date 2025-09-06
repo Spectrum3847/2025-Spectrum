@@ -421,6 +421,7 @@ public class FieldHelpers {
      * @param centerOffset
      * @return
      */
+    @SuppressWarnings("static-access")
     public static Pose2d getXYOffsetFromTag(int tagID, double distanceAway, double centerOffset) {
         Pose2d tagPose;
 

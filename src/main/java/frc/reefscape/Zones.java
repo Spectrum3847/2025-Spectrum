@@ -75,10 +75,12 @@ public class Zones {
      * @param tag
      * @return
      */
+    @SuppressWarnings("static-access")
     public double getTagOffset(int tag) {
         return offsets.getReefTagDistanceOffset(tag);
     }
 
+    @SuppressWarnings("static-access")
     public double getTagAngleOffset(int tag) {
         return offsets.getReefTagAngleOffset(tag);
     }
