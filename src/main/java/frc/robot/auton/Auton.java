@@ -170,7 +170,10 @@ public class Auton {
 
     public Command sockretAuto(boolean mirrored) {
         return (SpectrumAuton("SpectrumAuto0.5", mirrored)
-                        .andThen(SpectrumAuton("SockretAuto", mirrored)))
+                        .andThen(
+                                fullSequenceAimL4Score(1),
+                                SpectrumAuton("SockretAuto", mirrored),
+                                fullSequenceAimL4Score(1)))
                 .withName("Sockret Auto");
     }
 
