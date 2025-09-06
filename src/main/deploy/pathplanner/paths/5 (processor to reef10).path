@@ -33,8 +33,14 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
+      "name": "sourceIntakeOff",
+      "waypointRelativePos": 0.13723284589426338,
+      "endWaypointRelativePos": 0.25421822272215777,
+      "command": null
+    },
+    {
       "name": "home",
-      "waypointRelativePos": 0.2,
+      "waypointRelativePos": 0.3172103487064108,
       "endWaypointRelativePos": null,
       "command": null
     },
