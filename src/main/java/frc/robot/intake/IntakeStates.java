@@ -108,7 +108,7 @@ public class IntakeStates {
     }
 
     @SuppressWarnings("unused")
-private static Command runVoltageCurrentLimits(
+    private static Command runVoltageCurrentLimits(
             DoubleSupplier voltage, DoubleSupplier supplyCurrent, DoubleSupplier torqueCurrent) {
         return intake.runVoltageCurrentLimits(voltage, supplyCurrent, torqueCurrent);
     }

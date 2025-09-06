@@ -157,10 +157,10 @@ public class Auton {
     public Command secretAuto(boolean mirrored) {
         return (SpectrumAuton("SecretAuto0.5", mirrored)
                         .andThen(
-                                fullSequenceAimL4Score(1.5),
+                                fullSequenceAimL4Score(1),
                                 SpectrumAuton("SecretAuto", mirrored),
-                                fullSequenceAimL4Score(1.5)))
-                .withName("TEST FULL");
+                                fullSequenceAimL4Score(1)))
+                .withName("Secret Auto");
     }
 
     public Command secretAutoTest(boolean mirrored) {

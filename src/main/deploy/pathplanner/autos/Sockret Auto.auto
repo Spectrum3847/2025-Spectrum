@@ -43,7 +43,7 @@
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": "def not secret auto",
   "choreoAuto": false
 }
