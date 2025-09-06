@@ -7,43 +7,43 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1 - Blue Center Algae"
+            "pathName": null
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "2 - Blue Center Algae"
+            "pathName": null
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3 - Blue Center Algae"
+            "pathName": null
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "4 - Blue Center Algae"
+            "pathName": null
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "5 - Blue Center Algae"
+            "pathName": null
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "6 - Blue Center Algae"
+            "pathName": null
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Blue Center Origin",
+  "folder": null,
   "choreoAuto": false
 }

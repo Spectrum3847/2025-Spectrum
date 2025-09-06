@@ -13,25 +13,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "2 - L4 Trough Rush"
+            "pathName": null
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3 - L4 Trough Rush"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "4 - L4 Trough Rush"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "3 - L4 Trough Rush"
+            "pathName": null
           }
         },
         {
@@ -43,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "3 - L4 Trough Rush"
+            "pathName": null
           }
         },
         {
@@ -55,13 +43,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "3 - L4 Trough Rush"
+            "pathName": null
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "4 - L4 Trough Rush"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": null
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Blue Center Origin",
+  "folder": null,
   "choreoAuto": false
 }

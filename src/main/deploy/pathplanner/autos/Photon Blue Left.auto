@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1 - Photon Blue Left"
+            "pathName": null
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "2 - Photon Blue Left"
+            "pathName": null
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "3 - Photon Blue Left"
+            "pathName": null
           }
         },
         {
@@ -44,6 +44,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "Photon",
+  "folder": null,
   "choreoAuto": false
 }

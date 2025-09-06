@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1 - Source Only"
+            "pathName": null
           }
         },
         {
@@ -19,13 +19,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "2 - Source Only"
+            "pathName": null
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3 - Source Only"
+            "pathName": null
           }
         },
         {
@@ -37,13 +37,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "4 - Source Only"
+            "pathName": null
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "5 - Source Only"
+            "pathName": null
           }
         },
         {
@@ -55,13 +55,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "6 - Source Only"
+            "pathName": null
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "7 - Source Only"
+            "pathName": null
           }
         },
         {
@@ -73,13 +73,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "8 - Source Only"
+            "pathName": null
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "9 - Source Only"
+            "pathName": null
           }
         },
         {
@@ -92,6 +92,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "Blue Left Origin",
+  "folder": null,
   "choreoAuto": false
 }

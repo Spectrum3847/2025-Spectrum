@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1 Alt - L4 Trough Rush"
+            "pathName": null
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Blue Left Origin",
+  "folder": null,
   "choreoAuto": false
 }

@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "L1 Leave"
+            "pathName": null
           }
         },
         {
@@ -20,6 +20,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "Photon",
+  "folder": null,
   "choreoAuto": false
 }

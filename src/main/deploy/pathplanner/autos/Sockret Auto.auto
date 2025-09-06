@@ -7,25 +7,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": "2 (reef12 to processor)"
+            "pathName": "2 (reef10 to processor)"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3 (processor to reef10)"
+            "pathName": "3 (processor to reef8)"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "4 (reef10 to processor)"
+            "pathName": "4 (reef8 to processor)"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3 (processor to reef10)"
+            "pathName": "3 (processor to reef8)"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "4 (reef8 to processor)"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "5 (processor to reef10)"
           }
         }
       ]

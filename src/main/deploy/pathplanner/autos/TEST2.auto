@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "TEST 2 (reef12 to processor)"
+            "pathName": "TEST 2 (reef10 to processor)"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "TEST 3 (processor to reef10)"
+            "pathName": "TEST 3 (processor to reef8)"
           }
         }
       ]

@@ -14,6 +14,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "Blue Center Origin",
+  "folder": null,
   "choreoAuto": false
 }
