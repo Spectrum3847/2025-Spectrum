@@ -832,7 +832,9 @@ public class Vision implements NTSendable, Subsystem {
             }
         }
 
+        @SuppressWarnings("static-access")
         double reefTagDistanceOffset = offsets.getReefTagDistanceOffset(closestTagID);
+        @SuppressWarnings("static-access")
         double reefTagCenterOffset = offsets.getReefTagCenterOffset(closestTagID);
 
         return FieldHelpers.getXYOffsetFromTag(
