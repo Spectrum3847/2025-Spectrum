@@ -82,8 +82,8 @@ public class Auton {
         pathChooser.addOption("roiSecretAutoTest", secretAutoTest(false));
         pathChooser.addOption("lefSecretAutoTest", secretAutoTest(true));
 
-        // pathChooser.addOption("roiSockretAuto", sockretAuto(false));
-        // pathChooser.addOption("lefSockretAuto", sockretAuto(true));
+        pathChooser.addOption("roiSockretAuto", sockretAuto(false));
+        pathChooser.addOption("lefSockretAuto", sockretAuto(true));
 
         // pathChooser.addOption("roiSecretAuto2", secretAuto2(false));
         // pathChooser.addOption("lefSecretAuto2", secretAuto2(true));
@@ -168,14 +168,18 @@ public class Auton {
                 .withName("TEST FULL");
     }
 
-    // public Command sockretAuto(boolean mirrored) {
-    //     return (SpectrumAuton("SecretAuto0.5", mirrored)
-    //                     .andThen(
-    //                             fullSequenceAimL4Score(1),
-    //                             SpectrumAuton("SockretAuto", mirrored),
-    //                             fullSequenceAimL4Score(1)))
-    //             .withName("Sockret Auto");
-    // }
+    public Command sockretAuto(boolean mirrored) {
+        return (SpectrumAuton("SecretAuto0.5", mirrored)
+                        .andThen(
+                                fullSequenceAimL4Score(1),
+                                SpectrumAuton("SockretAutoP1", mirrored),
+                                fullSequenceAimL4Score(1),
+                                SpectrumAuton("SockretAutoP2", mirrored),
+                                fullSequenceAimL4Score(1),
+                                SpectrumAuton("SockretAutoP3", mirrored),
+                                fullSequenceAimL4Score(1)))
+                .withName("Sockret Auto");
+    }
 
     // Aaron's code (To see the difference between ours and his)
     public Command secretAutoTest2(boolean mirrored) {

@@ -7,6 +7,12 @@
         {
           "type": "path",
           "data": {
+            "pathName": "1 (left to reef10)"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
             "pathName": "2 (reef10 to processor)"
           }
         },
