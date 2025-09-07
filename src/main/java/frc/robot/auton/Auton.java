@@ -157,9 +157,9 @@ public class Auton {
     public Command secretAuto(boolean mirrored) {
         return (SpectrumAuton("SecretAuto0.5", mirrored)
                         .andThen(
-                                fullSequenceAimL4Score(1),
+                                fullSequenceAimL4Score(0.25),
                                 SpectrumAuton("SecretAuto", mirrored),
-                                fullSequenceAimL4Score(1)))
+                                fullSequenceAimL4Score(0.25)))
                 .withName("Secret Auto");
     }
 
@@ -282,9 +282,9 @@ public class Auton {
                                 .andThen(
                                         Commands.waitSeconds(0.05),
                                         RobotStates.actionPrepState.setTrue(),
-                                        Commands.waitSeconds(2.5),
+                                        Commands.waitSeconds(0.75), // 2.5
                                         RobotStates.actionPrepState.setFalse(),
-                                        Commands.waitSeconds(1.5),
+                                        Commands.waitSeconds(0.75), // 1.5
                                         RobotStates.homeAll.toggleToTrue(),
                                         Commands.waitSeconds(0.5)));
     }
