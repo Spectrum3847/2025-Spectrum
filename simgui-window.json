@@ -34,7 +34,7 @@
     "###/SmartDashboard/Auto Chooser": {
       "Collapsed": "0",
       "Pos": "407,272",
-      "Size": "348,32"
+      "Size": "361,66"
     },
     "###/SmartDashboard/Auto Visualizer": {
       "Collapsed": "0",
@@ -74,17 +74,17 @@
     "###Addressable LEDs": {
       "Collapsed": "0",
       "Pos": "567,12",
-      "Size": "229,32"
+      "Size": "475,262"
     },
     "###FMS": {
       "Collapsed": "0",
       "Pos": "105,427",
-      "Size": "87,32"
+      "Size": "388,176"
     },
     "###Joysticks": {
       "Collapsed": "0",
       "Pos": "984,637",
-      "Size": "142,32"
+      "Size": "1156,287"
     },
     "###Keyboard 0 Settings": {
       "Collapsed": "0",
@@ -127,12 +127,12 @@
     "###System Joysticks": {
       "Collapsed": "0",
       "Pos": "532,378",
-      "Size": "206,32"
+      "Size": "273,290"
     },
     "###Timing": {
       "Collapsed": "0",
       "Pos": "5,187",
-      "Size": "114,32"
+      "Size": "188,215"
     },
     "Debug##Default": {
       "Collapsed": "0",
@@ -142,7 +142,7 @@
     "Robot State": {
       "Collapsed": "0",
       "Pos": "240,216",
-      "Size": "137,32"
+      "Size": "137,152"
     }
   }
 }
