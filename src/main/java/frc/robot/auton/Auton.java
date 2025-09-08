@@ -73,8 +73,10 @@ public class Auton {
         // pathChooser.addOption("Left | 2 L4 Coral", houston2coral(false));
         // pathChooser.addOption("Right | 2 L4 Coral", houston2coral(true));
 
-        pathChooser.addOption("Left | 3 L4 Coral", worlds3coral(false));
-        pathChooser.addOption("Right | 3 L4 Coral", worlds3coral(true));
+        pathChooser.addOption(
+                "Left | 3 L4 Coral", worlds3coral(false).withName("Worlds 3 Coral - Left"));
+        pathChooser.addOption(
+                "Right | 3 L4 Coral", worlds3coral(true).withName("Worlds 3 Coral - Right"));
 
         pathChooser.addOption("Center | 3 Net Algae", worlds3algae(false));
 
@@ -115,15 +117,14 @@ public class Auton {
 
     public Command worlds3coral(boolean mirrored) {
         return Commands.sequence(
-                        SpectrumAuton("W3C-Start", mirrored),
-                        autoScore(),
-                        SpectrumAuton("W3C-Leg1", mirrored),
-                        autoScore(),
-                        SpectrumAuton("W3C-Leg2", mirrored),
-                        autoScore(),
-                        RobotStates.homeAll.toggleToTrue(),
-                        RobotStates.autonClearStates())
-                .withName("Worlds 3 Coral");
+                SpectrumAuton("W3C-Start", mirrored),
+                autoScore(),
+                SpectrumAuton("W3C-Leg1", mirrored),
+                autoScore(),
+                SpectrumAuton("W3C-Leg2", mirrored),
+                autoScore(),
+                RobotStates.homeAll.toggleToTrue(),
+                RobotStates.autonClearStates());
     }
 
     public Command worlds3algae(boolean mirrored) {

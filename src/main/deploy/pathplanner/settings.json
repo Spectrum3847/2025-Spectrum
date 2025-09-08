@@ -3,19 +3,21 @@
   "robotLength": 0.927,
   "holonomicMode": true,
   "pathFolders": [
+    "118 Practice Field Test",
     "Blue Left Preload-Source ",
     "Config Paths",
     "Houston 2 Coral",
-    "118 Practice Field Test",
+    "Visualizer Paths",
     "Worlds 3 Algae",
     "Worlds 3 Coral"
   ],
   "autoFolders": [
+    "118 Practice Field Test",
     "Blue Center Origin",
     "Blue Left Origin",
     "Config Autos",
     "Houston 2 Coral",
-    "118 Practice Field Test",
+    "Visualizer Autos",
     "Worlds 3 Algae",
     "Worlds 3 Coral"
   ],

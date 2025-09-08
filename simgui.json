@@ -96,17 +96,7 @@
           "visible": true
         }
       },
-      "/SmartDashboard/Hold Controller": {
-        "window": {
-          "visible": true
-        }
-      },
       "/SmartDashboard/LeftView": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Rotation Controller": {
         "window": {
           "visible": true
         }
@@ -155,16 +145,6 @@
           "image": "./images/tag-green.png"
         },
         "width": 17.54825210571289,
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/X Controller": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Y Controller": {
         "window": {
           "visible": true
         }
