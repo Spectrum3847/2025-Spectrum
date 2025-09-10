@@ -71,11 +71,6 @@
           "visible": true
         }
       },
-      "/SmartDashboard/Scheduler": {
-        "window": {
-          "visible": true
-        }
-      },
       "/SmartDashboard/States": {
         "window": {
           "visible": true
@@ -126,6 +121,9 @@
     }
   },
   "NetworkTables": {
+    "Retained Values": {
+      "open": false
+    },
     "transitory": {
       "CameraPublisher": {
         "open": true
@@ -134,6 +132,9 @@
         "open": true
       },
       "SmartDashboard": {
+        "Auto Chooser": {
+          "open": true
+        },
         "Elbow": {
           "open": true
         },
@@ -147,13 +148,13 @@
           "open": true
         },
         "open": true
+      },
+      "SwerveModuleState[]##v_SwerveStates": {
+        "open": true
       }
     }
   },
   "NetworkTables Info": {
-    "Connections": {
-      "open": true
-    },
     "visible": true
   }
 }
