@@ -13,16 +13,24 @@ public class TagProperties {
     @Getter private final double angle;
 
     /**
-     * @param frontOffsetInchesLeft
-     * @param frontOffsetInchesRight
-     * @param rearOffsetInchesLeft
-     * @param rearOffsetInchesRight
-     * @param frontCenterOffsetInchesLeft
-     * @param frontCenterOffsetInchesRight
-     * @param rearCenterOffsetInchesLeft
-     * @param rearCenterOffsetInchesRight
-     * @param taGoal
-     * @param angle
+     * @param frontOffsetInchesLeft the front left offset in inches from the center of the robot to
+     *     the tag
+     * @param frontOffsetInchesRight the front right offset in inches from the center of the robot
+     *     to the tag
+     * @param rearOffsetInchesLeft the rear left offset in inches from the center of the robot to
+     *     the tag
+     * @param rearOffsetInchesRight the rear right offset in inches from the center of the robot to
+     *     the tag
+     * @param frontCenterOffsetInchesLeft the front left offset in inches from the center of the
+     *     robot to the center of the tag
+     * @param frontCenterOffsetInchesRight the front right offset in inches from the center of the
+     *     robot to the center of the tag
+     * @param rearCenterOffsetInchesLeft the rear left offset in inches from the center of the robot
+     *     to the center of the tag
+     * @param rearCenterOffsetInchesRight the rear right offset in inches from the center of the
+     *     robot to the center of the tag
+     * @param taGoal the target area goal for the tag
+     * @param angle the angle in degrees from the robot to the tag
      */
     public TagProperties(
             double frontOffsetInchesLeft,

@@ -98,8 +98,7 @@ public class Shoulder extends Mechanism {
         // CANcoderSensorToMechanismRatio / sensorToMechanismRatio;
 
         @Getter @Setter
-        private double CANcoderSensorToMechanismRatio =
-                0.833333333333333333333333; // 1.2; // 30.0 / 36.0;
+        private double CANcoderSensorToMechanismRatio = 0.8333333333333334; // 1.2; // 30.0 / 36.0;
 
         @Getter @Setter private double CANcoderOffset = 0;
         @Getter @Setter private boolean CANcoderAttached = false;
@@ -183,10 +182,12 @@ public class Shoulder extends Mechanism {
     @Override
     public void periodic() {}
 
+    @Override
     public void setupStates() {
         ShoulderStates.setStates();
     }
 
+    @Override
     public void setupDefaultCommand() {
         ShoulderStates.setupDefaultCommand();
     }

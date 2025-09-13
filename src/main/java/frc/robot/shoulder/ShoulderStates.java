@@ -183,7 +183,7 @@ public class ShoulderStates {
         L2Algae.and(actionState).whileTrue(move(config::getHome, "Shoulder.L2AlgaeHome"));
         L3Algae.and(actionPrepState).whileTrue(move(config::getL3Algae, "Shoulder.L3Algae"));
         L3Algae.and(actionState).whileTrue(move(config::getHome, "Shoulder.L3AlgaeHome"));
-        netAlgae.and((actionPrepState.or(actionState).not()), (Util.autoMode.not()))
+        netAlgae.and(actionPrepState.or(actionState).not(), Util.autoMode.not())
                 .whileTrue(move(config::getHome, "Shoulder.netAlgaePrep"));
         netAlgae.and(actionPrepState.or(actionState))
                 .whileTrue(move(config::getNetAlgae, "Shoulder.netAlgae"));
@@ -224,9 +224,9 @@ public class ShoulderStates {
 
     public static Command move(
             DoubleSupplier degrees, DoubleSupplier exDegrees, DoubleSupplier delay, String name) {
-        return (new WaitCommand(delay.getAsDouble())
+        return new WaitCommand(delay.getAsDouble())
                 .andThen(move(degrees, exDegrees, name))
-                .withName(name));
+                .withName(name);
     }
 
     public static Command slowMove(

@@ -43,7 +43,9 @@ public class ExpCurve extends Curve {
         setDeadzone(deadzone);
     }
 
-    /** @param input value to be mapped */
+    /**
+     * @param input value to be mapped
+     */
     @Override
     public double calculate(double input) {
         double val = calculateOffset(calculateScalar(calculateExpVal(calculateDeadzone(input))));

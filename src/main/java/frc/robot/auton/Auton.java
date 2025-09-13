@@ -144,9 +144,9 @@ public class Auton {
 
     // vision aligns until autoScore scored or 5 seconds have passed without auto scoring
     public Command autoScore() {
-        return (Commands.race(SwerveStates.reefAimDriveVisionXY(), Commands.waitSeconds(5))
-                        .until(autonAutoScoreMode.not())
-                        .andThen(autoScoreFallback().onlyWhile(autonAutoScoreMode)))
+        return Commands.race(SwerveStates.reefAimDriveVisionXY(), Commands.waitSeconds(5))
+                .until(autonAutoScoreMode.not())
+                .andThen(autoScoreFallback().onlyWhile(autonAutoScoreMode))
                 .withName("Auton.autoScore");
     }
 
@@ -236,7 +236,7 @@ public class Auton {
      */
     public Command SpectrumAuton(String autoName, boolean mirrored) {
         Command autoCommand = new PathPlannerAuto(autoName, mirrored);
-        return (Commands.waitSeconds(0.01).andThen(autoCommand)).withName(autoName);
+        return Commands.waitSeconds(0.01).andThen(autoCommand).withName(autoName);
     }
 
     public Command SpectrumAuton(String autoName, boolean mirrored, double duration) {

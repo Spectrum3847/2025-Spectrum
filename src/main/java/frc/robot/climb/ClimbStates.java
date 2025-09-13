@@ -58,7 +58,7 @@ public class ClimbStates {
     }
 
     public static DoubleSupplier getPosition() {
-        return (() -> climb.getPositionPercentage());
+        return () -> climb.getPositionPercentage();
     }
 
     public static Command coastMode() {

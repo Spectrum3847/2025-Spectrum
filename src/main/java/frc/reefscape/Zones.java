@@ -72,8 +72,8 @@ public class Zones {
      * <p>getTagOffset automatically checks if the offset taken is < 0 or greater than the given tag
      * limit. If the tag is blue (> 16), it subtracts 17 from the given tag
      *
-     * @param tag
-     * @return
+     * @param tag Reef Tag ID
+     * @return Tag Offset
      */
     public double getTagOffset(int tag) {
         return offsets.getReefTagDistanceOffset(tag);

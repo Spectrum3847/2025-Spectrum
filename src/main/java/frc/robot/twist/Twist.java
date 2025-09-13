@@ -160,10 +160,12 @@ public class Twist extends Mechanism {
     @Override
     public void periodic() {}
 
+    @Override
     public void setupStates() {
         TwistStates.setStates();
     }
 
+    @Override
     public void setupDefaultCommand() {
         TwistStates.setupDefaultCommand();
     }
@@ -516,7 +518,7 @@ public class Twist extends Mechanism {
 
     public DoubleSupplier getIfReversedDegrees(DoubleSupplier degrees) {
         return () ->
-                (RobotStates.reverse.getAsBoolean())
+                RobotStates.reverse.getAsBoolean()
                         ? degrees.getAsDouble() + 180
                         : degrees.getAsDouble();
     }
@@ -525,6 +527,7 @@ public class Twist extends Mechanism {
         return homeAwayFromElevator(config::getHome).withName("Twist.home");
     }
 
+    @Override
     public Trigger atDegrees(DoubleSupplier target, DoubleSupplier tolerance) {
         return new Trigger(
                 () ->

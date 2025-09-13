@@ -144,8 +144,8 @@ public class FieldHelpers {
     /**
      * Converts an index to a reef tag ID
      *
-     * @param index
-     * @return
+     * @param index 0-5
+     * @return the reef tag ID
      */
     public static int indexToReefTagID(int index) {
         return index + 17;
@@ -154,8 +154,8 @@ public class FieldHelpers {
     /**
      * Converts a given Reef Tag Id into index form for center faces to pull from
      *
-     * @param tagID
-     * @return
+     * @param tagID Reef Tag ID 17-22
+     * @return index of reef face array or -1 if out of range
      */
     public static int blueReefTagIDToIndex(int tagID) {
 
@@ -170,52 +170,38 @@ public class FieldHelpers {
     /**
      * Converts a blue reef tag ID to a red reef tag ID
      *
-     * @param blueTagID
-     * @return
+     * @param blueTagID blue reef tag ID
+     * @return red reef tag ID
      */
     public static int blueToRedTagID(int blueTagID) {
-        switch (blueTagID) {
-            case 17:
-                return 8;
-            case 18:
-                return 7;
-            case 19:
-                return 6;
-            case 20:
-                return 11;
-            case 21:
-                return 10;
-            case 22:
-                return 9;
-            default:
-                return blueTagID;
-        }
+        return switch (blueTagID) {
+            case 17 -> 8;
+            case 18 -> 7;
+            case 19 -> 6;
+            case 20 -> 11;
+            case 21 -> 10;
+            case 22 -> 9;
+            default -> blueTagID;
+        };
     }
 
     public static int redToBlueTagID(int redTagID) {
-        switch (redTagID) {
-            case 8:
-                return 17;
-            case 7:
-                return 18;
-            case 6:
-                return 19;
-            case 11:
-                return 20;
-            case 10:
-                return 21;
-            case 9:
-                return 22;
-            default:
-                return redTagID;
-        }
+        return switch (redTagID) {
+            case 8 -> 17;
+            case 7 -> 18;
+            case 6 -> 19;
+            case 11 -> 20;
+            case 10 -> 21;
+            case 9 -> 22;
+            default -> redTagID;
+        };
     }
 
     /**
      * Returns the reef tag ID based on the robot's pose
      *
-     * @param pose
-     * @return
+     * @param pose robot pose
+     * @return reef tag ID
      */
     public static int getReefZoneTagID(Pose2d pose) {
         pose = flipIfRedSide(pose);
@@ -235,8 +221,8 @@ public class FieldHelpers {
      * Returns the reef index zone based on the robot's pose changed to blue pose including the
      * center is consistently blue center
      *
-     * @param pose
-     * @return
+     * @param pose robot pose
+     * @return reef zone index 0-5 or -1 if out of range
      */
     public static int getReefZone(Pose2d pose) {
         Translation2d point = pose.getTranslation();

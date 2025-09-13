@@ -395,7 +395,7 @@ public class SwerveStates {
                     && Math.abs(velocityY.getAsDouble()) < 0.5) {
                 return 0;
             } else {
-                return getAlignHeading(heading::getAsDouble).getAsDouble();
+                return getAlignHeading(heading).getAsDouble();
             }
         };
     }

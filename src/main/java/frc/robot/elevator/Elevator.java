@@ -131,10 +131,12 @@ public class Elevator extends Mechanism {
     @Override
     public void periodic() {}
 
+    @Override
     public void setupStates() {
         ElevatorStates.setStates();
     }
 
+    @Override
     public void setupDefaultCommand() {
         ElevatorStates.setupDefaultCommand();
     }

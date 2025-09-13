@@ -115,11 +115,13 @@ public class Pilot extends Gamepad {
         Telemetry.print("Pilot Subsystem Initialized: ");
     }
 
+    @Override
     public void setupStates() {
         // Used for setting rumble and control mode states only
         PilotStates.setStates();
     }
 
+    @Override
     public void setupDefaultCommand() {
         PilotStates.setupDefaultCommand();
     }

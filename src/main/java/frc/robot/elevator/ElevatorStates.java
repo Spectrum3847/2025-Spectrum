@@ -71,11 +71,12 @@ public class ElevatorStates {
                 .or(Robot.getPilot().photonRemoveL3Algae)
                 .onFalse(home());
 
-        (stagedCoral.or(stagedAlgae))
+        stagedCoral
+                .or(stagedAlgae)
                 .and(
                         actionState.not(),
                         actionPrepState.not().debounce(getActionPrepToActionTime()),
-                        (Util.autoMode.not()))
+                        Util.autoMode.not())
                 .whileTrue(move(config::getHome, "Elevator.Stage"));
 
         L1Coral.and(actionPrepState)

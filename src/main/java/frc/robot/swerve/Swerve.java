@@ -123,10 +123,12 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
         setPilotPerspective();
     }
 
+    @Override
     public void setupStates() {
         SwerveStates.setStates();
     }
 
+    @Override
     public void setupDefaultCommand() {
         SwerveStates.setupDefaultCommand();
     }
@@ -213,9 +215,9 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
      * This method is used to check if the robot is in the X zone of the field flips the values if
      * Red Alliance
      *
-     * @param minXmeter
-     * @param maxXmeter
-     * @return
+     * @param minXmeter the minimum X coordinate in meters
+     * @param maxXmeter the maximum X coordinate in meters
+     * @return the Trigger
      */
     public Trigger inXzoneAlliance(double minXmeter, double maxXmeter) {
         return new Trigger(
@@ -230,9 +232,9 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
      * This method is used to check if the robot is in the Y zone of the field flips the values if
      * Red Alliance
      *
-     * @param minYmeter
-     * @param maxYmeter
-     * @return
+     * @param minYmeter the minimum Y coordinate in meters
+     * @param maxYmeter the maximum Y coordinate in meters
+     * @return the Trigger
      */
     public Trigger inYzoneAlliance(double minYmeter, double maxYmeter) {
         return new Trigger(

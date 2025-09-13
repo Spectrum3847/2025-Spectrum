@@ -41,7 +41,7 @@ public class CanDeviceId {
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
+        if (!(obj instanceof CanDeviceId)) return false;
         CanDeviceId other = (CanDeviceId) obj;
         if (mDeviceNumber != other.mDeviceNumber) return false;
         if (mBus == null) {

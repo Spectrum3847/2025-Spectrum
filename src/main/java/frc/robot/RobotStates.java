@@ -81,15 +81,15 @@ public class RobotStates {
     // mechanism preset Triggers (Wrist, Elevator, etc.)
     public static final Trigger shrink = pilot.fn.or(shrinkState);
     public static final Trigger processorAlgae = l1.and(algae);
-    public static final Trigger L2Algae = (l2.and(algae)).or(autonLowAlgae);
-    public static final Trigger L3Algae = (l3.and(algae)).or(autonHighAlgae);
-    public static final Trigger netAlgae = (l4.and(algae)).or(autonNet);
+    public static final Trigger L2Algae = l2.and(algae).or(autonLowAlgae);
+    public static final Trigger L3Algae = l3.and(algae).or(autonHighAlgae);
+    public static final Trigger netAlgae = l4.and(algae).or(autonNet);
     public static final Trigger stagedAlgae = processorAlgae.or(L2Algae, L3Algae, netAlgae);
 
-    public static final Trigger L1Coral = (l1.and(coral)).or(autonL1);
+    public static final Trigger L1Coral = l1.and(coral).or(autonL1);
     public static final Trigger L2Coral = l2.and(coral);
     public static final Trigger L3Coral = l3.and(coral);
-    public static final Trigger L4Coral = (l4.and(coral));
+    public static final Trigger L4Coral = l4.and(coral);
     public static final Trigger branch = L2Coral.or(L3Coral, L4Coral);
     public static final Trigger stagedCoral = L1Coral.or(L2Coral, L3Coral, L4Coral);
 
@@ -102,7 +102,8 @@ public class RobotStates {
     public static final Trigger atL3Coral =
             ElbowStates.isL3Coral.and(ShoulderStates.isL3Coral, ElevatorStates.isL3Coral);
     public static final Trigger atL4Coral =
-            (ElbowStates.isL4Coral.and(ShoulderStates.isL4Coral, ElevatorStates.isL4Coral))
+            ElbowStates.isL4Coral
+                    .and(ShoulderStates.isL4Coral, ElevatorStates.isL4Coral)
                     .or(autonAtL4Coral);
 
     public static final Trigger atL2Algae =
@@ -163,7 +164,8 @@ public class RobotStates {
         pilot.actionReady_RB.onFalse(actionPrepState.setFalse());
         autonActionOff.onTrue(actionPrepState.setFalse());
 
-        (pilot.actionReady_RB.and(coral.or(algae)))
+        pilot.actionReady_RB
+                .and(coral.or(algae))
                 .or(autonActionOn)
                 .onTrue(actionPrepState.setTrue(), actionState.setFalse());
 
@@ -177,7 +179,7 @@ public class RobotStates {
 
         operator.algaeStage.or(operator.coralStage).onTrue(actionState.setFalse());
 
-        (L2Algae.or(L3Algae, processorAlgae)).and(actionState).onTrue(actionState.setFalse());
+        L2Algae.or(L3Algae, processorAlgae).and(actionState).onTrue(actionState.setFalse());
 
         // *********************************
         // Intaking States
@@ -219,16 +221,20 @@ public class RobotStates {
         operator.algaeStage.or(autonAlgae).onTrue(algae.setTrue(), coral.setFalse());
 
         // Set Levels
-        (operator.L1.and(operator.staged))
+        operator.L1
+                .and(operator.staged)
                 .or(autonL1)
                 .onTrue(l1.setTrue(), l2.setFalse(), l3.setFalse(), l4.setFalse());
-        (operator.L2.and(operator.staged))
+        operator.L2
+                .and(operator.staged)
                 .or(autonL2)
                 .onTrue(l2.setTrue(), l1.setFalse(), l3.setFalse(), l4.setFalse());
-        (operator.L3.and(operator.staged))
+        operator.L3
+                .and(operator.staged)
                 .or(autonL3)
                 .onTrue(l3.setTrue(), l1.setFalse(), l2.setFalse(), l4.setFalse());
-        (operator.L4.and(operator.staged))
+        operator.L4
+                .and(operator.staged)
                 .or(autonL4)
                 .onTrue(l4.setTrue(), l1.setFalse(), l2.setFalse(), l3.setFalse());
 

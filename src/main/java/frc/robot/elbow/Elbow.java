@@ -97,7 +97,7 @@ public class Elbow extends Mechanism {
         private double CANcoderRotorToSensorRatio = 61.71428571 * 1.2; // 102.857 * 1.2;
         // CANcoderRotorToSensorRatio / sensorToMechanismRatio;
 
-        @Getter @Setter private double CANcoderSensorToMechanismRatio = 0.833333333333333333333333;
+        @Getter @Setter private double CANcoderSensorToMechanismRatio = 0.8333333333333334;
 
         @Getter @Setter private double CANcoderOffset = 0;
         @Getter @Setter private boolean CANcoderAttached = false;
@@ -180,10 +180,12 @@ public class Elbow extends Mechanism {
     @Override
     public void periodic() {}
 
+    @Override
     public void setupStates() {
         ElbowStates.setStates();
     }
 
+    @Override
     public void setupDefaultCommand() {
         ElbowStates.setupDefaultCommand();
     }
@@ -196,7 +198,7 @@ public class Elbow extends Mechanism {
     public void initSendable(NTSendableBuilder builder) {
         if (isAttached()) {
             builder.addStringProperty("CurrentCommand", this::getCurrentCommandName, null);
-            builder.addDoubleProperty("Position Degrees", () -> (getPositionWithNegative()), null);
+            builder.addDoubleProperty("Position Degrees", this::getPositionWithNegative, null);
             builder.addDoubleProperty("MotorVoltage", this::getVoltage, null);
             builder.addDoubleProperty("StatorCurrent", this::getStatorCurrent, null);
         }
@@ -236,7 +238,7 @@ public class Elbow extends Mechanism {
     public Trigger belowDegrees(DoubleSupplier degrees, DoubleSupplier tolerance) {
         return new Trigger(
                 () ->
-                        (getPositionWithNegative())
+                        getPositionWithNegative()
                                 < (degrees.getAsDouble() - tolerance.getAsDouble()));
     }
 
@@ -244,7 +246,7 @@ public class Elbow extends Mechanism {
     public Trigger aboveDegrees(DoubleSupplier degrees, DoubleSupplier tolerance) {
         return new Trigger(
                 () ->
-                        (getPositionWithNegative())
+                        getPositionWithNegative()
                                 > (degrees.getAsDouble() + tolerance.getAsDouble()));
     }
 

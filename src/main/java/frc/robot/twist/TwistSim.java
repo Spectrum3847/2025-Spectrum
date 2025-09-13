@@ -27,12 +27,12 @@ class TwistSim implements Mountable {
     double initMountY;
     double initMountAngle;
 
-    private static Twist twist;
-    private static TwistConfig config;
+    private Twist twist;
+    private TwistConfig config;
 
     public TwistSim(TalonFXSimState twistMotorSim, Mechanism2d mech, Twist twist) {
-        TwistSim.twist = twist;
-        TwistSim.config = twist.getConfig();
+        this.twist = twist;
+        config = twist.getConfig();
 
         armSim =
                 new SingleJointedArmSim(
@@ -90,7 +90,7 @@ class TwistSim implements Mountable {
         armSim.setInput(twistMotorSim.getMotorVoltage());
         armSim.update(TimedRobot.kDefaultPeriod);
         twistMotorSim.setRawRotorPosition(
-                (Units.radiansToRotations(armSim.getAngleRads() - 0)) * config.getSimRatio());
+                Units.radiansToRotations(armSim.getAngleRads() - 0) * config.getSimRatio());
         twistMotorSim.setRotorVelocity(
                 Units.radiansToRotations(armSim.getVelocityRadPerSec()) * config.getSimRatio());
 

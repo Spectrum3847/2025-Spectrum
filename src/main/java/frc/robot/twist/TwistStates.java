@@ -61,24 +61,24 @@ public class TwistStates {
                 .whileTrue(move(config::getNet, "Twist.NetAlgae"));
 
         branch.and(
-                        (rightScore.or(Robot.getOperator().rightScore)),
+                        rightScore.or(Robot.getOperator().rightScore),
                         actionPrepState,
                         twistAtReef.not())
                 .whileTrue(move(config::getRightCoral, config::getStageDelay, "Twist.rightCoral"));
         branch.and(
-                        (rightScore.or(Robot.getOperator().rightScore)),
+                        rightScore.or(Robot.getOperator().rightScore),
                         actionPrepState,
                         twistAtReef,
                         toggleReverse.not())
                 .whileTrue(moveAwayFromBranch(config::getRightCoral, "Twist.rightCoralOverBranch"));
 
         branch.and(
-                        (rightScore.not().or(Robot.getOperator().leftScore)),
+                        rightScore.not().or(Robot.getOperator().leftScore),
                         actionPrepState,
                         twistAtReef.not())
                 .whileTrue(move(config::getLeftCoral, config::getStageDelay, "Twist.leftCoral"));
         branch.and(
-                        (rightScore.not().or(Robot.getOperator().leftScore)),
+                        rightScore.not().or(Robot.getOperator().leftScore),
                         actionPrepState,
                         twistAtReef,
                         toggleReverse.not())
@@ -87,7 +87,7 @@ public class TwistStates {
         branch.and(rightScore, actionPrepState, twistAtReef.not(), Util.autoMode)
                 .whileTrue(moveAwayFromBranch(config::getRightCoral, "Twist.rightCoral"));
 
-        branch.and((rightScore.not()), actionPrepState, twistAtReef.not(), Util.autoMode)
+        branch.and(rightScore.not(), actionPrepState, twistAtReef.not(), Util.autoMode)
                 .whileTrue(moveAwayFromBranch(config::getLeftCoral, "Twist.leftCoral"));
 
         climbPrep.whileTrue(move(config::getClimbPrep, "Twist.climbPrep"));

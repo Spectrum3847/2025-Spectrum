@@ -33,10 +33,12 @@ public class Limelight {
         }
 
         /**
+         * Sets the position of the robot in meters
+         *
          * @param forward (meters) forward from center of robot
          * @param right (meters) right from center of robot
          * @param up (meters) up from center of robot
-         * @return
+         * @return the LimelightConfig object
          */
         public LimelightConfig withTranslation(double forward, double right, double up) {
             this.forward = forward;
@@ -46,10 +48,12 @@ public class Limelight {
         }
 
         /**
+         * Sets the rotation of the limelight in degrees
+         *
          * @param roll (degrees) roll of limelight || positive is rotated right
          * @param pitch (degrees) pitch of limelight || positive is camera tilted up
          * @param yaw (yaw) yaw of limelight || positive is rotated left
-         * @return
+         * @return the LimelightConfig object
          */
         public LimelightConfig withRotation(double roll, double pitch, double yaw) {
             this.roll = roll;
@@ -104,6 +108,8 @@ public class Limelight {
 
     /* ::: Basic Information Retrieval ::: */
     /**
+     * Get the horizontal offset from crosshair to target
+     *
      * @return Horizontal Offset From Crosshair To Target (LL1: -27 degrees to 27 degrees / LL2:
      *     -29.8 to 29.8 degrees)
      */
@@ -115,6 +121,8 @@ public class Limelight {
     }
 
     /**
+     * Get the vertical offset from crosshair to target
+     *
      * @return Vertical Offset From Crosshair To Target in degrees (LL1: -20.5 degrees to 20.5
      *     degrees / LL2: -24.85 to 24.85 degrees)
      */
@@ -125,7 +133,11 @@ public class Limelight {
         return LimelightHelpers.getTY(config.getName());
     }
 
-    /** @return Whether the LL has any valid targets (April tags or other vision targets) */
+    /**
+     * Returns whether the LL has any valid targets (April tags or other vision targets)
+     *
+     * @return Whether the LL has any valid targets (April tags or other vision targets)
+     */
     public boolean targetInView() {
         if (!isAttached()) {
             return false;
@@ -133,7 +145,11 @@ public class Limelight {
         return LimelightHelpers.getTV(config.getName());
     }
 
-    /** @return whether the LL sees multiple tags or not */
+    /**
+     * Checks if the LL sees multiple tags
+     *
+     * @return whether the LL sees multiple tags or not
+     */
     public boolean multipleTagsInView() {
         if (!isAttached()) {
             return false;
@@ -153,6 +169,8 @@ public class Limelight {
     }
 
     /**
+     * Gets the ID of the apriltag most centered in the LL's view (or based on different
+     *
      * @return the tag ID of the apriltag most centered in the LL's view (or based on different
      *     criteria set in LL dasbhoard)
      */
@@ -172,7 +190,11 @@ public class Limelight {
 
     /* ::: Pose Retrieval ::: */
 
-    /** @return the corresponding LL Pose3d (MEGATAG1) for the alliance in DriverStation.java */
+    /**
+     * Get the corresponding LL Pose3d (MEGATAG1) for the alliance in DriverStation.java
+     *
+     * @return the corresponding LL Pose3d (MEGATAG1) for the alliance in DriverStation.java
+     */
     public Pose3d getMegaTag1_Pose3d() {
         if (!isAttached()) {
             return new Pose3d();
@@ -184,7 +206,11 @@ public class Limelight {
         return pose3d;
     }
 
-    /** @return the corresponding LL Pose3d (MEGATAG2) for the alliance in DriverStation.java */
+    /**
+     * Get the corresponding LL Pose2d (MEGATAG1) for the alliance in DriverStation.java
+     *
+     * @return the corresponding LL Pose3d (MEGATAG2) for the alliance in DriverStation.java
+     */
     public Pose2d getMegaTag2_Pose2d() {
         if (!isAttached()) {
             return new Pose2d();
@@ -229,7 +255,11 @@ public class Limelight {
         return multipleTagsInView() && getTargetSize() > 0.1;
     }
 
-    /** @return the distance of the 2d vector from the camera to closest apriltag */
+    /**
+     * Get the distance of the 2d vector from the camera to closest apriltag
+     *
+     * @return the distance of the 2d vector from the camera to closest apriltag
+     */
     public double getDistanceToTagFromCamera() {
         if (!isAttached()) {
             return 0;
@@ -290,7 +320,7 @@ public class Limelight {
      * get distance in meters to a target
      *
      * @param targetHeight meters
-     * @return
+     * @return distance in meters to a target
      */
     public double getDistanceToTarget(double targetHeight) {
         if (!isAttached()) {
@@ -316,13 +346,19 @@ public class Limelight {
      * Utility Wrappers
      */
 
-    /** @return The latest LL results as a LimelightResults object. */
+    /**
+     * @return The latest LL results as a LimelightResults object.
+     */
     @SuppressWarnings("unused")
     private LimelightResults retrieveJSON() {
         return LimelightHelpers.getLatestResults(config.name);
     }
 
-    /** @param pipelineIndex use pipeline indexes in {@link VisionConfig} */
+    /**
+     * Sets the LL pipeline to the given index.
+     *
+     * @param pipelineIndex use pipeline indexes in {@link VisionConfig}
+     */
     public void setLimelightPipeline(int pipelineIndex) {
         if (!isAttached()) {
             return;
@@ -330,7 +366,7 @@ public class Limelight {
         LimelightHelpers.setPipelineIndex(config.name, pipelineIndex);
     }
 
-    /** */
+    /** Sets the robot orientation in degrees for the Limelight's internal IMU. */
     public void setRobotOrientation(double degrees) {
         if (!isAttached()) {
             return;
@@ -409,11 +445,7 @@ public class Limelight {
         }
     }
 
-    /**
-     * Set LL LED's to blink
-     *
-     * @return
-     */
+    /** Set LL LED's to blink */
     public void blinkLEDs() {
         if (!isAttached()) {
             return;

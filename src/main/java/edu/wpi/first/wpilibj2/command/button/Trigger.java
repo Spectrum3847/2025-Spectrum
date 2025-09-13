@@ -110,7 +110,7 @@ public class Trigger implements BooleanSupplier {
     /**
      * Starts the given commands whenever the condition changes from `false` to `true`.
      *
-     * @param command the command to start
+     * @param commands the commands to start
      * @return this trigger, so calls can be chained
      */
     public Trigger onTrue(Command... commands) {
@@ -276,7 +276,7 @@ public class Trigger implements BooleanSupplier {
      * <p>Doesn't re-start the command if it ends while the condition is still `true`. If the
      * command should restart, see {@link edu.wpi.first.wpilibj2.command.RepeatCommand}.
      *
-     * @param command the command to start
+     * @param commands the commands to start
      * @return this trigger, so calls can be chained
      */
     public Trigger whileTrue(Command... commands) {
@@ -422,9 +422,10 @@ public class Trigger implements BooleanSupplier {
     /**
      * Run a command while true. Also runs a command for a certain timeout when released.
      *
-     * @param trigger
-     * @param runCommand
-     * @param endCommand
+     * @param runCommand the command to run while true
+     * @param endCommand the command to run when released
+     * @param endTimeout the time to run the end command
+     * @return this trigger, so calls can be chained
      */
     public Trigger runWithEndSequence(Command runCommand, Command endCommand, double endTimeout) {
         this.whileTrue(runCommand);

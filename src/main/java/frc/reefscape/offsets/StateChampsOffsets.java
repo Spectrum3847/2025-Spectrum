@@ -58,8 +58,8 @@ public class StateChampsOffsets {
     /**
      * Converts inches to meters and adds half the robot length to the offset
      *
-     * @param offsetInches
-     * @return
+     * @param offsetInches offset in inches from the tag to the desired position
+     * @return offset in meters from center of robot
      */
     private static double meterConverter(double offsetInches) {
         double meterConversion = Units.inchesToMeters(offsetInches);
@@ -68,7 +68,12 @@ public class StateChampsOffsets {
         return meterConversion + halfRobotLength;
     }
 
-    /** @param degrees */
+    /**
+     * Convert degrees to radians
+     *
+     * @param offsetDegrees offset in degrees from the tag to the desired position
+     * @return offset in radians
+     */
     private static double radianConverter(double offsetDegrees) {
         double radianConversion = Units.degreesToRadians(offsetDegrees);
 

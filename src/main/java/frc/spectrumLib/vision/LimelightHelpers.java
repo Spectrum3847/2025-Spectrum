@@ -1114,8 +1114,8 @@ public class LimelightHelpers {
     /**
      * Switch to getBotPose
      *
-     * @param limelightName
-     * @return
+     * @param limelightName Name/identifier of the Limelight
+     * @return double array [x,y,z,roll,pitch,yaw] in Limelight Coordinate System
      */
     @Deprecated
     public static double[] getBotpose(String limelightName) {
@@ -1125,8 +1125,8 @@ public class LimelightHelpers {
     /**
      * Switch to getBotPose_wpiRed
      *
-     * @param limelightName
-     * @return
+     * @param limelightName Name/identifier of the Limelight
+     * @return double array [x,y,z,roll,pitch,yaw] in WPILib Red Alliance Coordinate System
      */
     @Deprecated
     public static double[] getBotpose_wpiRed(String limelightName) {
@@ -1136,8 +1136,8 @@ public class LimelightHelpers {
     /**
      * Switch to getBotPose_wpiBlue
      *
-     * @param limelightName
-     * @return
+     * @param limelightName Name/identifier of the Limelight
+     * @return double array [x,y,z,roll,pitch,yaw] in WPILib Blue Alliance Coordinate System
      */
     @Deprecated
     public static double[] getBotpose_wpiBlue(String limelightName) {
@@ -1283,8 +1283,8 @@ public class LimelightHelpers {
     /**
      * Gets the Pose2d for easy use with Odometry vision pose estimator (addVisionMeasurement)
      *
-     * @param limelightName
-     * @return
+     * @param limelightName Name/identifier of the Limelight
+     * @return Pose2d object representing the robot's position and orientation
      */
     public static Pose2d getBotPose2d_wpiBlue(String limelightName) {
 
@@ -1297,7 +1297,7 @@ public class LimelightHelpers {
      * (addVisionMeasurement) in the WPILib Blue alliance coordinate system.
      *
      * @param limelightName
-     * @return
+     * @return Position Estimate with Pose2d and timestamp
      */
     public static PoseEstimate getBotPoseEstimate_wpiBlue(String limelightName) {
         return getBotPoseEstimate(limelightName, "botpose_wpiblue", false);
@@ -1309,7 +1309,7 @@ public class LimelightHelpers {
      * calling setRobotOrientation() before calling this method.
      *
      * @param limelightName
-     * @return
+     * @return Position Estimate with Pose2d and timestamp
      */
     public static PoseEstimate getBotPoseEstimate_wpiBlue_MegaTag2(String limelightName) {
         return getBotPoseEstimate(limelightName, "botpose_orb_wpiblue", true);

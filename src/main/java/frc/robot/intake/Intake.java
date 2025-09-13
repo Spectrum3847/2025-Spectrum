@@ -97,10 +97,12 @@ public class Intake extends Mechanism {
     @Override
     public void periodic() {}
 
+    @Override
     public void setupStates() {
         IntakeStates.setStates();
     }
 
+    @Override
     public void setupDefaultCommand() {
         IntakeStates.setupDefaultCommand();
     }

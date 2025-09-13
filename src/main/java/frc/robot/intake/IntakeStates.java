@@ -8,14 +8,15 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.intake.Intake.IntakeConfig;
 import frc.spectrumLib.Telemetry;
-import java.util.function.DoubleSupplier;
 
 public class IntakeStates {
     private static Intake intake = Robot.getIntake();
     private static IntakeConfig config = Robot.getConfig().intake;
 
     private static final Trigger photonAlgaeRemoval =
-            (Robot.getPilot().photonRemoveL2Algae.or(Robot.getPilot().photonRemoveL3Algae))
+            Robot.getPilot()
+                    .photonRemoveL2Algae
+                    .or(Robot.getPilot().photonRemoveL3Algae)
                     .and(photon);
 
     public static final Trigger hasGamePiece = new Trigger(intake::hasIntakeGamePiece);
@@ -107,10 +108,10 @@ public class IntakeStates {
         return intake.ensureBrakeMode();
     }
 
-    private static Command runVoltageCurrentLimits(
-            DoubleSupplier voltage, DoubleSupplier supplyCurrent, DoubleSupplier torqueCurrent) {
-        return intake.runVoltageCurrentLimits(voltage, supplyCurrent, torqueCurrent);
-    }
+    // private static Command runVoltageCurrentLimits(
+    //         DoubleSupplier voltage, DoubleSupplier supplyCurrent, DoubleSupplier torqueCurrent) {
+    //     return intake.runVoltageCurrentLimits(voltage, supplyCurrent, torqueCurrent);
+    // }
 
     // Log Command
     protected static Command log(Command cmd) {

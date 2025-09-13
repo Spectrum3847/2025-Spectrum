@@ -107,23 +107,16 @@ public class Robot extends SpectrumRobot {
             Telemetry.print("--- Robot Init Starting ---");
             robotSim = new RobotSim();
 
-            /** Set up the config */
-            switch (Rio.id) {
-                case PHOTON_2025:
-                    config = new PHOTON2025();
-                    break;
-                case PM_2025:
-                    config = new PM2025();
-                    break;
-                case FM_2025:
-                    config = new FM2025();
-                    break;
-                default: // SIM and UNKNOWN
-                    config = new FM2025();
-                    break;
-            }
+            /* Set up the config */
+            config =
+                    switch (Rio.id) {
+                        case PHOTON_2025 -> new PHOTON2025();
+                        case PM_2025 -> new PM2025();
+                        case FM_2025 -> new FM2025();
+                        default -> new FM2025(); // SIM and UNKNOWN
+                    };
 
-            /**
+            /*
              * Initialize the Subsystems of the robot. Subsystems are how we divide up the robot
              * code. Anything with an output that needs to be independently controlled is a
              * subsystem Something that don't have an output are also subsystems.
@@ -212,7 +205,7 @@ public class Robot extends SpectrumRobot {
     @Override
     public void robotPeriodic() {
         try {
-            /**
+            /*
              * Runs the Scheduler. This is responsible for polling buttons, adding newly-scheduled
              * commands, running already-scheduled commands, removing finished or interrupted
              * commands, and running subsystem periodic() methods. This must be called from the
@@ -255,7 +248,7 @@ public class Robot extends SpectrumRobot {
         String autoName = "";
         String newAutoName;
         List<PathPlannerPath> pathPlannerPaths = new ArrayList<>();
-        newAutoName = (auton.getAutonomousCommand()).getName();
+        newAutoName = auton.getAutonomousCommand().getName();
 
         if (!autoName.equals(newAutoName)) {
             autoName = newAutoName;
