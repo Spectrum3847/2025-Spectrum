@@ -201,3 +201,11 @@ tasks.spotbugsMain {
         setStylesheet("fancy-hist.xsl")
     }
 }
+
+//Javadoc Gradle task configuation
+//This will fail unless "io.freefair.lombok" is bumped from 6.6.1 to 6.6.3
+javadoc {
+    options.addStringOption('Xdoclint:none', '-quiet')
+    failOnError = false
+    exclude '**/*.md'
+}
