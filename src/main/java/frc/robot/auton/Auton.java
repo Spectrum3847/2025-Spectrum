@@ -79,8 +79,8 @@ public class Auton {
         pathChooser.addOption("roiSecretAuto", secretAuto(false));
         pathChooser.addOption("lefSecretAuto", secretAuto(true));
 
-        pathChooser.addOption("roiSecretAutoTest", secretAutoTest(false));
-        pathChooser.addOption("lefSecretAutoTest", secretAutoTest(true));
+        pathChooser.addOption("roiSecretAutoTest", secretAutoTest(true));
+        pathChooser.addOption("lefSecretAutoTest", secretAutoTest(false));
 
         pathChooser.addOption("roiSockretAuto", sockretAuto(false));
         pathChooser.addOption("lefSockretAuto", sockretAuto(true));

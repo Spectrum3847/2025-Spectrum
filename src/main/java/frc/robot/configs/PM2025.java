@@ -10,8 +10,8 @@ public class PM2025 extends Config {
         climb.configGearRatio(99.5555555555);
         // climb.setMinRotations(-0.055);
         // climb.setMaxRotations(0.45);
-        climb.configReverseSoftLimit(-0.045, true);
-        climb.configForwardSoftLimit(0.45, true);
+        // climb.configReverseSoftLimit(-0.045, true);
+        // climb.configForwardSoftLimit(0.45, true);
 
         // Attached Mechanisms
         pilot.setAttached(true);
@@ -27,6 +27,6 @@ public class PM2025 extends Config {
         shoulder.setCANcoderOffset(0.035318666);
         elbow.setCANcoderAttached(false);
         twist.setCANcoderAttached(true);
-        twist.setCANcoderOffset(-0.385254);
+        twist.setCANcoderOffset(-0.225342);
     }
 }
