@@ -11,6 +11,9 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.util.DriveFeedforwards;
+import com.pathplanner.lib.util.swerve.SwerveSetpoint;
+import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -35,6 +38,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.reefscape.Field;
 import frc.reefscape.FieldHelpers;
 import frc.robot.Robot;
+import frc.spectrumLib.ApplyModuleStates;
 import frc.spectrumLib.SpectrumSubsystem;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.util.Util;
@@ -468,8 +472,12 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
     // --------------------------------------------------------------------------------
     // Path Planner
     // --------------------------------------------------------------------------------
+    private SwerveSetpointGenerator setpointGenerator;
+    private SwerveSetpoint previousSetpoint;
+
     private void configurePathPlanner() {
         // Seed robot to mid field at start (Paths will change this starting position)
+
         resetPose(
                 new Pose2d(
                         Units.feetToMeters(27.0),
@@ -485,6 +493,18 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
             e.printStackTrace(); // Fallback to a default configuration
         }
 
+        setpointGenerator =
+                new SwerveSetpointGenerator(
+                        robotConfig,
+                        Units.rotationsToRadians(
+                                10.0) // Replace with your max module rotation speed
+                        );
+
+        ChassisSpeeds currentSpeeds = getCurrentRobotChassisSpeeds();
+        SwerveModuleState[] currentStates = getState().ModuleStates;
+        previousSetpoint =
+                new SwerveSetpoint(currentSpeeds, currentStates, DriveFeedforwards.zeros(4));
+
         AutoBuilder.configure(
                 () -> this.getState().Pose, // Supplier of current robot pose
                 this::resetPose, // Consumer for seeding pose against auto
@@ -499,10 +519,18 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
                 () ->
                         DriverStation.getAlliance().orElse(Alliance.Blue)
                                 == Alliance.Red, // Assume the path needs to be flipped for Red vs
-                // Blue, this is normally
-                // the case
+                // Blue, this is normally the case
                 this); // Subsystem for requirements
     }
+
+    // public void driveRobotRelative(ChassisSpeeds speeds) {
+    //     previousSetpoint = setpointGenerator.generateSetpoint(
+    //         previousSetpoint,
+    //         speeds,
+    //         0.02 // loop time
+    //     );
+    //     setModuleStates(previousSetpoint.moduleStates());
+    // }
 
     // --------------------------------------------------------------------------------
     // Simulation

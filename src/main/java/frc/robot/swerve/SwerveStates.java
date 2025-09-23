@@ -4,6 +4,10 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -17,6 +21,7 @@ import frc.robot.Robot;
 import frc.robot.pilot.Pilot;
 import frc.spectrumLib.SpectrumState;
 import frc.spectrumLib.Telemetry;
+import java.util.Set;
 import java.util.function.DoubleSupplier;
 
 public class SwerveStates {
@@ -78,7 +83,7 @@ public class SwerveStates {
         // // vision aim
         // pilot.reefAim_A.whileTrue(log(reefAimDrive()));
         // pilot.reefVision_A.whileTrue(log(reefAimDriveVisionTA()));
-        pilot.reefVision_A.whileTrue(log(reefAimDriveVisionXY()));
+        pilot.reefVision_A.whileTrue(log(PPReefPathfindCommand()));
         pilot.reefAlignScore_B.whileTrue(log(reefAimDriveVisionXY()));
 
         // Pose2d backReefOffset = Field.Reef.getOffsetPosition(21, Units.inchesToMeters(24));
@@ -118,6 +123,26 @@ public class SwerveStates {
                         () -> FieldHelpers.getReefOffsetFromTagY(),
                         () -> FieldHelpers.getReefTagAngle())
                 .withName("Swerve.reefAimDriveVisionXY");
+    }
+
+    public static Command PPReefPathfindCommand() {
+        // Defer the creation of the Pathfinding command until scheduling
+        return Commands.defer(
+                () -> {
+                    Pose2d targetPose =
+                            new Pose2d(
+                                    FieldHelpers.getReefOffsetFromTagX(),
+                                    FieldHelpers.getReefOffsetFromTagY(),
+                                    new Rotation2d(FieldHelpers.getReefTagAngle()));
+                    PathConstraints constraints =
+                            new PathConstraints(
+                                    3,
+                                    3,
+                                    config.getMaxAngularVelocity(),
+                                    config.getMaxAngularVelocity() * 2);
+                    return AutoBuilder.pathfindToPose(targetPose, constraints, 0.0);
+                },
+                Set.of());
     }
 
     public static Command reefAimDriveVisionXY() {
