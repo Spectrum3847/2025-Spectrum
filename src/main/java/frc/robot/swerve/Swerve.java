@@ -523,14 +523,14 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
                 this); // Subsystem for requirements
     }
 
-    // public void driveRobotRelative(ChassisSpeeds speeds) {
-    //     previousSetpoint = setpointGenerator.generateSetpoint(
-    //         previousSetpoint,
-    //         speeds,
-    //         0.02 // loop time
-    //     );
-    //     setModuleStates(previousSetpoint.moduleStates());
-    // }
+    public void driveRobotRelative(ChassisSpeeds speeds) {
+        previousSetpoint = setpointGenerator.generateSetpoint(
+            previousSetpoint,
+            speeds,
+            0.02 // loop time
+        );
+        setControl(AutoRequest.withSpeeds(previousSetpoint.robotRelativeSpeeds()));
+    }
 
     // --------------------------------------------------------------------------------
     // Simulation
