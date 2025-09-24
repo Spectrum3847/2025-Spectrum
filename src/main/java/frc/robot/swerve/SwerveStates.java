@@ -83,7 +83,7 @@ public class SwerveStates {
         // // vision aim
         // pilot.reefAim_A.whileTrue(log(reefAimDrive()));
         // pilot.reefVision_A.whileTrue(log(reefAimDriveVisionTA()));
-        pilot.reefVision_A.whileTrue(log(PPReefPathfindCommand()));
+        pilot.reefVision_A.whileTrue(log(reefAimDriveVisionXY()));
         pilot.reefAlignScore_B.whileTrue(log(reefAimDriveVisionXY()));
 
         // Pose2d backReefOffset = Field.Reef.getOffsetPosition(21, Units.inchesToMeters(24));
@@ -137,7 +137,7 @@ public class SwerveStates {
                     PathConstraints constraints =
                             new PathConstraints(
                                     3,
-                                    3,
+                                    6,
                                     config.getMaxAngularVelocity(),
                                     config.getMaxAngularVelocity() * 2);
                     return AutoBuilder.pathfindToPose(targetPose, constraints, 0.0);

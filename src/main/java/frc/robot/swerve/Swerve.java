@@ -38,7 +38,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.reefscape.Field;
 import frc.reefscape.FieldHelpers;
 import frc.robot.Robot;
-import frc.spectrumLib.ApplyModuleStates;
 import frc.spectrumLib.SpectrumSubsystem;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.util.Util;
@@ -476,8 +475,8 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
     private SwerveSetpoint previousSetpoint;
 
     private void configurePathPlanner() {
-        // Seed robot to mid field at start (Paths will change this starting position)
 
+        // Seed robot to mid field at start (Paths will change this starting position)
         resetPose(
                 new Pose2d(
                         Units.feetToMeters(27.0),
@@ -523,12 +522,24 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
                 this); // Subsystem for requirements
     }
 
-    public void driveRobotRelative(ChassisSpeeds speeds) {
-        previousSetpoint = setpointGenerator.generateSetpoint(
-            previousSetpoint,
-            speeds,
-            0.02 // loop time
-        );
+    /**
+     * This method will take in desired robot-relative chassis speeds, generate a swerve setpoint,
+     * then set the target state for each module
+     *
+     * @param speeds The desired robot-relative speeds
+     */
+    public void driveFieldRelative(
+            DoubleSupplier fwdPositive, DoubleSupplier leftPositive, DoubleSupplier ccwPositive) {
+        ChassisSpeeds speeds =
+                ChassisSpeeds.fromFieldRelativeSpeeds(
+                        fwdPositive.getAsDouble(),
+                        leftPositive.getAsDouble(),
+                        ccwPositive.getAsDouble(),
+                        getRotation());
+        previousSetpoint =
+                setpointGenerator.generateSetpoint(
+                        previousSetpoint, speeds, 0.02 // loop time
+                        );
         setControl(AutoRequest.withSpeeds(previousSetpoint.robotRelativeSpeeds()));
     }
 
