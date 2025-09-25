@@ -125,26 +125,6 @@ public class SwerveStates {
                 .withName("Swerve.reefAimDriveVisionXY");
     }
 
-    public static Command PPReefPathfindCommand() {
-        // Defer the creation of the Pathfinding command until scheduling
-        return Commands.defer(
-                () -> {
-                    Pose2d targetPose =
-                            new Pose2d(
-                                    FieldHelpers.getReefOffsetFromTagX(),
-                                    FieldHelpers.getReefOffsetFromTagY(),
-                                    new Rotation2d(FieldHelpers.getReefTagAngle()));
-                    PathConstraints constraints =
-                            new PathConstraints(
-                                    3,
-                                    6,
-                                    config.getMaxAngularVelocity(),
-                                    config.getMaxAngularVelocity() * 2);
-                    return AutoBuilder.pathfindToPose(targetPose, constraints, 0.0);
-                },
-                Set.of());
-    }
-
     public static Command reefAimDriveVisionXY() {
         return alignDrive(
                         () -> FieldHelpers.getReefOffsetFromTagX(),
@@ -191,17 +171,6 @@ public class SwerveStates {
 
     public static Command alignDrive(
             DoubleSupplier xGoalMeters, DoubleSupplier yGoalMeters, DoubleSupplier headingRadians) {
-        if (Field.isRed()) {
-            return resetXController()
-                    .andThen(
-                            resetYController(),
-                            resetTurnController(),
-                            drive(
-                                    () -> -getAlignToX(xGoalMeters).getAsDouble(),
-                                    () -> -getAlignToY(yGoalMeters).getAsDouble(),
-                                    () -> getAlignHeading(headingRadians).getAsDouble()));
-        }
-
         return resetXController()
                 .andThen(
                         resetYController(),
@@ -329,12 +298,9 @@ public class SwerveStates {
     // Uses m/s and rad/s
     private static Command drive(
             DoubleSupplier fwdPositive, DoubleSupplier leftPositive, DoubleSupplier ccwPositive) {
-        return swerve.applyRequest(
-                        () ->
-                                fieldCentricDrive
-                                        .withVelocityX(fwdPositive.getAsDouble())
-                                        .withVelocityY(leftPositive.getAsDouble())
-                                        .withRotationalRate(ccwPositive.getAsDouble()))
+        return Commands.run(
+                        () -> swerve.driveFieldRelative(fwdPositive, leftPositive, ccwPositive),
+                        swerve)
                 .withName("Swerve.drive");
     }
 
