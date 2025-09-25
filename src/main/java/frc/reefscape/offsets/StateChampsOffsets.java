@@ -68,7 +68,9 @@ public class StateChampsOffsets {
         return meterConversion + halfRobotLength;
     }
 
-    /** @param degrees */
+    /**
+     * @param degrees
+     */
     private static double radianConverter(double offsetDegrees) {
         double radianConversion = Units.degreesToRadians(offsetDegrees);
 

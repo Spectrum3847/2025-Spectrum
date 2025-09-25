@@ -125,7 +125,9 @@ public class Limelight {
         return LimelightHelpers.getTY(config.getName());
     }
 
-    /** @return Whether the LL has any valid targets (April tags or other vision targets) */
+    /**
+     * @return Whether the LL has any valid targets (April tags or other vision targets)
+     */
     public boolean targetInView() {
         if (!isAttached()) {
             return false;
@@ -133,7 +135,9 @@ public class Limelight {
         return LimelightHelpers.getTV(config.getName());
     }
 
-    /** @return whether the LL sees multiple tags or not */
+    /**
+     * @return whether the LL sees multiple tags or not
+     */
     public boolean multipleTagsInView() {
         if (!isAttached()) {
             return false;
@@ -172,7 +176,9 @@ public class Limelight {
 
     /* ::: Pose Retrieval ::: */
 
-    /** @return the corresponding LL Pose3d (MEGATAG1) for the alliance in DriverStation.java */
+    /**
+     * @return the corresponding LL Pose3d (MEGATAG1) for the alliance in DriverStation.java
+     */
     public Pose3d getMegaTag1_Pose3d() {
         if (!isAttached()) {
             return new Pose3d();
@@ -184,7 +190,9 @@ public class Limelight {
         return pose3d;
     }
 
-    /** @return the corresponding LL Pose3d (MEGATAG2) for the alliance in DriverStation.java */
+    /**
+     * @return the corresponding LL Pose3d (MEGATAG2) for the alliance in DriverStation.java
+     */
     public Pose2d getMegaTag2_Pose2d() {
         if (!isAttached()) {
             return new Pose2d();
@@ -229,7 +237,9 @@ public class Limelight {
         return multipleTagsInView() && getTargetSize() > 0.1;
     }
 
-    /** @return the distance of the 2d vector from the camera to closest apriltag */
+    /**
+     * @return the distance of the 2d vector from the camera to closest apriltag
+     */
     public double getDistanceToTagFromCamera() {
         if (!isAttached()) {
             return 0;
@@ -316,13 +326,17 @@ public class Limelight {
      * Utility Wrappers
      */
 
-    /** @return The latest LL results as a LimelightResults object. */
+    /**
+     * @return The latest LL results as a LimelightResults object.
+     */
     @SuppressWarnings("unused")
     private LimelightResults retrieveJSON() {
         return LimelightHelpers.getLatestResults(config.name);
     }
 
-    /** @param pipelineIndex use pipeline indexes in {@link VisionConfig} */
+    /**
+     * @param pipelineIndex use pipeline indexes in {@link VisionConfig}
+     */
     public void setLimelightPipeline(int pipelineIndex) {
         if (!isAttached()) {
             return;
