@@ -450,7 +450,7 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
     // Translation X Controller
     // --------------------------------------------------------------------------------
     void resetXController() {
-        xController.reset(getRobotPose().getX());
+        xController.reset(getRobotPose().getX(), getCurrentRobotChassisSpeeds().vxMetersPerSecond);
     }
 
     DoubleSupplier calculateXController(DoubleSupplier targetMeters) {
@@ -461,7 +461,7 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
     // Translation Y Controller
     // --------------------------------------------------------------------------------
     void resetYController() {
-        yController.reset(getRobotPose().getY());
+        yController.reset(getRobotPose().getY(), getCurrentRobotChassisSpeeds().vyMetersPerSecond);
     }
 
     DoubleSupplier calculateYController(DoubleSupplier targetMeters) {
