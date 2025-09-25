@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NTSendable;
 import edu.wpi.first.networktables.NTSendableBuilder;
@@ -38,6 +39,11 @@ import frc.robot.Robot;
 import frc.spectrumLib.SpectrumSubsystem;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.util.Util;
+
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.Seconds;
+
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import lombok.Getter;
@@ -507,20 +513,26 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
     // --------------------------------------------------------------------------------
     // Simulation
     // --------------------------------------------------------------------------------
-    private void startSimThread() {
-        lastSimTime = Utils.getCurrentTimeSeconds();
-
-        /* Run simulation at a faster rate so PID gains behave more reasonably */
-        simNotifier =
-                new Notifier(
-                        () -> {
-                            final double currentTime = Utils.getCurrentTimeSeconds();
-                            double deltaTime = currentTime - lastSimTime;
-                            lastSimTime = currentTime;
-
-                            /* use the measured time delta, get battery voltage from WPILib */
-                            updateSimState(deltaTime, RobotController.getBatteryVoltage());
-                        });
-        simNotifier.startPeriodic(config.getSimLoopPeriod());
-    }
+    private MapleSimSwerveDrivetrain mapleSimSwerveDrivetrain = null;
+        private void startSimThread() {
+            mapleSimSwerveDrivetrain = new MapleSimSwerveDrivetrain(
+            Seconds.of(config.getSimLoopPeriod()),
+            // TODO: modify the following constants according to your robot
+            Pounds.of(115), // robot weight
+            Inches.of(30), // bumper length
+            Inches.of(30), // bumper width
+            DCMotor.getKrakenX60Foc(1), // drive motor type
+            DCMotor.getKrakenX60Foc(1), // steer motor type
+            1.2, // wheel COF
+            getModuleLocations(),
+            getPigeon2(),
+            getModules(),
+            config.getFrontLeft(),
+            config.getFrontRight(),
+            config.getBackLeft(),
+            config.getBackRight());
+    /* Run simulation at a faster rate so PID gains behave more reasonably */
+    simNotifier = new Notifier(mapleSimSwerveDrivetrain::update);
+    simNotifier.startPeriodic(config.getSimLoopPeriod());
+}
 }
