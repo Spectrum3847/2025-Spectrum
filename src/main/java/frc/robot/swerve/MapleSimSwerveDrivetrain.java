@@ -268,7 +268,7 @@ public class MapleSimSwerveDrivetrain {
                 .withSteerMotorInverted(false)
                 // Disable CanCoder inversion
                 .withEncoderInverted(false)
-                // Adjust steer motor PID gains for simulation
+                // TODO: Adjust steer and drive motor PID gains for simulation
                 .withSteerMotorGains(
                         new Slot0Configs()
                                 .withKP(70)
@@ -279,7 +279,7 @@ public class MapleSimSwerveDrivetrain {
                                 .withKA(0)
                                 .withStaticFeedforwardSign(
                                         StaticFeedforwardSignValue.UseClosedLoopSign))
-                .withSteerMotorGearRatio(16.0)
+                .withSteerMotorGearRatio(21.428571428571427)
                 // Adjust friction voltages
                 .withDriveFrictionVoltage(Volts.of(0.1))
                 .withSteerFrictionVoltage(Volts.of(0.05))
