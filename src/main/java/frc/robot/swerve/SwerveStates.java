@@ -166,17 +166,6 @@ public class SwerveStates {
 
     public static Command alignDrive(
             DoubleSupplier xGoalMeters, DoubleSupplier yGoalMeters, DoubleSupplier headingRadians) {
-        if (Field.isRed()) {
-            return resetXController()
-                    .andThen(
-                            resetYController(),
-                            resetTurnController(),
-                            drive(
-                                    () -> -getAlignToX(xGoalMeters).getAsDouble(),
-                                    () -> -getAlignToY(yGoalMeters).getAsDouble(),
-                                    () -> getAlignHeading(headingRadians).getAsDouble()));
-        }
-
         return resetXController()
                 .andThen(
                         resetYController(),
@@ -304,12 +293,9 @@ public class SwerveStates {
     // Uses m/s and rad/s
     private static Command drive(
             DoubleSupplier fwdPositive, DoubleSupplier leftPositive, DoubleSupplier ccwPositive) {
-        return swerve.applyRequest(
-                        () ->
-                                fieldCentricDrive
-                                        .withVelocityX(fwdPositive.getAsDouble())
-                                        .withVelocityY(leftPositive.getAsDouble())
-                                        .withRotationalRate(ccwPositive.getAsDouble()))
+        return Commands.run(
+                        () -> swerve.driveFieldRelative(fwdPositive, leftPositive, ccwPositive),
+                        swerve)
                 .withName("Swerve.drive");
     }
 

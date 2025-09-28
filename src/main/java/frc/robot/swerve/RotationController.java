@@ -80,6 +80,12 @@ public class RotationController {
         lastOutput = 0.0;
     }
 
+    public void reset(double currentRadians, double currentRotationVelocity) {
+        motionController.reset(currentRadians, currentRotationVelocity);
+        holdController.reset();
+        lastOutput = 0.0;
+    }
+
     public void updatePID(double kP, double kI, double kD) {
         motionController.setPID(kP, kI, kD);
     }

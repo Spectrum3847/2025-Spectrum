@@ -11,6 +11,9 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.util.DriveFeedforwards;
+import com.pathplanner.lib.util.swerve.SwerveSetpoint;
+import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -381,7 +384,8 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
     }
 
     void resetRotationController() {
-        rotationController.reset(getRotationRadians());
+        rotationController.reset(
+                getRotationRadians(), getCurrentRobotChassisSpeeds().omegaRadiansPerSecond);
     }
 
     Rotation2d getRotation() {
@@ -447,7 +451,7 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
     // Translation X Controller
     // --------------------------------------------------------------------------------
     void resetXController() {
-        xController.reset(getRobotPose().getX());
+        xController.reset(getRobotPose().getX(), getCurrentRobotChassisSpeeds().vxMetersPerSecond);
     }
 
     DoubleSupplier calculateXController(DoubleSupplier targetMeters) {
@@ -458,7 +462,7 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
     // Translation Y Controller
     // --------------------------------------------------------------------------------
     void resetYController() {
-        yController.reset(getRobotPose().getY());
+        yController.reset(getRobotPose().getY(), getCurrentRobotChassisSpeeds().vyMetersPerSecond);
     }
 
     DoubleSupplier calculateYController(DoubleSupplier targetMeters) {
@@ -468,7 +472,11 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
     // --------------------------------------------------------------------------------
     // Path Planner
     // --------------------------------------------------------------------------------
+    private SwerveSetpointGenerator setpointGenerator;
+    private SwerveSetpoint previousSetpoint;
+
     private void configurePathPlanner() {
+
         // Seed robot to mid field at start (Paths will change this starting position)
         resetPose(
                 new Pose2d(
@@ -485,6 +493,18 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
             e.printStackTrace(); // Fallback to a default configuration
         }
 
+        setpointGenerator =
+                new SwerveSetpointGenerator(
+                        robotConfig,
+                        Units.rotationsToRadians(
+                                10.0) // Replace with your max module rotation speed
+                        );
+
+        ChassisSpeeds currentSpeeds = getCurrentRobotChassisSpeeds();
+        SwerveModuleState[] currentStates = getState().ModuleStates;
+        previousSetpoint =
+                new SwerveSetpoint(currentSpeeds, currentStates, DriveFeedforwards.zeros(4));
+
         AutoBuilder.configure(
                 () -> this.getState().Pose, // Supplier of current robot pose
                 this::resetPose, // Consumer for seeding pose against auto
@@ -499,9 +519,29 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
                 () ->
                         DriverStation.getAlliance().orElse(Alliance.Blue)
                                 == Alliance.Red, // Assume the path needs to be flipped for Red vs
-                // Blue, this is normally
-                // the case
+                // Blue, this is normally the case
                 this); // Subsystem for requirements
+    }
+
+    /**
+     * This method will take in desired robot-relative chassis speeds, generate a swerve setpoint,
+     * then set the target state for each module
+     *
+     * @param speeds The desired robot-relative speeds
+     */
+    public void driveFieldRelative(
+            DoubleSupplier fwdPositive, DoubleSupplier leftPositive, DoubleSupplier ccwPositive) {
+        ChassisSpeeds speeds =
+                ChassisSpeeds.fromFieldRelativeSpeeds(
+                        fwdPositive.getAsDouble(),
+                        leftPositive.getAsDouble(),
+                        ccwPositive.getAsDouble(),
+                        getRotation());
+        previousSetpoint =
+                setpointGenerator.generateSetpoint(
+                        previousSetpoint, speeds, 0.02 // loop time
+                        );
+        setControl(AutoRequest.withSpeeds(previousSetpoint.robotRelativeSpeeds()));
     }
 
     // --------------------------------------------------------------------------------

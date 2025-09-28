@@ -74,7 +74,13 @@
         53,
         54
       ],
-      "povCount": 0
+      "povConfig": [
+        {
+          "key270": 57,
+          "key90": 48
+        }
+      ],
+      "povCount": 1
     },
     {
       "axisConfig": [
@@ -107,7 +113,8 @@
   ],
   "robotJoysticks": [
     {
-      "guid": "Keyboard0"
+      "guid": "78696e70757401000000000000000000",
+      "useGamepad": true
     },
     {
       "guid": "Keyboard1"

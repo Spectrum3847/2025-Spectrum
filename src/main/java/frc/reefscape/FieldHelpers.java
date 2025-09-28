@@ -421,6 +421,7 @@ public class FieldHelpers {
      * @param centerOffset
      * @return
      */
+    @SuppressWarnings("static-access")
     public static Pose2d getXYOffsetFromTag(int tagID, double distanceAway, double centerOffset) {
         Pose2d tagPose;
 
@@ -431,7 +432,8 @@ public class FieldHelpers {
 
         Rotation2d rotationOffsetParallel =
                 tagPose.getRotation().plus(new Rotation2d(offsets.getReefTagAngleOffset(tagID)));
-        Rotation2d rotationOffsetPerpendicular = tagPose.getRotation().plus(new Rotation2d(90));
+        Rotation2d rotationOffsetPerpendicular =
+                tagPose.getRotation().plus(new Rotation2d(Math.PI / 2));
 
         Translation2d offsetPose =
                 tagPose.getTranslation()

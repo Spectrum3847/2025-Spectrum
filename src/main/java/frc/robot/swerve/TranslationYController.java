@@ -61,6 +61,10 @@ public class TranslationYController {
         controller.reset(currentMeters);
     }
 
+    public void reset(double currentMeters, double currentVelocity) {
+        controller.reset(currentMeters, currentVelocity);
+    }
+
     public void updatePID(double kP, double kI, double kD) {
         controller.setPID(kP, kI, kD);
     }

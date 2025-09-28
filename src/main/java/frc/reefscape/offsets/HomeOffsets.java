@@ -6,50 +6,168 @@ import lombok.Getter;
 
 public class HomeOffsets {
 
+    static double defaultDepth = 9.0;
+    static double leftScoreOffset = 6.5;
+    static double rightScoreOffset = -6.5;
+
     // TagProperty: offsetLeft, offsetRight, centerLeft, centerRight, taGoal, AngleOffset
     // Blue Tags (17–22)
     private static final TagProperties tag17Offset =
-            new TagProperties(10.0, 10.0, 10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 7.9, 180);
-    // L4: 9, 9, 0.0, -5.0, 7.9, 175);
+            new TagProperties(
+                    defaultDepth,
+                    defaultDepth,
+                    defaultDepth,
+                    defaultDepth,
+                    leftScoreOffset,
+                    rightScoreOffset,
+                    leftScoreOffset,
+                    rightScoreOffset,
+                    7.9,
+                    180);
 
     private static final TagProperties tag18Offset =
-            new TagProperties(10.0, 10.0, 10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 7.9, 180);
-    // L4: 9, 11.33, -5.0, -3.5, 7.9, 177);
+            new TagProperties(
+                    defaultDepth,
+                    defaultDepth,
+                    defaultDepth,
+                    defaultDepth,
+                    leftScoreOffset,
+                    rightScoreOffset,
+                    leftScoreOffset,
+                    rightScoreOffset,
+                    7.9,
+                    180);
 
     private static final TagProperties tag19Offset =
-            new TagProperties(10.0, 10.25, 10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 7.9, 180);
-    // L4: 11.33, 14.33, -4.0, -5.0, 7.9, 177);
+            new TagProperties(
+                    defaultDepth,
+                    defaultDepth,
+                    defaultDepth,
+                    defaultDepth,
+                    leftScoreOffset,
+                    rightScoreOffset,
+                    leftScoreOffset,
+                    rightScoreOffset,
+                    7.9,
+                    180);
 
     private static final TagProperties tag20Offset =
-            new TagProperties(11.0, 11.0, 10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 7.9, 180);
-    // L4: 9, 9, -5.0, -5.0, 7.9, 180);
+            new TagProperties(
+                    defaultDepth,
+                    defaultDepth,
+                    defaultDepth,
+                    defaultDepth,
+                    leftScoreOffset,
+                    rightScoreOffset,
+                    leftScoreOffset,
+                    rightScoreOffset,
+                    7.9,
+                    180);
 
     private static final TagProperties tag21Offset =
-            new TagProperties(10.0, 10.0, 10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 7.9, 180);
-    // L4: 10.0, 10.0, -1.0, -3.0, 7.9, 180);
+            new TagProperties(
+                    defaultDepth,
+                    defaultDepth,
+                    defaultDepth,
+                    defaultDepth,
+                    leftScoreOffset,
+                    rightScoreOffset,
+                    leftScoreOffset,
+                    rightScoreOffset,
+                    7.9,
+                    180);
 
     private static final TagProperties tag22Offset =
-            new TagProperties(10.0, 10.0, 10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 7.9, 180);
-    // L4: 10.23, 9, -4.0, -5.0, 7.9, 176);
+            new TagProperties(
+                    defaultDepth,
+                    defaultDepth,
+                    defaultDepth,
+                    defaultDepth,
+                    leftScoreOffset,
+                    rightScoreOffset,
+                    leftScoreOffset,
+                    rightScoreOffset,
+                    7.9,
+                    180);
 
     // Red Tags (6–11)
     private static final TagProperties tag6Offset =
-            new TagProperties(9, 9, 9, 9, 0.0, 0.0, 0.0, 0.0, 7.9, 180);
+            new TagProperties(
+                    defaultDepth,
+                    defaultDepth,
+                    defaultDepth,
+                    defaultDepth,
+                    leftScoreOffset,
+                    rightScoreOffset,
+                    leftScoreOffset,
+                    rightScoreOffset,
+                    7.9,
+                    180);
 
     private static final TagProperties tag7Offset =
-            new TagProperties(9, 9, 9, 9, 0.0, 0.0, 0.0, 0.0, 7.9, 180);
+            new TagProperties(
+                    defaultDepth,
+                    defaultDepth,
+                    defaultDepth,
+                    defaultDepth,
+                    leftScoreOffset,
+                    rightScoreOffset,
+                    leftScoreOffset,
+                    rightScoreOffset,
+                    7.9,
+                    180);
 
     private static final TagProperties tag8Offset =
-            new TagProperties(9, 9, 9, 9, 0.0, 0.0, 0.0, 0.0, 7.9, 180);
+            new TagProperties(
+                    defaultDepth,
+                    defaultDepth,
+                    defaultDepth,
+                    defaultDepth,
+                    leftScoreOffset,
+                    rightScoreOffset,
+                    leftScoreOffset,
+                    rightScoreOffset,
+                    7.9,
+                    180);
 
     private static final TagProperties tag9Offset =
-            new TagProperties(9, 9, 9, 9, 0.0, 0.0, 0.0, 0.0, 7.9, 180);
+            new TagProperties(
+                    defaultDepth,
+                    defaultDepth,
+                    defaultDepth,
+                    defaultDepth,
+                    leftScoreOffset,
+                    rightScoreOffset,
+                    leftScoreOffset,
+                    rightScoreOffset,
+                    7.9,
+                    180);
 
     private static final TagProperties tag10Offset =
-            new TagProperties(9, 9, 9, 9, 0.0, 0.0, 0.0, 0.0, 7.9, 180);
+            new TagProperties(
+                    defaultDepth,
+                    defaultDepth,
+                    defaultDepth,
+                    defaultDepth,
+                    leftScoreOffset,
+                    rightScoreOffset,
+                    leftScoreOffset,
+                    rightScoreOffset,
+                    7.9,
+                    180);
 
     private static final TagProperties tag11Offset =
-            new TagProperties(9, 9, 9, 9, 0.0, 0.0, 0.0, 0.0, 7.9, 180);
+            new TagProperties(
+                    defaultDepth,
+                    defaultDepth,
+                    defaultDepth,
+                    defaultDepth,
+                    leftScoreOffset,
+                    rightScoreOffset,
+                    leftScoreOffset,
+                    rightScoreOffset,
+                    7.9,
+                    180);
 
     // tag offsets ordered from blue tags to red tags due to centerFaces index values
 
