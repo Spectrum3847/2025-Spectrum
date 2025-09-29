@@ -8,13 +8,11 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.reefscape.FieldHelpers;
 import frc.reefscape.Zones;
-import frc.robot.elbow.ElbowStates;
 import frc.robot.elevator.ElevatorStates;
 import frc.robot.operator.Operator;
 import frc.robot.pilot.Pilot;
 import frc.robot.shoulder.ShoulderStates;
 import frc.robot.swerve.SwerveStates;
-import frc.robot.twist.TwistStates;
 import frc.robot.vision.VisionStates;
 import frc.spectrumLib.Rio;
 import frc.spectrumLib.SpectrumState;
@@ -49,7 +47,6 @@ public class RobotStates {
     public static final SpectrumState actionState = new SpectrumState("actionState");
     public static final SpectrumState homeAll = new SpectrumState("homeAll");
     public static final SpectrumState autonStationIntake = new SpectrumState("autonStationIntake");
-    public static final SpectrumState twistAtReef = new SpectrumState("twistCoralReef");
     public static final SpectrumState aligned = new SpectrumState("aligned");
     public static final SpectrumState autoScoreMode = new SpectrumState("autoScoreMode");
     public static final SpectrumState autonAutoScoreMode = new SpectrumState("autonAutoScoreMode");
@@ -96,19 +93,19 @@ public class RobotStates {
     public static final Trigger staged = stagedAlgae.or(stagedCoral);
 
     public static final Trigger atL1Coral =
-            ElbowStates.isL1Coral.and(ShoulderStates.isL1Coral, ElevatorStates.isL1Coral);
+            ElevatorStates.isL1Coral.and(ShoulderStates.isL1Coral);
     public static final Trigger atL2Coral =
-            ElbowStates.isL2Coral.and(ShoulderStates.isL2Coral, ElevatorStates.isL2Coral);
+            ElevatorStates.isL2Coral.and(ShoulderStates.isL2Coral);
     public static final Trigger atL3Coral =
-            ElbowStates.isL3Coral.and(ShoulderStates.isL3Coral, ElevatorStates.isL3Coral);
+            ElevatorStates.isL3Coral.and(ShoulderStates.isL3Coral);
     public static final Trigger atL4Coral =
-            (ElbowStates.isL4Coral.and(ShoulderStates.isL4Coral, ElevatorStates.isL4Coral))
+            (ElevatorStates.isL4Coral.and(ShoulderStates.isL4Coral))
                     .or(autonAtL4Coral);
 
     public static final Trigger atL2Algae =
-            ElbowStates.isL2Algae.and(ShoulderStates.isL2Algae, ElevatorStates.isL2Algae);
+            ElevatorStates.isL2Algae.and(ShoulderStates.isL2Algae);
     public static final Trigger atL3Algae =
-            ElbowStates.isL3Algae.and(ShoulderStates.isL3Algae, ElevatorStates.isL3Algae);
+            ElevatorStates.isL3Algae.and(ShoulderStates.isL3Algae);
 
     public static final Trigger completeStagedCoral = atL1Coral.or(atL2Coral, atL3Coral, atL4Coral);
     public static final Trigger completeStagedAlgae = atL2Algae.or(atL3Algae);
@@ -124,13 +121,7 @@ public class RobotStates {
     public static final Trigger poseUpdate = autonPoseUpdate.or(autonAutoScoreMode);
 
     public static final Trigger isAtHome =
-            ElevatorStates.isHome.and(ElbowStates.isHome, ShoulderStates.isHome);
-
-    public static final Trigger twistStageComplete =
-            branch.and(
-                    TwistStates.isLeft
-                            .and(rightScore.not())
-                            .or(TwistStates.isRight.and(rightScore)));
+            ElevatorStates.isHome.and(ShoulderStates.isHome);
 
     // reset triggers
     public static final Trigger homeElevator = operator.homeElevator_A;
@@ -235,13 +226,6 @@ public class RobotStates {
         // Set left or right score
         operator.leftScore.and(operator.staged).onTrue(rightScore.setFalse());
         operator.rightScore.and(operator.staged).onTrue(rightScore.setTrue());
-
-        // Set twist at reef if the arm is staged and at left or right
-        actionPrepState
-                .and(twistStageComplete.debounce(getTwistAtReefDelay()))
-                .onTrue(twistAtReef.setTrue());
-        actionState.onTrue(twistAtReef.setFalse());
-        reverse.onChange(twistAtReef.setFalse());
 
         // Set coralScoring when we try to score, turn off when homed
         actionPrepState.and(L1Coral, atL1Coral).onTrue(coralScoring.setTrue());
@@ -385,7 +369,6 @@ public class RobotStates {
                         actionState.setFalse(),
                         homeAll.setFalse(),
                         coastMode.setFalse(),
-                        twistAtReef.setFalse(),
                         aligned.setFalse(),
                         autoScoreMode.setFalse(),
                         autonAutoScoreMode.setFalse(),
@@ -401,7 +384,6 @@ public class RobotStates {
                         actionPrepState.setFalse(),
                         actionState.setFalse(),
                         coastMode.setFalse(),
-                        twistAtReef.setFalse(),
                         aligned.setFalse(),
                         autoScoreMode.setFalse(),
                         autonAutoScoreMode.setFalse(),

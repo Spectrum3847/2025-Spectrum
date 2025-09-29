@@ -1,4 +1,4 @@
-package frc.robot.intake;
+package frc.robot.groundIntake;
 
 import static frc.robot.RobotStates.*;
 
@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
-import frc.robot.intake.Intake.IntakeConfig;
+import frc.robot.groundIntake.Intake.IntakeConfig;
 import frc.spectrumLib.Telemetry;
 import java.util.function.DoubleSupplier;
 

@@ -21,15 +21,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.auton.Auton;
 import frc.robot.climb.Climb;
 import frc.robot.climb.Climb.ClimbConfig;
-import frc.robot.configs.FM2025;
-import frc.robot.configs.PHOTON2025;
-import frc.robot.configs.PM2025;
-import frc.robot.elbow.Elbow;
-import frc.robot.elbow.Elbow.ElbowConfig;
+import frc.robot.configs.OM2025;
 import frc.robot.elevator.Elevator;
 import frc.robot.elevator.Elevator.ElevatorConfig;
-import frc.robot.intake.Intake;
-import frc.robot.intake.Intake.IntakeConfig;
+import frc.robot.groundIntake.Intake;
+import frc.robot.groundIntake.Intake.IntakeConfig;
 import frc.robot.leds.LedFull;
 import frc.robot.leds.LedFull.LedFullConfig;
 import frc.robot.operator.Operator;
@@ -40,8 +36,6 @@ import frc.robot.shoulder.Shoulder;
 import frc.robot.shoulder.Shoulder.ShoulderConfig;
 import frc.robot.swerve.Swerve;
 import frc.robot.swerve.SwerveConfig;
-import frc.robot.twist.Twist;
-import frc.robot.twist.Twist.TwistConfig;
 import frc.robot.vision.Vision;
 import frc.robot.vision.Vision.VisionConfig;
 import frc.robot.vision.VisionSystem;
@@ -79,8 +73,6 @@ public class Robot extends SpectrumRobot {
         public IntakeConfig intake = new IntakeConfig();
         public LedFullConfig leds = new LedFullConfig();
         public ClimbConfig climb = new ClimbConfig();
-        public ElbowConfig elbow = new ElbowConfig();
-        public TwistConfig twist = new TwistConfig();
         public VisionConfig vision = new VisionConfig();
     }
 
@@ -94,9 +86,7 @@ public class Robot extends SpectrumRobot {
     @Getter private static Vision vision;
     @Getter private static Auton auton;
     @Getter private static Climb climb;
-    @Getter private static Elbow elbow;
     @Getter private static Shoulder shoulder;
-    @Getter private static Twist twist;
     public static boolean commandInit = false;
 
     public Robot() {
@@ -109,17 +99,8 @@ public class Robot extends SpectrumRobot {
 
             /** Set up the config */
             switch (Rio.id) {
-                case PHOTON_2025:
-                    config = new PHOTON2025();
-                    break;
-                case PM_2025:
-                    config = new PM2025();
-                    break;
-                case FM_2025:
-                    config = new FM2025();
-                    break;
                 default: // SIM and UNKNOWN
-                    config = new FM2025();
+                    config = new OM2025();
                     break;
             }
 
@@ -141,14 +122,12 @@ public class Robot extends SpectrumRobot {
             Timer.delay(canInitDelay);
             shoulder = new Shoulder(config.shoulder);
             Timer.delay(canInitDelay);
-            elbow = new Elbow(config.elbow);
             Timer.delay(canInitDelay);
             intake = new Intake(config.intake);
             Timer.delay(canInitDelay);
             vision = new Vision(config.vision);
             visionSystem = new VisionSystem(swerve::getRobotPose);
             Timer.delay(canInitDelay);
-            twist = new Twist(config.twist);
             auton = new Auton();
 
             // Setup Default Commands for all subsystems

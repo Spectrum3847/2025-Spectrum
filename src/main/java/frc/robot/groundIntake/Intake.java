@@ -1,4 +1,4 @@
-package frc.robot.intake;
+package frc.robot.groundIntake;
 
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.networktables.NTSendableBuilder;
@@ -231,7 +231,7 @@ public class Intake extends Mechanism {
             super(
                     new RollerConfig(config.wheelDiameter)
                             .setPosition(config.intakeX, config.intakeY)
-                            .setMount(Robot.getElbow().getSim()),
+                            .setMount(Robot.getShoulder().getSim()),
                     mech,
                     coralRollerMotorSim,
                     config.getName());

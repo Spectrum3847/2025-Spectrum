@@ -3,7 +3,7 @@ package frc.robot.operator;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 import frc.robot.RobotStates;
-import frc.robot.intake.IntakeStates;
+import frc.robot.groundIntake.IntakeStates;
 import frc.spectrumLib.Telemetry;
 
 /** This class should have any command calls that directly call the Operator */
