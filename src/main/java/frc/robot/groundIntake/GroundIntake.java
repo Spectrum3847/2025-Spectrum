@@ -17,9 +17,9 @@ import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Intake extends Mechanism {
+public class GroundIntake extends Mechanism {
 
-    public static class IntakeConfig extends Config {
+    public static class GroundIntakeConfig extends Config {
 
         @Getter private double hasGamePieceVelocity = 50;
         @Getter private double hasGamePieceCurrent = 80;
@@ -68,7 +68,7 @@ public class Intake extends Mechanism {
         @Getter private double intakeY = 1.3; // relative to elbow at 0 degrees
         @Getter private double wheelDiameter = 5.0;
 
-        public IntakeConfig() {
+        public GroundIntakeConfig() {
             super("Intake", 5, Rio.CANIVORE);
             configPIDGains(0, velocityKp, 0, 0);
             configFeedForwardGains(velocityKs, velocityKv, 0, 0);
@@ -82,10 +82,10 @@ public class Intake extends Mechanism {
         }
     }
 
-    private IntakeConfig config;
+    private GroundIntakeConfig config;
     private CoralIntakeSim sim;
 
-    public Intake(IntakeConfig config) {
+    public GroundIntake(GroundIntakeConfig config) {
         super(config);
         this.config = config;
 
@@ -98,11 +98,11 @@ public class Intake extends Mechanism {
     public void periodic() {}
 
     public void setupStates() {
-        IntakeStates.setStates();
+        GroundIntakeStates.setStates();
     }
 
     public void setupDefaultCommand() {
-        IntakeStates.setupDefaultCommand();
+        GroundIntakeStates.setupDefaultCommand();
     }
 
     /*-------------------

@@ -126,7 +126,7 @@ public class RobotStates {
     // reset triggers
     public static final Trigger homeElevator = operator.homeElevator_A;
 
-    public static final Trigger hasGamePiece = new Trigger(Robot.getIntake()::hasIntakeGamePiece);
+    public static final Trigger hasGamePiece = new Trigger(Robot.getGroundIntake()::hasIntakeGamePiece);
 
     // Setup any binding to set states
     public static void setupStates() {

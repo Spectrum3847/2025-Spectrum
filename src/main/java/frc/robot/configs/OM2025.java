@@ -14,8 +14,8 @@ public class OM2025 extends Config{
         operator.setAttached(true);
         elevator.setAttached(true);
         shoulder.setAttached(true);
-        intake.setAttached(true);
-        climb.setAttached(true);
+        groundIntake.setAttached(true);
+        climbPivot.setAttached(true);
 
         shoulder.setCANcoderAttached(true);
         shoulder.setCANcoderOffset(

@@ -6,13 +6,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
-import frc.robot.groundIntake.Intake.IntakeConfig;
+import frc.robot.groundIntake.GroundIntake.GroundIntakeConfig;
 import frc.spectrumLib.Telemetry;
 import java.util.function.DoubleSupplier;
 
-public class IntakeStates {
-    private static Intake intake = Robot.getIntake();
-    private static IntakeConfig config = Robot.getConfig().intake;
+public class GroundIntakeStates {
+    private static GroundIntake intake = Robot.getGroundIntake();
+    private static GroundIntakeConfig config = Robot.getConfig().groundIntake;
 
     private static final Trigger photonAlgaeRemoval =
             (Robot.getPilot().photonRemoveL2Algae.or(Robot.getPilot().photonRemoveL3Algae))

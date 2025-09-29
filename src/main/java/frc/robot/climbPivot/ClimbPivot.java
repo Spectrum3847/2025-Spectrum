@@ -1,4 +1,4 @@
-package frc.robot.climb;
+package frc.robot.climbPivot;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
@@ -22,9 +22,9 @@ import frc.spectrumLib.sim.ArmSim;
 import java.util.function.DoubleSupplier;
 import lombok.*;
 
-public class Climb extends Mechanism {
+public class ClimbPivot extends Mechanism {
 
-    public static class ClimbConfig extends Config {
+    public static class ClimbPivotConfig extends Config {
 
         @Getter private final double maxRotations = 0.335; // 0.315; // 0.36;
         @Getter private final double minRotations = -0.06;
@@ -65,7 +65,7 @@ public class Climb extends Mechanism {
 
         @Getter private double length = 0.4;
 
-        public ClimbConfig() {
+        public ClimbPivotConfig() {
             super("ClimbTop", 55, Rio.CANIVORE);
             configPIDGains(0, positionKp, 0, positionKd);
             configFeedForwardGains(positionKs, positionKv, positionKa, positionKg);
@@ -85,7 +85,7 @@ public class Climb extends Mechanism {
             setFollowerConfigs(new FollowerConfig("ClimbBottom", 56, Rio.CANIVORE, false));
         }
 
-        public ClimbConfig modifyMotorConfig(TalonFX motor) {
+        public ClimbPivotConfig modifyMotorConfig(TalonFX motor) {
             TalonFXConfigurator configurator = motor.getConfigurator();
             TalonFXConfiguration talonConfigMod = getTalonConfig();
 
@@ -95,12 +95,12 @@ public class Climb extends Mechanism {
         }
     }
 
-    private ClimbConfig config;
+    private ClimbPivotConfig config;
     private SpectrumServo latchServo = new SpectrumServo(9);
     @Getter private SpectrumState latched = new SpectrumState("ClimbLatched");
     @Getter private ClimbSim sim;
 
-    public Climb(ClimbConfig config) {
+    public ClimbPivot(ClimbPivotConfig config) {
         super(config);
         this.config = config;
 
@@ -116,11 +116,11 @@ public class Climb extends Mechanism {
     public void periodic() {}
 
     public void setupStates() {
-        ClimbStates.setStates();
+        ClimbPivotStates.setStates();
     }
 
     public void setupDefaultCommand() {
-        ClimbStates.setupDefaultCommand();
+        ClimbPivotStates.setupDefaultCommand();
     }
 
     /*-------------------
@@ -172,7 +172,7 @@ public class Climb extends Mechanism {
             // constructor
             {
                 setName("Climb.holdPosition");
-                addRequirements(Climb.this);
+                addRequirements(ClimbPivot.this);
             }
 
             @Override

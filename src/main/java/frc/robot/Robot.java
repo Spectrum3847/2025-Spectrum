@@ -19,13 +19,13 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.auton.Auton;
-import frc.robot.climb.Climb;
-import frc.robot.climb.Climb.ClimbConfig;
+import frc.robot.climbPivot.ClimbPivot;
+import frc.robot.climbPivot.ClimbPivot.ClimbPivotConfig;
 import frc.robot.configs.OM2025;
 import frc.robot.elevator.Elevator;
 import frc.robot.elevator.Elevator.ElevatorConfig;
-import frc.robot.groundIntake.Intake;
-import frc.robot.groundIntake.Intake.IntakeConfig;
+import frc.robot.groundIntake.GroundIntake;
+import frc.robot.groundIntake.GroundIntake.GroundIntakeConfig;
 import frc.robot.leds.LedFull;
 import frc.robot.leds.LedFull.LedFullConfig;
 import frc.robot.operator.Operator;
@@ -70,22 +70,22 @@ public class Robot extends SpectrumRobot {
         public ElevatorConfig elevator = new ElevatorConfig();
         public ShoulderConfig shoulder = new ShoulderConfig();
 
-        public IntakeConfig intake = new IntakeConfig();
+        public GroundIntakeConfig groundIntake = new GroundIntakeConfig();
         public LedFullConfig leds = new LedFullConfig();
-        public ClimbConfig climb = new ClimbConfig();
+        public ClimbPivotConfig climbPivot = new ClimbPivotConfig();
         public VisionConfig vision = new VisionConfig();
     }
 
     @Getter private static Swerve swerve;
     @Getter private static Elevator elevator;
-    @Getter private static Intake intake;
+    @Getter private static GroundIntake groundIntake;
     @Getter private static LedFull leds;
     @Getter private static Operator operator;
     @Getter private static Pilot pilot;
     @Getter private static VisionSystem visionSystem;
     @Getter private static Vision vision;
     @Getter private static Auton auton;
-    @Getter private static Climb climb;
+    @Getter private static ClimbPivot climbPivot;
     @Getter private static Shoulder shoulder;
     public static boolean commandInit = false;
 
@@ -118,12 +118,12 @@ public class Robot extends SpectrumRobot {
             Timer.delay(canInitDelay);
             elevator = new Elevator(config.elevator);
             Timer.delay(canInitDelay);
-            climb = new Climb(config.climb);
+            climbPivot = new ClimbPivot(config.climbPivot);
             Timer.delay(canInitDelay);
             shoulder = new Shoulder(config.shoulder);
             Timer.delay(canInitDelay);
             Timer.delay(canInitDelay);
-            intake = new Intake(config.intake);
+            groundIntake = new GroundIntake(config.groundIntake);
             Timer.delay(canInitDelay);
             vision = new Vision(config.vision);
             visionSystem = new VisionSystem(swerve::getRobotPose);

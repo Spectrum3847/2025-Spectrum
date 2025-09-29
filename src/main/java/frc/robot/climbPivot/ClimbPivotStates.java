@@ -1,17 +1,17 @@
-package frc.robot.climb;
+package frc.robot.climbPivot;
 
 import static frc.robot.RobotStates.*;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
-import frc.robot.climb.Climb.ClimbConfig;
+import frc.robot.climbPivot.ClimbPivot.ClimbPivotConfig;
 import frc.spectrumLib.SpectrumState;
 import frc.spectrumLib.Telemetry;
 import java.util.function.DoubleSupplier;
 
-public class ClimbStates {
-    private static Climb climb = Robot.getClimb();
-    private static ClimbConfig config = Robot.getConfig().climb;
+public class ClimbPivotStates {
+    private static ClimbPivot climb = Robot.getClimbPivot();
+    private static ClimbPivotConfig config = Robot.getConfig().climbPivot;
 
     public static final SpectrumState isLatched = climb.getLatched();
 
