@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.auton.Auton;
+import frc.robot.claw.Claw;
+import frc.robot.claw.Claw.ClawConfig;
 import frc.robot.climbPivot.ClimbPivot;
 import frc.robot.climbPivot.ClimbPivot.ClimbPivotConfig;
 import frc.robot.configs.OM2025;
@@ -76,6 +78,7 @@ public class Robot extends SpectrumRobot {
         public LedFullConfig leds = new LedFullConfig();
         public ClimbPivotConfig climbPivot = new ClimbPivotConfig();
         public VisionConfig vision = new VisionConfig();
+        public ClawConfig claw = new ClawConfig();
     }
 
     @Getter private static Swerve swerve;
@@ -90,6 +93,7 @@ public class Robot extends SpectrumRobot {
     @Getter private static Auton auton;
     @Getter private static ClimbPivot climbPivot;
     @Getter private static Shoulder shoulder;
+    @Getter private static Claw claw;
     public static boolean commandInit = false;
 
     public Robot() {
@@ -122,6 +126,8 @@ public class Robot extends SpectrumRobot {
             elevator = new Elevator(config.elevator);
             Timer.delay(canInitDelay);
             climbPivot = new ClimbPivot(config.climbPivot);
+            Timer.delay(canInitDelay);
+            claw = new Claw(config.claw);
             Timer.delay(canInitDelay);
             shoulder = new Shoulder(config.shoulder);
             Timer.delay(canInitDelay);
