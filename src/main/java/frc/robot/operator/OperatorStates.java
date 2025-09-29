@@ -21,7 +21,6 @@ public class OperatorStates {
 
     /** Set the states for the operator controller */
     public static void setStates() {
-        GroundIntakeStates.hasAlgae.onTrue(log(rumble(1, 0.5).withName("Pilot.hasAlgaeRumble")));
         RobotStates.staged.onTrue(log(rumble(1, 0.5).withName("Operator.stagedRumble")));
     }
 
