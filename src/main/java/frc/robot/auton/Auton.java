@@ -135,6 +135,13 @@ public class Auton {
                 .withName("W3A-Full");
     }
 
+    public Command offseasonBackAlgae(boolean mirrored) {
+        return Commands.sequence(
+                SpectrumAuton("Offseason Back Algae Leg 1", mirrored),
+                autoScoreThenAlgae())
+            .withName("Offseason Back Algae");
+    }
+
     public Command aimScore(double alignTime) {
         return SwerveStates.reefAimDriveVisionXY()
                 .withTimeout(alignTime)
