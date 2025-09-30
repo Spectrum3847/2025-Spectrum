@@ -1,15 +1,13 @@
 package frc.robot.intakePivot;
 
-import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.networktables.NTSendableBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
-import frc.robot.RobotStates;
 import frc.spectrumLib.Rio;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.mechanism.Mechanism;
+import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,7 +15,7 @@ public class IntakePivot extends Mechanism {
 
     public static class IntakePivotConfig extends Config {
 
-        //TODO: tune these values
+        // TODO: tune these values
 
         @Getter @Setter private double home = 0;
         @Getter @Setter private double groundCoralIntake = 4;
@@ -48,7 +46,6 @@ public class IntakePivot extends Mechanism {
         @Getter @Setter private double sensorToMechanismRatio = 61.71428571; // 102.857;
         @Getter @Setter private double rotorToSensorRatio = 1;
 
-
         public IntakePivotConfig() {
             // TODO: change id
             super("IntakePivot", 42, Rio.CANIVORE);
@@ -67,7 +64,7 @@ public class IntakePivot extends Mechanism {
             configGravityType(true);
         }
     }
-    
+
     private IntakePivotConfig config;
     // private IntakePivotSim sim;
 
@@ -110,7 +107,7 @@ public class IntakePivot extends Mechanism {
     }
 
     void setInitialPosition() {
-            motor.setPosition(degreesToRotations(offsetPosition(() -> config.getInitPosition())));
+        motor.setPosition(degreesToRotations(offsetPosition(() -> config.getInitPosition())));
     }
 
     public Command resetToIntialPos() {
@@ -211,8 +208,7 @@ public class IntakePivot extends Mechanism {
     }
 
     public Command move(DoubleSupplier degrees) {
-        return run(() -> setMMPositionFoc(degrees))
-                .withName("IntakePivot.move");
+        return run(() -> setMMPositionFoc(degrees)).withName("IntakePivot.move");
     }
 
     public DoubleSupplier getOffsetRotations(DoubleSupplier degrees) {

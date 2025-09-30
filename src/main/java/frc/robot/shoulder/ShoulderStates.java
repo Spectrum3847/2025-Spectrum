@@ -21,28 +21,28 @@ public class ShoulderStates {
             shoulder.aboveDegrees(config::getAutonShoulderNetChecker, config::getTolerance);
 
     public static final Trigger isL1Coral =
-            shoulder.atDegrees(config::getExL1Coral, config::getTolerance)
+            shoulder.atDegrees(config::getL1Coral, config::getTolerance)
                     .and(reverse.not())
                     .or(
-                            shoulder.atDegrees(() -> -config.getExL1Coral(), config::getTolerance)
+                            shoulder.atDegrees(() -> -config.getL1Coral(), config::getTolerance)
                                     .and(reverse));
     public static final Trigger isL2Coral =
-            shoulder.atDegrees(config::getExL2Coral, config::getTolerance)
+            shoulder.atDegrees(config::getL2Coral, config::getTolerance)
                     .and(reverse.not())
                     .or(
-                            shoulder.atDegrees(() -> -config.getExL2Coral(), config::getTolerance)
+                            shoulder.atDegrees(() -> -config.getL2Coral(), config::getTolerance)
                                     .and(reverse));
     public static final Trigger isL3Coral =
-            shoulder.atDegrees(config::getExL3Coral, config::getTolerance)
+            shoulder.atDegrees(config::getL3Coral, config::getTolerance)
                     .and(reverse.not())
                     .or(
-                            shoulder.atDegrees(() -> -config.getExL3Coral(), config::getTolerance)
+                            shoulder.atDegrees(() -> -config.getL3Coral(), config::getTolerance)
                                     .and(reverse));
     public static final Trigger isL4Coral =
-            shoulder.atDegrees(config::getExL4Coral, config::getTolerance)
+            shoulder.atDegrees(config::getL4Coral, config::getTolerance)
                     .and(reverse.not())
                     .or(
-                            shoulder.atDegrees(() -> -config.getExL4Coral(), config::getTolerance)
+                            shoulder.atDegrees(() -> -config.getL4Coral(), config::getTolerance)
                                     .and(reverse));
 
     public static final Trigger isL2Algae =
@@ -77,7 +77,7 @@ public class ShoulderStates {
                         config::getStationIntake,
                         // config::getStationExtendedIntake,
                         "Shoulder.stationIntake"));
-        stationIntaking.or(groundCoral, groundAlgae).onFalse(home());
+        stationIntaking.or(groundAlgae).onFalse(home());
 
         groundCoral.whileTrue(move(config::getGroundCoralIntake, "Shoulder.groundCoral"));
         groundAlgae.whileTrue(move(config::getGroundAlgaeIntake, "Shoulder.groundAlgae"));
@@ -101,69 +101,45 @@ public class ShoulderStates {
                 .whileTrue(move(config::getHome, "Shoulder.Stage"));
 
         L1Coral.and(actionState.or(actionPrepState))
-                .whileTrue(move(config::getL1Coral, config::getExL1Coral, "Shoulder.L1Coral"));
+                .whileTrue(move(config::getL1Coral, "Shoulder.L1Coral"));
         L2Coral.and(actionPrepState, coralScoring.not())
-                .whileTrue(
-                        move(
-                                config::getL2Coral,
-                                config::getExL2Coral,
-                                "Shoulder.L2Coral.prescoreInitial"));
+                .whileTrue(move(config::getL2Coral, "Shoulder.L2Coral.prescoreInitial"));
         L2Coral.and(actionPrepState, coralScoring, ElevatorStates.isL2Coral)
                 .whileTrue(
                         move(
                                 config::getL2Coral,
-                                config::getExL2Coral,
                                 config::getPrescoreDelay,
                                 "Shoulder.L2Coral.prescoreRepeat"));
         L2Coral.and(actionState)
                 .whileTrue(
-                        move(
-                                config::getL2Score,
-                                config::getExL2Score,
-                                config::getScoreDelay,
-                                "Shoulder.L2Coral.score"));
+                        move(config::getL2Score, config::getScoreDelay, "Shoulder.L2Coral.score"));
         L3Coral.and(actionPrepState, coralScoring.not())
-                .whileTrue(
-                        move(
-                                config::getL3Coral,
-                                config::getExL3Coral,
-                                "Shoulder.L3Coral.prescoreInitial"));
+                .whileTrue(move(config::getL3Coral, "Shoulder.L3Coral.prescoreInitial"));
         L3Coral.and(actionPrepState, coralScoring, ElevatorStates.isL3Coral)
                 .whileTrue(
                         move(
                                 config::getL3Coral,
-                                config::getExL3Coral,
                                 config::getPrescoreDelay,
                                 "Shoulder.L3Coral.prescoreRepeat"));
         L3Coral.and(actionState)
                 .whileTrue(
-                        move(
-                                config::getL3Score,
-                                config::getExL3Score,
-                                config::getScoreDelay,
-                                "Shoulder.L3Coral.score"));
+                        move(config::getL3Score, config::getScoreDelay, "Shoulder.L3Coral.score"));
         L4Coral.and(actionPrepState, coralScoring.not())
-                .whileTrue(
-                        move(
-                                config::getL4Coral,
-                                config::getExL4Coral,
-                                "Shoulder.L4Coral.prescoreInitial"));
+                .whileTrue(move(config::getL4Coral, "Shoulder.L4Coral.prescoreInitial"));
         L4Coral.and(actionPrepState, coralScoring, ElevatorStates.isL4Coral)
                 .whileTrue(
                         move(
                                 config::getL4Coral,
-                                config::getExL4Coral,
                                 config::getPrescoreDelay,
                                 "Shoulder.L4Coral.prescoreRepeat"));
         L4Coral.and(actionState)
                 .whileTrue(
                         move(
                                 config::getL4CoralScore,
-                                config::getExL4Score,
                                 config::getScoreDelay,
                                 "Shoulder.L4Coral.score"));
         L4Coral.and(actionPrepState, Util.autoMode)
-                .whileTrue(slowMove(config::getExL4Coral, "Shoulder.L4Coral.slowPrescore"));
+                .whileTrue(slowMove(config::getL4Coral, "Shoulder.L4Coral.slowPrescore"));
         // L4Coral.and(actionState, Util.autoMode)
         //         .whileTrue(
         //                 slowMove(

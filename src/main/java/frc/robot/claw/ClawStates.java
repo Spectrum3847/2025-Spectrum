@@ -1,6 +1,5 @@
 package frc.robot.claw;
 
-import java.util.function.DoubleSupplier;
 import static frc.robot.RobotStates.*;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -9,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.claw.Claw.ClawConfig;
 import frc.spectrumLib.Telemetry;
+import java.util.function.DoubleSupplier;
 
 public class ClawStates {
     private static Claw claw = Robot.getClaw();
@@ -45,27 +45,25 @@ public class ClawStates {
 
         // hasGamePiece.onTrue(claw.getDefaultCommand());
 
-        stationIntaking
-                .whileTrue(
-                        // claw.clawCoral(
-                        //                 config::getCoralClawTorqueCurrent,
-                        //                 config::getCoralClawSupplyCurrent)
-                        //         .withName("Claw.StationIntaking"));
-                        claw.runTorqueFOC(config::getCoralIntakeSupplyCurrent));
+        stationIntaking.whileTrue(
+                // claw.clawCoral(
+                //                 config::getCoralClawTorqueCurrent,
+                //                 config::getCoralClawSupplyCurrent)
+                //         .withName("Claw.StationIntaking"));
+                claw.runTorqueFOC(config::getCoralIntakeSupplyCurrent));
 
-        algae
-                .whileTrue(
-                        // claw.clawAlgae(
-                        //                 config::getAlgaeClawTorqueCurrent,
-                        //                 config::getAlgaeClawSupplyCurrent)
-                        //         .withName("Claw.Algae"));
-                        claw.runTorqueFOC(config::getAlgaeIntakeTorqueCurrent));
+        algae.whileTrue(
+                // claw.clawAlgae(
+                //                 config::getAlgaeClawTorqueCurrent,
+                //                 config::getAlgaeClawSupplyCurrent)
+                //         .withName("Claw.Algae"));
+                claw.runTorqueFOC(config::getAlgaeIntakeTorqueCurrent));
 
         Robot.getOperator()
                 .processorScore_LT
                 .whileTrue(claw.runTorqueFOC(config::getCoralIntakeTorqueCurrent));
 
-        branch.and(actionState, L4Coral.not())
+        branch.and(actionState)
                 .onTrue(
                         new WaitCommand(config.getScoreDelay())
                                 .andThen(

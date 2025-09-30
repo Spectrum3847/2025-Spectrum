@@ -127,9 +127,9 @@ public class Robot extends SpectrumRobot {
             Timer.delay(canInitDelay);
             climbPivot = new ClimbPivot(config.climbPivot);
             Timer.delay(canInitDelay);
-            claw = new Claw(config.claw);
-            Timer.delay(canInitDelay);
             shoulder = new Shoulder(config.shoulder);
+            Timer.delay(canInitDelay);
+            claw = new Claw(config.claw);
             Timer.delay(canInitDelay);
             intakePivot = new IntakePivot(config.intakePivot);
             Timer.delay(canInitDelay);

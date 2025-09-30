@@ -1,18 +1,12 @@
 package frc.robot.groundIntake;
 
-import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.networktables.NTSendableBuilder;
-import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
-import frc.robot.Robot;
-import frc.robot.RobotSim;
 import frc.robot.RobotStates;
 import frc.spectrumLib.Rio;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.mechanism.Mechanism;
-import frc.spectrumLib.sim.RollerConfig;
-import frc.spectrumLib.sim.RollerSim;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.Setter;
@@ -168,7 +162,8 @@ public class GroundIntake extends Mechanism {
     // --------------------------------------------------------------------------------
     // public void simulationInit() {
     //     if (isAttached()) {
-    //         // Create a new RollerSim with the left view, the motor's sim state, and a 6 in diameter
+    //         // Create a new RollerSim with the left view, the motor's sim state, and a 6 in
+    // diameter
     //         sim = new CoralIntakeSim(RobotSim.leftView, motor.getSimState());
     //     }
     // }

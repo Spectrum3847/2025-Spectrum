@@ -19,7 +19,10 @@ public class GroundIntakeStates {
 
     public static void setupDefaultCommand() {
         groundIntake.setDefaultCommand(
-                groundIntake.defaultHoldOrStop().ignoringDisable(true).withName("GroundIntake.default"));
+                groundIntake
+                        .defaultHoldOrStop()
+                        .ignoringDisable(true)
+                        .withName("GroundIntake.default"));
     }
 
     public static void setStates() {
@@ -29,12 +32,17 @@ public class GroundIntakeStates {
                 .onTrue(groundIntake.runVoltage(() -> 0));
 
         groundCoral.whileTrue(
-                groundIntake.intakeCoral(config::getCoralIntakeTorqueCurrent, config::getCoralIntakeSupplyCurrent)
+                groundIntake
+                        .intakeCoral(
+                                config::getCoralIntakeTorqueCurrent,
+                                config::getCoralIntakeSupplyCurrent)
                         .withName("GroundIntake.GroundCoral"));
 
         L1Coral.and(actionState)
                 .whileTrue(
-                        groundIntake.runTorqueFOC(config::getCoralL1ScoreTorqueCurrent).withName("GroundIntake.L1Score"));
+                        groundIntake
+                                .runTorqueFOC(config::getCoralL1ScoreTorqueCurrent)
+                                .withName("GroundIntake.L1Score"));
 
         coastMode.whileTrue(log(coastMode()));
         coastMode.onFalse(log(ensureBrakeMode()));

@@ -21,7 +21,7 @@ public class Claw extends Mechanism {
 
     public static class ClawConfig extends Config {
 
-        //TODO: tune these values
+        // TODO: tune these values
 
         @Getter private double hasGamePieceVelocity = 50;
         @Getter private double hasGamePieceCurrent = 80;
@@ -57,6 +57,11 @@ public class Claw extends Mechanism {
         @Getter private double velocityKv = 0.2; // 0.12;
         @Getter private double velocityKs = 14;
 
+        /* Sim Configs */
+        @Getter private double intakeX = 0.8; // relative to shoulder at 0 degrees
+        @Getter private double intakeY = 0.6; // relative to shoulder at 0 degrees
+        @Getter private double wheelDiameter = 5.0;
+
         public ClawConfig() {
             // TODO: change id
             super("Claw", 5, Rio.CANIVORE);
@@ -73,13 +78,13 @@ public class Claw extends Mechanism {
     }
 
     private ClawConfig config;
-    // private ClawSim sim;
+    private ClawSim sim;
 
     public Claw(ClawConfig config) {
         super(config);
         this.config = config;
 
-        // simulationInit();
+        simulationInit();
         telemetryInit();
         Telemetry.print(getName() + " Subsystem Initialized");
     }
@@ -200,31 +205,31 @@ public class Claw extends Mechanism {
     // --------------------------------------------------------------------------------
     // Simulation
     // --------------------------------------------------------------------------------
-    // public void simulationInit() {
-    //     if (isAttached()) {
-    //         // Create a new RollerSim with the left view, the motor's sim state, and a 6 in diameter
-    //         sim = new ClawSim(RobotSim.leftView, motor.getSimState());
-    //     }
-    // }
+    public void simulationInit() {
+        if (isAttached()) {
+            // Create a new RollerSim with the left view, the motor's sim state, and a 6 in diameter
+            sim = new ClawSim(RobotSim.leftView, motor.getSimState());
+        }
+    }
 
-    // // Must be called to enable the simulation
-    // // if roller position changes configure x and y to set position.
-    // @Override
-    // public void simulationPeriodic() {
-    //     if (isAttached()) {
-    //         sim.simulationPeriodic();
-    //     }
-    // }
+    // Must be called to enable the simulation
+    // if roller position changes configure x and y to set position.
+    @Override
+    public void simulationPeriodic() {
+        if (isAttached()) {
+            sim.simulationPeriodic();
+        }
+    }
 
-    // class ClawSim extends RollerSim {
-    //     public ClawSim(Mechanism2d mech, TalonFXSimState coralRollerMotorSim) {
-    //         super(
-    //                 new RollerConfig(config.wheelDiameter)
-    //                         .setPosition(config.intakeX, config.intakeY)
-    //                         .setMount(Robot.getElbow().getSim()),
-    //                 mech,
-    //                 coralRollerMotorSim,
-    //                 config.getName());
-    //     }
-    // }
+    class ClawSim extends RollerSim {
+        public ClawSim(Mechanism2d mech, TalonFXSimState coralRollerMotorSim) {
+            super(
+                    new RollerConfig(config.wheelDiameter)
+                            .setPosition(config.intakeX, config.intakeY)
+                            .setMount(Robot.getShoulder().getSim()),
+                    mech,
+                    coralRollerMotorSim,
+                    config.getName());
+        }
+    }
 }
