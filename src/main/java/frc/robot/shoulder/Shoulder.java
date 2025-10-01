@@ -45,30 +45,22 @@ public class Shoulder extends Mechanism {
         @Getter @Setter private double groundCoralIntake = 4;
 
         @Getter @Setter private double processorAlgae = -143.877;
-        @Getter @Setter private double l2Algae = 160; // -32;
-        @Getter @Setter private double l3Algae = 160; // -32;
-        @Getter @Setter private double netAlgae = 180;
+        @Getter @Setter private double l2Algae = 90; // -32;
+        @Getter @Setter private double l3Algae = 90; // -32;
+        @Getter @Setter private double netAlgae = 160;
         @Getter @Setter private double autonShoulderNetChecker = 60;
 
-        @Getter @Setter private double l1Coral = 51.5;
-        @Getter @Setter private double l2Coral = 15.3;
-        @Getter @Setter private double l2Score = 70; // 26
-        @Getter @Setter private double l3Coral = 11.1; // -8
-        @Getter @Setter private double l3Score = 70; // 26;
-        @Getter @Setter private double l4Coral = 170; // 158.5;
-        @Getter @Setter private double l4CoralScore = 128; // 117;
-
-        @Getter @Setter private double exL1Coral = 16.9;
-        @Getter @Setter private double exL2Coral = -19.8; // -19.33; // -13.4; // -27;
-        @Getter @Setter private double exL2Score = 25; // 30
-        @Getter @Setter private double exL3Coral = -19.8; // -27;
-        @Getter @Setter private double exL3Score = 30;
-        @Getter @Setter private double exL4Coral = 193.5; // 190.3;
-        @Getter @Setter private double exL4Score = 145.8; // 133;
+        @Getter @Setter private double l1Coral = 0;
+        @Getter @Setter private double l2Coral = 95;
+        @Getter @Setter private double l2Score = 80; // 26
+        @Getter @Setter private double l3Coral = 95; // -8
+        @Getter @Setter private double l3Score = 80; // 26;
+        @Getter @Setter private double l4Coral = 95; // 158.5;
+        @Getter @Setter private double l4CoralScore = 80; // 117;
 
         @Getter @Setter private double tolerance = 3.5;
 
-        @Getter @Setter private double offset = -90;
+        @Getter @Setter private double offset = 0;
         @Getter @Setter private double initPosition = 0;
 
         /* Shoulder config settings */
@@ -106,11 +98,10 @@ public class Shoulder extends Mechanism {
 
         /* Sim properties */
         @Getter private double shoulderX = 0.8;
-        @Getter private double shoulderY = 1.1;
+        @Getter private double shoulderY = 1.4;
+        @Getter private double length = 0.8;
 
         @Getter @Setter private double simRatio = 1;
-
-        @Getter private double length = 0.3;
 
         public ShoulderConfig() {
             super("Shoulder", 42, Rio.CANIVORE);

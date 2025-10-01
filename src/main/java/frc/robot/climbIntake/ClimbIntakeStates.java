@@ -1,5 +1,3 @@
 package frc.robot.climbIntake;
 
-public class ClimbIntakeStates {
-    
-}
+public class ClimbIntakeStates {}

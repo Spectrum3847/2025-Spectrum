@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.auton.Auton;
+import frc.robot.claw.Claw;
+import frc.robot.claw.Claw.ClawConfig;
 import frc.robot.climbPivot.ClimbPivot;
 import frc.robot.climbPivot.ClimbPivot.ClimbPivotConfig;
 import frc.robot.configs.OM2025;
@@ -26,6 +28,8 @@ import frc.robot.elevator.Elevator;
 import frc.robot.elevator.Elevator.ElevatorConfig;
 import frc.robot.groundIntake.GroundIntake;
 import frc.robot.groundIntake.GroundIntake.GroundIntakeConfig;
+import frc.robot.intakePivot.IntakePivot;
+import frc.robot.intakePivot.IntakePivot.IntakePivotConfig;
 import frc.robot.leds.LedFull;
 import frc.robot.leds.LedFull.LedFullConfig;
 import frc.robot.operator.Operator;
@@ -69,16 +73,18 @@ public class Robot extends SpectrumRobot {
         public OperatorConfig operator = new OperatorConfig();
         public ElevatorConfig elevator = new ElevatorConfig();
         public ShoulderConfig shoulder = new ShoulderConfig();
-
         public GroundIntakeConfig groundIntake = new GroundIntakeConfig();
+        public IntakePivotConfig intakePivot = new IntakePivotConfig();
         public LedFullConfig leds = new LedFullConfig();
         public ClimbPivotConfig climbPivot = new ClimbPivotConfig();
         public VisionConfig vision = new VisionConfig();
+        public ClawConfig claw = new ClawConfig();
     }
 
     @Getter private static Swerve swerve;
     @Getter private static Elevator elevator;
     @Getter private static GroundIntake groundIntake;
+    @Getter private static IntakePivot intakePivot;
     @Getter private static LedFull leds;
     @Getter private static Operator operator;
     @Getter private static Pilot pilot;
@@ -87,6 +93,7 @@ public class Robot extends SpectrumRobot {
     @Getter private static Auton auton;
     @Getter private static ClimbPivot climbPivot;
     @Getter private static Shoulder shoulder;
+    @Getter private static Claw claw;
     public static boolean commandInit = false;
 
     public Robot() {
@@ -122,6 +129,9 @@ public class Robot extends SpectrumRobot {
             Timer.delay(canInitDelay);
             shoulder = new Shoulder(config.shoulder);
             Timer.delay(canInitDelay);
+            claw = new Claw(config.claw);
+            Timer.delay(canInitDelay);
+            intakePivot = new IntakePivot(config.intakePivot);
             Timer.delay(canInitDelay);
             groundIntake = new GroundIntake(config.groundIntake);
             Timer.delay(canInitDelay);

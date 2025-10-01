@@ -92,20 +92,14 @@ public class RobotStates {
 
     public static final Trigger staged = stagedAlgae.or(stagedCoral);
 
-    public static final Trigger atL1Coral =
-            ElevatorStates.isL1Coral.and(ShoulderStates.isL1Coral);
-    public static final Trigger atL2Coral =
-            ElevatorStates.isL2Coral.and(ShoulderStates.isL2Coral);
-    public static final Trigger atL3Coral =
-            ElevatorStates.isL3Coral.and(ShoulderStates.isL3Coral);
+    public static final Trigger atL1Coral = ElevatorStates.isL1Coral.and(ShoulderStates.isL1Coral);
+    public static final Trigger atL2Coral = ElevatorStates.isL2Coral.and(ShoulderStates.isL2Coral);
+    public static final Trigger atL3Coral = ElevatorStates.isL3Coral.and(ShoulderStates.isL3Coral);
     public static final Trigger atL4Coral =
-            (ElevatorStates.isL4Coral.and(ShoulderStates.isL4Coral))
-                    .or(autonAtL4Coral);
+            (ElevatorStates.isL4Coral.and(ShoulderStates.isL4Coral)).or(autonAtL4Coral);
 
-    public static final Trigger atL2Algae =
-            ElevatorStates.isL2Algae.and(ShoulderStates.isL2Algae);
-    public static final Trigger atL3Algae =
-            ElevatorStates.isL3Algae.and(ShoulderStates.isL3Algae);
+    public static final Trigger atL2Algae = ElevatorStates.isL2Algae.and(ShoulderStates.isL2Algae);
+    public static final Trigger atL3Algae = ElevatorStates.isL3Algae.and(ShoulderStates.isL3Algae);
 
     public static final Trigger completeStagedCoral = atL1Coral.or(atL2Coral, atL3Coral, atL4Coral);
     public static final Trigger completeStagedAlgae = atL2Algae.or(atL3Algae);
@@ -120,13 +114,13 @@ public class RobotStates {
     // auton Triggers
     public static final Trigger poseUpdate = autonPoseUpdate.or(autonAutoScoreMode);
 
-    public static final Trigger isAtHome =
-            ElevatorStates.isHome.and(ShoulderStates.isHome);
+    public static final Trigger isAtHome = ElevatorStates.isHome.and(ShoulderStates.isHome);
 
     // reset triggers
     public static final Trigger homeElevator = operator.homeElevator_A;
 
-    public static final Trigger hasGamePiece = new Trigger(Robot.getGroundIntake()::hasIntakeGamePiece);
+    public static final Trigger hasGamePiece =
+            new Trigger(Robot.getGroundIntake()::hasIntakeGamePiece);
 
     // Setup any binding to set states
     public static void setupStates() {

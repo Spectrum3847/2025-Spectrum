@@ -2,8 +2,8 @@ package frc.robot.configs;
 
 import frc.robot.Robot.Config;
 
-public class OM2025 extends Config{
-    
+public class OM2025 extends Config {
+
     public OM2025() {
         super();
         swerve.configEncoderOffsets(-0.395508, 0.117920, 0.055176, 0.386963);
@@ -21,5 +21,4 @@ public class OM2025 extends Config{
         shoulder.setCANcoderOffset(
                 -0.237305 - 0.208333333); // add -0.208333333 to the inverse of the position
     }
-
 }

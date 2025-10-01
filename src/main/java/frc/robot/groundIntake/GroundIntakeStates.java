@@ -3,7 +3,6 @@ package frc.robot.groundIntake;
 import static frc.robot.RobotStates.*;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.groundIntake.GroundIntake.GroundIntakeConfig;
@@ -11,105 +10,55 @@ import frc.spectrumLib.Telemetry;
 import java.util.function.DoubleSupplier;
 
 public class GroundIntakeStates {
-    private static GroundIntake intake = Robot.getGroundIntake();
+    private static GroundIntake groundIntake = Robot.getGroundIntake();
     private static GroundIntakeConfig config = Robot.getConfig().groundIntake;
 
-    private static final Trigger photonAlgaeRemoval =
-            (Robot.getPilot().photonRemoveL2Algae.or(Robot.getPilot().photonRemoveL3Algae))
-                    .and(photon);
-
-    public static final Trigger hasGamePiece = new Trigger(intake::hasIntakeGamePiece);
+    public static final Trigger hasGamePiece = new Trigger(groundIntake::hasIntakeGamePiece);
     public static final Trigger hasCoral =
-            hasGamePiece.and(intake.aboveVelocityRPM(() -> 0, () -> 0));
-    public static final Trigger hasAlgae =
-            algae.and(netAlgae.not(), intake.aboveCurrent(config::getHasAlgaeCurrent, () -> 0));
-    // hasGamePiece.and(intake.belowVelocityRPM(() -> 0, () -> 0));
+            hasGamePiece.and(groundIntake.aboveVelocityRPM(() -> 0, () -> 0));
 
     public static void setupDefaultCommand() {
-        intake.setDefaultCommand(
-                intake.defaultHoldOrStop().ignoringDisable(true).withName("Intake.default"));
+        groundIntake.setDefaultCommand(
+                groundIntake
+                        .defaultHoldOrStop()
+                        .ignoringDisable(true)
+                        .withName("GroundIntake.default"));
     }
 
     public static void setStates() {
-        // intakeRunning.onFalse(intake.getDefaultCommand());
         Robot.getPilot()
                 .home_select
                 .or(Robot.getOperator().home_select)
-                .onTrue(intake.runVoltage(() -> 0));
-
-        stationIntaking.or(photonAlgaeRemoval).onFalse(intake.getDefaultCommand());
-
-        netAlgae.and(actionState)
-                .whileTrue(
-                        // runVoltageCurrentLimits(
-                        //         config::getAlgaeScoreVoltage,
-                        //         config::getAlgaeScoreSupplyCurrent,
-                        //         config::getAlgaeScoreTorqueCurrent));
-                        intake.runTorqueFOC(config::getAlgaeScoreTorqueCurrent));
-
-        // hasGamePiece.onTrue(intake.getDefaultCommand());
-
-        stationIntaking
-                .or(photonAlgaeRemoval)
-                .whileTrue(
-                        // intake.intakeCoral(
-                        //                 config::getCoralIntakeTorqueCurrent,
-                        //                 config::getCoralIntakeSupplyCurrent)
-                        //         .withName("Intake.StationIntaking"));
-                        intake.runTorqueFOC(config::getCoralIntakeTorqueCurrent));
+                .onTrue(groundIntake.runVoltage(() -> 0));
 
         groundCoral.whileTrue(
-                // intake.intakeCoral(
-                //                 config::getCoralGroundTorqueCurrent,
-                //                 config::getCoralGroundSupplyCurrent)
-                //         .withName("Intake.GroundCoral"));
-                intake.runTorqueFOC(config::getCoralGroundTorqueCurrent));
-
-        algae.and(photon.not())
-                .whileTrue(
-                        // intake.intakeAlgae(
-                        //                 config::getAlgaeIntakeTorqueCurrent,
-                        //                 config::getAlgaeIntakeSupplyCurrent)
-                        //         .withName("Intake.Algae"));
-                        intake.runTorqueFOC(config::getAlgaeIntakeTorqueCurrent));
+                groundIntake
+                        .intakeCoral(
+                                config::getCoralIntakeTorqueCurrent,
+                                config::getCoralIntakeSupplyCurrent)
+                        .withName("GroundIntake.GroundCoral"));
 
         L1Coral.and(actionState)
                 .whileTrue(
-                        // runVoltageCurrentLimits(
-                        //         config::getCoralL1ScoreVoltage,
-                        //         config::getCoralL1ScoreSupplyCurrent,
-                        //         config::getCoralL1ScoreTorqueCurrent));
-                        intake.runTorqueFOC(config::getCoralL1ScoreTorqueCurrent));
-
-        Robot.getOperator()
-                .processorScore_LT
-                .whileTrue(intake.runTorqueFOC(config::getCoralIntakeTorqueCurrent));
-
-        branch.and(actionState, L4Coral.not())
-                .onTrue(
-                        new WaitCommand(config.getScoreDelay())
-                                .andThen(
-                                        // runVoltageCurrentLimits(
-                                        //         config::getCoralScoreVoltage,
-                                        //         config::getCoralScoreSupplyCurrent,
-                                        //         config::getCoralScoreTorqueCurrent));
-                                        intake.runTorqueFOC(config::getCoralScoreTorqueCurrent)));
+                        groundIntake
+                                .runTorqueFOC(config::getCoralL1ScoreTorqueCurrent)
+                                .withName("GroundIntake.L1Score"));
 
         coastMode.whileTrue(log(coastMode()));
         coastMode.onFalse(log(ensureBrakeMode()));
     }
 
     private static Command coastMode() {
-        return intake.coastMode();
+        return groundIntake.coastMode();
     }
 
     private static Command ensureBrakeMode() {
-        return intake.ensureBrakeMode();
+        return groundIntake.ensureBrakeMode();
     }
 
     private static Command runVoltageCurrentLimits(
             DoubleSupplier voltage, DoubleSupplier supplyCurrent, DoubleSupplier torqueCurrent) {
-        return intake.runVoltageCurrentLimits(voltage, supplyCurrent, torqueCurrent);
+        return groundIntake.runVoltageCurrentLimits(voltage, supplyCurrent, torqueCurrent);
     }
 
     // Log Command
