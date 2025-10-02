@@ -28,7 +28,7 @@ public class Shoulder extends Mechanism {
     public static class ShoulderConfig extends Config {
         @Getter @Setter private boolean isPhoton = false;
 
-        // Positions set as degrees of rotation || 0 is vertical down
+        // Positions set as degrees of rotation || 0 is vertical up
         @Getter private final int initializedPosition = 0;
 
         @Getter private final double scoreDelay = 0.3;
@@ -55,12 +55,13 @@ public class Shoulder extends Mechanism {
         @Getter @Setter private double l2Score = 80; // 26
         @Getter @Setter private double l3Coral = 95; // -8
         @Getter @Setter private double l3Score = 80; // 26;
-        @Getter @Setter private double l4Coral = 95; // 158.5;
-        @Getter @Setter private double l4CoralScore = 80; // 117;
+
+        @Getter @Setter private double l4Coral = 45;
+        @Getter @Setter private double l4CoralScore = 30;
 
         @Getter @Setter private double tolerance = 3.5;
 
-        @Getter @Setter private double offset = 0;
+        @Getter @Setter private double offset = 90;
         @Getter @Setter private double initPosition = 0;
 
         /* Shoulder config settings */
@@ -74,7 +75,7 @@ public class Shoulder extends Mechanism {
         @Getter @Setter private double positionKv = 0;
         @Getter @Setter private double positionKs = 0.06;
         @Getter @Setter private double positionKa = 0.001;
-        @Getter @Setter private double positionKg = 20.83333; // 12.5 * 1.666666
+        @Getter @Setter private double positionKg = 0; // 20.83333;
         @Getter @Setter private double mmCruiseVelocity = 10;
         @Getter @Setter private double mmAcceleration = 50;
         @Getter @Setter private double mmJerk = 0;
@@ -399,7 +400,7 @@ public class Shoulder extends Mechanism {
                                     config.length,
                                     -360,
                                     360.0 - 90.0,
-                                    -90)
+                                    90)
                             .setMount(Robot.getElevator().getSim(), true),
                     mech,
                     shoulderMotorSim,
