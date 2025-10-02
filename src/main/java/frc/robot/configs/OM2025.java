@@ -12,11 +12,11 @@ public class OM2025 extends Config {
         // Attached Mechanisms
         pilot.setAttached(true);
         operator.setAttached(true);
-        elevator.setAttached(false);
-        claw.setAttached(false);
+        elevator.setAttached(true);
+        claw.setAttached(true);
         shoulder.setAttached(true);
-        groundIntake.setAttached(false);
-        climbPivot.setAttached(false);
+        groundIntake.setAttached(true);
+        climbPivot.setAttached(true);
 
         // shoulder.setCANcoderAttached(true);
         // shoulder.setCANcoderOffset(

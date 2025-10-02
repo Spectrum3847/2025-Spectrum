@@ -75,7 +75,7 @@ public class Shoulder extends Mechanism {
         @Getter @Setter private double positionKv = 0;
         @Getter @Setter private double positionKs = 0.06;
         @Getter @Setter private double positionKa = 0.001;
-        @Getter @Setter private double positionKg = 0; // 20.83333;
+        @Getter @Setter private double positionKg = 20; // 20.83333;
         @Getter @Setter private double mmCruiseVelocity = 10;
         @Getter @Setter private double mmAcceleration = 50;
         @Getter @Setter private double mmJerk = 0;
@@ -105,7 +105,7 @@ public class Shoulder extends Mechanism {
         @Getter @Setter private double simRatio = 1;
 
         public ShoulderConfig() {
-            super("Shoulder", 42, Rio.CANIVORE);
+            super("Shoulder", 52, Rio.CANIVORE);
             configPIDGains(0, positionKp, 0, positionKd);
             configFeedForwardGains(positionKs, positionKv, positionKa, positionKg);
             configMotionMagic(mmCruiseVelocity, mmAcceleration, mmJerk);
@@ -399,7 +399,7 @@ public class Shoulder extends Mechanism {
                                     config.simRatio,
                                     config.length,
                                     -360,
-                                    360.0 - 90.0,
+                                    360.0,
                                     90)
                             .setMount(Robot.getElevator().getSim(), true),
                     mech,
