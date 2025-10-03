@@ -92,7 +92,7 @@ public class RobotStates {
 
     public static final Trigger staged = stagedAlgae.or(stagedCoral);
 
-    public static final Trigger atL1Coral = ElevatorStates.isL1Coral.and(ShoulderStates.isL1Coral);
+    public static final Trigger atL1Coral = ElevatorStates.isL1Coral;
     public static final Trigger atL2Coral = ElevatorStates.isL2Coral.and(ShoulderStates.isL2Coral);
     public static final Trigger atL3Coral = ElevatorStates.isL3Coral.and(ShoulderStates.isL3Coral);
     public static final Trigger atL4Coral =

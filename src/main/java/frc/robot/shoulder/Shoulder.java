@@ -50,12 +50,10 @@ public class Shoulder extends Mechanism {
         @Getter @Setter private double netAlgae = 160;
         @Getter @Setter private double autonShoulderNetChecker = 60;
 
-        @Getter @Setter private double l1Coral = 0;
-        @Getter @Setter private double l2Coral = 95;
-        @Getter @Setter private double l2Score = 80; // 26
-        @Getter @Setter private double l3Coral = 95; // -8
-        @Getter @Setter private double l3Score = 80; // 26;
-
+        @Getter @Setter private double l2Coral = 90;
+        @Getter @Setter private double l2Score = 105;
+        @Getter @Setter private double l3Coral = 60;
+        @Getter @Setter private double l3Score = 75;
         @Getter @Setter private double l4Coral = 45;
         @Getter @Setter private double l4CoralScore = 60;
 

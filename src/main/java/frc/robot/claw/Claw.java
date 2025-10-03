@@ -59,7 +59,7 @@ public class Claw extends Mechanism {
 
         /* Sim Configs */
         @Getter private double intakeX = 0.8; // relative to shoulder at 0 degrees
-        @Getter private double intakeY = 0.6; // relative to shoulder at 0 degrees
+        @Getter private double intakeY = 2.2; // relative to shoulder at 0 degrees
         @Getter private double wheelDiameter = 5.0;
 
         public ClawConfig() {
