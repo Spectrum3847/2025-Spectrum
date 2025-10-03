@@ -80,7 +80,7 @@ public class IntakePivot extends Mechanism {
     }
 
     private IntakePivotConfig config;
-    private IntakePivotSim sim;
+    @Getter private IntakePivotSim sim;
 
     public IntakePivot(IntakePivotConfig config) {
         super(config);

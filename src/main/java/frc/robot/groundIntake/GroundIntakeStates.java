@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.groundIntake.GroundIntake.GroundIntakeConfig;
+import frc.robot.intakePivot.IntakePivotStates;
 import frc.spectrumLib.Telemetry;
 import java.util.function.DoubleSupplier;
 
@@ -37,6 +38,12 @@ public class GroundIntakeStates {
                                 config::getCoralIntakeTorqueCurrent,
                                 config::getCoralIntakeSupplyCurrent)
                         .withName("GroundIntake.GroundCoral"));
+
+        handOff.and(IntakePivotStates.isHandOff)
+                .whileTrue(
+                        groundIntake
+                                .runTorqueFOC(config::getCoralHandoffTorqueCurrent)
+                                .withName("GroundIntake.HandOff"));
 
         L1Coral.and(actionState)
                 .whileTrue(

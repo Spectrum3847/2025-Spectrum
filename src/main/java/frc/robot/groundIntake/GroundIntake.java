@@ -1,12 +1,18 @@
 package frc.robot.groundIntake;
 
+import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.networktables.NTSendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import frc.robot.Robot;
+import frc.robot.RobotSim;
 import frc.robot.RobotStates;
 import frc.spectrumLib.Rio;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.mechanism.Mechanism;
+import frc.spectrumLib.sim.RollerConfig;
+import frc.spectrumLib.sim.RollerSim;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,6 +48,11 @@ public class GroundIntake extends Mechanism {
         @Getter private double velocityKv = 0.2; // 0.12;
         @Getter private double velocityKs = 14;
 
+        /* Sim Configs */
+        @Getter private double intakeX = 1.4;
+        @Getter private double intakeY = 0.85;
+        @Getter private double wheelDiameter = 5.0;
+
         public GroundIntakeConfig() {
             // TODO: change id
             super("Intake", 25, Rio.CANIVORE);
@@ -58,13 +69,13 @@ public class GroundIntake extends Mechanism {
     }
 
     private GroundIntakeConfig config;
-    // private CoralIntakeSim sim;
+    private GroundIntakeSim sim;
 
     public GroundIntake(GroundIntakeConfig config) {
         super(config);
         this.config = config;
 
-        // simulationInit();
+        simulationInit();
         telemetryInit();
         Telemetry.print(getName() + " Subsystem Initialized");
     }
@@ -160,32 +171,30 @@ public class GroundIntake extends Mechanism {
     // --------------------------------------------------------------------------------
     // Simulation
     // --------------------------------------------------------------------------------
-    // public void simulationInit() {
-    //     if (isAttached()) {
-    //         // Create a new RollerSim with the left view, the motor's sim state, and a 6 in
-    // diameter
-    //         sim = new CoralIntakeSim(RobotSim.leftView, motor.getSimState());
-    //     }
-    // }
+    public void simulationInit() {
+        if (isAttached()) {
+            sim = new GroundIntakeSim(RobotSim.leftView, motor.getSimState());
+        }
+    }
 
-    // // Must be called to enable the simulation
-    // // if roller position changes configure x and y to set position.
-    // @Override
-    // public void simulationPeriodic() {
-    //     if (isAttached()) {
-    //         sim.simulationPeriodic();
-    //     }
-    // }
+    // Must be called to enable the simulation
+    // if roller position changes configure x and y to set position.
+    @Override
+    public void simulationPeriodic() {
+        if (isAttached()) {
+            sim.simulationPeriodic();
+        }
+    }
 
-    // class CoralIntakeSim extends RollerSim {
-    //     public CoralIntakeSim(Mechanism2d mech, TalonFXSimState coralRollerMotorSim) {
-    //         super(
-    //                 new RollerConfig(config.wheelDiameter)
-    //                         .setPosition(config.intakeX, config.intakeY)
-    //                         .setMount(Robot.getShoulder().getSim()),
-    //                 mech,
-    //                 coralRollerMotorSim,
-    //                 config.getName());
-    //     }
-    // }
+    class GroundIntakeSim extends RollerSim {
+        public GroundIntakeSim(Mechanism2d mech, TalonFXSimState groundIntakeSim) {
+            super(
+                    new RollerConfig(config.wheelDiameter)
+                            .setPosition(config.intakeX, config.intakeY)
+                            .setMount(Robot.getIntakePivot().getSim()),
+                    mech,
+                    groundIntakeSim,
+                    config.getName());
+        }
+    }
 }

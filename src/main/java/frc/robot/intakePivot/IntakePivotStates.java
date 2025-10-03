@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.intakePivot.IntakePivot.IntakePivotConfig;
 import frc.spectrumLib.Telemetry;
-import frc.spectrumLib.util.Util;
 import java.util.function.DoubleSupplier;
 
 public class IntakePivotStates {
@@ -15,6 +14,9 @@ public class IntakePivotStates {
     private static IntakePivotConfig config = Robot.getConfig().intakePivot;
     public static final Trigger isHome =
             intakePivot.atDegrees(config::getHome, config::getTolerance);
+
+    public static final Trigger isHandOff =
+            intakePivot.atDegrees(config::getHandOff, config::getTolerance);
 
     public static void setupDefaultCommand() {
         intakePivot.setDefaultCommand(
@@ -27,17 +29,11 @@ public class IntakePivotStates {
         coastMode.onTrue(log(coastMode()).ignoringDisable(true));
         coastMode.onFalse(log(ensureBrakeMode()));
 
-        groundIntake.whileTrue(move(config::getGroundCoralIntake, "IntakePivot.groundCoral"));
+        groundCoral.whileTrue(move(config::getGroundCoralIntake, "IntakePivot.groundCoral"));
 
         L1Coral.whileTrue(move(config::getL1, "IntakePivot.L1"));
 
-        stagedCoral
-                .and(
-                        l1.not(),
-                        actionState.not(),
-                        actionPrepState.not().debounce(getActionPrepToActionTime()),
-                        Util.autoMode.not())
-                .whileTrue(move(config::getHandOff, "IntakePivot.Stage"));
+        handOff.whileTrue(move(config::getHandOff, "IntakePivot.Stage"));
 
         Robot.getPilot().reZero_start.onTrue(intakePivot.resetToIntialPos());
     }

@@ -51,7 +51,7 @@ public class RobotStates {
     public static final SpectrumState autoScoreMode = new SpectrumState("autoScoreMode");
     public static final SpectrumState autonAutoScoreMode = new SpectrumState("autonAutoScoreMode");
     public static final SpectrumState coralScoring = new SpectrumState("coralScoring");
-    public static final SpectrumState groundIntake = new SpectrumState("groundCoral");
+    public static final SpectrumState handOff = new SpectrumState("handOff");
 
     /**
      * Define Robot States here and how they can be triggered States should be triggers that command
@@ -129,6 +129,12 @@ public class RobotStates {
 
         // *********************************
 
+        // Handoff state
+        stagedCoral
+                .and(l1.not(), actionState.not(), actionPrepState.not(), Util.autoMode.not())
+                .onTrue(handOff.setTrue());
+        homeAll.onTrue(handOff.setFalse());
+
         // HOME Commands and States
         pilot.home_select.or(operator.home_select).whileTrue(homeAll.toggleToTrue());
         pilot.home_select.or(operator.home_select).onFalse(clearStates());
@@ -170,8 +176,7 @@ public class RobotStates {
         stationIntaking.whileTrue(coral.toggleToTrue(), algae.setFalse());
         stationIntaking.onFalse(homeAll.toggleToTrue());
 
-        groundCoral.whileTrue(coral.toggleToTrue(), groundIntake.setTrue(), algae.setFalse());
-        groundCoral.onChangeToFalse(groundIntake.setFalse());
+        groundCoral.whileTrue(coral.toggleToTrue(), algae.setFalse());
         groundCoral.onChangeToFalse(homeAll.toggleToTrue());
 
         groundAlgae.whileTrue(algae.toggleToTrue(), coral.setFalse());
@@ -353,7 +358,8 @@ public class RobotStates {
                         coral.setFalse(),
                         algae.setFalse(),
                         shrinkState.setFalse(),
-                        autonStationIntake.setFalse())
+                        autonStationIntake.setFalse(),
+                        handOff.setFalse())
                 .withName("Clear Staged");
     }
 
@@ -368,7 +374,8 @@ public class RobotStates {
                         aligned.setFalse(),
                         autoScoreMode.setFalse(),
                         autonAutoScoreMode.setFalse(),
-                        coralScoring.setFalse())
+                        coralScoring.setFalse(),
+                        handOff.setFalse())
                 .withName("Clear States");
     }
 
@@ -383,7 +390,8 @@ public class RobotStates {
                         aligned.setFalse(),
                         autoScoreMode.setFalse(),
                         autonAutoScoreMode.setFalse(),
-                        coralScoring.setFalse())
+                        coralScoring.setFalse(),
+                        handOff.setFalse())
                 .withName("Auton Clear States");
     }
 }
