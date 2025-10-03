@@ -57,7 +57,7 @@ public class Shoulder extends Mechanism {
         @Getter @Setter private double l3Score = 80; // 26;
 
         @Getter @Setter private double l4Coral = 45;
-        @Getter @Setter private double l4CoralScore = 30;
+        @Getter @Setter private double l4CoralScore = 60;
 
         @Getter @Setter private double tolerance = 3.5;
 
@@ -105,7 +105,7 @@ public class Shoulder extends Mechanism {
         @Getter @Setter private double simRatio = 1;
 
         public ShoulderConfig() {
-            super("Shoulder", 52, Rio.CANIVORE);
+            super("Shoulder", 45, Rio.CANIVORE);
             configPIDGains(0, positionKp, 0, positionKd);
             configFeedForwardGains(positionKs, positionKv, positionKa, positionKg);
             configMotionMagic(mmCruiseVelocity, mmAcceleration, mmJerk);

@@ -44,7 +44,7 @@ public class GroundIntake extends Mechanism {
 
         public GroundIntakeConfig() {
             // TODO: change id
-            super("Intake", 5, Rio.CANIVORE);
+            super("Intake", 25, Rio.CANIVORE);
             configPIDGains(0, velocityKp, 0, 0);
             configFeedForwardGains(velocityKs, velocityKv, 0, 0);
             configGearRatio(1);

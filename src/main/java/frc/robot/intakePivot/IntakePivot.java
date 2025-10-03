@@ -48,7 +48,7 @@ public class IntakePivot extends Mechanism {
 
         public IntakePivotConfig() {
             // TODO: change id
-            super("IntakePivot", 42, Rio.CANIVORE);
+            super("IntakePivot", 35, Rio.CANIVORE);
             configPIDGains(0, positionKp, 0, positionKd);
             configFeedForwardGains(positionKs, positionKv, positionKa, positionKg);
             configMotionMagic(mmCruiseVelocity, mmAcceleration, mmJerk);
