@@ -3,7 +3,6 @@ package frc.robot.intakePivot;
 import static frc.robot.RobotStates.*;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.intakePivot.IntakePivot.IntakePivotConfig;
@@ -28,14 +27,17 @@ public class IntakePivotStates {
         coastMode.onTrue(log(coastMode()).ignoringDisable(true));
         coastMode.onFalse(log(ensureBrakeMode()));
 
-        groundCoral.whileTrue(move(config::getGroundCoralIntake, "IntakePivot.groundCoral"));
+        groundIntake.whileTrue(move(config::getGroundCoralIntake, "IntakePivot.groundCoral"));
+
+        L1Coral.whileTrue(move(config::getL1, "IntakePivot.L1"));
 
         stagedCoral
                 .and(
+                        l1.not(),
                         actionState.not(),
                         actionPrepState.not().debounce(getActionPrepToActionTime()),
                         Util.autoMode.not())
-                .whileTrue(move(config::getHome, "IntakePivot.Stage"));
+                .whileTrue(move(config::getHandOff, "IntakePivot.Stage"));
 
         Robot.getPilot().reZero_start.onTrue(intakePivot.resetToIntialPos());
     }
@@ -54,11 +56,6 @@ public class IntakePivotStates {
 
     public static Command move(DoubleSupplier degrees, String name) {
         return intakePivot.move(degrees).withName(name);
-    }
-
-    public static Command move(
-            DoubleSupplier degrees, DoubleSupplier exDegrees, DoubleSupplier delay, String name) {
-        return (new WaitCommand(delay.getAsDouble()).andThen(move(degrees, name)).withName(name));
     }
 
     public static Command coastMode() {

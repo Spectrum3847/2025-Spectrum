@@ -51,6 +51,7 @@ public class RobotStates {
     public static final SpectrumState autoScoreMode = new SpectrumState("autoScoreMode");
     public static final SpectrumState autonAutoScoreMode = new SpectrumState("autonAutoScoreMode");
     public static final SpectrumState coralScoring = new SpectrumState("coralScoring");
+    public static final SpectrumState groundIntake = new SpectrumState("groundCoral");
 
     /**
      * Define Robot States here and how they can be triggered States should be triggers that command
@@ -68,7 +69,7 @@ public class RobotStates {
     public static final Trigger stationIntaking = pilot.stationIntake_LT.or(autonStationIntake);
     // public static final Trigger stationExtendedIntaking = pilot.stationIntakeExtended_LT_RB;
     public static final Trigger groundAlgae = pilot.groundAlgae_RT;
-    public static final Trigger groundCoral = pilot.groundCoral_LB_LT;
+    public static final Trigger groundCoral = pilot.groundCoral_X;
     public static final Trigger intaking = stationIntaking.or(groundAlgae, groundCoral);
 
     // climb Triggers
@@ -169,15 +170,16 @@ public class RobotStates {
         stationIntaking.whileTrue(coral.toggleToTrue(), algae.setFalse());
         stationIntaking.onFalse(homeAll.toggleToTrue());
 
-        groundCoral.whileTrue(coral.toggleToTrue(), algae.setFalse());
+        groundCoral.whileTrue(coral.toggleToTrue(), groundIntake.setTrue(), algae.setFalse());
+        groundCoral.onChangeToFalse(groundIntake.setFalse());
         groundCoral.onChangeToFalse(homeAll.toggleToTrue());
 
         groundAlgae.whileTrue(algae.toggleToTrue(), coral.setFalse());
         groundAlgae.onChangeToFalse(homeAll.toggleToTrue());
 
-        pilot.l2AlgaeRemoval.onTrue(
-                algae.setTrue(), coral.setFalse(), l2.setTrue(), actionPrepState.setTrue());
-        pilot.l2AlgaeRemoval.onFalse(l2.setFalse(), actionPrepState.setFalse());
+        // pilot.l2AlgaeRemoval.onTrue(
+        //         algae.setTrue(), coral.setFalse(), l2.setTrue(), actionPrepState.setTrue());
+        // pilot.l2AlgaeRemoval.onFalse(l2.setFalse(), actionPrepState.setFalse());
 
         pilot.l3AlgaeRemoval.onTrue(
                 algae.setTrue(), coral.setFalse(), l3.setTrue(), actionPrepState.setTrue());

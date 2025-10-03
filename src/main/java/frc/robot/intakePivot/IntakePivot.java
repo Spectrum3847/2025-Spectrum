@@ -1,12 +1,17 @@
 package frc.robot.intakePivot;
 
+import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.networktables.NTSendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
+import frc.robot.RobotSim;
 import frc.spectrumLib.Rio;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.mechanism.Mechanism;
+import frc.spectrumLib.sim.ArmConfig;
+import frc.spectrumLib.sim.ArmSim;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,11 +23,13 @@ public class IntakePivot extends Mechanism {
         // TODO: tune these values
 
         @Getter @Setter private double home = 0;
-        @Getter @Setter private double groundCoralIntake = 4;
+        @Getter @Setter private double groundCoralIntake = 120;
+        @Getter @Setter private double handOff = -45;
+        @Getter @Setter private double L1 = 60;
 
         @Getter @Setter private double tolerance = 3.5;
 
-        @Getter @Setter private double offset = -90;
+        @Getter @Setter private double offset = 90;
         @Getter @Setter private double initPosition = 0;
 
         /* IntakePivot config settings */
@@ -46,8 +53,14 @@ public class IntakePivot extends Mechanism {
         @Getter @Setter private double sensorToMechanismRatio = 61.71428571; // 102.857;
         @Getter @Setter private double rotorToSensorRatio = 1;
 
+        /* Sim properties */
+        @Getter private double intakePivotX = 1.4;
+        @Getter private double intakePivotY = 0.35;
+        @Getter private double length = 0.5;
+
+        @Getter @Setter private double simRatio = 1;
+
         public IntakePivotConfig() {
-            // TODO: change id
             super("IntakePivot", 35, Rio.CANIVORE);
             configPIDGains(0, positionKp, 0, positionKd);
             configFeedForwardGains(positionKs, positionKv, positionKa, positionKg);
@@ -62,11 +75,12 @@ public class IntakePivot extends Mechanism {
             configNeutralBrakeMode(true);
             configClockwise_Positive();
             configGravityType(true);
+            setSimRatio(sensorToMechanismRatio);
         }
     }
 
     private IntakePivotConfig config;
-    // private IntakePivotSim sim;
+    private IntakePivotSim sim;
 
     public IntakePivot(IntakePivotConfig config) {
         super(config);
@@ -74,7 +88,7 @@ public class IntakePivot extends Mechanism {
 
         setInitialPosition();
 
-        // simulationInit();
+        simulationInit();
         telemetryInit();
         Telemetry.print(getName() + " Subsystem Initialized");
     }
@@ -197,22 +211,13 @@ public class IntakePivot extends Mechanism {
         return super.moveToDegrees(offsetPosition(degrees)).withName(getName() + ".runPoseDegrees");
     }
 
-    public double checkMoveOverTop(DoubleSupplier degrees) {
-        double newDeg = degrees.getAsDouble();
-        if (newDeg < -90 && (getPositionDegrees() - config.offset) > 90) {
-            newDeg += 360;
-        } else if (newDeg > 90 && (getPositionDegrees() - config.offset) < -90) {
-            newDeg -= 360;
-        }
-        return newDeg;
-    }
-
     public Command move(DoubleSupplier degrees) {
-        return run(() -> setMMPositionFoc(degrees)).withName("IntakePivot.move");
+        return run(() -> setMMPositionFoc(getOffsetRotations(degrees)))
+                .withName("IntakePivot.move");
     }
 
     public DoubleSupplier getOffsetRotations(DoubleSupplier degrees) {
-        return () -> degreesToRotations(offsetPosition(() -> checkMoveOverTop(degrees)));
+        return () -> degreesToRotations(offsetPosition(degrees));
     }
 
     public DoubleSupplier offsetPosition(DoubleSupplier position) {
@@ -222,36 +227,35 @@ public class IntakePivot extends Mechanism {
     // --------------------------------------------------------------------------------
     // Simulation
     // --------------------------------------------------------------------------------
-    // void simulationInit() {
-    //     if (isAttached()) {
-    //         sim = new IntakePivotSim(motor.getSimState(), RobotSim.leftView);
-    //         // m_CANcoder.setPosition(0);
-    //     }
-    // }
+    void simulationInit() {
+        if (isAttached()) {
+            sim = new IntakePivotSim(motor.getSimState(), RobotSim.leftView);
+            // m_CANcoder.setPosition(0);
+        }
+    }
 
-    // @Override
-    // public void simulationPeriodic() {
-    //     if (isAttached()) {
-    //         sim.simulationPeriodic();
-    //         // m_CANcoder.getSimState().setRawPosition(sim.getAngleRads() / 0.202);
-    //     }
-    // }
+    @Override
+    public void simulationPeriodic() {
+        if (isAttached()) {
+            sim.simulationPeriodic();
+            // m_CANcoder.getSimState().setRawPosition(sim.getAngleRads() / 0.202);
+        }
+    }
 
-    // class IntakePivotSim extends ArmSim {
-    //     public IntakePivotSim(TalonFXSimState intakePivotMotorSim, Mechanism2d mech) {
-    //         super(
-    //                 new ArmConfig(
-    //                                 config.intakePivotX,
-    //                                 config.intakePivotY,
-    //                                 config.simRatio,
-    //                                 config.length,
-    //                                 -360,
-    //                                 360.0 - 90.0,
-    //                                 -90)
-    //                         .setMount(Robot.getElevator().getSim(), true),
-    //                 mech,
-    //                 intakePivotMotorSim,
-    //                 "2" + config.getName()); // added 2 to the name to create it second
-    //     }
-    // }
+    class IntakePivotSim extends ArmSim {
+        public IntakePivotSim(TalonFXSimState intakePivotMotorSim, Mechanism2d mech) {
+            super(
+                    new ArmConfig(
+                            config.intakePivotX,
+                            config.intakePivotY,
+                            config.simRatio,
+                            config.length,
+                            -360,
+                            360,
+                            90),
+                    mech,
+                    intakePivotMotorSim,
+                    "3" + config.getName()); // added 2 to the name to create it second
+        }
+    }
 }
