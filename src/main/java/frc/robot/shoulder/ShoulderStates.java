@@ -66,6 +66,9 @@ public class ShoulderStates {
 
         Robot.getOperator().antiSecretClimb_LTRSup.whileTrue(shoulder.move(config::getNetAlgae));
 
+        lollipopCoral.whileTrue(
+                moveWithoutReverse(config::getLollipopCoral, "Shoulder.lollipopCoral"));
+
         stationIntaking.whileTrue(move(config::getStationIntake, "Shoulder.stationIntake"));
         stationIntaking.or(groundAlgae).onFalse(home());
 
@@ -99,8 +102,8 @@ public class ShoulderStates {
         L4Coral.and(actionPrepState, ElevatorStates.isL4Coral)
                 .whileTrue(move(config::getL4Coral, "Shoulder.L4Coral.prescoreRepeat"));
         L4Coral.and(actionState).whileTrue(move(config::getL4CoralScore, "Shoulder.L4Coral.score"));
-        L4Coral.and(actionPrepState, Util.autoMode)
-                .whileTrue(slowMove(config::getL4Coral, "Shoulder.L4Coral.slowPrescore"));
+        // L4Coral.and(actionPrepState, Util.autoMode)
+        //         .whileTrue(slowMove(config::getL4Coral, "Shoulder.L4Coral.slowPrescore"));
 
         // algae
         processorAlgae
@@ -162,6 +165,10 @@ public class ShoulderStates {
     public static Command slowMove(
             DoubleSupplier degrees, DoubleSupplier exDegrees, DoubleSupplier delay, String name) {
         return new WaitCommand(delay.getAsDouble()).andThen(slowMove(degrees, name).withName(name));
+    }
+
+    public static Command moveWithoutReverse(DoubleSupplier degrees, String name) {
+        return shoulder.moveWithoutReverse(degrees, degrees).withName(name);
     }
 
     public static Command coastMode() {

@@ -43,6 +43,7 @@ public class Shoulder extends Mechanism {
         @Getter @Setter private double stationExtendedIntake = -23.6;
         @Getter @Setter private double groundAlgaeIntake = 0;
         @Getter @Setter private double groundCoralIntake = 4;
+        @Getter @Setter private double lollipopCoral = 115; // 20;
 
         @Getter @Setter private double processorAlgae = -143.877;
         @Getter @Setter private double l2Algae = 90; // -32;
@@ -97,7 +98,7 @@ public class Shoulder extends Mechanism {
 
         /* Sim properties */
         @Getter private double shoulderX = 0.8;
-        @Getter private double shoulderY = 1.4;
+        @Getter private double shoulderY = 0.45;
         @Getter private double length = 0.8;
 
         @Getter @Setter private double simRatio = 1;
@@ -330,6 +331,17 @@ public class Shoulder extends Mechanism {
                         setMMPositionFoc(getIfReversedOffsetInRotations(exDegrees));
                     } else {
                         setMMPositionFoc(getIfReversedOffsetInRotations(shrinkDegrees));
+                    }
+                })
+                .withName("Shoulder.move");
+    }
+
+    public Command moveWithoutReverse(DoubleSupplier shrinkDegrees, DoubleSupplier exDegrees) {
+        return run(() -> {
+                    if (!RobotStates.shrink.getAsBoolean()) {
+                        setMMPositionFoc(() -> degreesToRotations(exDegrees));
+                    } else {
+                        setMMPositionFoc(() -> degreesToRotations(shrinkDegrees));
                     }
                 })
                 .withName("Shoulder.move");

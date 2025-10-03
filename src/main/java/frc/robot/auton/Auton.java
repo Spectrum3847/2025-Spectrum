@@ -53,6 +53,7 @@ public class Auton {
     public static final EventTrigger autonReverse = new EventTrigger("reverse");
     public static final EventTrigger autonPoseUpdate = new EventTrigger("poseUpdate");
     public static final EventTrigger autonAutoScore = new EventTrigger("autoScore");
+    public static final EventTrigger autonStow = new EventTrigger("stow");
 
     private final SendableChooser<Command> pathChooser = new SendableChooser<>();
     private boolean autoMessagePrinted = true;
@@ -77,6 +78,9 @@ public class Auton {
                 "Left | 3 L4 Coral", worlds3coral(false).withName("Worlds 3 Coral - Left"));
         pathChooser.addOption(
                 "Right | 3 L4 Coral", worlds3coral(true).withName("Worlds 3 Coral - Right"));
+
+        pathChooser.addOption("Left | 3 Ground Coral", groundCoral3(false));
+        pathChooser.addOption("Right | 3 Ground Coral", groundCoral3(true));
 
         pathChooser.addOption("Center | 3 Net Algae", worlds3algae(false));
 
@@ -105,16 +109,6 @@ public class Auton {
         printAutoDuration();
     }
 
-    public Command houston2coral(boolean mirrored) {
-        return Commands.sequence(
-                        SpectrumAuton("H2C-Start", mirrored, 2),
-                        fullSequenceAimL4Score(1.5),
-                        SpectrumAuton("H2C-Leg1", mirrored),
-                        fullSequenceAimL4Score(1.5),
-                        SpectrumAuton("H2C-Leg2", mirrored))
-                .withName("Houston 2 Coral");
-    }
-
     public Command worlds3coral(boolean mirrored) {
         return Commands.sequence(
                 SpectrumAuton("W3C-Start", mirrored),
@@ -125,6 +119,19 @@ public class Auton {
                 autoScore(),
                 RobotStates.homeAll.toggleToTrue(),
                 RobotStates.autonClearStates());
+    }
+
+    public Command groundCoral3(boolean mirrored) {
+        return Commands.sequence(
+                        SpectrumAuton("GC3-Start", mirrored),
+                        autoScore(),
+                        SpectrumAuton("GC3-Leg1", mirrored),
+                        autoScore(),
+                        SpectrumAuton("GC3-Leg2", mirrored),
+                        autoScore(),
+                        RobotStates.homeAll.toggleToTrue(),
+                        RobotStates.autonClearStates())
+                .withName("GC3-Full");
     }
 
     public Command worlds3algae(boolean mirrored) {

@@ -3,43 +3,43 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.174929775280899,
-        "y": 7.081460674157304
+        "x": 1.6,
+        "y": 5.85
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.4703146857252825,
-        "y": 6.682270878352151
+        "x": 2.2,
+        "y": 5.85
       },
       "isLocked": false,
-      "linkedName": "feeder"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.7137640449438205,
-        "y": 5.438202247191011
+        "x": 3.04,
+        "y": 4.17
       },
       "prevControl": {
-        "x": 3.2137640449438205,
-        "y": 6.30422765097545
+        "x": 2.04,
+        "y": 4.17
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "trough"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.598668754894279,
-      "maxWaypointRelativePos": 1.0,
+      "minWaypointRelativePos": 0.7114330462020363,
+      "maxWaypointRelativePos": 0.9964761158966329,
       "constraints": {
-        "maxVelocity": 3.0,
-        "maxAcceleration": 3.0,
+        "maxVelocity": 4.0,
+        "maxAcceleration": 2.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
-        "nominalVoltage": 12.0,
+        "nominalVoltage": 10.0,
         "unlimited": false
       }
     }
@@ -47,38 +47,38 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "clearStates",
+      "name": "poseUpdate",
       "waypointRelativePos": 0,
+      "endWaypointRelativePos": 1.0,
+      "command": null
+    },
+    {
+      "name": "home",
+      "waypointRelativePos": 0.20086139389193242,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
-      "name": "twistL4R",
-      "waypointRelativePos": 0,
+      "name": "L4",
+      "waypointRelativePos": 0.3981989036804953,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
       "name": "coral",
-      "waypointRelativePos": 0.19929522317932777,
+      "waypointRelativePos": 0.39976507439309855,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
-      "name": "sourceIntakeOff",
-      "waypointRelativePos": 0.20086139389192625,
+      "name": "actionOn",
+      "waypointRelativePos": 0.7960062646828505,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
-      "name": "right",
-      "waypointRelativePos": 0.3010963194988236,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "shoulderL4",
-      "waypointRelativePos": 0.35,
+      "name": "autoScore",
+      "waypointRelativePos": 0.9025058731401643,
       "endWaypointRelativePos": null,
       "command": null
     }
@@ -92,14 +92,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0.0,
-    "rotation": -59.99999999999999
+    "velocity": 0,
+    "rotation": 180.0
   },
   "reversed": false,
-  "folder": "Houston 2 Coral",
+  "folder": "Ground Coral 3",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -53.5
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

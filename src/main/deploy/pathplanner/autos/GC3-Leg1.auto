@@ -7,19 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "2 - L4 Trough Rush"
+            "pathName": "2 - GC3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3L - L4 Trough Rush"
+            "pathName": "3 - GC3"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Houston 2 Coral",
+  "folder": "Ground Coral 3",
   "choreoAuto": false
 }

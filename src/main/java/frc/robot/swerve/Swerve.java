@@ -531,12 +531,16 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
      */
     public void driveFieldRelative(
             DoubleSupplier fwdPositive, DoubleSupplier leftPositive, DoubleSupplier ccwPositive) {
+        Rotation2d rotation = getRotation();
+        // Flip the rotation if we are on the red alliance, so field-relative controls are correct
+        rotation = FieldHelpers.flipAngleIfRed(rotation);
+
         ChassisSpeeds speeds =
                 ChassisSpeeds.fromFieldRelativeSpeeds(
                         fwdPositive.getAsDouble(),
                         leftPositive.getAsDouble(),
                         ccwPositive.getAsDouble(),
-                        getRotation());
+                        rotation);
         previousSetpoint =
                 setpointGenerator.generateSetpoint(
                         previousSetpoint, speeds, 0.02 // loop time

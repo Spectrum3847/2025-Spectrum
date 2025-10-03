@@ -57,6 +57,8 @@ public class ElevatorStates {
                         "Elevator.stationIntake"));
         stationIntaking.onFalse(home());
 
+        lollipopCoral.whileTrue(home());
+
         groundAlgae.whileTrue(move(config::getClawGroundAlgaeIntake, "Ground Algae"));
         groundCoral.whileTrue(home());
 
@@ -93,9 +95,10 @@ public class ElevatorStates {
         L4Coral.and(actionState)
                 .whileTrue(move(config::getL4Score, config::getExl4Score, "Elevator.L4CoralScore"));
 
-        L4Coral.and(actionPrepState, Util.autoMode)
-                .whileTrue(
-                        slowMove(config::getL4Coral, config::getExl4Coral, "Elevator.slowL4Coral"));
+        // L4Coral.and(actionPrepState, Util.autoMode)
+        //         .whileTrue(
+        //                 slowMove(config::getL4Coral, config::getExl4Coral,
+        // "Elevator.slowL4Coral"));
         // L4Coral.and(actionState, Util.autoMode)
         //         .whileTrue(
         //                 slowMove(

@@ -48,8 +48,8 @@
     },
     "###/SmartDashboard/LeftView": {
       "Collapsed": "0",
-      "Pos": "1578,552",
-      "Size": "324,396"
+      "Pos": "1299,553",
+      "Size": "498,596"
     },
     "###/SmartDashboard/Rotation Controller": {
       "Collapsed": "0",
@@ -63,13 +63,13 @@
     },
     "###/SmartDashboard/Scheduler": {
       "Collapsed": "0",
-      "Pos": "1023,555",
-      "Size": "274,363"
+      "Pos": "992,555",
+      "Size": "305,488"
     },
     "###/SmartDashboard/States": {
       "Collapsed": "0",
-      "Pos": "696,839",
-      "Size": "283,179"
+      "Pos": "668,841",
+      "Size": "323,253"
     },
     "###/SmartDashboard/Swerve Field": {
       "Collapsed": "0",
@@ -94,7 +94,7 @@
     "###/SmartDashboard/frontView": {
       "Collapsed": "0",
       "Pos": "1300,553",
-      "Size": "274,338"
+      "Size": "375,464"
     },
     "###Addressable LEDs": {
       "Collapsed": "0",

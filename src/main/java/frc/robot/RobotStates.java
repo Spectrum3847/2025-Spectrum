@@ -51,6 +51,7 @@ public class RobotStates {
     public static final SpectrumState autoScoreMode = new SpectrumState("autoScoreMode");
     public static final SpectrumState autonAutoScoreMode = new SpectrumState("autonAutoScoreMode");
     public static final SpectrumState coralScoring = new SpectrumState("coralScoring");
+    public static final SpectrumState lollipopCoral = new SpectrumState("lollipopCoral");
     public static final SpectrumState groundIntake = new SpectrumState("groundCoral");
 
     /**
@@ -70,7 +71,8 @@ public class RobotStates {
     // public static final Trigger stationExtendedIntaking = pilot.stationIntakeExtended_LT_RB;
     public static final Trigger groundAlgae = pilot.groundAlgae_RT;
     public static final Trigger groundCoral = pilot.groundCoral_X;
-    public static final Trigger intaking = stationIntaking.or(groundAlgae, groundCoral);
+    public static final Trigger intaking =
+            stationIntaking.or(groundAlgae, groundCoral, lollipopCoral);
 
     // climb Triggers
     public static final Trigger climbPrep = operator.climbPrep_start;
@@ -237,7 +239,9 @@ public class RobotStates {
         autonSourceIntakeOff.onTrue(autonStationIntake.setFalse());
         autonLeft.onTrue(rightScore.setFalse());
         autonRight.onTrue(rightScore.setTrue());
+        autonGroundIntake.onTrue(lollipopCoral.setTrue());
         autonHome.onTrue(homeAll.toggleToTrue());
+        autonHome.onTrue(lollipopCoral.setFalse());
         autonReverse.whileTrue(reverse.setTrue());
         autonAutoScore.onTrue(autonAutoScoreMode.setTrue());
 

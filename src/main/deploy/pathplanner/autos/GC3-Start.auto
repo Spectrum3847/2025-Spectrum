@@ -7,19 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "4 - W3C - Reversed"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Feeder to IJ"
+            "pathName": "1 - GC3"
           }
         }
       ]
     }
   },
   "resetOdom": false,
-  "folder": "118 Practice Field Test",
+  "folder": "Ground Coral 3",
   "choreoAuto": false
 }

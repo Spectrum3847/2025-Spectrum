@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.174929775280899,
-        "y": 7.081460674157304
+        "x": 5.37,
+        "y": 5.22
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.5318234473317038,
-        "y": 6.599146557786973
+        "x": 5.37,
+        "y": 6.22
       },
       "isLocked": false,
-      "linkedName": "feeder"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.851053370786517,
-        "y": 4.033216292134832
+        "x": 1.6,
+        "y": 5.85
       },
       "prevControl": {
-        "x": 2.101053370786517,
-        "y": 4.033216292134832
+        "x": 3.6,
+        "y": 5.85
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,14 +32,14 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.598668754894279,
+      "minWaypointRelativePos": 0.9119028974158183,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
-        "maxVelocity": 3.0,
-        "maxAcceleration": 3.0,
+        "maxVelocity": 1.0,
+        "maxAcceleration": 2.5,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
-        "nominalVoltage": 12.0,
+        "nominalVoltage": 10.0,
         "unlimited": false
       }
     }
@@ -47,20 +47,20 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "sourceIntakeOff",
-      "waypointRelativePos": 0.20086139389192625,
+      "name": "poseUpdate",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": 1.0,
+      "command": null
+    },
+    {
+      "name": "home",
+      "waypointRelativePos": 0.045810493343774655,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
-      "name": "clearStates",
-      "waypointRelativePos": 0.29796397807360386,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "left",
-      "waypointRelativePos": 0.3543461237274824,
+      "name": "groundIntake",
+      "waypointRelativePos": 0.6785434612372708,
       "endWaypointRelativePos": null,
       "command": null
     }
@@ -74,14 +74,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0.5,
-    "rotation": 0.0
+    "velocity": 0,
+    "rotation": 180.0
   },
   "reversed": false,
-  "folder": "Houston 2 Coral",
+  "folder": "Ground Coral 3",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -53.5
+    "rotation": -119.99999999999999
   },
   "useDefaultConstraints": true
 }
