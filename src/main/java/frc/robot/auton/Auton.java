@@ -144,15 +144,8 @@ public class Auton {
 
     public Command offseasonBackAlgae(boolean mirrored) {
         return Commands.sequence(
-<<<<<<< Updated upstream
                         SpectrumAuton("Offseason Back Algae Leg 1", mirrored), autoScoreThenAlgae())
                 .withName("Offseason Back Algae");
-=======
-                SpectrumAuton("OBA-Start", mirrored),
-                autoScoreThenAlgae(),
-                SpectrumAuton("OBA-End", mirrored))
-            .withName("Offseason Back Algae");
->>>>>>> Stashed changes
     }
 
     public Command aimScore(double alignTime) {
