@@ -144,7 +144,9 @@ public class Auton {
 
     public Command offseasonBackAlgae(boolean mirrored) {
         return Commands.sequence(
-                        SpectrumAuton("Offseason Back Algae Leg 1", mirrored), autoScoreThenAlgae())
+                        SpectrumAuton("OBA-1", mirrored), 
+                        autoScoreThenAlgae(),
+                        SpectrumAuton("OBA-2", mirrored))
                 .withName("Offseason Back Algae");
     }
 

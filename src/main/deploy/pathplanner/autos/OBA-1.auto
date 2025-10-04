@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": null
+            "pathName": "Offseason Back Algae 1"
           }
         }
       ]
     }
   },
-  "resetOdom": false,
-  "folder": "Worlds 3 Coral",
+  "resetOdom": true,
+  "folder": "Offseason 3 Back Algae",
   "choreoAuto": false
 }
