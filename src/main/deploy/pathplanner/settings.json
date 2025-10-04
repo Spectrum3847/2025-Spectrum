@@ -3,7 +3,6 @@
   "robotLength": 0.927,
   "holonomicMode": true,
   "pathFolders": [
-    "Blue Left Preload-Source ",
     "Config Paths",
     "Ground Coral 3",
     "Offseason 3 Back Algae",
@@ -20,7 +19,7 @@
     "Worlds 3 Coral"
   ],
   "defaultMaxVel": 4.0,
-  "defaultMaxAccel": 4.0,
+  "defaultMaxAccel": 6.0,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 10.0,

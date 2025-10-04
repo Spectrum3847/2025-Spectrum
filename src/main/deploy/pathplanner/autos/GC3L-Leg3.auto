@@ -7,13 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1 - GC3"
+            "pathName": "6 - GC3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "7 - GC3"
           }
         }
       ]
     }
   },
-  "resetOdom": false,
-  "folder": "Worlds 3 Coral",
+  "resetOdom": true,
+  "folder": "Ground Coral 3",
   "choreoAuto": false
 }

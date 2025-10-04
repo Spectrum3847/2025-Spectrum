@@ -64,13 +64,13 @@
   "eventMarkers": [
     {
       "name": "coral",
-      "waypointRelativePos": 0.04776820673453159,
+      "waypointRelativePos": 0.30213903743315573,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
       "name": "L4",
-      "waypointRelativePos": 0.05090054815975032,
+      "waypointRelativePos": 0.30481283422459887,
       "endWaypointRelativePos": null,
       "command": null
     },
