@@ -19,7 +19,6 @@ public class ClawStates {
             hasGamePiece.and(claw.aboveVelocityRPM(() -> 0, () -> 0));
     public static final Trigger hasAlgae =
             algae.and(netAlgae.not(), claw.aboveCurrent(config::getHasAlgaeCurrent, () -> 0));
-    // hasGamePiece.and(claw.belowVelocityRPM(() -> 0, () -> 0));
 
     public static void setupDefaultCommand() {
         claw.setDefaultCommand(
@@ -62,6 +61,8 @@ public class ClawStates {
         Robot.getOperator()
                 .processorScore_LT
                 .whileTrue(claw.runTorqueFOC(config::getCoralIntakeTorqueCurrent));
+
+        handOff.whileTrue(claw.runTorqueCurrentFoc(config::getCoralIntakeTorqueCurrent));
 
         branch.and(actionState)
                 .onTrue(
