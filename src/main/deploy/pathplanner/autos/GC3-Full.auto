@@ -7,43 +7,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Offseason Back Algae 2"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 2.5
+            "pathName": "1 - GC3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Offseason Back Algae 3"
+            "pathName": "2 - GC3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Offseason Back Algae 4"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 2.5
+            "pathName": "3 - GC3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Offseason Back Algae 5"
+            "pathName": "4 - GC3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "5 - GC3"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Offseason 3 Back Algae",
+  "folder": "Ground Coral 3",
   "choreoAuto": false
 }
