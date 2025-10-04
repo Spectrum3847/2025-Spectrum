@@ -1,0 +1,19 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Offseason Back Algae 2"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Offseason 3 Back Algae",
+  "choreoAuto": false
+}
