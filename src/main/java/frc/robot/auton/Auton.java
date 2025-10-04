@@ -84,6 +84,8 @@ public class Auton {
 
         pathChooser.addOption("Center | 3 Net Algae", worlds3algae(false));
 
+        pathChooser.addOption("Center | Offseason Back Algae", offseasonBackAlgae(false));
+
         pathChooser.addOption("Drive Forward", SpectrumAuton("Drive Forward", false));
 
         SmartDashboard.putData("Auto Chooser", pathChooser);
@@ -144,7 +146,7 @@ public class Auton {
 
     public Command offseasonBackAlgae(boolean mirrored) {
         return Commands.sequence(
-                        SpectrumAuton("OBA-1", mirrored), 
+                        SpectrumAuton("OBA-1", mirrored),
                         autoScoreThenAlgae(),
                         SpectrumAuton("OBA-2", mirrored))
                 .withName("Offseason Back Algae");

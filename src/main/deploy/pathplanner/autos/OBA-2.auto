@@ -9,6 +9,18 @@
           "data": {
             "pathName": "Offseason Back Algae 2"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Offseason Back Algae 3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Offseason Back Algae 4"
+          }
         }
       ]
     }

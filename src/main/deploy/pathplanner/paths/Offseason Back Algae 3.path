@@ -1,0 +1,70 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.85,
+        "y": 4.79
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.215247074122236,
+        "y": 5.024707412223666
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.210890767230168,
+        "y": 5.736540962288687
+      },
+      "prevControl": {
+        "x": 4.891319895968789,
+        "y": 5.851690507152146
+      },
+      "nextControl": {
+        "x": 3.539445115434771,
+        "y": 5.622911698138696
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.02799089726918,
+        "y": 4.030234070221066
+      },
+      "prevControl": {
+        "x": 2.9023732119635883,
+        "y": 5.056111833550065
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 2.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0.0,
+    "rotation": 0.0
+  },
+  "reversed": false,
+  "folder": "Offseason 3 Back Algae",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "useDefaultConstraints": false
+}
