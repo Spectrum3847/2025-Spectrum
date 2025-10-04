@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.elevator.Elevator.ElevatorConfig;
+import frc.robot.shoulder.ShoulderStates;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.util.Util;
 import java.util.function.DoubleSupplier;
@@ -70,7 +71,8 @@ public class ElevatorStates {
                         (Util.autoMode.not()))
                 .whileTrue(move(config::getHome, "Elevator.Stage"));
 
-        L2Coral.and(actionPrepState).whileTrue(move(config::getL2Coral, "Elevator.L2Coral"));
+        L2Coral.and(actionPrepState, ShoulderStates.isL2Coral)
+                .whileTrue(move(config::getL2Coral, "Elevator.L2Coral"));
         L2Coral.and(actionState).whileTrue(move(config::getL2Score, "Elevator.L2CoralScore"));
         L3Coral.and(actionPrepState).whileTrue(move(config::getL3Coral, "Elevator.L3Coral"));
         L3Coral.and(actionState).whileTrue(move(config::getL3Score, "Elevator.L3CoralScore"));

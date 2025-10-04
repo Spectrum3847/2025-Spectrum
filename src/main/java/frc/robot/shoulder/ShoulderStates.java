@@ -20,8 +20,14 @@ public class ShoulderStates {
     public static final Trigger isAutonNetPosition =
             shoulder.aboveDegrees(config::getAutonShoulderNetChecker, config::getTolerance);
 
+    public static final Trigger isHandOff =
+            shoulder.atDegrees(config::getHandOff, config::getTolerance)
+                    .and(reverse.not())
+                    .or(
+                            shoulder.atDegrees(() -> -config.getHandOff(), config::getTolerance)
+                                    .and(reverse));
     public static final Trigger isL2Coral =
-            shoulder.atDegrees(config::getL2Coral, config::getTolerance)
+            shoulder.atDegrees(config::getL2Coral, () -> (config.getTolerance() + 3))
                     .and(reverse.not())
                     .or(
                             shoulder.atDegrees(() -> -config.getL2Coral(), config::getTolerance)
@@ -64,27 +70,17 @@ public class ShoulderStates {
         coastMode.onTrue(log(coastMode()).ignoringDisable(true));
         coastMode.onFalse(log(ensureBrakeMode()));
 
-        Robot.getOperator().antiSecretClimb_LTRSup.whileTrue(shoulder.move(config::getNetAlgae));
-
         lollipopCoral.whileTrue(
                 moveWithoutReverse(config::getLollipopCoral, "Shoulder.lollipopCoral"));
 
         stationIntaking.whileTrue(move(config::getStationIntake, "Shoulder.stationIntake"));
         stationIntaking.or(groundAlgae).onFalse(home());
 
-        groundCoral.whileTrue(move(config::getGroundCoralIntake, "Shoulder.groundCoral"));
-        groundAlgae.whileTrue(move(config::getGroundAlgaeIntake, "Shoulder.groundAlgae"));
+        groundAlgae.whileTrue(
+                moveWithoutReverse(config::getGroundAlgaeIntake, "Shoulder.groundAlgae"));
 
-        Robot.getPilot()
-                .photonRemoveL2Algae
-                .whileTrue(move(config::getL2Algae, "Shoulder.L2Algae"));
-        Robot.getPilot()
-                .photonRemoveL3Algae
-                .whileTrue(move(config::getL3Algae, "Shoulder.L3Algae"));
-        Robot.getPilot()
-                .photonRemoveL2Algae
-                .or(Robot.getPilot().photonRemoveL3Algae)
-                .onFalse(home());
+        handOff.and(ElevatorStates.isHandOff)
+                .whileTrue(moveWithoutReverse(config::getHandOff, "Shoulder.handOff"));
 
         stagedCoral
                 .and(
@@ -93,13 +89,13 @@ public class ShoulderStates {
                         Util.autoMode.not())
                 .whileTrue(move(config::getHome, "Shoulder.Stage"));
 
-        L2Coral.and(actionPrepState, ElevatorStates.isL2Coral)
+        L2Coral.and(actionPrepState)
                 .whileTrue(move(config::getL2Coral, "Shoulder.L2Coral.prescoreRepeat"));
         L2Coral.and(actionState).whileTrue(move(config::getL2Score, "Shoulder.L2Coral.score"));
-        L3Coral.and(actionPrepState, ElevatorStates.isL3Coral)
+        L3Coral.and(actionPrepState)
                 .whileTrue(move(config::getL3Coral, "Shoulder.L3Coral.prescoreRepeat"));
         L3Coral.and(actionState).whileTrue(move(config::getL3Score, "Shoulder.L3Coral.score"));
-        L4Coral.and(actionPrepState, ElevatorStates.isL4Coral)
+        L4Coral.and(actionPrepState)
                 .whileTrue(move(config::getL4Coral, "Shoulder.L4Coral.prescoreRepeat"));
         L4Coral.and(actionState).whileTrue(move(config::getL4CoralScore, "Shoulder.L4Coral.score"));
         // L4Coral.and(actionPrepState, Util.autoMode)

@@ -3,12 +3,13 @@ package frc.robot.elevator;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NTSendableBuilder;
+import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.RobotSim;
 import frc.robot.RobotStates;
-import frc.robot.elevator.Elevator.ElevatorSim;
 import frc.spectrumLib.Rio;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.mechanism.Mechanism;
@@ -49,7 +50,7 @@ public class Elevator extends Mechanism {
         @Getter @Setter private double l4Coral = fullExtend;
         @Getter @Setter private double l4Score = l4Coral - 3;
 
-        @Getter @Setter private double handOff = 10;
+        @Getter @Setter private double handOff = 15;
 
         @Getter private double triggerTolerance = 1.15;
         @Getter private double elevatorIsUpHeight = 5;
@@ -83,6 +84,10 @@ public class Elevator extends Mechanism {
         @Getter private double angle = 90;
         @Getter private double staticLength = 50;
         @Getter private double movingLength = 50;
+        @Getter public int LineWeight = 4;
+        @Getter public Color8Bit Stage1Color = new Color8Bit(255, 150, 0);
+        @Getter public Color8Bit Stage2Color = new Color8Bit(0, 200, 255);
+        @Getter private double maxSpeedMetersPerSec = 3.0;
 
         public ElevatorConfig() {
             super("ElevatorFront", 40, Rio.CANIVORE);
@@ -108,7 +113,7 @@ public class Elevator extends Mechanism {
         }
     }
 
-    private ElevatorConfig config;
+    @Getter private ElevatorConfig config;
     @Getter private ElevatorSim sim;
 
     public Elevator(ElevatorConfig config) {
@@ -242,18 +247,29 @@ public class Elevator extends Mechanism {
                 .withName("Elevator.zeroElevatorRoutine");
     }
 
+    public DoubleSupplier getPositionMeters =
+            () -> {
+                if (isAttached()) {
+                    return getPositionRotations()
+                            * config.getKElevatorGearing()
+                            * (2 * Math.PI * config.getKElevatorDrumRadiusMeters());
+                } else {
+                    return 0.0;
+                }
+            };
+
     // --------------------------------------------------------------------------------
     // Simulation
     // --------------------------------------------------------------------------------
     private void simulationInit() {
-        if (isAttached()) { // Only run simulation if it's attached
+        if (isAttached()) {
             sim = new ElevatorSim(motor.getSimState(), RobotSim.leftView);
         }
     }
 
     @Override
     public void simulationPeriodic() {
-        if (isAttached()) { // Only run if it's attached
+        if (isAttached()) {
             sim.simulationPeriodic();
         }
     }

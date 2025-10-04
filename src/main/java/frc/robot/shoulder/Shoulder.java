@@ -58,7 +58,9 @@ public class Shoulder extends Mechanism {
         @Getter @Setter private double l4Coral = 45;
         @Getter @Setter private double l4CoralScore = 60;
 
-        @Getter @Setter private double tolerance = 3.5;
+        @Getter @Setter private double handOff = 180;
+
+        @Getter @Setter private double tolerance = 10;
 
         @Getter @Setter private double offset = 90;
         @Getter @Setter private double initPosition = 0;
@@ -74,7 +76,7 @@ public class Shoulder extends Mechanism {
         @Getter @Setter private double positionKv = 0;
         @Getter @Setter private double positionKs = 0.06;
         @Getter @Setter private double positionKa = 0.001;
-        @Getter @Setter private double positionKg = 20; // 20.83333;
+        @Getter @Setter private double positionKg = 25;
         @Getter @Setter private double mmCruiseVelocity = 10;
         @Getter @Setter private double mmAcceleration = 50;
         @Getter @Setter private double mmJerk = 0;
@@ -98,8 +100,8 @@ public class Shoulder extends Mechanism {
 
         /* Sim properties */
         @Getter private double shoulderX = 0.8;
-        @Getter private double shoulderY = 0.45;
-        @Getter private double length = 0.8;
+        @Getter private double shoulderY = 0.75;
+        @Getter private double length = 0.6;
 
         @Getter @Setter private double simRatio = 1;
 
@@ -339,9 +341,10 @@ public class Shoulder extends Mechanism {
     public Command moveWithoutReverse(DoubleSupplier shrinkDegrees, DoubleSupplier exDegrees) {
         return run(() -> {
                     if (!RobotStates.shrink.getAsBoolean()) {
-                        setMMPositionFoc(getOffsetRotations(exDegrees));
+                        setMMPositionFoc(getOffsetRotations(() -> (-1 * exDegrees.getAsDouble())));
                     } else {
-                        setMMPositionFoc(getOffsetRotations(shrinkDegrees));
+                        setMMPositionFoc(
+                                getOffsetRotations(() -> (-1 * shrinkDegrees.getAsDouble())));
                     }
                 })
                 .withName("Shoulder.move");
