@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.RobotSim;
 import frc.robot.RobotStates;
+import frc.robot.elevator.Elevator.ElevatorSim;
 import frc.spectrumLib.Rio;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.mechanism.Mechanism;
@@ -41,21 +42,14 @@ public class Elevator extends Mechanism {
         @Getter @Setter private double l3Algae = 12;
         @Getter @Setter private double netAlgae = fullExtend;
 
-        @Getter @Setter private double l1Coral = 0;
-        @Getter @Setter private double l2Coral = 8.6; // 0.68;
-        @Getter @Setter private double l2Score = 6.2; // l2Coral;
-        @Getter @Setter private double l3Coral = 20; // 12.8; // 10.7;
-        @Getter @Setter private double l3Score = 17.6; // l3Coral - 1;
+        @Getter @Setter private double l2Coral = 8.6;
+        @Getter @Setter private double l2Score = 6.2;
+        @Getter @Setter private double l3Coral = 20;
+        @Getter @Setter private double l3Score = 17.6;
         @Getter @Setter private double l4Coral = fullExtend;
         @Getter @Setter private double l4Score = l4Coral - 3;
 
-        @Getter @Setter private double exl1Coral = 0.3;
-        @Getter @Setter private double exl2Coral = 6.4; // 5.53; // 8.6;
-        @Getter @Setter private double exl2Score = 4.1; // 3.44; // 6.2; // 0.3;
-        @Getter @Setter private double exl3Coral = 16.9; // 20; // 12.8;
-        @Getter @Setter private double exl3Score = 14.6; // 17.6; // 11.8;
-        @Getter @Setter private double exl4Coral = fullExtend;
-        @Getter @Setter private double exl4Score = exl4Coral - 3;
+        @Getter @Setter private double handOff = 10;
 
         @Getter private double triggerTolerance = 1.15;
         @Getter private double elevatorIsUpHeight = 5;
@@ -212,15 +206,8 @@ public class Elevator extends Mechanism {
         };
     }
 
-    public Command move(DoubleSupplier shrinkRotations, DoubleSupplier exRotations) {
-        return run(
-                () -> {
-                    if (!RobotStates.shrink.getAsBoolean()) {
-                        setMMPositionFoc(exRotations);
-                    } else {
-                        setMMPositionFoc(shrinkRotations);
-                    }
-                });
+    public Command move(DoubleSupplier rotations) {
+        return run(() -> setMMPositionFoc(rotations));
     }
 
     public Command slowMove(DoubleSupplier shrinkRotations, DoubleSupplier exRotations) {

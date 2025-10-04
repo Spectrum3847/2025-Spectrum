@@ -95,7 +95,6 @@ public class RobotStates {
 
     public static final Trigger staged = stagedAlgae.or(stagedCoral);
 
-    public static final Trigger atL1Coral = ElevatorStates.isL1Coral;
     public static final Trigger atL2Coral = ElevatorStates.isL2Coral.and(ShoulderStates.isL2Coral);
     public static final Trigger atL3Coral = ElevatorStates.isL3Coral.and(ShoulderStates.isL3Coral);
     public static final Trigger atL4Coral =
@@ -104,7 +103,7 @@ public class RobotStates {
     public static final Trigger atL2Algae = ElevatorStates.isL2Algae.and(ShoulderStates.isL2Algae);
     public static final Trigger atL3Algae = ElevatorStates.isL3Algae.and(ShoulderStates.isL3Algae);
 
-    public static final Trigger completeStagedCoral = atL1Coral.or(atL2Coral, atL3Coral, atL4Coral);
+    public static final Trigger completeStagedCoral = atL2Coral.or(atL3Coral, atL4Coral);
     public static final Trigger completeStagedAlgae = atL2Algae.or(atL3Algae);
 
     public static final Trigger toggleReverse = pilot.toggleReverse.or(operator.toggleReverse);
@@ -231,7 +230,6 @@ public class RobotStates {
         operator.rightScore.and(operator.staged).onTrue(rightScore.setTrue());
 
         // Set coralScoring when we try to score, turn off when homed
-        actionPrepState.and(L1Coral, atL1Coral).onTrue(coralScoring.setTrue());
         actionPrepState.and(L2Coral, atL2Coral).onTrue(coralScoring.setTrue());
         actionPrepState.and(L3Coral, atL3Coral).onTrue(coralScoring.setTrue());
         actionPrepState.and(L4Coral, atL4Coral).onTrue(coralScoring.setTrue());

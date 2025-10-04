@@ -79,8 +79,8 @@ public class Auton {
         pathChooser.addOption(
                 "Right | 3 L4 Coral", worlds3coral(true).withName("Worlds 3 Coral - Right"));
 
-        pathChooser.addOption("Left | 3 Ground Coral", groundCoral3(false));
-        pathChooser.addOption("Right | 3 Ground Coral", groundCoral3(true));
+        pathChooser.addOption("Left | 3 Ground Coral", groundCoral3left());
+        pathChooser.addOption("Right | 3 Ground Coral", groundCoral3right());
 
         pathChooser.addOption("Center | 3 Net Algae", worlds3algae(false));
 
@@ -123,17 +123,34 @@ public class Auton {
                 RobotStates.autonClearStates());
     }
 
-    public Command groundCoral3(boolean mirrored) {
+    public Command groundCoral3left() {
         return Commands.sequence(
-                        SpectrumAuton("GC3-Start", mirrored),
+                        SpectrumAuton("GC3L-Start", false),
                         autoScore(),
-                        SpectrumAuton("GC3-Leg1", mirrored),
+                        SpectrumAuton("GC3L-Leg1", false),
                         autoScore(),
-                        SpectrumAuton("GC3-Leg2", mirrored),
+                        SpectrumAuton("GC3L-Leg2", false),
+                        autoScore(),
+                        SpectrumAuton("GC3L-Leg3", false),
                         autoScore(),
                         RobotStates.homeAll.toggleToTrue(),
                         RobotStates.autonClearStates())
-                .withName("GC3-Full");
+                .withName("GC3L-Full");
+    }
+
+    public Command groundCoral3right() {
+        return Commands.sequence(
+                        SpectrumAuton("GC3R-Start", false),
+                        autoScore(),
+                        SpectrumAuton("GC3R-Leg1", false),
+                        autoScore(),
+                        SpectrumAuton("GC3R-Leg2", false),
+                        autoScore(),
+                        SpectrumAuton("GC3R-Leg3", false),
+                        autoScore(),
+                        RobotStates.homeAll.toggleToTrue(),
+                        RobotStates.autonClearStates())
+                .withName("GC3R-Full");
     }
 
     public Command worlds3algae(boolean mirrored) {

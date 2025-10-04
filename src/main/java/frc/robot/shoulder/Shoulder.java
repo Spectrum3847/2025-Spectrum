@@ -339,9 +339,9 @@ public class Shoulder extends Mechanism {
     public Command moveWithoutReverse(DoubleSupplier shrinkDegrees, DoubleSupplier exDegrees) {
         return run(() -> {
                     if (!RobotStates.shrink.getAsBoolean()) {
-                        setMMPositionFoc(() -> degreesToRotations(exDegrees));
+                        setMMPositionFoc(getOffsetRotations(exDegrees));
                     } else {
-                        setMMPositionFoc(() -> degreesToRotations(shrinkDegrees));
+                        setMMPositionFoc(getOffsetRotations(shrinkDegrees));
                     }
                 })
                 .withName("Shoulder.move");

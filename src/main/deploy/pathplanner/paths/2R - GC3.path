@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.37,
-        "y": 5.22
+        "x": 5.34,
+        "y": 2.87
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.37,
-        "y": 6.22
+        "x": 5.34,
+        "y": 1.87
       },
       "isLocked": false,
       "linkedName": null
@@ -17,11 +17,11 @@
     {
       "anchor": {
         "x": 1.6,
-        "y": 5.85
+        "y": 2.18
       },
       "prevControl": {
         "x": 3.6,
-        "y": 5.85
+        "y": 2.18
       },
       "nextControl": null,
       "isLocked": false,
@@ -81,7 +81,7 @@
   "folder": "Ground Coral 3",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -119.99999999999999
+    "rotation": 119.99999999999999
   },
   "useDefaultConstraints": true
 }

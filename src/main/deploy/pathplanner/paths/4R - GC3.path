@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.37,
-        "y": 5.22
+        "x": 3.04,
+        "y": 3.86
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.37,
-        "y": 6.22
+        "x": 2.54,
+        "y": 3.86
       },
       "isLocked": false,
       "linkedName": null
@@ -17,11 +17,11 @@
     {
       "anchor": {
         "x": 1.6,
-        "y": 5.85
+        "y": 4.02
       },
       "prevControl": {
-        "x": 3.6,
-        "y": 5.85
+        "x": 2.6000000000000005,
+        "y": 4.02
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,14 +32,14 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.9119028974158183,
+      "minWaypointRelativePos": 0.6785434612372736,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
-        "maxVelocity": 1.0,
-        "maxAcceleration": 2.5,
+        "maxVelocity": 4.0,
+        "maxAcceleration": 2.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
-        "nominalVoltage": 10.0,
+        "nominalVoltage": 12.0,
         "unlimited": false
       }
     }
@@ -54,23 +54,23 @@
     },
     {
       "name": "home",
-      "waypointRelativePos": 0.045810493343774655,
+      "waypointRelativePos": 0.05,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
       "name": "groundIntake",
-      "waypointRelativePos": 0.6785434612372708,
+      "waypointRelativePos": 0.40446358653093173,
       "endWaypointRelativePos": null,
       "command": null
     }
   ],
   "globalConstraints": {
     "maxVelocity": 4.0,
-    "maxAcceleration": 6.0,
+    "maxAcceleration": 1.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
-    "nominalVoltage": 10.0,
+    "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
@@ -81,7 +81,7 @@
   "folder": "Ground Coral 3",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -119.99999999999999
+    "rotation": 180.0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

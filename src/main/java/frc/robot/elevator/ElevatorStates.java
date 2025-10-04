@@ -22,14 +22,15 @@ public class ElevatorStates {
     public static final Trigger isHome =
             elevator.atRotations(config::getHome, config::getTriggerTolerance);
 
-    public static final Trigger isL1Coral =
-            elevator.atRotations(config::getExl1Coral, config::getTriggerTolerance);
+    public static final Trigger isHandOff =
+            elevator.atRotations(config::getHandOff, config::getTriggerTolerance);
+
     public static final Trigger isL2Coral =
-            elevator.atRotations(config::getExl2Coral, config::getTriggerTolerance);
+            elevator.atRotations(config::getL2Coral, config::getTriggerTolerance);
     public static final Trigger isL3Coral =
-            elevator.atRotations(config::getExl3Coral, config::getTriggerTolerance);
+            elevator.atRotations(config::getL3Coral, config::getTriggerTolerance);
     public static final Trigger isL4Coral =
-            elevator.atRotations(config::getExl4Coral, config::getTriggerTolerance);
+            elevator.atRotations(config::getL4Coral, config::getTriggerTolerance);
 
     public static final Trigger isL2Algae =
             elevator.atRotations(config::getL2Algae, config::getTriggerTolerance);
@@ -62,17 +63,6 @@ public class ElevatorStates {
         groundAlgae.whileTrue(move(config::getClawGroundAlgaeIntake, "Ground Algae"));
         groundCoral.whileTrue(home());
 
-        Robot.getPilot()
-                .photonRemoveL2Algae
-                .whileTrue(move(config::getL2Algae, "Elevator.L2Algae"));
-        Robot.getPilot()
-                .photonRemoveL3Algae
-                .whileTrue(move(config::getL3Algae, "Elevator.L3Algae"));
-        Robot.getPilot()
-                .photonRemoveL2Algae
-                .or(Robot.getPilot().photonRemoveL3Algae)
-                .onFalse(home());
-
         (stagedCoral.or(stagedAlgae))
                 .and(
                         actionState.not(),
@@ -80,20 +70,14 @@ public class ElevatorStates {
                         (Util.autoMode.not()))
                 .whileTrue(move(config::getHome, "Elevator.Stage"));
 
-        L1Coral.and(actionPrepState)
-                .whileTrue(move(config::getL1Coral, config::getExl1Coral, "Elevator.L1Coral"));
-        L2Coral.and(actionPrepState)
-                .whileTrue(move(config::getL2Coral, config::getExl2Coral, "Elevator.L2Coral"));
-        L2Coral.and(actionState)
-                .whileTrue(move(config::getL2Score, config::getExl2Score, "Elevator.L2CoralScore"));
-        L3Coral.and(actionPrepState)
-                .whileTrue(move(config::getL3Coral, config::getExl3Coral, "Elevator.L3Coral"));
-        L3Coral.and(actionState)
-                .whileTrue(move(config::getL3Score, config::getExl3Score, "Elevator.L3CoralScore"));
-        L4Coral.and(actionPrepState)
-                .whileTrue(move(config::getL4Coral, config::getExl4Coral, "Elevator.L4Coral"));
-        L4Coral.and(actionState)
-                .whileTrue(move(config::getL4Score, config::getExl4Score, "Elevator.L4CoralScore"));
+        L2Coral.and(actionPrepState).whileTrue(move(config::getL2Coral, "Elevator.L2Coral"));
+        L2Coral.and(actionState).whileTrue(move(config::getL2Score, "Elevator.L2CoralScore"));
+        L3Coral.and(actionPrepState).whileTrue(move(config::getL3Coral, "Elevator.L3Coral"));
+        L3Coral.and(actionState).whileTrue(move(config::getL3Score, "Elevator.L3CoralScore"));
+        L4Coral.and(actionPrepState).whileTrue(move(config::getL4Coral, "Elevator.L4Coral"));
+        L4Coral.and(actionState).whileTrue(move(config::getL4Score, "Elevator.L4CoralScore"));
+
+        handOff.whileTrue(move(config::getHandOff, "Elevator.HandOff"));
 
         // L4Coral.and(actionPrepState, Util.autoMode)
         //         .whileTrue(
@@ -127,11 +111,7 @@ public class ElevatorStates {
     }
 
     public static Command move(DoubleSupplier rotations, String name) {
-        return elevator.move(rotations, rotations).withName(name);
-    }
-
-    public static Command move(DoubleSupplier rotations, DoubleSupplier exRotaitons, String name) {
-        return elevator.move(rotations, exRotaitons).withName(name);
+        return elevator.move(rotations).withName(name);
     }
 
     public static Command slowMove(DoubleSupplier rotations, String name) {

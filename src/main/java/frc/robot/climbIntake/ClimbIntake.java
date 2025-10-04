@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.spectrumLib.Rio;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.mechanism.Mechanism;
-import frc.spectrumLib.mechanism.Mechanism.Config;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.Setter;
