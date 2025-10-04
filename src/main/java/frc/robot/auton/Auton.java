@@ -84,8 +84,7 @@ public class Auton {
 
         pathChooser.addOption("Center | 3 Net Algae", worlds3algae(false));
 
-        pathChooser.addOption("Center-Left | Offseason Back Algae", offseasonBackAlgae(false));
-        pathChooser.addOption("Center-Right | Offseason Back Algae", offseasonBackAlgae(true));
+        pathChooser.addOption("Center | Offseason Back Algae", offseasonBackAlgae(false));
 
         pathChooser.addOption("Drive Forward", SpectrumAuton("Drive Forward", false));
 
