@@ -11,12 +11,6 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 2.5
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Offseason Back Algae 3"
@@ -26,18 +20,6 @@
           "type": "path",
           "data": {
             "pathName": "Offseason Back Algae 4"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 2.5
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Offseason Back Algae 5"
           }
         }
       ]
