@@ -64,7 +64,7 @@ public class ClimbPivot extends Mechanism {
         @Getter private double length = 0.4;
 
         public ClimbPivotConfig() {
-            super("ClimbTop", 55, Rio.CANIVORE);
+            super("Climb", 55, Rio.CANIVORE);
             configPIDGains(0, positionKp, 0, positionKd);
             configFeedForwardGains(positionKs, positionKv, positionKa, positionKg);
             configMotionMagic(mmCruiseVelocity, mmAcceleration, mmJerk);
