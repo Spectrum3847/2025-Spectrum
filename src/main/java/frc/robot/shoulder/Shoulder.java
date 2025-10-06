@@ -41,14 +41,14 @@ public class Shoulder extends Mechanism {
 
         @Getter @Setter private double stationIntake = -9.2;
         @Getter @Setter private double stationExtendedIntake = -23.6;
-        @Getter @Setter private double groundAlgaeIntake = 0;
+        @Getter @Setter private double groundAlgaeIntake = 120;
         @Getter @Setter private double groundCoralIntake = 4;
         @Getter @Setter private double lollipopCoral = 115; // 20;
 
         @Getter @Setter private double processorAlgae = -143.877;
         @Getter @Setter private double l2Algae = 90; // -32;
         @Getter @Setter private double l3Algae = 90; // -32;
-        @Getter @Setter private double netAlgae = 160;
+        @Getter @Setter private double netAlgae = 0;
         @Getter @Setter private double autonShoulderNetChecker = 60;
 
         @Getter @Setter private double l2Coral = 90;

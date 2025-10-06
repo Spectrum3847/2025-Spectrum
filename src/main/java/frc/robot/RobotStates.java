@@ -170,7 +170,7 @@ public class RobotStates {
 
         operator.algaeStage.or(operator.coralStage).onTrue(actionState.setFalse());
 
-        (L2Algae.or(L3Algae, processorAlgae)).and(actionState).onTrue(actionState.setFalse());
+        // (L2Algae.or(L3Algae, processorAlgae)).and(actionState).onTrue(actionState.setFalse());
 
         // *********************************
         // Intaking States
