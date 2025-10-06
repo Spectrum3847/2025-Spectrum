@@ -26,16 +26,14 @@ public class ClimbPivot extends Mechanism {
 
     public static class ClimbPivotConfig extends Config {
 
-        @Getter private final double maxRotations = 0.335; // 0.315; // 0.36;
-        @Getter private final double minRotations = -0.06;
+        @Getter private final double maxRotations = 0.375; // 0.315; // 0.36;
+        @Getter private final double minRotations = 0.250;
+
         /* Climb positions in degrees || 0 is horizontal */
         @Getter private final double home = 90;
-        @Getter private final double intake = 0;
-        @Getter private final double algaeFloorIntake = 30;
-        @Getter private final double prepClimber = 0;
-        @Getter private final double finishClimb = 100;
-        @Getter private final double coralFloorIntake = -10;
-        @Getter private final double processorScore = 60;
+
+        @Getter private final double prepClimber = 90;
+
         @Getter private final double latchOpen = 1;
         @Getter private final double latchClosed = 0;
 
@@ -82,7 +80,6 @@ public class ClimbPivot extends Mechanism {
             configCounterClockwise_Positive();
             configGravityType(true);
             setSimRatio(simRatio);
-            setFollowerConfigs(new FollowerConfig("ClimbBottom", 56, Rio.CANIVORE, false));
         }
 
         public ClimbPivotConfig modifyMotorConfig(TalonFX motor) {
@@ -143,7 +140,6 @@ public class ClimbPivot extends Mechanism {
     private void setInitialPosition() {
         if (config.isAttached()) {
             motor.setPosition(0.25);
-            followerMotors[0].setPosition(0.25);
         }
     }
 
@@ -260,13 +256,13 @@ public class ClimbPivot extends Mechanism {
                                     config.climbY,
                                     config.simRatio,
                                     config.length,
-                                    -30,
-                                    180,
+                                    -360,
+                                    360,
                                     90)
                             .setColor(new Color8Bit(Color.kBrown)),
                     mech,
                     climbMotorSim,
-                    config.getName());
+                    "2" + config.getName());
         }
     }
 }

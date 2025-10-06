@@ -118,9 +118,6 @@ public class ShoulderStates {
                 .whileTrue(move(config::getNetAlgae, "Shoulder.netAlgae"));
 
         Robot.getPilot().reZero_start.onTrue(shoulder.resetToIntialPos());
-        Robot.getOperator()
-                .climbPrep_start
-                .whileTrue(move(config::getClimbPrep, "Shoulder.startClimb"));
     }
 
     public static Command runShoulder(DoubleSupplier speed) {

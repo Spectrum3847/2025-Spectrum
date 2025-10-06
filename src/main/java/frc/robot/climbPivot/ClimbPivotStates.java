@@ -25,6 +25,7 @@ public class ClimbPivotStates {
 
         Robot.getOperator().latchOpen_startUp.onTrue(openLatch());
         Robot.getOperator().latchCloser_startDown.onTrue(closeLatch());
+
         Robot.getOperator()
                 .climbPrep_start
                 .and(Robot.getOperator().noTriggers.not())

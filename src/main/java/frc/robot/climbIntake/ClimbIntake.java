@@ -1,10 +1,16 @@
 package frc.robot.climbIntake;
 
+import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.networktables.NTSendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Robot;
+import frc.robot.RobotSim;
 import frc.spectrumLib.Rio;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.mechanism.Mechanism;
+import frc.spectrumLib.sim.RollerConfig;
+import frc.spectrumLib.sim.RollerSim;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,8 +31,8 @@ public class ClimbIntake extends Mechanism {
         @Getter private double velocityKs = 14;
 
         /* Sim Configs */
-        @Getter private double intakeX = 0.8; // relative to elbow at 0 degrees
-        @Getter private double intakeY = 1.3; // relative to elbow at 0 degrees
+        @Getter private double intakeX = 0.95;
+        @Getter private double intakeY = 0.95;
         @Getter private double wheelDiameter = 5.0;
 
         public ClimbIntakeConfig() {
@@ -45,13 +51,13 @@ public class ClimbIntake extends Mechanism {
     }
 
     private ClimbIntakeConfig config;
-    // private CoralIntakeSim sim;
+    private ClimbIntakeSim sim;
 
     public ClimbIntake(ClimbIntakeConfig config) {
         super(config);
         this.config = config;
 
-        // simulationInit();
+        simulationInit();
         telemetryInit();
         Telemetry.print(getName() + " Subsystem Initialized");
     }
@@ -114,32 +120,28 @@ public class ClimbIntake extends Mechanism {
     // --------------------------------------------------------------------------------
     // Simulation
     // --------------------------------------------------------------------------------
-    // public void simulationInit() {
-    //     if (isAttached()) {
-    //         // Create a new RollerSim with the left view, the motor's sim state, and a 6 in
-    // diameter
-    //         sim = new CoralIntakeSim(RobotSim.leftView, motor.getSimState());
-    //     }
-    // }
+    public void simulationInit() {
+        if (isAttached()) {
+            sim = new ClimbIntakeSim(RobotSim.frontView, motor.getSimState());
+        }
+    }
 
-    // // Must be called to enable the simulation
-    // // if roller position changes configure x and y to set position.
-    // @Override
-    // public void simulationPeriodic() {
-    //     if (isAttached()) {
-    //         sim.simulationPeriodic();
-    //     }
-    // }
+    @Override
+    public void simulationPeriodic() {
+        if (isAttached()) {
+            sim.simulationPeriodic();
+        }
+    }
 
-    // class CoralIntakeSim extends RollerSim {
-    //     public CoralIntakeSim(Mechanism2d mech, TalonFXSimState coralRollerMotorSim) {
-    //         super(
-    //                 new RollerConfig(config.wheelDiameter)
-    //                         .setPosition(config.intakeX, config.intakeY)
-    //                         .setMount(Robot.getElbow().getSim()),
-    //                 mech,
-    //                 coralRollerMotorSim,
-    //                 config.getName());
-    //     }
-    // }
+    class ClimbIntakeSim extends RollerSim {
+        public ClimbIntakeSim(Mechanism2d mech, TalonFXSimState climbRollerMotorSim) {
+            super(
+                    new RollerConfig(config.wheelDiameter)
+                            .setPosition(config.intakeX, config.intakeY)
+                            .setMount(Robot.getClimbPivot().getSim()),
+                    mech,
+                    climbRollerMotorSim,
+                    "1" + config.getName());
+        }
+    }
 }
