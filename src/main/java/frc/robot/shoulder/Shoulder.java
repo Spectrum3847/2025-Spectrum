@@ -82,7 +82,7 @@ public class Shoulder extends Mechanism {
         @Getter @Setter private double slowMmAcceleration = 2;
         @Getter @Setter private double slowMmJerk = 50;
 
-        @Getter @Setter private double sensorToMechanismRatio = 61.71428571; // 102.857;
+        @Getter @Setter private double sensorToMechanismRatio = 101.25;
         @Getter @Setter private double rotorToSensorRatio = 1;
 
         /* Cancoder config settings */
@@ -157,7 +157,7 @@ public class Shoulder extends Mechanism {
                                 config.isCANcoderAttached());
                 canCoder =
                         new SpectrumCANcoder(
-                                42,
+                                46,
                                 canCoderConfig,
                                 motor,
                                 config,

@@ -50,7 +50,7 @@ public class IntakePivot extends Mechanism {
         @Getter @Setter private double slowMmAcceleration = 2;
         @Getter @Setter private double slowMmJerk = 50;
 
-        @Getter @Setter private double sensorToMechanismRatio = 61.71428571; // 102.857;
+        @Getter @Setter private double sensorToMechanismRatio = 99.5555555555; // 102.857;
         @Getter @Setter private double rotorToSensorRatio = 1;
 
         /* Sim properties */
