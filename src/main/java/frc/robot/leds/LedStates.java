@@ -46,6 +46,7 @@ public class LedStates {
 
         // Climb Led Commands
         // climbReadyLED(ClimbStates.isLatched.and(RobotStates.climbPrep, Util.teleop), 6);
+        climbLED(RobotStates.climbPrep.and(Util.teleop), 6);
 
         // Limelight Led Commands
         seesTagDefaultLED(VisionStates.seeingTag.and(Util.teleop), 5);
@@ -156,6 +157,11 @@ public class LedStates {
     static void climbReadyLED(Trigger trigger, int priority) {
         ledCommand("right.ClimbReady", right, right.scrollingRainbow(), priority, trigger);
         ledCommand("left.ClimbReady", left, left.scrollingRainbow(), priority, trigger);
+    }
+
+    static void climbLED(Trigger trigger, int priority) {
+        ledCommand("right.Climb", right, right.scrollingRainbow(), priority, trigger);
+        ledCommand("left.Climb", left, left.scrollingRainbow(), priority, trigger);
     }
 
     static void coralModeLED(Trigger trigger, int priority) {
