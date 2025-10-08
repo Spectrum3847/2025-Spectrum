@@ -68,8 +68,8 @@ public class Shoulder extends Mechanism {
         @Getter private final double zeroSpeed = -0.1;
         @Getter private final double holdMaxSpeedRPM = 18.0;
 
-        @Getter private final double currentLimit = 60;
-        @Getter private final double torqueCurrentLimit = 80;
+        @Getter private final double currentLimit = 15; //60;
+        @Getter private final double torqueCurrentLimit = 20; //80;
         @Getter private final double positionKp = 250;
         @Getter private final double positionKd = 60;
         @Getter private final double positionKv = 0;

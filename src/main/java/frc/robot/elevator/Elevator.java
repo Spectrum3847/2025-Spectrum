@@ -72,8 +72,8 @@ public class Elevator extends Mechanism {
         @Getter private final double slowMmAcceleration = 55;
         @Getter private final double slowMmJerk = 550;
 
-        @Getter private double currentLimit = 60;
-        @Getter private double torqueCurrentLimit = 160;
+        @Getter private double currentLimit = 15; //60;
+        @Getter private double torqueCurrentLimit = 40; //160;
 
         /* Sim properties */
         @Getter private double kElevatorGearing = 1.7;
@@ -82,7 +82,7 @@ public class Elevator extends Mechanism {
         @Getter private double initialX = 0.8;
         @Getter private double initialY = 0.35;
         @Getter private double angle = 90;
-        @Getter private double staticLength = 50;
+        @Getter private double staticLength = 75;
         @Getter private double movingLength = 50;
         @Getter public int LineWeight = 4;
         @Getter public Color8Bit Stage1Color = new Color8Bit(255, 150, 0);
@@ -285,7 +285,7 @@ public class Elevator extends Mechanism {
                             .setAngle(config.angle)
                             .setMovingLength(config.getMovingLength())
                             .setStaticLength(config.getStaticLength())
-                            .setMaxHeight(30.5 + 7),
+                            .setMaxHeight(100),
                     mech,
                     elevatorMotorSim,
                     "1" + config.getName()); // added 1 to the name to create it first

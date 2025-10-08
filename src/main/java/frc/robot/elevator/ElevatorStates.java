@@ -46,8 +46,8 @@ public class ElevatorStates {
     public static void setStates() {
         coastMode.onTrue(log(coastMode()));
         coastMode.onFalse(log(ensureBrakeMode()));
-        homeAll.whileTrue(home());
-        homeAll.and(Util.autoMode).whileTrue(slowHome());
+        homeAll.and(ShoulderStates.isHome).whileTrue(home());
+        homeAll.and(Util.autoMode, ShoulderStates.isHome).whileTrue(slowHome());
         Robot.getOperator()
                 .antiSecretClimb_LTRSup
                 .whileTrue(move(config::getFullExtend, "Elevator.fullExtend"));
