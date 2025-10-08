@@ -23,9 +23,9 @@ public class IntakePivot extends Mechanism {
         // TODO: tune these values
 
         @Getter @Setter private double home = 0;
-        @Getter @Setter private double groundCoralIntake = 120;
-        @Getter @Setter private double handOff = -45;
-        @Getter @Setter private double L1 = 60;
+        @Getter @Setter private double groundCoralIntake = 70;
+        @Getter @Setter private double handOff = -30;
+        @Getter @Setter private double L1 = 24;
 
         @Getter @Setter private double tolerance = 3.5;
 
@@ -33,21 +33,20 @@ public class IntakePivot extends Mechanism {
         @Getter @Setter private double initPosition = 0;
 
         /* IntakePivot config settings */
-        @Getter @Setter private double zeroSpeed = -0.1;
-        @Getter @Setter private double holdMaxSpeedRPM = 18;
+        @Getter private final double zeroSpeed = -0.1;
+        @Getter private final double holdMaxSpeedRPM = 18;
 
-        @Getter @Setter private double currentLimit = 60;
-        @Getter @Setter private double torqueCurrentLimit = 80;
-        @Getter @Setter private double positionKp = 1500;
-        @Getter @Setter private double positionKd = 170;
-        @Getter @Setter private double positionKv = 0;
-        @Getter @Setter private double positionKs = 0.06;
-        @Getter @Setter private double positionKa = 0.001;
-        @Getter @Setter private double positionKg = 20.83333; // 12.5 * 1.666666
-        @Getter @Setter private double mmCruiseVelocity = 10;
-        @Getter @Setter private double mmAcceleration = 50;
-        @Getter @Setter private double mmJerk = 0;
-        @Getter @Setter private double slowMmAcceleration = 2;
+        @Getter private final double currentLimit = 60; // 60
+        @Getter private final double torqueCurrentLimit = 180; // 180
+        @Getter private final double positionKp = 190;
+        @Getter private final double positionKd = 40;
+        @Getter private final double positionKv = 0;
+        @Getter private final double positionKs = 0.3;
+        @Getter private final double positionKa = 0.001;
+        @Getter private final double positionKg = 2.9;
+        @Getter private final double mmCruiseVelocity = 1;
+        @Getter private final double mmAcceleration = 10;
+        @Getter private final double mmJerk = 0;
         @Getter @Setter private double slowMmJerk = 50;
 
         @Getter @Setter private double sensorToMechanismRatio = 99.5555555555; // 102.857;

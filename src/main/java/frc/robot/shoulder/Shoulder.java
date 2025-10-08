@@ -57,7 +57,7 @@ public class Shoulder extends Mechanism {
         @Getter @Setter private double l4Coral = 45;
         @Getter @Setter private double l4CoralScore = 60;
 
-        @Getter @Setter private double handOff = 180;
+        @Getter @Setter private double handOff = -177;
 
         @Getter @Setter private double tolerance = 10;
 
@@ -65,32 +65,32 @@ public class Shoulder extends Mechanism {
         @Getter @Setter private double initPosition = 0;
 
         /* Shoulder config settings */
-        @Getter @Setter private double zeroSpeed = -0.1;
-        @Getter @Setter private double holdMaxSpeedRPM = 18;
+        @Getter private final double zeroSpeed = -0.1;
+        @Getter private final double holdMaxSpeedRPM = 18.0;
 
-        @Getter @Setter private double currentLimit = 60;
-        @Getter @Setter private double torqueCurrentLimit = 80;
-        @Getter @Setter private double positionKp = 1500;
-        @Getter @Setter private double positionKd = 170;
-        @Getter @Setter private double positionKv = 0;
-        @Getter @Setter private double positionKs = 0.06;
-        @Getter @Setter private double positionKa = 0.001;
-        @Getter @Setter private double positionKg = 25;
-        @Getter @Setter private double mmCruiseVelocity = 10;
-        @Getter @Setter private double mmAcceleration = 50;
-        @Getter @Setter private double mmJerk = 0;
-        @Getter @Setter private double slowMmAcceleration = 2;
-        @Getter @Setter private double slowMmJerk = 50;
+        @Getter private final double currentLimit = 60;
+        @Getter private final double torqueCurrentLimit = 80;
+        @Getter private final double positionKp = 250;
+        @Getter private final double positionKd = 60;
+        @Getter private final double positionKv = 0;
+        @Getter private final double positionKs = 0;
+        @Getter private final double positionKa = 0.002;
+        @Getter private final double positionKg = 11; // 7 * 1.6666
+        @Getter private final double mmCruiseVelocity = 1;
+        @Getter private final double mmAcceleration = 20;
+        @Getter private final double mmJerk = 100;
+        @Getter private final double slowMmAcceleration = 5;
+        @Getter private final double slowMmJerk = 60;
+        @Getter private final double groundMmAcceleration = 3;
+        @Getter private final double groundMmJerk = 60;
 
         @Getter @Setter private double sensorToMechanismRatio = 101.25;
         @Getter @Setter private double rotorToSensorRatio = 1;
 
         /* Cancoder config settings */
-        @Getter @Setter
-        private double CANcoderRotorToSensorRatio = 101.25/5;
+        @Getter @Setter private double CANcoderRotorToSensorRatio = 101.25 / 5;
 
-        @Getter @Setter
-        private double CANcoderSensorToMechanismRatio = 5;
+        @Getter @Setter private double CANcoderSensorToMechanismRatio = 5;
 
         @Getter @Setter private double CANcoderOffset = 0;
         @Getter @Setter private boolean CANcoderAttached = false;

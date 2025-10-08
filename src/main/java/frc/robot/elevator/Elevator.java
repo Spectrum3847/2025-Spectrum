@@ -24,9 +24,9 @@ public class Elevator extends Mechanism {
         @Getter @Setter private boolean isPhoton = false;
 
         /* Elevator constants in rotations */
-        @Getter @Setter private double maxRotations = 21.1;
+        @Getter @Setter private double maxRotations = 34;
 
-        @Getter @Setter private double minRotations = 0.3;
+        @Getter @Setter private double minRotations = 0.1;
 
         /* Elevator positions in rotations */
         @Getter @Setter private double fullExtend = maxRotations * .999;
@@ -50,7 +50,7 @@ public class Elevator extends Mechanism {
         @Getter @Setter private double l4Coral = fullExtend;
         @Getter @Setter private double l4Score = l4Coral - 3;
 
-        @Getter @Setter private double handOff = 15;
+        @Getter @Setter private double handOff = 26.9;
 
         @Getter private double triggerTolerance = 1.15;
         @Getter private double elevatorIsUpHeight = 5;
@@ -60,12 +60,12 @@ public class Elevator extends Mechanism {
 
         /* Elevator config settings */
         @Getter private final double zeroSpeed = -0.2;
-        @Getter private final double positionKp = 100;
-        @Getter private final double positionKd = 8; // 6
-        @Getter private final double positionKa = 0.2;
+        @Getter private final double positionKp = 70;
+        @Getter private final double positionKd = 3.25; // 6
+        @Getter private final double positionKa = 0;
         @Getter private final double positionKv = 0;
-        @Getter private final double positionKs = 5;
-        @Getter private final double positionKg = 25.3;
+        @Getter private final double positionKs = 0;
+        @Getter private final double positionKg = 11;
         @Getter private final double mmCruiseVelocity = 70;
         @Getter private final double mmAcceleration = 400;
         @Getter private final double mmJerk = 4500;
