@@ -111,14 +111,14 @@ public class Shoulder extends Mechanism {
             configSupplyCurrentLimit(currentLimit, true);
             configForwardTorqueCurrentLimit(torqueCurrentLimit);
             configReverseTorqueCurrentLimit(-1 * torqueCurrentLimit);
-            configMinMaxRotations(-1, 0.5);
+            configMinMaxRotations(-1, 1);
             configReverseSoftLimit(-1, true);
-            configForwardSoftLimit(0.5, true);
+            configForwardSoftLimit(1, true);
             configNeutralBrakeMode(true);
             if (Robot.isSimulation()) {
                 configCounterClockwise_Positive();
             } else {
-                configClockwise_Positive();
+                configCounterClockwise_Positive();
             }
             configGravityType(true);
             setSimRatio(sensorToMechanismRatio);

@@ -18,8 +18,8 @@ public class OM2025 extends Config {
         groundIntake.setAttached(true);
         climbPivot.setAttached(true);
 
-        // shoulder.setCANcoderAttached(true);
-        // shoulder.setCANcoderOffset(
-        //         -0.237305 - 0.208333333); // add -0.208333333 to the inverse of the position
+        shoulder.setCANcoderAttached(false);
+        shoulder.setCANcoderOffset(
+                1.104248 - 0.249756); // add -0.249756 to the inverse of the position
     }
 }
