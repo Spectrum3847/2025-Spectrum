@@ -327,8 +327,8 @@ public class FieldHelpers {
      * Converts a target angle into a reverse rotation if the back is closer; otherwise, returns the
      * original target angle for front heading.
      *
-     * <p>variable robotAngle The current angle of the robot in radians. variable reefRotation The
-     * rotation adjustment factor in radians. targetAngle The desired target angle in radians.
+     * <p>The method considers: robotAngle - The current angle of the robot in radians. reefRotation - The
+     * rotation adjustment factor in radians. targetAngle - The desired target angle in radians.
      *
      * @return true/false if robot heading is reversed to reef face
      */

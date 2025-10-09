@@ -335,7 +335,7 @@ public class Limelight {
     }
 
     /**
-     * @param pipelineIndex use pipeline indexes in {@link VisionConfig}
+     * @param pipelineIndex use pipeline indexes in {@link frc.robot.vision.Vision.VisionConfig}
      */
     public void setLimelightPipeline(int pipelineIndex) {
         if (!isAttached()) {
