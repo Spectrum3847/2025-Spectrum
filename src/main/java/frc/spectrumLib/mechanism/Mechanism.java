@@ -39,7 +39,7 @@ import lombok.*;
 /**
  * Control Modes Docs:
  * https://pro.docs.ctr-electronics.com/en/latest/docs/migration/migration-guide/control-requests-guide.html
- * Closed-loop & Motion Magic Docs:
+ * Closed-loop and Motion Magic Docs:
  * https://pro.docs.ctr-electronics.com/en/latest/docs/migration/migration-guide/closed-loop-guide.html
  */
 public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
@@ -510,7 +510,7 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
     /**
      * Closed-loop Velocity with torque control (requires Pro)
      *
-     * @param velocity rotations per second
+     * @param velocityRPS rotations per second
      */
     protected void setVelocityTCFOCrpm(DoubleSupplier velocityRPS) {
         if (isAttached()) {
