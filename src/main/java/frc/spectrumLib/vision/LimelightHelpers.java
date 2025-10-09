@@ -1283,8 +1283,8 @@ public class LimelightHelpers {
     /**
      * Gets the Pose2d for easy use with Odometry vision pose estimator (addVisionMeasurement)
      *
-     * @param limelightName
-     * @return
+     * @param limelightName Name of the Limelight camera
+     * @return Robot Pose2d in WPI Blue alliance coordinates
      */
     public static Pose2d getBotPose2d_wpiBlue(String limelightName) {
 
@@ -1296,8 +1296,8 @@ public class LimelightHelpers {
      * Gets the MegaTag1 Pose2d and timestamp for use with WPILib pose estimator
      * (addVisionMeasurement) in the WPILib Blue alliance coordinate system.
      *
-     * @param limelightName
-     * @return
+     * @param limelightName Name of the Limelight camera
+     * @return PoseEstimate containing pose and timestamp in WPI Blue coordinates
      */
     public static PoseEstimate getBotPoseEstimate_wpiBlue(String limelightName) {
         return getBotPoseEstimate(limelightName, "botpose_wpiblue", false);
@@ -1308,8 +1308,8 @@ public class LimelightHelpers {
      * (addVisionMeasurement) in the WPILib Blue alliance coordinate system. Make sure you are
      * calling setRobotOrientation() before calling this method.
      *
-     * @param limelightName
-     * @return
+     * @param limelightName Name of the Limelight camera
+     * @return PoseEstimate containing MegaTag2 pose and timestamp in WPI Blue coordinates
      */
     public static PoseEstimate getBotPoseEstimate_wpiBlue_MegaTag2(String limelightName) {
         return getBotPoseEstimate(limelightName, "botpose_orb_wpiblue", true);
@@ -1318,8 +1318,8 @@ public class LimelightHelpers {
     /**
      * Gets the Pose2d for easy use with Odometry vision pose estimator (addVisionMeasurement)
      *
-     * @param limelightName
-     * @return
+     * @param limelightName Name of the Limelight camera
+     * @return Robot Pose2d in WPI Red alliance coordinates
      */
     public static Pose2d getBotPose2d_wpiRed(String limelightName) {
 
@@ -1331,8 +1331,8 @@ public class LimelightHelpers {
      * Gets the Pose2d and timestamp for use with WPILib pose estimator (addVisionMeasurement) when
      * you are on the RED alliance
      *
-     * @param limelightName
-     * @return
+     * @param limelightName Name of the Limelight camera
+     * @return PoseEstimate containing pose and timestamp in WPI Red coordinates
      */
     public static PoseEstimate getBotPoseEstimate_wpiRed(String limelightName) {
         return getBotPoseEstimate(limelightName, "botpose_wpired", false);
@@ -1342,8 +1342,8 @@ public class LimelightHelpers {
      * Gets the Pose2d and timestamp for use with WPILib pose estimator (addVisionMeasurement) when
      * you are on the RED alliance
      *
-     * @param limelightName
-     * @return
+     * @param limelightName Name of the Limelight camera
+     * @return PoseEstimate containing MegaTag2 pose and timestamp in WPI Red coordinates
      */
     public static PoseEstimate getBotPoseEstimate_wpiRed_MegaTag2(String limelightName) {
         return getBotPoseEstimate(limelightName, "botpose_orb_wpired", true);
@@ -1352,8 +1352,8 @@ public class LimelightHelpers {
     /**
      * Gets the Pose2d for easy use with Odometry vision pose estimator (addVisionMeasurement)
      *
-     * @param limelightName
-     * @return
+     * @param limelightName Name of the Limelight camera
+     * @return Robot Pose2d in field coordinates
      */
     public static Pose2d getBotPose2d(String limelightName) {
 

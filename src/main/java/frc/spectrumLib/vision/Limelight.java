@@ -36,7 +36,7 @@ public class Limelight {
          * @param forward (meters) forward from center of robot
          * @param right (meters) right from center of robot
          * @param up (meters) up from center of robot
-         * @return
+         * @return This LimelightConfig for method chaining
          */
         public LimelightConfig withTranslation(double forward, double right, double up) {
             this.forward = forward;
@@ -49,7 +49,7 @@ public class Limelight {
          * @param roll (degrees) roll of limelight || positive is rotated right
          * @param pitch (degrees) pitch of limelight || positive is camera tilted up
          * @param yaw (yaw) yaw of limelight || positive is rotated left
-         * @return
+         * @return This LimelightConfig for method chaining
          */
         public LimelightConfig withRotation(double roll, double pitch, double yaw) {
             this.roll = roll;
@@ -299,8 +299,8 @@ public class Limelight {
     /**
      * get distance in meters to a target
      *
-     * @param targetHeight meters
-     * @return
+     * @param targetHeight Height of target in meters
+     * @return Distance to target in meters
      */
     public double getDistanceToTarget(double targetHeight) {
         if (!isAttached()) {
@@ -425,8 +425,6 @@ public class Limelight {
 
     /**
      * Set LL LED's to blink
-     *
-     * @return
      */
     public void blinkLEDs() {
         if (!isAttached()) {

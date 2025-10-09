@@ -58,8 +58,8 @@ public class StateChampsOffsets {
     /**
      * Converts inches to meters and adds half the robot length to the offset
      *
-     * @param offsetInches
-     * @return
+     * @param offsetInches The offset distance in inches
+     * @return The offset distance in meters including half robot length
      */
     private static double meterConverter(double offsetInches) {
         double meterConversion = Units.inchesToMeters(offsetInches);

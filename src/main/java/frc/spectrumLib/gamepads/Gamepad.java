@@ -283,7 +283,7 @@ public abstract class Gamepad implements SpectrumSubsystem {
     /**
      * Get proper stick angles for each alliance
      *
-     * @return
+     * @return The cardinal direction angle in radians
      */
     public double chooseCardinalDirections() {
         // hotfix
@@ -319,7 +319,7 @@ public abstract class Gamepad implements SpectrumSubsystem {
     /**
      * Flips the stick direction for the red alliance.
      *
-     * @return
+     * @return The cardinal direction angle in radians for red alliance
      */
     public double getRedAllianceStickCardinals() {
         double stickAngle = getRightStickDirection().getRadians();

@@ -232,7 +232,7 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
     /**
      * Update the value of the stator current for the motor
      *
-     * @return
+     * @return The current stator current value in amps
      */
     public double updateCurrent() {
         if (config.attached) {
@@ -259,7 +259,8 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
     /**
      * Percentage to Rotations
      *
-     * @return
+     * @param percent The percentage value supplier
+     * @return The equivalent rotation count
      */
     public double percentToRotations(DoubleSupplier percent) {
         return (percent.getAsDouble() / 100) * config.maxRotations;
@@ -268,8 +269,8 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
     /**
      * Rotations to Percentage
      *
-     * @param rotations
-     * @return
+     * @param rotations The rotation count supplier
+     * @return The equivalent percentage value
      */
     public double rotationsToPercent(DoubleSupplier rotations) {
         return (rotations.getAsDouble() / config.maxRotations) * 100;
@@ -361,8 +362,8 @@ public abstract class Mechanism implements NTSendable, SpectrumSubsystem {
     /**
      * Run the mechanism at given velocity rpm in TorqueCurrentFOC mode
      *
-     * @param velocityRPM
-     * @return
+     * @param velocityRPM The target velocity in RPM
+     * @return Command that runs the mechanism at the specified velocity
      */
     public Command runVelocityTcFocRpm(DoubleSupplier velocityRPM) {
         return run(() -> setVelocityTorqueCurrentFOC(() -> Conversions.RPMtoRPS(velocityRPM)))
