@@ -104,11 +104,16 @@ public abstract class Gamepad implements SpectrumSubsystem {
     /**
      * Constructs a Gamepad object with the specified configuration.
      *
+     * <p>The constructor initializes the following:
+     *
+     * <ul>
+     *   <li>Superclass with port and attachment status from the configuration
+     *   <li>Curve objects for left stick, right stick, and triggers using exponential curves
+     *   <li>If the gamepad is attached, initializes the Xbox controller and its buttons, triggers,
+     *       sticks, and D-pad
+     * </ul>
+     *
      * @param config the configuration object containing settings for the gamepad
-     *     <p>The constructor initializes the following: - Superclass with port and attachment
-     *     status from the configuration. - Curve objects for left stick, right stick, and triggers
-     *     using exponential curves. - If the gamepad is attached, initializes the Xbox controller
-     *     and its buttons, triggers, sticks, and D-pad.
      */
     protected Gamepad(Config config) {
         this.config = config;
@@ -283,7 +288,7 @@ public abstract class Gamepad implements SpectrumSubsystem {
     /**
      * Get proper stick angles for each alliance
      *
-     * @return
+     * @return The cardinal direction angle in radians
      */
     public double chooseCardinalDirections() {
         // hotfix
@@ -319,7 +324,7 @@ public abstract class Gamepad implements SpectrumSubsystem {
     /**
      * Flips the stick direction for the red alliance.
      *
-     * @return
+     * @return The cardinal direction angle in radians for red alliance
      */
     public double getRedAllianceStickCardinals() {
         double stickAngle = getRightStickDirection().getRadians();

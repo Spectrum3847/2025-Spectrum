@@ -645,7 +645,7 @@ public class Vision implements NTSendable, Subsystem {
     /**
      * Choose the limelight with the best view of multiple tags
      *
-     * @return
+     * @return The Limelight with the best scoring view
      */
     public Limelight getBestLimelight() {
         Limelight bestLimelight = frontLL;
@@ -732,7 +732,7 @@ public class Vision implements NTSendable, Subsystem {
     /**
      * If at least one LL has an accurate pose
      *
-     * @return
+     * @return True if at least one Limelight has an accurate pose
      */
     public boolean hasAccuratePose() {
         for (Limelight limelight : allLimelights) {

@@ -4,7 +4,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.vision.Vision.VisionConfig;
 import frc.spectrumLib.vision.LimelightHelpers.LimelightResults;
 import frc.spectrumLib.vision.LimelightHelpers.PoseEstimate;
 import frc.spectrumLib.vision.LimelightHelpers.RawFiducial;
@@ -36,7 +35,7 @@ public class Limelight {
          * @param forward (meters) forward from center of robot
          * @param right (meters) right from center of robot
          * @param up (meters) up from center of robot
-         * @return
+         * @return This LimelightConfig for method chaining
          */
         public LimelightConfig withTranslation(double forward, double right, double up) {
             this.forward = forward;
@@ -49,7 +48,7 @@ public class Limelight {
          * @param roll (degrees) roll of limelight || positive is rotated right
          * @param pitch (degrees) pitch of limelight || positive is camera tilted up
          * @param yaw (yaw) yaw of limelight || positive is rotated left
-         * @return
+         * @return This LimelightConfig for method chaining
          */
         public LimelightConfig withRotation(double roll, double pitch, double yaw) {
             this.roll = roll;
@@ -299,8 +298,8 @@ public class Limelight {
     /**
      * get distance in meters to a target
      *
-     * @param targetHeight meters
-     * @return
+     * @param targetHeight Height of target in meters
+     * @return Distance to target in meters
      */
     public double getDistanceToTarget(double targetHeight) {
         if (!isAttached()) {
@@ -335,7 +334,7 @@ public class Limelight {
     }
 
     /**
-     * @param pipelineIndex use pipeline indexes in {@link VisionConfig}
+     * @param pipelineIndex use pipeline indexes in {@link frc.robot.vision.Vision.VisionConfig}
      */
     public void setLimelightPipeline(int pipelineIndex) {
         if (!isAttached()) {
@@ -423,11 +422,7 @@ public class Limelight {
         }
     }
 
-    /**
-     * Set LL LED's to blink
-     *
-     * @return
-     */
+    /** Set LL LED's to blink */
     public void blinkLEDs() {
         if (!isAttached()) {
             return;

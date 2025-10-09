@@ -69,11 +69,11 @@ public class Zones {
     /**
      * Depending on the offsets file used, change the tag offsets here.
      *
-     * <p>getTagOffset automatically checks if the offset taken is < 0 or greater than the given tag
-     * limit. If the tag is blue (> 16), it subtracts 17 from the given tag
+     * <p>getTagOffset automatically checks if the offset taken is &lt; 0 or greater than the given
+     * tag limit. If the tag is blue (&gt; 16), it subtracts 17 from the given tag
      *
-     * @param tag
-     * @return
+     * @param tag The AprilTag ID
+     * @return The distance offset for the tag in meters
      */
     public double getTagOffset(int tag) {
         return offsets.getReefTagDistanceOffset(tag);
