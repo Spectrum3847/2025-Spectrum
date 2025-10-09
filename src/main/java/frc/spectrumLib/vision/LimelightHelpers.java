@@ -1126,7 +1126,8 @@ public class LimelightHelpers {
      * Switch to getBotPose_wpiRed
      *
      * @param limelightName Name of the Limelight camera
-     * @return Array containing robot pose data in WPI Red alliance coordinates [x, y, z, roll, pitch, yaw]
+     * @return Array containing robot pose data in WPI Red alliance coordinates [x, y, z, roll,
+     *     pitch, yaw]
      */
     @Deprecated
     public static double[] getBotpose_wpiRed(String limelightName) {
@@ -1137,7 +1138,8 @@ public class LimelightHelpers {
      * Switch to getBotPose_wpiBlue
      *
      * @param limelightName Name of the Limelight camera
-     * @return Array containing robot pose data in WPI Blue alliance coordinates [x, y, z, roll, pitch, yaw]
+     * @return Array containing robot pose data in WPI Blue alliance coordinates [x, y, z, roll,
+     *     pitch, yaw]
      */
     @Deprecated
     public static double[] getBotpose_wpiBlue(String limelightName) {

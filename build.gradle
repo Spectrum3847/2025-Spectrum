@@ -202,9 +202,9 @@ tasks.spotbugsMain {
     }
 }
 
-//Javadoc Gradle task configuation
+// Javadoc Gradle task configuation
 javadoc {
-    options.addStringOption('Xdoclint:none', '-quiet')
-    failOnError = false
+    //options.addStringOption('Xdoclint:none', '-quiet')
+    //failOnError = false
     exclude '**/*.md'
 }

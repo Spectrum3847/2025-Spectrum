@@ -423,9 +423,7 @@ public class Limelight {
         }
     }
 
-    /**
-     * Set LL LED's to blink
-     */
+    /** Set LL LED's to blink */
     public void blinkLEDs() {
         if (!isAttached()) {
             return;
