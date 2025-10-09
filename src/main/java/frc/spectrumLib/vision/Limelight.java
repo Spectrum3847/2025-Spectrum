@@ -4,7 +4,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.vision.Vision.VisionConfig;
 import frc.spectrumLib.vision.LimelightHelpers.LimelightResults;
 import frc.spectrumLib.vision.LimelightHelpers.PoseEstimate;
 import frc.spectrumLib.vision.LimelightHelpers.RawFiducial;
