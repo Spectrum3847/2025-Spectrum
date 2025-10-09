@@ -43,12 +43,12 @@ public class Elevator extends Mechanism {
         @Getter @Setter private double l3Algae = 12;
         @Getter @Setter private double netAlgae = fullExtend;
 
-        @Getter @Setter private double l2Coral = 8.6;
-        @Getter @Setter private double l2Score = 6.2;
-        @Getter @Setter private double l3Coral = 20;
-        @Getter @Setter private double l3Score = 17.6;
-        @Getter @Setter private double l4Coral = fullExtend;
-        @Getter @Setter private double l4Score = l4Coral - 3;
+        @Getter @Setter private double l2Coral = 7.3;
+        @Getter @Setter private double l2Score = 7.3;
+        @Getter @Setter private double l3Coral = 17.2;
+        @Getter @Setter private double l3Score = 17.2;
+        @Getter @Setter private double l4Coral = 33;
+        @Getter @Setter private double l4Score = 33;
 
         @Getter @Setter private double handOff = 26.9;
 
@@ -72,8 +72,8 @@ public class Elevator extends Mechanism {
         @Getter private final double slowMmAcceleration = 55;
         @Getter private final double slowMmJerk = 550;
 
-        @Getter private double currentLimit = 15; //60;
-        @Getter private double torqueCurrentLimit = 40; //160;
+        @Getter private double currentLimit = 10; // 60;
+        @Getter private double torqueCurrentLimit = 40; // 160;
 
         /* Sim properties */
         @Getter private double kElevatorGearing = 1.7;

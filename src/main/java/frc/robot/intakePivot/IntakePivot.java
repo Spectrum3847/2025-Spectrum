@@ -36,7 +36,7 @@ public class IntakePivot extends Mechanism {
         @Getter private final double zeroSpeed = -0.1;
         @Getter private final double holdMaxSpeedRPM = 18;
 
-        @Getter private final double currentLimit = 15; // 60
+        @Getter private final double currentLimit = 10; // 60
         @Getter private final double torqueCurrentLimit = 45; // 180
         @Getter private final double positionKp = 190;
         @Getter private final double positionKd = 40;

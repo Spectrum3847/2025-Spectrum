@@ -25,7 +25,7 @@ public class IntakePivotStates {
     }
 
     public static void setStates() {
-        homeAll.whileTrue(home());
+        homeAll.debounce(0.3).whileTrue(home());
         coastMode.onTrue(log(coastMode()).ignoringDisable(true));
         coastMode.onFalse(log(ensureBrakeMode()));
 
@@ -34,6 +34,8 @@ public class IntakePivotStates {
         L1Coral.whileTrue(move(config::getL1, "IntakePivot.L1"));
 
         handOff.whileTrue(move(config::getHandOff, "IntakePivot.Stage"));
+
+        actionPrepState.and(l1.not()).debounce(0.2).onTrue(home());
 
         Robot.getPilot().reZero_start.onTrue(intakePivot.resetToIntialPos());
     }

@@ -52,16 +52,20 @@ public class ElevatorStates {
                 .antiSecretClimb_LTRSup
                 .whileTrue(move(config::getFullExtend, "Elevator.fullExtend"));
 
-        stationIntaking.whileTrue(
-                move(
-                        config::getStationIntake,
-                        // config::getStationExtendedIntake,
-                        "Elevator.stationIntake"));
-        stationIntaking.onFalse(home());
+        stationIntaking
+                .and(ShoulderStates.isLow.not())
+                .whileTrue(
+                        move(
+                                config::getStationIntake,
+                                // config::getStationExtendedIntake,
+                                "Elevator.stationIntake"));
+        stationIntaking.and(ShoulderStates.isLow.not()).onFalse(home());
 
-        lollipopCoral.whileTrue(home());
+        lollipopCoral.and(ShoulderStates.isLow.not()).whileTrue(home());
 
-        groundAlgae.whileTrue(move(config::getClawGroundAlgaeIntake, "Ground Algae"));
+        groundAlgae
+                .and(ShoulderStates.isLow.not())
+                .whileTrue(move(config::getClawGroundAlgaeIntake, "Ground Algae"));
         groundCoral.whileTrue(home());
 
         (stagedCoral.or(stagedAlgae))
@@ -71,12 +75,16 @@ public class ElevatorStates {
                         (Util.autoMode.not()))
                 .whileTrue(move(config::getHome, "Elevator.Stage"));
 
-        L2Coral.and(actionPrepState, ShoulderStates.isL2Coral)
+        L2Coral.and(actionPrepState, ShoulderStates.isLow.not())
                 .whileTrue(move(config::getL2Coral, "Elevator.L2Coral"));
         L2Coral.and(actionState).whileTrue(move(config::getL2Score, "Elevator.L2CoralScore"));
-        L3Coral.and(actionPrepState).whileTrue(move(config::getL3Coral, "Elevator.L3Coral"));
+        L3Coral.and(actionPrepState, ShoulderStates.isLow.not())
+                .debounce(0.2)
+                .whileTrue(move(config::getL3Coral, "Elevator.L3Coral"));
         L3Coral.and(actionState).whileTrue(move(config::getL3Score, "Elevator.L3CoralScore"));
-        L4Coral.and(actionPrepState).whileTrue(move(config::getL4Coral, "Elevator.L4Coral"));
+        L4Coral.and(actionPrepState)
+                .debounce(0.2)
+                .whileTrue(move(config::getL4Coral, "Elevator.L4Coral"));
         L4Coral.and(actionState).whileTrue(move(config::getL4Score, "Elevator.L4CoralScore"));
 
         handOff.whileTrue(move(config::getHandOff, "Elevator.HandOff"));

@@ -42,7 +42,7 @@ public class Shoulder extends Mechanism {
         @Getter @Setter private double stationExtendedIntake = -23.6;
         @Getter @Setter private double groundAlgaeIntake = 120;
         @Getter @Setter private double groundCoralIntake = 4;
-        @Getter @Setter private double lollipopCoral = 115; // 20;
+        @Getter @Setter private double lollipopCoral = -100; // 20;
 
         @Getter @Setter private double processorAlgae = -143.877;
         @Getter @Setter private double l2Algae = 90; // -32;
@@ -50,12 +50,14 @@ public class Shoulder extends Mechanism {
         @Getter @Setter private double netAlgae = 0;
         @Getter @Setter private double autonShoulderNetChecker = 60;
 
-        @Getter @Setter private double l2Coral = 90;
-        @Getter @Setter private double l2Score = 105;
-        @Getter @Setter private double l3Coral = 60;
-        @Getter @Setter private double l3Score = 75;
-        @Getter @Setter private double l4Coral = 45;
-        @Getter @Setter private double l4CoralScore = 60;
+        @Getter @Setter private double isLow = -90;
+
+        @Getter @Setter private double l2Coral = -53;
+        @Getter @Setter private double l2Score = -73.8;
+        @Getter @Setter private double l3Coral = -52.2;
+        @Getter @Setter private double l3Score = -73.8;
+        @Getter @Setter private double l4Coral = -53;
+        @Getter @Setter private double l4CoralScore = -77.4;
 
         @Getter @Setter private double handOff = -177;
 
@@ -68,8 +70,8 @@ public class Shoulder extends Mechanism {
         @Getter private final double zeroSpeed = -0.1;
         @Getter private final double holdMaxSpeedRPM = 18.0;
 
-        @Getter private final double currentLimit = 15; //60;
-        @Getter private final double torqueCurrentLimit = 20; //80;
+        @Getter private final double currentLimit = 10; // 60;
+        @Getter private final double torqueCurrentLimit = 20; // 80;
         @Getter private final double positionKp = 250;
         @Getter private final double positionKd = 60;
         @Getter private final double positionKv = 0;
