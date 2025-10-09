@@ -144,8 +144,8 @@ public class FieldHelpers {
     /**
      * Converts an index to a reef tag ID
      *
-     * @param index
-     * @return
+     * @param index The reef index (0-5)
+     * @return The corresponding reef tag ID (17-22)
      */
     public static int indexToReefTagID(int index) {
         return index + 17;
@@ -154,8 +154,8 @@ public class FieldHelpers {
     /**
      * Converts a given Reef Tag Id into index form for center faces to pull from
      *
-     * @param tagID
-     * @return
+     * @param tagID The blue reef tag ID (17-22)
+     * @return The reef index (0-5), or -1 if invalid
      */
     public static int blueReefTagIDToIndex(int tagID) {
 
@@ -170,8 +170,8 @@ public class FieldHelpers {
     /**
      * Converts a blue reef tag ID to a red reef tag ID
      *
-     * @param blueTagID
-     * @return
+     * @param blueTagID The blue alliance reef tag ID (17-22)
+     * @return The corresponding red alliance reef tag ID (6-11)
      */
     public static int blueToRedTagID(int blueTagID) {
         switch (blueTagID) {
@@ -214,8 +214,8 @@ public class FieldHelpers {
     /**
      * Returns the reef tag ID based on the robot's pose
      *
-     * @param pose
-     * @return
+     * @param pose The robot's current pose on the field
+     * @return The reef tag ID corresponding to the robot's zone
      */
     public static int getReefZoneTagID(Pose2d pose) {
         pose = flipIfRedSide(pose);
@@ -235,8 +235,8 @@ public class FieldHelpers {
      * Returns the reef index zone based on the robot's pose changed to blue pose including the
      * center is consistently blue center
      *
-     * @param pose
-     * @return
+     * @param pose The robot's current pose on the field
+     * @return The reef zone index (0-5)
      */
     public static int getReefZone(Pose2d pose) {
         Translation2d point = pose.getTranslation();
@@ -327,8 +327,9 @@ public class FieldHelpers {
      * Converts a target angle into a reverse rotation if the back is closer; otherwise, returns the
      * original target angle for front heading.
      *
-     * <p>variable robotAngle The current angle of the robot in radians. variable reefRotation The
-     * rotation adjustment factor in radians. targetAngle The desired target angle in radians.
+     * <p>The method considers: robotAngle - The current angle of the robot in radians. reefRotation
+     * - The rotation adjustment factor in radians. targetAngle - The desired target angle in
+     * radians.
      *
      * @return true/false if robot heading is reversed to reef face
      */
@@ -370,7 +371,7 @@ public class FieldHelpers {
     /**
      * Returns the reef face pose based on the tag ID sent from either red or blue
      *
-     * @param tagID
+     * @param tagID The reef tag ID
      * @return Pose2d of reef side
      */
     public static Pose2d getReefSideFromTagID(int faceIndex) {
@@ -392,7 +393,7 @@ public class FieldHelpers {
      *
      * @param blueReefTagID may also be a red reef tag ID that will later be converted from a blue
      *     reef tagID
-     * @return
+     * @return The calculated scoring pose for the robot
      */
     public static Pose2d getScorePoseFromTagID(int blueReefTagID) {
         if (blueReefTagID < 0 || blueReefTagID > 22 || blueReefTagID == 16) {
@@ -414,12 +415,12 @@ public class FieldHelpers {
     }
 
     /**
-     * Method gets
+     * Gets the pose offset from a tag position
      *
-     * @param tagID
-     * @param distanceAway
-     * @param centerOffset
-     * @return
+     * @param tagID The AprilTag ID
+     * @param distanceAway The distance away from the tag in meters
+     * @param centerOffset The offset from the center in meters
+     * @return The calculated pose offset from the tag
      */
     public static Pose2d getXYOffsetFromTag(int tagID, double distanceAway, double centerOffset) {
         Pose2d tagPose;
@@ -456,7 +457,7 @@ public class FieldHelpers {
     /**
      * Get the angle the robot should turn to based on the id the limelight is seeing.
      *
-     * @return
+     * @return The target angle in degrees
      */
     public static double getReefTagAngle() {
         double[][] reefFrontAngles = {

@@ -108,7 +108,7 @@ public class SpectrumState extends Trigger {
      * Command to set state to true, and then to false, ensuring your state will trigger change to
      * false actions
      *
-     * @return
+     * @return Command that toggles state to false
      */
     public Command toggleToFalse() {
         return setTrue()
@@ -119,8 +119,8 @@ public class SpectrumState extends Trigger {
     }
 
     /**
-     * @param value
-     * @return
+     * @param value The boolean value to set the state to
+     * @return Command that sets the state
      */
     public Command set(boolean value) {
         return Commands.runOnce(() -> setState(value)).ignoringDisable(true);
