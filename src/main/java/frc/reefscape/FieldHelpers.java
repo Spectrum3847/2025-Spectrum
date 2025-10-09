@@ -371,7 +371,7 @@ public class FieldHelpers {
     /**
      * Returns the reef face pose based on the tag ID sent from either red or blue
      *
-     * @param faceIndex The reef face index
+     * @param tagID The reef tag ID
      * @return Pose2d of reef side
      */
     public static Pose2d getReefSideFromTagID(int faceIndex) {
