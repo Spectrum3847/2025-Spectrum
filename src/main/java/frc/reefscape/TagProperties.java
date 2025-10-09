@@ -13,16 +13,16 @@ public class TagProperties {
     @Getter private final double angle;
 
     /**
-     * @param frontOffsetInchesLeft
-     * @param frontOffsetInchesRight
-     * @param rearOffsetInchesLeft
-     * @param rearOffsetInchesRight
-     * @param frontCenterOffsetInchesLeft
-     * @param frontCenterOffsetInchesRight
-     * @param rearCenterOffsetInchesLeft
-     * @param rearCenterOffsetInchesRight
-     * @param taGoal
-     * @param angle
+     * @param frontOffsetInchesLeft Front offset in inches for left side
+     * @param frontOffsetInchesRight Front offset in inches for right side
+     * @param rearOffsetInchesLeft Rear offset in inches for left side
+     * @param rearOffsetInchesRight Rear offset in inches for right side
+     * @param frontCenterOffsetInchesLeft Front center offset in inches for left side
+     * @param frontCenterOffsetInchesRight Front center offset in inches for right side
+     * @param rearCenterOffsetInchesLeft Rear center offset in inches for left side
+     * @param rearCenterOffsetInchesRight Rear center offset in inches for right side
+     * @param taGoal Target area goal
+     * @param angleDegrees Angle in degrees
      */
     public TagProperties(
             double frontOffsetInchesLeft,
