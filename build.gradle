@@ -204,7 +204,7 @@ tasks.spotbugsMain {
 
 //Javadoc Gradle task configuation
 javadoc {
-    options.addStringOption('Xdoclint:none', '-quiet')
-    failOnError = false
+    options.addStringOption('Xdoclint:all', '-Xmaxwarns', '1000')
+    failOnError = true
     exclude '**/*.md'
 }
