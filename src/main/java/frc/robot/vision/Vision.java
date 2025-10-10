@@ -52,7 +52,8 @@ public class Vision implements NTSendable, Subsystem {
         final LimelightConfig backConfig =
                 new LimelightConfig(backLL)
                         .withTranslation(-0.215, 0.0, 0.188)
-                        .withRotation(0, Math.toRadians(28), Math.toRadians(180));
+                        .withRotation(0, Math.toRadians(28), Math.toRadians(180))
+                        .withAttached(false);
 
         /* Pipeline configs */
         @Getter final int frontTagPipeline = 0;

@@ -57,6 +57,11 @@ public class Limelight {
             this.yaw = yaw;
             return this;
         }
+
+        public LimelightConfig withAttached(boolean attached) {
+            this.attached = attached;
+            return this;
+        }
     }
 
     /* Debug */

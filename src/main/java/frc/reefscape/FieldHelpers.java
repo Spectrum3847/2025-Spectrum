@@ -467,7 +467,7 @@ public class FieldHelpers {
         };
 
         int closestTag = Robot.getVision().getClosestTagID();
-        boolean rearTag = Robot.getVision().isRearTagClosest();
+        boolean rearTag = false;
 
         if (closestTag <= 0) {
             Pose2d currentPose = Robot.getSwerve().getRobotPose();

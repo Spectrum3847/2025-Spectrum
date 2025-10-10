@@ -23,11 +23,11 @@ public class IntakePivot extends Mechanism {
         // TODO: tune these values
 
         @Getter @Setter private double home = 0;
-        @Getter @Setter private double groundCoralIntake = 70;
+        @Getter @Setter private double groundCoralIntake = 75;
         @Getter @Setter private double handOff = -30;
         @Getter @Setter private double L1 = 24;
 
-        @Getter @Setter private double tolerance = 3.5;
+        @Getter @Setter private double tolerance = 10;
 
         @Getter @Setter private double offset = 90;
         @Getter @Setter private double initPosition = 0;
@@ -36,8 +36,8 @@ public class IntakePivot extends Mechanism {
         @Getter private final double zeroSpeed = -0.1;
         @Getter private final double holdMaxSpeedRPM = 18;
 
-        @Getter private final double currentLimit = 10; // 60
-        @Getter private final double torqueCurrentLimit = 45; // 180
+        @Getter private final double currentLimit = 30; // 60
+        @Getter private final double torqueCurrentLimit = 90; // 180
         @Getter private final double positionKp = 190;
         @Getter private final double positionKd = 40;
         @Getter private final double positionKv = 0;

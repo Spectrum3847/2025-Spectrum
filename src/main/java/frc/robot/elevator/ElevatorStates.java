@@ -5,6 +5,7 @@ import static frc.robot.RobotStates.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
+import frc.robot.claw.ClawStates;
 import frc.robot.elevator.Elevator.ElevatorConfig;
 import frc.robot.shoulder.ShoulderStates;
 import frc.spectrumLib.Telemetry;
@@ -33,6 +34,9 @@ public class ElevatorStates {
     public static final Trigger isL4Coral =
             elevator.atRotations(config::getL4Coral, config::getTriggerTolerance);
 
+    public static final Trigger handOffAvoid =
+            elevator.atRotations(config::getHandOffAvoid, config::getTriggerTolerance);
+
     public static final Trigger isL2Algae =
             elevator.atRotations(config::getL2Algae, config::getTriggerTolerance);
     public static final Trigger isL3Algae =
@@ -46,6 +50,9 @@ public class ElevatorStates {
     public static void setStates() {
         coastMode.onTrue(log(coastMode()));
         coastMode.onFalse(log(ensureBrakeMode()));
+
+        homeAll.and(ClawStates.hasCoral).debounce(0.2).whileTrue(home());
+
         homeAll.and(ShoulderStates.isHome).whileTrue(home());
         homeAll.and(Util.autoMode, ShoulderStates.isHome).whileTrue(slowHome());
         Robot.getOperator()
@@ -75,16 +82,23 @@ public class ElevatorStates {
                         (Util.autoMode.not()))
                 .whileTrue(move(config::getHome, "Elevator.Stage"));
 
-        L2Coral.and(actionPrepState, ShoulderStates.isLow.not())
+        actionPrepState
+                .and(L2Coral)
+                .whileTrue(move(config::getHandOffAvoid, "Elevator.avoidHit").until(handOffAvoid));
+        actionPrepState
+                .and(L2Coral, ShoulderStates.isLow.not())
                 .whileTrue(move(config::getL2Coral, "Elevator.L2Coral"));
+
+        actionPrepState
+                .and(L3Coral)
+                .whileTrue(move(config::getHandOffAvoid, "Elevator.avoidHit").until(handOffAvoid));
+        actionPrepState
+                .and(L3Coral, ShoulderStates.isLow.not())
+                .whileTrue(move(config::getL3Coral, "Elevator.L2Coral"));
+
         L2Coral.and(actionState).whileTrue(move(config::getL2Score, "Elevator.L2CoralScore"));
-        L3Coral.and(actionPrepState, ShoulderStates.isLow.not())
-                .debounce(0.2)
-                .whileTrue(move(config::getL3Coral, "Elevator.L3Coral"));
         L3Coral.and(actionState).whileTrue(move(config::getL3Score, "Elevator.L3CoralScore"));
-        L4Coral.and(actionPrepState)
-                .debounce(0.2)
-                .whileTrue(move(config::getL4Coral, "Elevator.L4Coral"));
+        L4Coral.and(actionPrepState).whileTrue(move(config::getL4Coral, "Elevator.L4Coral"));
         L4Coral.and(actionState).whileTrue(move(config::getL4Score, "Elevator.L4CoralScore"));
 
         handOff.whileTrue(move(config::getHandOff, "Elevator.HandOff"));

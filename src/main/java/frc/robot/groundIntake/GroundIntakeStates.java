@@ -5,9 +5,7 @@ import static frc.robot.RobotStates.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
-import frc.robot.elevator.ElevatorStates;
 import frc.robot.groundIntake.GroundIntake.GroundIntakeConfig;
-import frc.robot.intakePivot.IntakePivotStates;
 import frc.robot.shoulder.ShoulderStates;
 import frc.spectrumLib.Telemetry;
 import java.util.function.DoubleSupplier;
@@ -41,7 +39,7 @@ public class GroundIntakeStates {
                                 config::getCoralIntakeSupplyCurrent)
                         .withName("GroundIntake.GroundCoral"));
 
-        handOff.and(IntakePivotStates.isHandOff, ElevatorStates.isHandOff, ShoulderStates.isHandOff)
+        handOff.and(ShoulderStates.isHandOff)
                 .whileTrue(
                         groundIntake
                                 .runTorqueFOC(config::getCoralHandoffTorqueCurrent)

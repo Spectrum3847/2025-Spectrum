@@ -6,7 +6,7 @@ import lombok.Getter;
 
 public class HomeOffsets {
 
-    static double defaultDepth = 9.0;
+    static double defaultDepth = 9.25;
     static double leftScoreOffset = 6.5;
     static double rightScoreOffset = -6.5;
 

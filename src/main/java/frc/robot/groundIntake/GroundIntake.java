@@ -33,9 +33,9 @@ public class GroundIntake extends Mechanism {
         @Getter @Setter private double coralIntakeSupplyCurrent = 30.0;
         @Getter @Setter private double coralIntakeTorqueCurrent = 100.0;
 
-        @Getter @Setter private double coralHandoffVoltage = -15.0;
+        @Getter @Setter private double coralHandoffVoltage = -12.0;
         @Getter @Setter private double coralHandoffSupplyCurrent = 30.0;
-        @Getter @Setter private double coralHandoffTorqueCurrent = -60.0;
+        @Getter @Setter private double coralHandoffTorqueCurrent = -50.0;
         @Getter @Setter private double coralL1ScoreVoltage = -8;
         @Getter @Setter private double coralL1ScoreSupplyCurrent = 15.0;
         @Getter @Setter private double coralL1ScoreTorqueCurrent = -30.0;

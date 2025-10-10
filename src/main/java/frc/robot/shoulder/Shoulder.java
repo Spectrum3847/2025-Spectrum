@@ -40,28 +40,28 @@ public class Shoulder extends Mechanism {
 
         @Getter @Setter private double stationIntake = -9.2;
         @Getter @Setter private double stationExtendedIntake = -23.6;
-        @Getter @Setter private double groundAlgaeIntake = 120;
+        @Getter @Setter private double groundAlgaeIntake = -100;
         @Getter @Setter private double groundCoralIntake = 4;
         @Getter @Setter private double lollipopCoral = -100; // 20;
 
         @Getter @Setter private double processorAlgae = -143.877;
-        @Getter @Setter private double l2Algae = 90; // -32;
-        @Getter @Setter private double l3Algae = 90; // -32;
-        @Getter @Setter private double netAlgae = 0;
+        @Getter @Setter private double l2Algae = -88; // -32;
+        @Getter @Setter private double l3Algae = -88; // -32;
+        @Getter @Setter private double netAlgae = -19;
         @Getter @Setter private double autonShoulderNetChecker = 60;
 
         @Getter @Setter private double isLow = -90;
 
-        @Getter @Setter private double l2Coral = -53;
-        @Getter @Setter private double l2Score = -73.8;
-        @Getter @Setter private double l3Coral = -52.2;
-        @Getter @Setter private double l3Score = -73.8;
-        @Getter @Setter private double l4Coral = -53;
-        @Getter @Setter private double l4CoralScore = -77.4;
+        @Getter @Setter private double l2Coral = -58;
+        @Getter @Setter private double l2Score = -77.8;
+        @Getter @Setter private double l3Coral = -56.2;
+        @Getter @Setter private double l3Score = -77.8;
+        @Getter @Setter private double l4Coral = -55;
+        @Getter @Setter private double l4CoralScore = -82.4;
 
-        @Getter @Setter private double handOff = -177;
+        @Getter @Setter private double handOff = -180;
 
-        @Getter @Setter private double tolerance = 10;
+        @Getter @Setter private double tolerance = 3;
 
         @Getter @Setter private double offset = 90;
         @Getter @Setter private double initPosition = 0;
@@ -242,7 +242,9 @@ public class Shoulder extends Mechanism {
     public Trigger atDegrees(DoubleSupplier degrees, DoubleSupplier tolerance) {
         return new Trigger(
                 () ->
-                        Math.abs(getPositionDegrees() - config.getOffset() - degrees.getAsDouble())
+                        Math.abs(
+                                        Math.abs(getPositionDegrees() - config.getOffset())
+                                                - Math.abs(degrees.getAsDouble()))
                                 < tolerance.getAsDouble());
     }
 

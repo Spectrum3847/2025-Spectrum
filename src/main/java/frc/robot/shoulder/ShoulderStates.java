@@ -72,6 +72,9 @@ public class ShoulderStates {
     }
 
     public static void setStates() {
+        isHandOff.onTrue(shoulderHandOff.setTrue());
+        isHandOff.onFalse(shoulderHandOff.setFalse());
+
         homeAll.whileTrue(home());
         homeAll.and(Util.autoMode).whileTrue(slowHome());
         coastMode.onTrue(log(coastMode()).ignoringDisable(true));
@@ -80,11 +83,12 @@ public class ShoulderStates {
         lollipopCoral.whileTrue(
                 moveWithoutReverse(config::getLollipopCoral, "Shoulder.lollipopCoral"));
 
-        stationIntaking.whileTrue(move(config::getStationIntake, "Shoulder.stationIntake"));
-        stationIntaking.or(groundAlgae).onFalse(home());
+        // stationIntaking.whileTrue(move(config::getStationIntake, "Shoulder.stationIntake"));
+        // stationIntaking.or(groundAlgae).onFalse(home());
 
         groundAlgae.whileTrue(
                 moveWithoutReverse(config::getGroundAlgaeIntake, "Shoulder.groundAlgae"));
+        groundAlgae.onFalse(moveWithoutReverse(config::getHome, "Shoulder.groundAlgae"));
 
         handOff.and(ElevatorStates.isHandOff)
                 .whileTrue(moveWithoutReverse(config::getHandOff, "Shoulder.handOff"));
@@ -98,16 +102,22 @@ public class ShoulderStates {
 
         L2Coral.and(actionPrepState)
                 .debounce(0.3)
-                .whileTrue(move(config::getL2Coral, "Shoulder.L2Coral.prescoreRepeat"));
-        L2Coral.and(actionState).whileTrue(move(config::getL2Score, "Shoulder.L2Coral.score"));
+                .whileTrue(
+                        moveWithoutReverse(config::getL2Coral, "Shoulder.L2Coral.prescoreRepeat"));
+        L2Coral.and(actionState)
+                .whileTrue(moveWithoutReverse(config::getL2Score, "Shoulder.L2Coral.score"));
         L3Coral.and(actionPrepState)
                 .debounce(0.3)
-                .whileTrue(move(config::getL3Coral, "Shoulder.L3Coral.prescoreRepeat"));
-        L3Coral.and(actionState).whileTrue(move(config::getL3Score, "Shoulder.L3Coral.score"));
+                .whileTrue(
+                        moveWithoutReverse(config::getL3Coral, "Shoulder.L3Coral.prescoreRepeat"));
+        L3Coral.and(actionState)
+                .whileTrue(moveWithoutReverse(config::getL3Score, "Shoulder.L3Coral.score"));
         L4Coral.and(actionPrepState)
                 .debounce(0.3)
-                .whileTrue(move(config::getL4Coral, "Shoulder.L4Coral.prescoreRepeat"));
-        L4Coral.and(actionState).whileTrue(move(config::getL4CoralScore, "Shoulder.L4Coral.score"));
+                .whileTrue(
+                        moveWithoutReverse(config::getL4Coral, "Shoulder.L4Coral.prescoreRepeat"));
+        L4Coral.and(actionState)
+                .whileTrue(moveWithoutReverse(config::getL4CoralScore, "Shoulder.L4Coral.score"));
         // L4Coral.and(actionPrepState, Util.autoMode)
         //         .whileTrue(slowMove(config::getL4Coral, "Shoulder.L4Coral.slowPrescore"));
 
@@ -118,10 +128,16 @@ public class ShoulderStates {
         processorAlgae
                 .and(actionState)
                 .whileTrue(move(config::getHome, "Shoulder.processorAlgaeHome"));
-        L2Algae.and(actionPrepState).whileTrue(move(config::getL2Algae, "Shoulder.L2Algae"));
-        L2Algae.and(actionState).whileTrue(move(config::getHome, "Shoulder.L2AlgaeHome"));
-        L3Algae.and(actionPrepState).whileTrue(move(config::getL3Algae, "Shoulder.L3Algae"));
-        L3Algae.and(actionState).whileTrue(move(config::getHome, "Shoulder.L3AlgaeHome"));
+
+        L2Algae.and(actionPrepState)
+                .whileTrue(moveWithoutReverse(config::getL2Algae, "Shoulder.L2Algae"));
+        L2Algae.and(actionState)
+                .whileTrue(moveWithoutReverse(config::getHome, "Shoulder.L2AlgaeHome"));
+        L3Algae.and(actionPrepState)
+                .whileTrue(moveWithoutReverse(config::getL3Algae, "Shoulder.L3Algae"));
+        L3Algae.and(actionState)
+                .whileTrue(moveWithoutReverse(config::getHome, "Shoulder.L3AlgaeHome"));
+
         netAlgae.and((actionPrepState.or(actionState).not()), (Util.autoMode.not()))
                 .whileTrue(move(config::getHome, "Shoulder.netAlgaePrep"));
         netAlgae.and(actionPrepState.or(actionState))

@@ -30,7 +30,7 @@ public class Elevator extends Mechanism {
 
         /* Elevator positions in rotations */
         @Getter @Setter private double fullExtend = maxRotations * .999;
-        @Getter @Setter private double home = 0;
+        @Getter @Setter private double home = 0.5;
 
         @Getter @Setter private double clawGroundAlgaeIntake = 4.5;
         @Getter @Setter private double clawGroundCoralIntake = 0;
@@ -39,8 +39,8 @@ public class Elevator extends Mechanism {
         @Getter @Setter private double stationExtendedIntake = 0;
 
         @Getter @Setter private double processorAlgae = 0;
-        @Getter @Setter private double l2Algae = 6;
-        @Getter @Setter private double l3Algae = 12;
+        @Getter @Setter private double l2Algae = 14.4;
+        @Getter @Setter private double l3Algae = 24.9;
         @Getter @Setter private double netAlgae = fullExtend;
 
         @Getter @Setter private double l2Coral = 7.3;
@@ -51,6 +51,7 @@ public class Elevator extends Mechanism {
         @Getter @Setter private double l4Score = 33;
 
         @Getter @Setter private double handOff = 26.9;
+        @Getter @Setter private double handOffAvoid = 31;
 
         @Getter private double triggerTolerance = 1.15;
         @Getter private double elevatorIsUpHeight = 5;

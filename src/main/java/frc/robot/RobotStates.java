@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.reefscape.FieldHelpers;
 import frc.reefscape.Zones;
 import frc.robot.elevator.ElevatorStates;
 import frc.robot.operator.Operator;
@@ -52,7 +51,9 @@ public class RobotStates {
     public static final SpectrumState autonAutoScoreMode = new SpectrumState("autonAutoScoreMode");
     public static final SpectrumState coralScoring = new SpectrumState("coralScoring");
     public static final SpectrumState lollipopCoral = new SpectrumState("lollipopCoral");
+    public static final SpectrumState groundAlgae = new SpectrumState("groundAlgae");
     public static final SpectrumState handOff = new SpectrumState("handOff");
+    public static final SpectrumState shoulderHandOff = new SpectrumState("shoulderHandOff");
 
     /**
      * Define Robot States here and how they can be triggered States should be triggers that command
@@ -69,7 +70,6 @@ public class RobotStates {
     public static final Trigger intakeRunning = coral.or(algae);
     public static final Trigger stationIntaking = pilot.stationIntake_LT.or(autonStationIntake);
     // public static final Trigger stationExtendedIntaking = pilot.stationIntakeExtended_LT_RB;
-    public static final Trigger groundAlgae = pilot.groundAlgae_RT;
     public static final Trigger groundCoral = pilot.groundCoral_X;
     public static final Trigger intaking =
             stationIntaking.or(groundAlgae, groundCoral, lollipopCoral);
@@ -109,9 +109,10 @@ public class RobotStates {
     public static final Trigger toggleReverse = pilot.toggleReverse.or(operator.toggleReverse);
 
     // pose Triggers
-    public static final Trigger poseReversal =
-            new Trigger(
-                    () -> FieldHelpers.reverseRotationBlue() == Zones.blueFieldSide.getAsBoolean());
+    //     public static final Trigger poseReversal =
+    //             new Trigger(
+    //                     () -> FieldHelpers.reverseRotationBlue() ==
+    // Zones.blueFieldSide.getAsBoolean());
 
     // auton Triggers
     public static final Trigger poseUpdate = autonPoseUpdate.or(autonAutoScoreMode);
@@ -134,6 +135,7 @@ public class RobotStates {
         stagedCoral
                 .and(l1.not(), actionState.not(), actionPrepState.not(), Util.autoMode.not())
                 .onTrue(handOff.setTrue());
+        actionPrepState.onTrue(handOff.setFalse());
         homeAll.onTrue(handOff.setFalse());
 
         // HOME Commands and States
@@ -185,6 +187,9 @@ public class RobotStates {
 
         pilot.tempLollipop.onTrue(lollipopCoral.setTrue());
         pilot.tempLollipop.onFalse(lollipopCoral.setFalse());
+
+        pilot.groundAlgae_RT.onTrue(groundAlgae.setTrue());
+        pilot.groundAlgae_RT.onFalse(groundAlgae.setFalse());
 
         // pilot.l2AlgaeRemoval.onTrue(
         //         algae.setTrue(), coral.setFalse(), l2.setTrue(), actionPrepState.setTrue());
@@ -255,23 +260,16 @@ public class RobotStates {
         // Reversal States
         toggleReverse.onTrue(reverse.toggle());
 
-        poseReversal.and(stagedCoral.or(L2Algae, L3Algae)).onTrue(reverse.setTrue());
-        poseReversal.not().and(stagedCoral.or(L2Algae, L3Algae)).onTrue(reverse.setFalse());
+        // poseReversal.and(stagedCoral.or(L2Algae, L3Algae)).onTrue(reverse.setTrue());
+        // poseReversal.not().and(stagedCoral.or(L2Algae, L3Algae)).onTrue(reverse.setFalse());
         stagedCoral
                 .or(L2Algae, L3Algae)
-                .and(
-                        VisionStates.usingRearTag,
-                        actionPrepState.not(),
-                        actionState.not(),
-                        poseReversal.not())
+                .and(VisionStates.usingRearTag, actionPrepState.not(), actionState.not())
+                // poseReversal.not())
                 .onTrue(reverse.setTrue());
         stagedCoral
                 .or(L2Algae, L3Algae)
-                .and(
-                        VisionStates.usingRearTag.not(),
-                        actionPrepState.not(),
-                        actionState.not(),
-                        poseReversal.not())
+                .and(VisionStates.usingRearTag.not(), actionPrepState.not(), actionState.not())
                 .onTrue(reverse.setFalse());
         groundAlgae.or(groundCoral, processorAlgae).and(toggleReverse).onTrue(reverse.setTrue());
         groundAlgae
