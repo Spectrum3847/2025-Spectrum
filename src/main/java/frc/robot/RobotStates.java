@@ -254,7 +254,7 @@ public class RobotStates {
         autonHome.onTrue(homeAll.toggleToTrue(), autonL4reverse.setFalse());
         autonHome.onTrue(lollipopCoral.setFalse());
         autonReverse.whileTrue(reverse.setTrue());
-        autonAutoScore.onTrue(autonAutoScoreMode.setTrue());
+        // autonAutoScore.onTrue(autonAutoScoreMode.setTrue());
         autonL4reverseTrigger.onTrue(autonL4reverse.setTrue());
 
         // *********************************

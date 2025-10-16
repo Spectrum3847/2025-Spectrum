@@ -33,7 +33,7 @@
     },
     "###/SmartDashboard/Auto Chooser": {
       "Collapsed": "0",
-      "Pos": "314,257",
+      "Pos": "319,256",
       "Size": "307,60"
     },
     "###/SmartDashboard/Field2d": {
@@ -48,7 +48,7 @@
     },
     "###/SmartDashboard/LeftView": {
       "Collapsed": "0",
-      "Pos": "1299,558",
+      "Pos": "1323,645",
       "Size": "498,591"
     },
     "###/SmartDashboard/Rotation Controller": {
@@ -63,7 +63,7 @@
     },
     "###/SmartDashboard/Scheduler": {
       "Collapsed": "0",
-      "Pos": "992,555",
+      "Pos": "993,649",
       "Size": "321,488"
     },
     "###/SmartDashboard/States": {
@@ -79,7 +79,7 @@
     "###/SmartDashboard/VisionSystemSim-main/Sim Field": {
       "Collapsed": "0",
       "Pos": "990,14",
-      "Size": "1048,528"
+      "Size": "1263,631"
     },
     "###/SmartDashboard/X Controller": {
       "Collapsed": "0",
@@ -104,7 +104,7 @@
     "###FMS": {
       "Collapsed": "0",
       "Pos": "330,26",
-      "Size": "336,158"
+      "Size": "210,214"
     },
     "###Joysticks": {
       "Collapsed": "0",

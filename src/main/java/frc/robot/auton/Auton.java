@@ -120,37 +120,37 @@ public class Auton {
                 autoScore(),
                 SpectrumAuton("W3C-Leg2", mirrored),
                 autoScore(),
-                RobotStates.homeAll.toggleToTrue(),
-                RobotStates.autonClearStates());
+                RobotStates.autonClearStates(),
+                RobotStates.homeAll.toggleToTrue());
     }
 
     public Command groundCoral3left() {
         return Commands.sequence(
                         SpectrumAuton("GC3L-Start", false),
-                        autoScore(),
+                        autonScore(),
                         SpectrumAuton("GC3L-Leg1", false),
-                        autoScore(),
+                        autonScore(),
                         SpectrumAuton("GC3L-Leg2", false),
-                        autoScore(),
+                        autonScore(),
                         SpectrumAuton("GC3L-Leg3", false),
-                        autoScore(),
-                        RobotStates.homeAll.toggleToTrue(),
-                        RobotStates.autonClearStates())
+                        autonScore(),
+                        RobotStates.autonClearStates(),
+                        RobotStates.homeAll.toggleToTrue())
                 .withName("GC3L-Full");
     }
 
     public Command groundCoral3right() {
         return Commands.sequence(
                         SpectrumAuton("GC3R-Start", false),
-                        autoScore(),
+                        autonScore(),
                         SpectrumAuton("GC3R-Leg1", false),
-                        autoScore(),
+                        autonScore(),
                         SpectrumAuton("GC3R-Leg2", false),
-                        autoScore(),
+                        autonScore(),
                         SpectrumAuton("GC3R-Leg3", false),
-                        autoScore(),
-                        RobotStates.homeAll.toggleToTrue(),
-                        RobotStates.autonClearStates())
+                        autonScore(),
+                        RobotStates.autonClearStates(),
+                        RobotStates.homeAll.toggleToTrue())
                 .withName("GC3R-Full");
     }
 
@@ -222,7 +222,10 @@ public class Auton {
     }
 
     public Command autonScore() {
-        return Commands.sequence(Commands.waitSeconds(.75), RobotStates.actionPrepState.setFalse())
+        return Commands.sequence(
+                        RobotStates.actionPrepState.setFalse(),
+                        RobotStates.actionState.setTrueForTimeWithCancel(
+                                RobotStates::getAutonScoreTime, RobotStates.actionPrepState))
                 .withName("Auton.L4Score");
     }
 
