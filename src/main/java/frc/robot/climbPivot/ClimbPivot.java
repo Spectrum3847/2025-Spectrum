@@ -26,8 +26,10 @@ public class ClimbPivot extends Mechanism {
 
     public static class ClimbPivotConfig extends Config {
 
-        @Getter private final double maxRotations = 0.375; // 0.315; // 0.36;
-        @Getter private final double minRotations = 0.250;
+        @Getter private final double maxRotations = -9.5 / 25; // 0.315; // 0.36;
+        @Getter private final double minRotations = -85 / 25;
+
+        @Getter private final double startRotations = 0.05;
 
         /* Climb positions in degrees || 0 is horizontal */
         @Getter private final double home = 90;
@@ -43,16 +45,16 @@ public class ClimbPivot extends Mechanism {
         @Getter private final double zeroSpeed = -0.1;
         @Getter private final double holdMaxSpeedRPM = 18;
 
-        @Getter private final double currentLimit = 60; // 60
-        @Getter private final double torqueCurrentLimit = 180; // 180
+        @Getter private final double currentLimit = 300; // 60
+        @Getter private final double torqueCurrentLimit = 300; // 180
         @Getter private final double positionKp = 190;
         @Getter private final double positionKd = 40;
         @Getter private final double positionKv = 0;
         @Getter private final double positionKs = 0.3;
         @Getter private final double positionKa = 0.001;
         @Getter private final double positionKg = 2.9;
-        @Getter private final double mmCruiseVelocity = 1;
-        @Getter private final double mmAcceleration = 10;
+        @Getter private final double mmCruiseVelocity = 100;
+        @Getter private final double mmAcceleration = 100;
         @Getter private final double mmJerk = 0;
 
         /* Sim properties */
@@ -68,7 +70,7 @@ public class ClimbPivot extends Mechanism {
             configPIDGains(0, positionKp, 0, positionKd);
             configFeedForwardGains(positionKs, positionKv, positionKa, positionKg);
             configMotionMagic(mmCruiseVelocity, mmAcceleration, mmJerk);
-            configGearRatio(99.5555555555); // 9t = 99.5555555555); 12t - 74.6666666667;
+            configGearRatio(25); // 9t = 99.5555555555); 12t - 74.6666666667;
             configSupplyCurrentLimit(currentLimit, true);
             configStatorCurrentLimit(torqueCurrentLimit, true);
             configForwardTorqueCurrentLimit(torqueCurrentLimit);
@@ -77,7 +79,7 @@ public class ClimbPivot extends Mechanism {
             configReverseSoftLimit(getMinRotations(), true);
             configForwardSoftLimit(getMaxRotations(), true);
             configNeutralBrakeMode(true);
-            configCounterClockwise_Positive();
+            configClockwise_Positive();
             configGravityType(true);
             setSimRatio(simRatio);
         }
@@ -137,9 +139,18 @@ public class ClimbPivot extends Mechanism {
         }
     }
 
+    // public void startClimb() {
+    //     if (config.isAttached()) {
+    //         moveToRotations(config::getStartRotations)
+    //                 .withTimeout(1)
+    //                 .andThen(moveToRotations(config::getMinRotations))
+    //                 .withTimeout(1);
+    //     }
+    // }
+
     private void setInitialPosition() {
         if (config.isAttached()) {
-            motor.setPosition(0.25);
+            motor.setPosition(0.15);
         }
     }
 

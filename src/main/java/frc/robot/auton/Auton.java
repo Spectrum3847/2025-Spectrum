@@ -54,6 +54,7 @@ public class Auton {
     public static final EventTrigger autonPoseUpdate = new EventTrigger("poseUpdate");
     public static final EventTrigger autonAutoScore = new EventTrigger("autoScore");
     public static final EventTrigger autonStow = new EventTrigger("stow");
+    public static final EventTrigger autonL4reverseTrigger = new EventTrigger("L4reverse");
 
     private final SendableChooser<Command> pathChooser = new SendableChooser<>();
     private boolean autoMessagePrinted = true;
@@ -206,7 +207,7 @@ public class Auton {
                         RobotStates.l2.setTrue(),
                         RobotStates.algae.setTrue(),
                         Commands.waitSeconds(0.05),
-                        SwerveStates.autonAlgaeReefAimDriveVisionXY().withTimeout(.25),
+                        SwerveStates.autonAlgaeReefAimDriveVisionXY().withTimeout(.75),
                         RobotStates.actionPrepState.setTrue(),
                         Commands.waitSeconds(0.2),
                         SwerveStates.autonAlgaeDriveIntake(0.5))

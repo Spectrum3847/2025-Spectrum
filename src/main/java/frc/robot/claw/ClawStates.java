@@ -34,6 +34,8 @@ public class ClawStates {
 
         stationIntaking.onFalse(claw.getDefaultCommand());
 
+        lollipopCoral.whileTrue(claw.runTorqueCurrentFoc(config::getCoralIntakeSupplyCurrent));
+
         netAlgae.and(actionState)
                 .whileTrue(
                         // runVoltageCurrentLimits(

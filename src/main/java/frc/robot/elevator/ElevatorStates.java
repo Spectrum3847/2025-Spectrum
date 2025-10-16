@@ -53,8 +53,8 @@ public class ElevatorStates {
 
         homeAll.and(ClawStates.hasCoral).debounce(0.2).whileTrue(home());
 
-        homeAll.and(ShoulderStates.isHome).whileTrue(home());
-        homeAll.and(Util.autoMode, ShoulderStates.isHome).whileTrue(slowHome());
+        homeAll.and(ShoulderStates.isLow.not()).whileTrue(home());
+        // homeAll.and(Util.autoMode, ShoulderStates.isHome).whileTrue(slowHome());
         Robot.getOperator()
                 .antiSecretClimb_LTRSup
                 .whileTrue(move(config::getFullExtend, "Elevator.fullExtend"));
@@ -68,11 +68,10 @@ public class ElevatorStates {
                                 "Elevator.stationIntake"));
         stationIntaking.and(ShoulderStates.isLow.not()).onFalse(home());
 
-        lollipopCoral.and(ShoulderStates.isLow.not()).whileTrue(home());
+        lollipopCoral.whileTrue(home());
 
-        groundAlgae
-                .and(ShoulderStates.isLow.not())
-                .whileTrue(move(config::getClawGroundAlgaeIntake, "Ground Algae"));
+        groundAlgae.whileTrue(move(config::getClawGroundAlgaeIntake, "Ground Algae"));
+        // (groundAlgae.onFalse().and(ShoulderStates.isLow.not())).onTrue(home());
         groundCoral.whileTrue(home());
 
         (stagedCoral.or(stagedAlgae))
@@ -83,14 +82,14 @@ public class ElevatorStates {
                 .whileTrue(move(config::getHome, "Elevator.Stage"));
 
         actionPrepState
-                .and(L2Coral)
+                .and(L2Coral, ShoulderStates.isLow)
                 .whileTrue(move(config::getHandOffAvoid, "Elevator.avoidHit").until(handOffAvoid));
         actionPrepState
                 .and(L2Coral, ShoulderStates.isLow.not())
                 .whileTrue(move(config::getL2Coral, "Elevator.L2Coral"));
 
         actionPrepState
-                .and(L3Coral)
+                .and(L3Coral, ShoulderStates.isLow)
                 .whileTrue(move(config::getHandOffAvoid, "Elevator.avoidHit").until(handOffAvoid));
         actionPrepState
                 .and(L3Coral, ShoulderStates.isLow.not())

@@ -24,8 +24,8 @@ public class ClimbIntake extends Mechanism {
         @Getter @Setter private double intakeTorqueCurrent = 85.0;
 
         /* Intake config values */
-        @Getter private double currentLimit = 44;
-        @Getter private double torqueCurrentLimit = 200;
+        @Getter private double currentLimit = 80;
+        @Getter private double torqueCurrentLimit = 400;
         @Getter private double velocityKp = 12; // 0.156152;
         @Getter private double velocityKv = 0.2; // 0.12;
         @Getter private double velocityKs = 14;
@@ -46,7 +46,7 @@ public class ClimbIntake extends Mechanism {
             configForwardTorqueCurrentLimit(torqueCurrentLimit);
             configReverseTorqueCurrentLimit(torqueCurrentLimit);
             configNeutralBrakeMode(true);
-            configCounterClockwise_Positive();
+            configClockwise_Positive();
         }
     }
 

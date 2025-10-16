@@ -71,8 +71,14 @@
       "command": null
     },
     {
+      "name": "L4reverse",
+      "waypointRelativePos": 0.5046985121378122,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
       "name": "actionOn",
-      "waypointRelativePos": 0.7960062646828505,
+      "waypointRelativePos": 0.6002349256068921,
       "endWaypointRelativePos": null,
       "command": null
     },

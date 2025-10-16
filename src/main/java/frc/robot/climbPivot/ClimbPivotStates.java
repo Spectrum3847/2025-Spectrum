@@ -38,13 +38,13 @@ public class ClimbPivotStates {
                 .climbPrep_start
                 .and(Robot.getOperator().rightTriggerOnly)
                 .onTrue(closeLatch());
-        Robot.getOperator()
-                .climbPrep_start
-                .onTrue(
-                        climb.moveToRotations(config::getMinRotations)
-                                .withTimeout(1.5)
-                                .andThen(closeLatch())
-                                .withName("Climb.prepClimber"));
+        // Robot.getOperator()
+        //         .climbPrep_start
+        //         .onTrue(
+        //                 climb.moveToRotations(config::getMinRotations)
+        //                         .withTimeout(1.5)
+        //                         .andThen(closeLatch())
+        //                         .withName("Climb.prepClimber"));
 
         // homeAll.and(climb.getLatched().not(), climbPrep.not()).whileTrue(log(home()));
         homeAll.whileTrue(log(home().alongWith(openLatch())));

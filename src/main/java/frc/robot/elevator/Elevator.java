@@ -32,7 +32,7 @@ public class Elevator extends Mechanism {
         @Getter @Setter private double fullExtend = maxRotations * .999;
         @Getter @Setter private double home = 0.5;
 
-        @Getter @Setter private double clawGroundAlgaeIntake = 4.5;
+        @Getter @Setter private double clawGroundAlgaeIntake = 10.5;
         @Getter @Setter private double clawGroundCoralIntake = 0;
 
         @Getter @Setter private double stationIntake = 0;
@@ -50,7 +50,7 @@ public class Elevator extends Mechanism {
         @Getter @Setter private double l4Coral = 33;
         @Getter @Setter private double l4Score = 33;
 
-        @Getter @Setter private double handOff = 26.9;
+        @Getter @Setter private double handOff = 27.4;
         @Getter @Setter private double handOffAvoid = 31;
 
         @Getter private double triggerTolerance = 1.15;
@@ -73,8 +73,8 @@ public class Elevator extends Mechanism {
         @Getter private final double slowMmAcceleration = 55;
         @Getter private final double slowMmJerk = 550;
 
-        @Getter private double currentLimit = 10; // 60;
-        @Getter private double torqueCurrentLimit = 40; // 160;
+        @Getter private double currentLimit = 60; // 60;
+        @Getter private double torqueCurrentLimit = 160; // 160;
 
         /* Sim properties */
         @Getter private double kElevatorGearing = 1.7;

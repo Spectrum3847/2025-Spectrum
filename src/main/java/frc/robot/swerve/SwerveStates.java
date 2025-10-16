@@ -114,8 +114,8 @@ public class SwerveStates {
 
     public static Command autonAlgaeReefAimDriveVisionXY() {
         return alignDrive(
-                        () -> FieldHelpers.getReefOffsetFromTagX() + 0.05,
-                        () -> FieldHelpers.getReefOffsetFromTagY(),
+                        () -> FieldHelpers.getReefOffsetFromTagAlgaeX(),
+                        () -> FieldHelpers.getReefOffsetFromTagAlgaeY(),
                         () -> FieldHelpers.getReefTagAngle())
                 .withName("Swerve.reefAimDriveVisionXY");
     }

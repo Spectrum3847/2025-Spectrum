@@ -20,13 +20,11 @@ public class ShoulderStates {
     public static final Trigger isAutonNetPosition =
             shoulder.aboveDegrees(config::getAutonShoulderNetChecker, config::getTolerance);
 
-    public static final Trigger isLow =
-            shoulder.aboveDegrees(config::getIsLow, config::getTolerance)
-                    .and(reverse.not())
-                    .or(
-                            shoulder.aboveDegrees(() -> -config.getIsLow(), config::getTolerance)
-                                    .and(reverse));
-    ;
+    public static final Trigger isLow = shoulder.atDegrees(config::getIsLow, () -> 90);
+    //     .or(
+    //             shoulder.atDegrees(() -> -config.getIsLow(), () -> 90)
+    //                     .and(reverse));
+
     public static final Trigger isHandOff =
             shoulder.atDegrees(config::getHandOff, config::getTolerance)
                     .and(reverse.not())
@@ -68,10 +66,14 @@ public class ShoulderStates {
     public static void setupDefaultCommand() {
         shoulder.setDefaultCommand(
                 log(shoulder.runHoldShoulder().withName("Shoulder.HoldDefault")));
-        // shoulder.runStop());
+        // shoulder.runStop()););
     }
 
     public static void setStates() {
+        Robot.getOperator()
+                .climbPrep_start
+                .onTrue(moveWithoutReverse(config::getClimbPrep, "Shoulder.climbPrep"));
+
         isHandOff.onTrue(shoulderHandOff.setTrue());
         isHandOff.onFalse(shoulderHandOff.setFalse());
 
@@ -118,6 +120,16 @@ public class ShoulderStates {
                         moveWithoutReverse(config::getL4Coral, "Shoulder.L4Coral.prescoreRepeat"));
         L4Coral.and(actionState)
                 .whileTrue(moveWithoutReverse(config::getL4CoralScore, "Shoulder.L4Coral.score"));
+
+        L4Coral.and(actionPrepState, Util.autoMode, autonL4reverse)
+                .debounce(0.3)
+                .whileTrue(
+                        moveWithoutReverse(
+                                () -> -config.getL4Coral(), "Shoulder.L4Coral.prescoreRepeat"));
+        L4Coral.and(actionState, Util.autoMode, autonL4reverse)
+                .whileTrue(
+                        moveWithoutReverse(
+                                () -> -config.getL4CoralScore(), "Shoulder.L4Coral.score"));
         // L4Coral.and(actionPrepState, Util.autoMode)
         //         .whileTrue(slowMove(config::getL4Coral, "Shoulder.L4Coral.slowPrescore"));
 

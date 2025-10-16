@@ -330,6 +330,7 @@ public class Robot extends SpectrumRobot {
             field2d.getObject("path").setPoses(new ArrayList<>()); // clears auto visualizer
 
             Telemetry.print("!!! Teleop Init Complete !!! ");
+            // climbPivot.startClimb();
         } catch (Throwable t) {
             // intercept error and log it
             CrashTracker.logThrowableCrash(t);

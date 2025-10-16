@@ -451,6 +451,14 @@ public class FieldHelpers {
         return Robot.getVision().getReefOffsetFromTag().getY();
     }
 
+    public static double getReefOffsetFromTagAlgaeX() {
+        return Robot.getVision().getReefOffsetFromTagAlgae().getX();
+    }
+
+    public static double getReefOffsetFromTagAlgaeY() {
+        return Robot.getVision().getReefOffsetFromTagAlgae().getY();
+    }
+
     // ------------------------------------------------------------------------------
     // Calculation Functions
     // ------------------------------------------------------------------------------

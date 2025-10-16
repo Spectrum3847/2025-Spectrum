@@ -6,7 +6,7 @@ public class OM2025 extends Config {
 
     public OM2025() {
         super();
-        swerve.configEncoderOffsets(-0.29541, 0.085938, 0.33667, 0.387451);
+        swerve.configEncoderOffsets(-0.257324, 0.087891, 0.371582, 0.448730);
         // swerve.configEncoderOffsets(-0.395264, 0.11499, 0.061279, 0.385742);
 
         // Attached Mechanisms
@@ -16,7 +16,8 @@ public class OM2025 extends Config {
         claw.setAttached(true);
         shoulder.setAttached(true);
         groundIntake.setAttached(true);
-        climbPivot.setAttached(false);
+        climbPivot.setAttached(true);
+        climbIntake.setAttached(true);
         intakePivot.setAttached(true);
 
         shoulder.setCANcoderAttached(false);

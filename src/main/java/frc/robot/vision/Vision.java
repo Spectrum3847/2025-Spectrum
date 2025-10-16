@@ -100,7 +100,7 @@ public class Vision implements NTSendable, Subsystem {
 
         backLL = new Limelight(config.backLL, config.backTagPipeline, config.backConfig);
 
-        allLimelights = new Limelight[] {frontLL, backLL};
+        allLimelights = new Limelight[] {frontLL};
 
         // logging
         df.setMaximumFractionDigits(2);
@@ -122,6 +122,8 @@ public class Vision implements NTSendable, Subsystem {
 
         this.register();
         telemetryInit();
+
+        Telemetry.print(getName() + " Subsystem Initialized");
     }
 
     @Override
@@ -184,9 +186,7 @@ public class Vision implements NTSendable, Subsystem {
     private void setLimeLightOrientation() {
         double yaw = Robot.getSwerve().getRobotPose().getRotation().getDegrees();
 
-        for (Limelight limelight : allLimelights) {
-            limelight.setRobotOrientation(yaw);
-        }
+        frontLL.setRobotOrientation(yaw);
     }
 
     private void disabledLimelightUpdates() {
@@ -194,11 +194,11 @@ public class Vision implements NTSendable, Subsystem {
             for (Limelight limelight : allLimelights) {
                 limelight.setIMUmode(1);
             }
-            try {
-                addMegaTag1_VisionInput(backLL, true);
-            } catch (Exception e) {
-                Telemetry.print("REAR MT1: Vision pose not present but tried to access it");
-            }
+            // try {
+            //     addMegaTag1_VisionInput(backLL, true);
+            // } catch (Exception e) {
+            //     Telemetry.print("REAR MT1: Vision pose not present but tried to access it");
+            // }
 
             try {
                 addMegaTag1_VisionInput(frontLL, true);
@@ -213,11 +213,11 @@ public class Vision implements NTSendable, Subsystem {
             for (Limelight limelight : allLimelights) {
                 limelight.setIMUmode(1);
             }
-            try {
-                addMegaTag2_VisionInput(backLL);
-            } catch (Exception e) {
-                Telemetry.print("REAR MT2: Vision pose not present but tried to access it");
-            }
+            // try {
+            //     addMegaTag2_VisionInput(backLL);
+            // } catch (Exception e) {
+            //     Telemetry.print("REAR MT2: Vision pose not present but tried to access it");
+            // }
 
             try {
                 addMegaTag2_VisionInput(frontLL);
@@ -225,11 +225,11 @@ public class Vision implements NTSendable, Subsystem {
                 Telemetry.print("FRONT MT2: Vision pose not present but tried to access it");
             }
 
-            try {
-                addMegaTag1_VisionInput(backLL, false);
-            } catch (Exception e) {
-                Telemetry.print("REAR MT1: Vision pose not present but tried to access it");
-            }
+            // try {
+            //     addMegaTag1_VisionInput(backLL, false);
+            // } catch (Exception e) {
+            //     Telemetry.print("REAR MT1: Vision pose not present but tried to access it");
+            // }
 
             try {
                 addMegaTag1_VisionInput(frontLL, false);
@@ -244,11 +244,11 @@ public class Vision implements NTSendable, Subsystem {
             for (Limelight limelight : allLimelights) {
                 limelight.setIMUmode(1);
             }
-            try {
-                addMegaTag2_VisionInputAuton(backLL);
-            } catch (Exception e) {
-                Telemetry.print("REAR MT2: Vision pose not present but tried to access it");
-            }
+            // try {
+            //     addMegaTag2_VisionInputAuton(backLL);
+            // } catch (Exception e) {
+            //     Telemetry.print("REAR MT2: Vision pose not present but tried to access it");
+            // }
 
             try {
                 addMegaTag2_VisionInputAuton(frontLL);
@@ -256,11 +256,11 @@ public class Vision implements NTSendable, Subsystem {
                 Telemetry.print("FRONT MT2: Vision pose not present but tried to access it");
             }
 
-            try {
-                addMegaTag1_VisionInputAuton(backLL, false);
-            } catch (Exception e) {
-                Telemetry.print("REAR MT1: Vision pose not present but tried to access it");
-            }
+            // try {
+            //     addMegaTag1_VisionInputAuton(backLL, false);
+            // } catch (Exception e) {
+            //     Telemetry.print("REAR MT1: Vision pose not present but tried to access it");
+            // }
 
             try {
                 addMegaTag1_VisionInputAuton(frontLL, false);
@@ -835,6 +835,23 @@ public class Vision implements NTSendable, Subsystem {
 
         double reefTagDistanceOffset = offsets.getReefTagDistanceOffset(closestTagID);
         double reefTagCenterOffset = offsets.getReefTagCenterOffset(closestTagID);
+
+        return FieldHelpers.getXYOffsetFromTag(
+                closestTagID, reefTagDistanceOffset, reefTagCenterOffset);
+    }
+
+    public Pose2d getReefOffsetFromTagAlgae() {
+        int closestTagID = Robot.getVision().getClosestTagID();
+
+        if (closestTagID < 6 || closestTagID == 16 || closestTagID > 22) {
+            closestTagID = FieldHelpers.getReefZoneTagID(Robot.getSwerve().getRobotPose());
+            if (closestTagID < 0) {
+                return Robot.getSwerve().getRobotPose();
+            }
+        }
+
+        double reefTagDistanceOffset = offsets.getReefTagDistanceOffset(closestTagID) + 0.5;
+        double reefTagCenterOffset = 0;
 
         return FieldHelpers.getXYOffsetFromTag(
                 closestTagID, reefTagDistanceOffset, reefTagCenterOffset);

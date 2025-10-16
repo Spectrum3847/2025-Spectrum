@@ -7,6 +7,7 @@ import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.networktables.NTSendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -40,9 +41,11 @@ public class Shoulder extends Mechanism {
 
         @Getter @Setter private double stationIntake = -9.2;
         @Getter @Setter private double stationExtendedIntake = -23.6;
-        @Getter @Setter private double groundAlgaeIntake = -100;
+        @Getter @Setter private double groundAlgaeIntake = -125;
         @Getter @Setter private double groundCoralIntake = 4;
-        @Getter @Setter private double lollipopCoral = -100; // 20;
+        @Getter @Setter private double lollipopCoral = -110; // 20;
+
+        @Getter @Setter private double climbPrep = -100;
 
         @Getter @Setter private double processorAlgae = -143.877;
         @Getter @Setter private double l2Algae = -88; // -32;
@@ -50,7 +53,7 @@ public class Shoulder extends Mechanism {
         @Getter @Setter private double netAlgae = -19;
         @Getter @Setter private double autonShoulderNetChecker = 60;
 
-        @Getter @Setter private double isLow = -90;
+        @Getter @Setter private double isLow = 180;
 
         @Getter @Setter private double l2Coral = -58;
         @Getter @Setter private double l2Score = -77.8;
@@ -70,8 +73,8 @@ public class Shoulder extends Mechanism {
         @Getter private final double zeroSpeed = -0.1;
         @Getter private final double holdMaxSpeedRPM = 18.0;
 
-        @Getter private final double currentLimit = 10; // 60;
-        @Getter private final double torqueCurrentLimit = 20; // 80;
+        @Getter private final double currentLimit = 60; // 60;
+        @Getter private final double torqueCurrentLimit = 120; // 80;
         @Getter private final double positionKp = 250;
         @Getter private final double positionKd = 60;
         @Getter private final double positionKv = 0;
@@ -173,7 +176,9 @@ public class Shoulder extends Mechanism {
     }
 
     @Override
-    public void periodic() {}
+    public void periodic() {
+        SmartDashboard.putBoolean("isLow", ShoulderStates.isLow.getAsBoolean());
+    }
 
     public void setupStates() {
         ShoulderStates.setStates();

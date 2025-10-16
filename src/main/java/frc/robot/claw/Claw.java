@@ -31,11 +31,11 @@ public class Claw extends Mechanism {
         // Algae Voltages and Current
         @Getter @Setter private double algaeIntakeVoltage = -9.0;
         @Getter @Setter private double algaeIntakeSupplyCurrent = 30.0;
-        @Getter @Setter private double algaeIntakeTorqueCurrent = 120.0;
+        @Getter @Setter private double algaeIntakeTorqueCurrent = 150.0;
 
         @Getter @Setter private double algaeScoreVoltage = 12.0;
-        @Getter @Setter private double algaeScoreSupplyCurrent = 30.0;
-        @Getter @Setter private double algaeScoreTorqueCurrent = -180.0;
+        @Getter @Setter private double algaeScoreSupplyCurrent = 40.0;
+        @Getter @Setter private double algaeScoreTorqueCurrent = -200.0;
 
         // Coral Voltages and Current
         @Getter @Setter private double coralHoldVoltage = 2.5;

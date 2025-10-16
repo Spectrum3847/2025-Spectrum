@@ -40,6 +40,7 @@ public class GroundIntakeStates {
                         .withName("GroundIntake.GroundCoral"));
 
         handOff.and(ShoulderStates.isHandOff)
+                .debounce(0.25)
                 .whileTrue(
                         groundIntake
                                 .runTorqueFOC(config::getCoralHandoffTorqueCurrent)
