@@ -46,6 +46,7 @@ public class LedStates {
         // // hasAlgaeLED(IntakeStates.hasAlgae.and(Util.teleop), 7);
         rightCoralLED(RobotStates.rightScore.and(Util.teleop), 8);
         netAlgaeZoneLED(Zones.netAlgaeZone.and(RobotStates.netAlgae, Util.teleop), 8);
+        coralModeAutoLED(RobotStates.coral.and(Util.autoMode), 7);
 
         // Elevator Led Commands
         elevatorHomeLED(ElevatorStates.isHome, 17);
@@ -177,6 +178,11 @@ public class LedStates {
         // trigger);
         ledCommand("right.CoralMode", right, right.solid(Color.kCoral), priority, trigger);
         ledCommand("left.CoralMode", left, left.solid(Color.kCoral), priority, trigger);
+    }
+
+    static void coralModeAutoLED(Trigger trigger, int priority) {
+        ledCommand("right.CoralModeAuto", right, right.solid(Color.kPurple), priority, trigger);
+        ledCommand("left.CoralModeAuto", left, left.solid(Color.kPurple), priority, trigger);
     }
 
     static void algaeModeLED(Trigger trigger, int priority) {
