@@ -1,4 +1,5 @@
 name: Generate JavaDoc and deploy to GitHub Pages
+# Modified from https://gist.github.com/Project516/2eccafb22440aca4793fcae1efa6da94
 
 on:
   push:
