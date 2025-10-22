@@ -2,154 +2,143 @@ package frc.robot;
 
 import com.google.common.collect.ImmutableMap;
 
-import edu.wpi.first.wpilibj.RobotState;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.intake.IntakeStates;
 import java.util.Map;
 import lombok.Getter;
+import lombok.Setter;
 
 public enum State {
-    REHOME(Claw.EMPTY, true),
+    REHOME,
 
-    IDLE_EMPTY(Claw.EMPTY, false),
-    IDLE_ALGAE(Claw.ALGAE, false),
-    IDLE_CORAL(Claw.CORAL, false),
-    STARTING_POS(Claw.EMPTY, false),
-    STARTING_POS_CORAL(Claw.CORAL, false),
+    IDLE_EMPTY,
+    IDLE_ALGAE,
+    IDLE_CORAL,
+    STARTING_POS,
+    STARTING_POS_CORAL,
 
-    ALGAE_INTAKE_FLOOR(Claw.ALGAE, false),
-    ALGAE_INTAKE_L2(Claw.ALGAE, false),
-    ALGAE_INTAKE_L3(Claw.ALGAE, false),
+    ALGAE_INTAKE_FLOOR,
+    ALGAE_INTAKE_L2,
+    ALGAE_INTAKE_L3,
 
-    ALGAE_NET_WAITING(Claw.ALGAE, false),
-    ALGAE_NET_RELEASE(Claw.ALGAE, false),
+    ALGAE_NET_READY,
+    ALGAE_NET_RELEASE,
 
-    CORAL_INTAKE_FLOOR(Claw.CORAL, false),
+    CORAL_INTAKE_FLOOR,
 
-    CORAL_L2_LINEUP_LEFT(Claw.CORAL, false),
-    CORAL_L2_LINEUP_RIGHT(Claw.CORAL, false),
-    CORAL_L2_PLACE_LEFT(Claw.CORAL, false),
-    CORAL_L2_PLACE_RIGHT(Claw.CORAL, false),
-    CORAL_L2_RELEASE_LEFT(Claw.CORAL, false),
-    CORAL_L2_RELEASE_RIGHT(Claw.CORAL, false),
+    CORAL_L2_READY,
+    CORAL_L2_LINEUP,
+    CORAL_L2_PLACE,
 
-    CORAL_L3_LINEUP_LEFT(Claw.CORAL, false),
-    CORAL_L3_LINEUP_RIGHT(Claw.CORAL, false),
-    CORAL_L3_PLACE_LEFT(Claw.CORAL, false),
-    CORAL_L3_PLACE_RIGHT(Claw.CORAL, false),
-    CORAL_L3_RELEASE_LEFT(Claw.CORAL, false),
-    CORAL_L3_RELEASE_RIGHT(Claw.CORAL, false),
+    CORAL_L3_READY,
+    CORAL_L3_LINEUP,
+    CORAL_L3_PLACE,
 
-    CORAL_L4_LINEUP_LEFT(Claw.CORAL, false),
-    CORAL_L4_LINEUP_RIGHT(Claw.CORAL, false),
-    CORAL_L4_PLACE_LEFT(Claw.CORAL, false),
-    CORAL_L4_PLACE_RIGHT(Claw.CORAL, false),
-    CORAL_L4_RELEASE_LEFT(Claw.CORAL, false),
-    CORAL_L4_RELEASE_RIGHT(Claw.CORAL, false),
+    CORAL_L4_READY,
+    CORAL_L4_LINEUP,
+    CORAL_L4_PLACE,
 
-    CLIMING_APPROACH(Claw.EMPTY, true),
-    CLIMBING_HANG(Claw.EMPTY, true),
-    CLIMBING_LOCK(Claw.EMPTY, true);
+    CLIMING_APPROACH,
+    CLIMBING_HANG,
+    CLIMBING_LOCK;
+
+    @Getter @Setter private static boolean isReversed = false;
+    @Getter @Setter private static boolean isLeft = false;
+
+    private State() {
     }
 
-    public enum Claw {
-        EMPTY,
-        ALGAE,
-        CORAL
-    }
-
-    public class StateMachine {
-    @Getter public final Claw claw;
-    @Getter public final boolean specialMode;
-
-    private State(Claw clawGp, boolean specialMode) {
-        this.claw = clawGp;
-        this.specialMode = specialMode;
-    }
-
-    private State state = State.IDLE_EMPTY;
-
+    // Define the scoring sequence map, the 2nd state is the next state after the current one
     private static final ImmutableMap<State, State> scoreSequence =
             ImmutableMap.ofEntries(
-                    Map.entry(CORAL_L2_LINEUP_LEFT, CORAL_L2_PLACE_LEFT),
-                    Map.entry(CORAL_L2_LINEUP_RIGHT, CORAL_L2_PLACE_RIGHT),
-                    Map.entry(CORAL_L3_LINEUP_LEFT, CORAL_L3_PLACE_LEFT),
-                    Map.entry(CORAL_L3_LINEUP_RIGHT, CORAL_L3_PLACE_RIGHT),
-                    Map.entry(CORAL_L4_LINEUP_LEFT, CORAL_L4_PLACE_LEFT),
-                    Map.entry(CORAL_L4_LINEUP_RIGHT, CORAL_L4_PLACE_RIGHT),
-                    Map.entry(CORAL_L2_PLACE_LEFT, CORAL_L2_RELEASE_LEFT),
-                    Map.entry(CORAL_L2_PLACE_RIGHT, CORAL_L2_RELEASE_RIGHT),
-                    Map.entry(CORAL_L3_PLACE_LEFT, CORAL_L3_RELEASE_LEFT),
-                    Map.entry(CORAL_L3_PLACE_RIGHT, CORAL_L3_RELEASE_RIGHT),
-                    Map.entry(CORAL_L4_PLACE_LEFT, CORAL_L4_RELEASE_LEFT),
-                    Map.entry(CORAL_L4_PLACE_RIGHT, CORAL_L4_RELEASE_RIGHT));
+                    Map.entry(CORAL_L2_READY, CORAL_L2_LINEUP),
+                    Map.entry(CORAL_L3_READY, CORAL_L3_LINEUP),
+                    Map.entry(CORAL_L4_READY, CORAL_L4_LINEUP),
+                    Map.entry(CORAL_L2_LINEUP, CORAL_L2_PLACE),
+                    Map.entry(CORAL_L3_LINEUP, CORAL_L3_PLACE),
+                    Map.entry(CORAL_L4_LINEUP, CORAL_L4_PLACE));
 
+    //------ STATE ATTRIBUTES ------//
     public static boolean isLineupState(State state) {
         return switch (state) {
-            case CORAL_L4_LINEUP_RIGHT,
-                    CORAL_L4_LINEUP_LEFT,
-                    CORAL_L3_LINEUP_LEFT,
-                    CORAL_L3_LINEUP_RIGHT,
-                    CORAL_L2_LINEUP_LEFT,
-                    CORAL_L2_LINEUP_RIGHT -> true;
+            case CORAL_L4_LINEUP,
+                    CORAL_L3_LINEUP,
+                    CORAL_L2_LINEUP -> true;
             default -> false;
         };
     }
 
-    public static boolean missingGP(State state, boolean hasGp) {
-        return (!state.claw.equals(Claw.EMPTY) && !hasGp);
-    }
-
-    public static boolean isReleaseState(State state) {
+    public static boolean isReadyState(State state) {
         return switch (state) {
-            case CORAL_L2_RELEASE_LEFT,
-                    CORAL_L2_RELEASE_RIGHT,
-                    CORAL_L3_RELEASE_LEFT,
-                    CORAL_L3_RELEASE_RIGHT,
-                    CORAL_L4_RELEASE_LEFT,
-                    CORAL_L4_RELEASE_RIGHT -> true;
+            case CORAL_L4_READY,
+                    CORAL_L3_READY,
+                    CORAL_L2_READY -> true;
             default -> false;
         };
     }
 
     public static boolean isSpecialMode(State state) {
-        return state.specialMode;
+        return switch (state) {
+            case CLIMING_APPROACH, CLIMBING_HANG, CLIMBING_LOCK -> true;
+            default -> false;
+        };
+    }
+
+    public static boolean isAlgae(State state) {
+        return switch (state) {
+            case IDLE_ALGAE,
+                    ALGAE_INTAKE_FLOOR,
+                    ALGAE_INTAKE_L2,
+                    ALGAE_INTAKE_L3,
+                    ALGAE_NET_READY,
+                    ALGAE_NET_RELEASE -> true;
+            default -> false;
+        };
+    }
+
+    public static boolean isCoral(State state){
+        return switch (state) {
+            case IDLE_CORAL,
+                    CORAL_INTAKE_FLOOR,
+                    CORAL_L2_READY,
+                    CORAL_L2_LINEUP,
+                    CORAL_L2_PLACE,
+                    CORAL_L3_READY,
+                    CORAL_L3_LINEUP,
+                    CORAL_L3_PLACE,
+                    CORAL_L4_READY,
+                    CORAL_L4_LINEUP,
+                    CORAL_L4_PLACE -> true;
+            default -> false;
+        };
+    }
+
+    public static boolean isIntakeState(State state) {
+        return switch (state) {
+            case ALGAE_INTAKE_FLOOR,
+                    ALGAE_INTAKE_L2,
+                    ALGAE_INTAKE_L3,
+                    CORAL_INTAKE_FLOOR -> true;
+            default -> false;
+        };
     }
 
     public State getNextScoreState() {
         return scoreSequence.getOrDefault(this, this);
     }
-
-    public void setStateCommand(State wantedState) {
-        this.state = wantedState;
-        }
         
-
     protected State getNextState(State currentState) {
         State nextState = this; // Default to the current state
 
-        if (State.missingGP(currentState, IntakeStates.hasGamePiece.getAsBoolean())) {
-            return State.IDLE_EMPTY;
-        }
-
         return switch (currentState) {
-            case CORAL_L2_PLACE_LEFT,
-                    CORAL_L2_PLACE_RIGHT,
-                    CORAL_L3_PLACE_LEFT,
-                    CORAL_L3_PLACE_RIGHT,
-                    CORAL_L4_PLACE_LEFT,
-                    CORAL_L4_PLACE_RIGHT -> {
+            case CORAL_L2_PLACE,
+                    CORAL_L3_PLACE,
+                    CORAL_L4_PLACE -> {
                 nextState = currentState.getNextScoreState();
                 yield nextState;
             }
 
-            case CORAL_L2_LINEUP_LEFT,
-                    CORAL_L2_LINEUP_RIGHT,
-                    CORAL_L3_LINEUP_LEFT,
-                    CORAL_L3_LINEUP_RIGHT,
-                    CORAL_L4_LINEUP_LEFT,
-                    CORAL_L4_LINEUP_RIGHT -> {
+            case CORAL_L2_LINEUP,
+                    CORAL_L3_LINEUP,
+                    CORAL_L4_LINEUP -> {
                 nextState = currentState.getNextScoreState();
                 yield nextState;
             }
@@ -164,7 +153,7 @@ public enum State {
                 yield nextState;
             }
 
-            case ALGAE_NET_WAITING -> {
+            case ALGAE_NET_READY -> {
                 nextState = State.ALGAE_NET_RELEASE;
                 yield nextState;
             }
