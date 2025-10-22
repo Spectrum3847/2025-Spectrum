@@ -1,14 +1,19 @@
 package frc.robot;
 
+import static frc.robot.State.*;
+
 
 public class Coordinator {
     
+    public void update(){
+        CORAL_L2_LINEUP.config(true, true);
+        setCurrentState(ALGAE_INTAKE_FLOOR);
+    }
+
     public void applyRobotState(State state) {
         switch (state) {
             case REHOME -> {
                 // Implement rehome logic
-                State.setLeft(true);
-                State.setReversed(false);
             }
             case IDLE_EMPTY -> {
                 // Implement scoring logic

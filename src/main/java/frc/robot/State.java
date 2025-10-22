@@ -39,8 +39,10 @@ public enum State {
     CLIMBING_HANG,
     CLIMBING_LOCK;
 
-    @Getter @Setter private static boolean isReversed = false;
-    @Getter @Setter private static boolean isLeft = false;
+    @Setter private static boolean isReversed = false;
+    @Setter private static boolean isLeft = false;
+    @Getter @Setter private static State currentState = IDLE_EMPTY;
+    @Getter private static State previouState = IDLE_EMPTY;
 
     private State() {
     }
@@ -56,7 +58,32 @@ public enum State {
                     Map.entry(CORAL_L4_LINEUP, CORAL_L4_PLACE));
 
     //------ STATE ATTRIBUTES ------//
-    public static boolean isLineupState(State state) {
+    public State reversed (boolean isReversed) {
+        setReversed(isReversed);
+        return this;
+    }
+
+    public State left(boolean isLeft) {
+        setLeft(isLeft);
+        return this;
+    }
+
+    public State config(boolean isReversed, boolean isLeft) {
+        setReversed(isReversed);
+        setLeft(isLeft);
+        return this;
+    }
+
+    public boolean isReversed() {
+        return isReversed;
+    }
+
+    public boolean isLeft() {
+        return isLeft;
+    }
+
+
+    private static boolean isLineupState(State state) {
         return switch (state) {
             case CORAL_L4_LINEUP,
                     CORAL_L3_LINEUP,
@@ -65,7 +92,11 @@ public enum State {
         };
     }
 
-    public static boolean isReadyState(State state) {
+    public boolean isLineupState() {
+        return isLineupState(this);
+    }
+
+    private static boolean isReadyState(State state) {
         return switch (state) {
             case CORAL_L4_READY,
                     CORAL_L3_READY,
@@ -74,14 +105,22 @@ public enum State {
         };
     }
 
-    public static boolean isSpecialMode(State state) {
+    public boolean isReadyState() {
+        return isReadyState(this);
+    }
+
+    private static boolean isSpecialMode(State state) {
         return switch (state) {
             case CLIMING_APPROACH, CLIMBING_HANG, CLIMBING_LOCK -> true;
             default -> false;
         };
     }
 
-    public static boolean isAlgae(State state) {
+    public boolean isSpecialMode() {
+        return isSpecialMode(this);
+    }
+
+    private static boolean isAlgae(State state) {
         return switch (state) {
             case IDLE_ALGAE,
                     ALGAE_INTAKE_FLOOR,
@@ -93,7 +132,11 @@ public enum State {
         };
     }
 
-    public static boolean isCoral(State state){
+    public boolean isAlgae() {
+        return isAlgae(this);
+    }
+
+    private static boolean isCoral(State state){
         return switch (state) {
             case IDLE_CORAL,
                     CORAL_INTAKE_FLOOR,
@@ -110,7 +153,11 @@ public enum State {
         };
     }
 
-    public static boolean isIntakeState(State state) {
+    public boolean isCoral() {
+        return isCoral(this);
+    }
+
+    private static boolean isIntakeState(State state) {
         return switch (state) {
             case ALGAE_INTAKE_FLOOR,
                     ALGAE_INTAKE_L2,
@@ -120,11 +167,15 @@ public enum State {
         };
     }
 
-    public State getNextScoreState() {
+    public boolean isIntakeState() {
+        return isIntakeState(this);
+    }
+
+    private State getNextScoreState() {
         return scoreSequence.getOrDefault(this, this);
     }
         
-    protected State getNextState(State currentState) {
+    private State getNextState(State currentState) {
         State nextState = this; // Default to the current state
 
         return switch (currentState) {
@@ -159,5 +210,9 @@ public enum State {
 
             default -> nextState;
         };
+    }
+
+    public State getNextState() {
+        return getNextState(this);
     }
 }
