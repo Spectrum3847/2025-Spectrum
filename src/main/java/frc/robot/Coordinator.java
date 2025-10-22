@@ -6,8 +6,6 @@ import static frc.robot.State.*;
 public class Coordinator {
     
     public void update(){
-        CORAL_L2_LINEUP.config(true, true);
-        setCurrentState(ALGAE_INTAKE_FLOOR);
     }
 
     public void applyRobotState(State state) {

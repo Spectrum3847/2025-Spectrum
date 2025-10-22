@@ -22,6 +22,7 @@ public enum State {
     ALGAE_NET_RELEASE,
 
     CORAL_INTAKE_FLOOR,
+    CORAL_INTAKE_HUMAN,
 
     CORAL_L2_READY,
     CORAL_L2_LINEUP,
@@ -58,19 +59,23 @@ public enum State {
                     Map.entry(CORAL_L4_LINEUP, CORAL_L4_PLACE));
 
     //------ STATE ATTRIBUTES ------//
-    public State reversed (boolean isReversed) {
-        setReversed(isReversed);
+    public State reversed() {
+        setReversed(true);
         return this;
     }
 
-    public State left(boolean isLeft) {
-        setLeft(isLeft);
+    public State forward() {
+        setReversed(false);
         return this;
     }
 
-    public State config(boolean isReversed, boolean isLeft) {
-        setReversed(isReversed);
-        setLeft(isLeft);
+    public State left() {
+        setLeft(true);
+        return this;
+    }
+
+    public State right(){
+        setLeft(false);
         return this;
     }
 
