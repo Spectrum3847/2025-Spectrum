@@ -1,10 +1,6 @@
 package frc.robot;
 
 import com.google.common.collect.ImmutableMap;
-
-import edu.wpi.first.wpilibj.RobotState;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.intake.IntakeStates;
 import java.util.Map;
 import lombok.Getter;
@@ -51,7 +47,6 @@ public enum State {
     CLIMING_APPROACH(Claw.EMPTY, true),
     CLIMBING_HANG(Claw.EMPTY, true),
     CLIMBING_LOCK(Claw.EMPTY, true);
-    }
 
     public enum Claw {
         EMPTY,
@@ -59,7 +54,6 @@ public enum State {
         CORAL
     }
 
-    public class StateMachine {
     @Getter public final Claw claw;
     @Getter public final boolean specialMode;
 
@@ -67,8 +61,6 @@ public enum State {
         this.claw = clawGp;
         this.specialMode = specialMode;
     }
-
-    private State state = State.IDLE_EMPTY;
 
     private static final ImmutableMap<State, State> scoreSequence =
             ImmutableMap.ofEntries(
@@ -120,11 +112,6 @@ public enum State {
     public State getNextScoreState() {
         return scoreSequence.getOrDefault(this, this);
     }
-
-    public void setStateCommand(State wantedState) {
-        this.state = wantedState;
-        }
-        
 
     protected State getNextState(State currentState) {
         State nextState = this; // Default to the current state
