@@ -87,7 +87,6 @@ public enum State {
         return isLeft;
     }
 
-
     private static boolean isLineupState(State state) {
         return switch (state) {
             case CORAL_L4_LINEUP,
@@ -97,7 +96,7 @@ public enum State {
         };
     }
 
-    public boolean isLineupState() {
+    public boolean isLineup() {
         return isLineupState(this);
     }
 
@@ -110,11 +109,11 @@ public enum State {
         };
     }
 
-    public boolean isReadyState() {
+    public boolean isReady() {
         return isReadyState(this);
     }
 
-    private static boolean isSpecialMode(State state) {
+    private static boolean isSpecialModeState(State state) {
         return switch (state) {
             case CLIMING_APPROACH, CLIMBING_HANG, CLIMBING_LOCK -> true;
             default -> false;
@@ -122,10 +121,10 @@ public enum State {
     }
 
     public boolean isSpecialMode() {
-        return isSpecialMode(this);
+        return isSpecialModeState(this);
     }
 
-    private static boolean isAlgae(State state) {
+    private static boolean isAlgaeState(State state) {
         return switch (state) {
             case IDLE_ALGAE,
                     ALGAE_INTAKE_FLOOR,
@@ -138,10 +137,10 @@ public enum State {
     }
 
     public boolean isAlgae() {
-        return isAlgae(this);
+        return isAlgaeState(this);
     }
 
-    private static boolean isCoral(State state){
+    private static boolean isCoralState(State state){
         return switch (state) {
             case IDLE_CORAL,
                     CORAL_INTAKE_FLOOR,
@@ -159,7 +158,7 @@ public enum State {
     }
 
     public boolean isCoral() {
-        return isCoral(this);
+        return isCoralState(this);
     }
 
     private static boolean isIntakeState(State state) {
@@ -172,7 +171,7 @@ public enum State {
         };
     }
 
-    public boolean isIntakeState() {
+    public boolean isIntake() {
         return isIntakeState(this);
     }
 
@@ -217,7 +216,7 @@ public enum State {
         };
     }
 
-    public State getNextState() {
+    public State getNext() {
         return getNextState(this);
     }
 }
