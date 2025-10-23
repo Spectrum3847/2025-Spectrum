@@ -1,6 +1,7 @@
 package frc.robot.elbow;
 
 import static frc.robot.RobotStates.*;
+import static frc.robot.elbow.ElbowState.*;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -12,6 +13,43 @@ import frc.spectrumLib.util.Util;
 import java.util.function.DoubleSupplier;
 
 public class ElbowStates {
+
+        private ElbowState wantedState = HOME;
+        private ElbowState systemState = HOME;
+
+        public ElbowState handleStateTransition() {
+            return switch(wantedState) {
+                case HOME -> HOME;
+                case L1_CORAL -> L1_CORAL;
+                case L2_CORAL -> L2_CORAL;
+                case L3_CORAL -> L3_CORAL;
+                case L4_CORAL -> L4_CORAL;
+                case L2_ALGAE -> L2_ALGAE;
+                case L3_ALGAE -> L3_ALGAE;
+                case NET_ALGAE -> NET_ALGAE;
+                default -> HOME;
+            };
+        }
+
+        public void applyState() {
+                final double positionDegrees;
+                switch(systemState) {
+                    case HOME -> positionDegrees = config.getHome();
+                    case L1_CORAL -> positionDegrees = config.getL1Coral();
+                    case L2_CORAL -> positionDegrees = config.getL2Coral();
+                    case L3_CORAL -> positionDegrees = config.getL3Coral();
+                    case L4_CORAL -> positionDegrees = config.getL4Coral();
+                    case L2_ALGAE -> positionDegrees = config.getL2Algae();
+                    case L3_ALGAE -> positionDegrees = config.getL3Algae();
+                    case NET_ALGAE -> positionDegrees = config.getNet();
+                    case GROUND_CORAL -> positionDegrees = config.getGroundCoralIntake();
+                    case GROUND_ALGAE -> positionDegrees = config.getGroundAlgaeIntake();
+                    case STATION_CORAL -> positionDegrees = config.getStationIntake();
+                    default -> positionDegrees = config.getHome();
+                }
+                move(() -> positionDegrees, "Shoulder." + systemState.name()).schedule();
+        }
+
     private static Elbow elbow = Robot.getElbow();
     private static ElbowConfig config = Robot.getConfig().elbow;
 
