@@ -1,47 +1,169 @@
 package frc.robot;
 
-import static frc.robot.State.*;
-
+import frc.robot.elbow.ElbowStates;
+import frc.robot.elevator.ElevatorStates;
+import frc.robot.shoulder.ShoulderStates;
+import frc.robot.twist.TwistStates;
+import frc.robot.intake.IntakeStates;
 
 public class Coordinator {
-    
-    public void update(){
-    }
+
+    public void update() {}
 
     public void applyRobotState(State state) {
         switch (state) {
             case REHOME -> {
-                // Implement rehome logic
+                ElevatorStates.home();
+                ShoulderStates.home();
+                ElbowStates.home();
+                TwistStates.home();
+                IntakeStates.neutral();
             }
             case IDLE_EMPTY -> {
-                // Implement scoring logic
+                ElevatorStates.home();
+                ShoulderStates.home();
+                ElbowStates.home();
+                TwistStates.home();
+                IntakeStates.neutral();
             }
             case IDLE_ALGAE -> {
-                // Implement climbing logic
+                ElevatorStates.home();
+                ShoulderStates.home();
+                ElbowStates.home();
+                TwistStates.home();
+                IntakeStates.intakeAlgae();
             }
             case IDLE_CORAL -> {
-                // Implement idle logic
+                ElevatorStates.home();
+                ShoulderStates.home();
+                ElbowStates.home();
+                TwistStates.home();
+                IntakeStates.holdCoral();
             }
             case STARTING_POS -> {
-                // Implement starting position logic
+                ElevatorStates.home();
+                ShoulderStates.home();
+                ElbowStates.home();
+                TwistStates.home();
+                IntakeStates.neutral();
             }
             case STARTING_POS_CORAL -> {
-                // Implement starting position coral logic
+                ElevatorStates.home();
+                ShoulderStates.home();
+                ElbowStates.home();
+                TwistStates.home();
+                IntakeStates.holdCoral();
             }
             case ALGAE_INTAKE_FLOOR -> {
-                // Implement algae intake from floor logic
+                ElevatorStates.groundAlgae();
+                ShoulderStates.groundAlgae();
+                ElbowStates.groundAlgae();
+                TwistStates.groundAlgae();
+                IntakeStates.intakeAlgae();
             }
             case ALGAE_INTAKE_L3, ALGAE_INTAKE_L2 -> {
                 // Implement algae intake level 3 logic
             }
             case ALGAE_NET_READY -> {
-                // Implement algae net waiting logic
+                ElevatorStates.netAlgae();
+                ShoulderStates.netAlgae();
+                ElbowStates.netAlgae();
+                TwistStates.netAlgae();
+                IntakeStates.intakeAlgae();
             }
             case ALGAE_NET_RELEASE -> {
-                // Implement algae net release logic
+                ElevatorStates.netAlgae();
+                ShoulderStates.netAlgae();
+                ElbowStates.netAlgae();
+                TwistStates.netAlgae();
+                IntakeStates.scoreAlgae();
             }
             case CORAL_INTAKE_FLOOR -> {
-                // Implement coral intake from floor logic
+                ElevatorStates.groundCoral();
+                ShoulderStates.groundCoral();
+                ElbowStates.groundCoral();
+                TwistStates.groundCoral();
+                IntakeStates.intakeCoral();
+            }
+            case CORAL_INTAKE_HUMAN -> {
+                ElevatorStates.humanCoral();
+                ShoulderStates.humanCoral();
+                ElbowStates.humanCoral();
+                TwistStates.humanIntake();
+                IntakeStates.intakeCoral();
+            }
+            case CORAL_L2_READY, CORAL_L3_READY, CORAL_L4_READY -> {
+                ElevatorStates.home();
+                ShoulderStates.home();
+                ElbowStates.home();
+                TwistStates.home();
+                IntakeStates.holdCoral();
+            }
+            case CORAL_L2_PREP -> {
+                ElevatorStates.L2CoralPrep();
+                ShoulderStates.L2CoralPrep();
+                ElbowStates.L2CoralPrep();
+                if (state.isLeft()) {
+                    TwistStates.coralLeft();
+                } else {
+                    TwistStates.coralRight();
+                }
+                IntakeStates.holdCoral();
+            }
+            case CORAL_L2_RELEASE -> {
+                ElevatorStates.L2CoralRelease();
+                ShoulderStates.L2CoralRelease();
+                ElbowStates.L2CoralRelease();
+                if (state.isLeft()) {
+                    TwistStates.coralLeft();
+                } else {
+                    TwistStates.coralRight();
+                }
+                IntakeStates.scoreCoral();
+            }
+            case CORAL_L3_PREP -> {
+                ElevatorStates.L3CoralPrep();
+                ShoulderStates.L3CoralPrep();
+                ElbowStates.L3CoralPrep();
+                if (state.isLeft()) {
+                    TwistStates.coralLeft();
+                } else {
+                    TwistStates.coralRight();
+                }
+                IntakeStates.holdCoral();
+            }
+            case CORAL_L3_RELEASE -> {
+                ElevatorStates.L3CoralRelease();
+                ShoulderStates.L3CoralRelease();
+                ElbowStates.L3CoralRelease();
+                if (state.isLeft()) {
+                    TwistStates.coralLeft();
+                } else {
+                    TwistStates.coralRight();
+                }
+                IntakeStates.scoreCoral();
+            }
+            case CORAL_L4_PREP -> {
+                ElevatorStates.L4CoralPrep();
+                ShoulderStates.L4CoralPrep();
+                ElbowStates.L4CoralPrep();
+                if (state.isLeft()) {
+                    TwistStates.coralLeft();
+                } else {
+                    TwistStates.coralRight();
+                }
+                IntakeStates.holdCoral();
+            }
+            case CORAL_L4_RELEASE -> {
+                ElevatorStates.L4CoralRelease();
+                ShoulderStates.L4CoralRelease();
+                ElbowStates.L4CoralRelease();
+                if (state.isLeft()) {
+                    TwistStates.coralLeft();
+                } else {
+                    TwistStates.coralRight();
+                }
+                IntakeStates.scoreCoral();
             }
 
             default -> {

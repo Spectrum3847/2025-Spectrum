@@ -100,6 +100,36 @@ public class IntakeStates {
         coastMode.onFalse(log(ensureBrakeMode()));
     }
 
+    public static Command neutral() {
+        return intake.runVoltage(() -> 0);
+    }
+
+    public static Command intakeCoral() {
+        return intake.runTorqueFOC(config::getCoralGroundTorqueCurrent);
+    }
+
+    public static Command intakeAlgae() {
+        return intake.runTorqueFOC(config::getAlgaeIntakeTorqueCurrent);
+    }
+
+    public static Command holdCoral() {
+        return intake.runTorqueFOC(config::getCoralHoldTorqueCurrent);
+    }
+
+    public static Command l1Score() {
+        return intake.runTorqueFOC(config::getCoralL1ScoreTorqueCurrent);
+    }
+
+    public static Command scoreCoral() {
+        return intake.runTorqueFOC(config::getCoralScoreTorqueCurrent);
+    }
+
+    public static Command scoreAlgae() {
+        return intake.runTorqueFOC(config::getAlgaeScoreTorqueCurrent);
+    }
+
+
+
     private static Command coastMode() {
         return intake.coastMode();
     }

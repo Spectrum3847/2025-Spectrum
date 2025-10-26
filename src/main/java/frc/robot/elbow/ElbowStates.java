@@ -1,7 +1,6 @@
 package frc.robot.elbow;
 
 import static frc.robot.RobotStates.*;
-import static frc.robot.elbow.ElbowState.*;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -13,43 +12,6 @@ import frc.spectrumLib.util.Util;
 import java.util.function.DoubleSupplier;
 
 public class ElbowStates {
-
-        private ElbowState wantedState = HOME;
-        private ElbowState systemState = HOME;
-
-        public ElbowState handleStateTransition() {
-            return switch(wantedState) {
-                case HOME -> HOME;
-                case L1_CORAL -> L1_CORAL;
-                case L2_CORAL -> L2_CORAL;
-                case L3_CORAL -> L3_CORAL;
-                case L4_CORAL -> L4_CORAL;
-                case L2_ALGAE -> L2_ALGAE;
-                case L3_ALGAE -> L3_ALGAE;
-                case NET_ALGAE -> NET_ALGAE;
-                default -> HOME;
-            };
-        }
-
-        public void applyState() {
-                final double positionDegrees;
-                switch(systemState) {
-                    case HOME -> positionDegrees = config.getHome();
-                    case L1_CORAL -> positionDegrees = config.getL1Coral();
-                    case L2_CORAL -> positionDegrees = config.getL2Coral();
-                    case L3_CORAL -> positionDegrees = config.getL3Coral();
-                    case L4_CORAL -> positionDegrees = config.getL4Coral();
-                    case L2_ALGAE -> positionDegrees = config.getL2Algae();
-                    case L3_ALGAE -> positionDegrees = config.getL3Algae();
-                    case NET_ALGAE -> positionDegrees = config.getNet();
-                    case GROUND_CORAL -> positionDegrees = config.getGroundCoralIntake();
-                    case GROUND_ALGAE -> positionDegrees = config.getGroundAlgaeIntake();
-                    case STATION_CORAL -> positionDegrees = config.getStationIntake();
-                    default -> positionDegrees = config.getHome();
-                }
-                move(() -> positionDegrees, "Shoulder." + systemState.name()).schedule();
-        }
-
     private static Elbow elbow = Robot.getElbow();
     private static ElbowConfig config = Robot.getConfig().elbow;
 
@@ -183,8 +145,61 @@ public class ElbowStates {
         climbPrep.whileTrue(move(config::getClimbPrep, "Elbow.climbPrep"));
     }
 
-    private static Command home() {
-        return move(config::getHome, "Elbow.home");
+    // -------------------- State Commands --------------------
+    public static Command home() {
+        return move(config::getHome, "Shoulder.home");
+    }
+
+    public static Command groundCoral() {
+        return move(config::getGroundCoralIntake, "Shoulder.groundCoral");
+    }
+
+    public static Command humanCoral() {
+        return move(config::getStationIntake, "Shoulder.humanCoral");
+    }
+
+    public static Command groundAlgae() {
+        return move(config::getGroundAlgaeIntake, "Shoulder.groundAlgae");
+    }
+
+    public static Command L1Coral() {
+        return move(config::getL1Coral, config::getExL1Coral, "Shoulder.stationIntake");
+    }
+
+    public static Command L2CoralPrep() {
+        return move(config::getL2Coral, config::getExL2Coral, "Shoulder.L2CoralPrep");
+    }
+
+    public static Command L2CoralRelease() {
+        return move(config::getL2Score, config::getExL2Score, "Shoulder.L2CoralRelease");
+    }
+
+    public static Command L3CoralPrep() {
+        return move(config::getL3Coral, config::getExL3Coral, "Shoulder.L3CoralPrep");
+    }
+
+    public static Command L3CoralRelease() {
+        return move(config::getL3Score, config::getExL3Score, "Shoulder.L3CoralRelease");
+    }
+
+    public static Command L4CoralPrep() {
+        return move(config::getL4Coral, config::getExL4Coral, "Shoulder.L4CoralPrep");
+    }
+
+    public static Command L4CoralRelease() {
+        return move(config::getL4Score, config::getExL4Score, "Shoulder.L4CoralRelease");
+    }
+
+    public static Command L2Algae() {
+        return move(config::getL2Algae, "Shoulder.L2Algae");
+    }
+
+    public static Command L3Algae() {
+        return move(config::getL3Algae, "Shoulder.L3Algae");
+    }
+
+    public static Command netAlgae() {
+        return move(config::getNet, "Shoulder.netAlgae");
     }
 
     private static Command slowHome() {

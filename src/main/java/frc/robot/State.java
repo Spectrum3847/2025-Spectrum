@@ -25,16 +25,16 @@ public enum State {
     CORAL_INTAKE_HUMAN,
 
     CORAL_L2_READY,
-    CORAL_L2_LINEUP,
-    CORAL_L2_PLACE,
+    CORAL_L2_PREP,
+    CORAL_L2_RELEASE,
 
     CORAL_L3_READY,
-    CORAL_L3_LINEUP,
-    CORAL_L3_PLACE,
+    CORAL_L3_PREP,
+    CORAL_L3_RELEASE,
 
     CORAL_L4_READY,
-    CORAL_L4_LINEUP,
-    CORAL_L4_PLACE,
+    CORAL_L4_PREP,
+    CORAL_L4_RELEASE,
 
     CLIMING_APPROACH,
     CLIMBING_HANG,
@@ -45,20 +45,19 @@ public enum State {
     @Getter @Setter private static State currentState = IDLE_EMPTY;
     @Getter private static State previouState = IDLE_EMPTY;
 
-    private State() {
-    }
+    private State() {}
 
     // Define the scoring sequence map, the 2nd state is the next state after the current one
     private static final ImmutableMap<State, State> scoreSequence =
             ImmutableMap.ofEntries(
-                    Map.entry(CORAL_L2_READY, CORAL_L2_LINEUP),
-                    Map.entry(CORAL_L3_READY, CORAL_L3_LINEUP),
-                    Map.entry(CORAL_L4_READY, CORAL_L4_LINEUP),
-                    Map.entry(CORAL_L2_LINEUP, CORAL_L2_PLACE),
-                    Map.entry(CORAL_L3_LINEUP, CORAL_L3_PLACE),
-                    Map.entry(CORAL_L4_LINEUP, CORAL_L4_PLACE));
+                    Map.entry(CORAL_L2_READY, CORAL_L2_PREP),
+                    Map.entry(CORAL_L3_READY, CORAL_L3_PREP),
+                    Map.entry(CORAL_L4_READY, CORAL_L4_PREP),
+                    Map.entry(CORAL_L2_PREP, CORAL_L2_RELEASE),
+                    Map.entry(CORAL_L3_PREP, CORAL_L3_RELEASE),
+                    Map.entry(CORAL_L4_PREP, CORAL_L4_RELEASE));
 
-    //------ STATE ATTRIBUTES ------//
+    // ------ STATE ATTRIBUTES ------//
     public State reversed() {
         setReversed(true);
         return this;
@@ -74,7 +73,7 @@ public enum State {
         return this;
     }
 
-    public State right(){
+    public State right() {
         setLeft(false);
         return this;
     }
@@ -87,24 +86,9 @@ public enum State {
         return isLeft;
     }
 
-    private static boolean isLineupState(State state) {
-        return switch (state) {
-            case CORAL_L4_LINEUP,
-                    CORAL_L3_LINEUP,
-                    CORAL_L2_LINEUP -> true;
-            default -> false;
-        };
-    }
-
-    public boolean isLineup() {
-        return isLineupState(this);
-    }
-
     private static boolean isReadyState(State state) {
         return switch (state) {
-            case CORAL_L4_READY,
-                    CORAL_L3_READY,
-                    CORAL_L2_READY -> true;
+            case CORAL_L4_READY, CORAL_L3_READY, CORAL_L2_READY -> true;
             default -> false;
         };
     }
@@ -140,19 +124,19 @@ public enum State {
         return isAlgaeState(this);
     }
 
-    private static boolean isCoralState(State state){
+    private static boolean isCoralState(State state) {
         return switch (state) {
             case IDLE_CORAL,
                     CORAL_INTAKE_FLOOR,
                     CORAL_L2_READY,
-                    CORAL_L2_LINEUP,
-                    CORAL_L2_PLACE,
+                    CORAL_L2_PREP,
+                    CORAL_L2_RELEASE,
                     CORAL_L3_READY,
-                    CORAL_L3_LINEUP,
-                    CORAL_L3_PLACE,
+                    CORAL_L3_PREP,
+                    CORAL_L3_RELEASE,
                     CORAL_L4_READY,
-                    CORAL_L4_LINEUP,
-                    CORAL_L4_PLACE -> true;
+                    CORAL_L4_PREP,
+                    CORAL_L4_RELEASE -> true;
             default -> false;
         };
     }
@@ -163,10 +147,7 @@ public enum State {
 
     private static boolean isIntakeState(State state) {
         return switch (state) {
-            case ALGAE_INTAKE_FLOOR,
-                    ALGAE_INTAKE_L2,
-                    ALGAE_INTAKE_L3,
-                    CORAL_INTAKE_FLOOR -> true;
+            case ALGAE_INTAKE_FLOOR, ALGAE_INTAKE_L2, ALGAE_INTAKE_L3, CORAL_INTAKE_FLOOR -> true;
             default -> false;
         };
     }
@@ -178,21 +159,17 @@ public enum State {
     private State getNextScoreState() {
         return scoreSequence.getOrDefault(this, this);
     }
-        
+
     private State getNextState(State currentState) {
         State nextState = this; // Default to the current state
 
         return switch (currentState) {
-            case CORAL_L2_PLACE,
-                    CORAL_L3_PLACE,
-                    CORAL_L4_PLACE -> {
+            case CORAL_L2_READY, CORAL_L3_READY, CORAL_L4_READY -> {
                 nextState = currentState.getNextScoreState();
                 yield nextState;
             }
 
-            case CORAL_L2_LINEUP,
-                    CORAL_L3_LINEUP,
-                    CORAL_L4_LINEUP -> {
+            case CORAL_L2_PREP, CORAL_L3_PREP, CORAL_L4_PREP -> {
                 nextState = currentState.getNextScoreState();
                 yield nextState;
             }

@@ -23,13 +23,13 @@ public class ElevatorStates {
             elevator.atRotations(config::getHome, config::getTriggerTolerance);
 
     public static final Trigger isL1Coral =
-            elevator.atRotations(config::getExl1Coral, config::getTriggerTolerance);
+            elevator.atRotations(config::getExL1Coral, config::getTriggerTolerance);
     public static final Trigger isL2Coral =
-            elevator.atRotations(config::getExl2Coral, config::getTriggerTolerance);
+            elevator.atRotations(config::getExL2Coral, config::getTriggerTolerance);
     public static final Trigger isL3Coral =
-            elevator.atRotations(config::getExl3Coral, config::getTriggerTolerance);
+            elevator.atRotations(config::getExL3Coral, config::getTriggerTolerance);
     public static final Trigger isL4Coral =
-            elevator.atRotations(config::getExl4Coral, config::getTriggerTolerance);
+            elevator.atRotations(config::getExL4Coral, config::getTriggerTolerance);
 
     public static final Trigger isL2Algae =
             elevator.atRotations(config::getL2Algae, config::getTriggerTolerance);
@@ -80,23 +80,23 @@ public class ElevatorStates {
                 .whileTrue(move(config::getHome, "Elevator.Stage"));
 
         L1Coral.and(actionPrepState)
-                .whileTrue(move(config::getL1Coral, config::getExl1Coral, "Elevator.L1Coral"));
+                .whileTrue(move(config::getL1Coral, config::getExL1Coral, "Elevator.L1Coral"));
         L2Coral.and(actionPrepState)
-                .whileTrue(move(config::getL2Coral, config::getExl2Coral, "Elevator.L2Coral"));
+                .whileTrue(move(config::getL2Coral, config::getExL2Coral, "Elevator.L2Coral"));
         L2Coral.and(actionState)
-                .whileTrue(move(config::getL2Score, config::getExl2Score, "Elevator.L2CoralScore"));
+                .whileTrue(move(config::getL2Score, config::getExL2Score, "Elevator.L2CoralScore"));
         L3Coral.and(actionPrepState)
-                .whileTrue(move(config::getL3Coral, config::getExl3Coral, "Elevator.L3Coral"));
+                .whileTrue(move(config::getL3Coral, config::getExL3Coral, "Elevator.L3Coral"));
         L3Coral.and(actionState)
-                .whileTrue(move(config::getL3Score, config::getExl3Score, "Elevator.L3CoralScore"));
+                .whileTrue(move(config::getL3Score, config::getExL3Score, "Elevator.L3CoralScore"));
         L4Coral.and(actionPrepState)
-                .whileTrue(move(config::getL4Coral, config::getExl4Coral, "Elevator.L4Coral"));
+                .whileTrue(move(config::getL4Coral, config::getExL4Coral, "Elevator.L4Coral"));
         L4Coral.and(actionState)
-                .whileTrue(move(config::getL4Score, config::getExl4Score, "Elevator.L4CoralScore"));
+                .whileTrue(move(config::getL4Score, config::getExL4Score, "Elevator.L4CoralScore"));
 
         L4Coral.and(actionPrepState, Util.autoMode)
                 .whileTrue(
-                        slowMove(config::getL4Coral, config::getExl4Coral, "Elevator.slowL4Coral"));
+                        slowMove(config::getL4Coral, config::getExL4Coral, "Elevator.slowL4Coral"));
         // L4Coral.and(actionState, Util.autoMode)
         //         .whileTrue(
         //                 slowMove(
@@ -120,8 +120,61 @@ public class ElevatorStates {
         Robot.getPilot().reZero_start.onTrue(elevator.resetToInitialPos());
     }
 
-    public static DoubleSupplier getPosition() {
-        return () -> elevator.getPositionRotations();
+    // -------------------- State Commands --------------------
+    public static Command home() {
+        return move(config::getHome, "Shoulder.home");
+    }
+
+    public static Command groundCoral() {
+        return move(config::getClawGroundCoralIntake, "Shoulder.groundAlgae");
+    }
+
+    public static Command humanCoral() {
+        return move(config::getStationIntake, "Shoulder.humanCoral");
+    }
+
+    public static Command groundAlgae() {
+        return move(config::getClawGroundAlgaeIntake, "Shoulder.groundAlgae");
+    }
+
+    public static Command L1Coral() {
+        return move(config::getL1Coral, config::getExL1Coral, "Shoulder.stationIntake");
+    }
+
+    public static Command L2CoralPrep() {
+        return move(config::getL2Coral, config::getExL2Coral, "Shoulder.L2CoralPrep");
+    }
+
+    public static Command L2CoralRelease() {
+        return move(config::getL2Score, config::getExL2Score, "Shoulder.L2CoralRelease");
+    }
+
+    public static Command L3CoralPrep() {
+        return move(config::getL3Coral, config::getExL3Coral, "Shoulder.L3CoralPrep");
+    }
+
+    public static Command L3CoralRelease() {
+        return move(config::getL3Score, config::getExL3Score, "Shoulder.L3CoralRelease");
+    }
+
+    public static Command L4CoralPrep() {
+        return move(config::getL4Coral, config::getExL4Coral, "Shoulder.L4CoralPrep");
+    }
+
+    public static Command L4CoralRelease() {
+        return move(config::getL4Score, config::getExL4Score, "Shoulder.L4CoralRelease");
+    }
+
+    public static Command L2Algae() {
+        return move(config::getL2Algae, "Shoulder.L2Algae");
+    }
+
+    public static Command L3Algae() {
+        return move(config::getL3Algae, "Shoulder.L3Algae");
+    }
+
+    public static Command netAlgae() {
+        return move(config::getNetAlgae, "Shoulder.netAlgae");
     }
 
     public static Command move(DoubleSupplier rotations, String name) {
@@ -143,10 +196,6 @@ public class ElevatorStates {
 
     private static Command holdPosition() {
         return elevator.holdPosition().withName("Elevator.holdPosition");
-    }
-
-    private static Command home() {
-        return move(config::getHome, "Elevator.home");
     }
 
     private static Command slowHome() {

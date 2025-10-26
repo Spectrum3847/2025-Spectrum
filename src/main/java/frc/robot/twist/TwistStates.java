@@ -93,6 +93,43 @@ public class TwistStates {
         climbPrep.whileTrue(move(config::getClimbPrep, "Twist.climbPrep"));
     }
 
+    // -------------------- State Commands --------------------
+    public static Command home() {
+        return move(config::getHome, "Twist.home");
+    }
+
+    public static Command groundCoral() {
+        return move(config::getGroundCoralIntake, "Twist.groundCoralIntake");
+    }
+
+    public static Command groundAlgae() {
+        return move(config::getGroundAlgaeIntake, "Twist.groundAlgaeIntake");
+    }
+
+    public static Command humanIntake() {
+        return move(config::getStationIntake, "Twist.humanIntake");
+    }
+
+    public static Command coralRight() {
+        return move(config::getRightCoral, "Twist.coralRight");
+    }
+
+    public static Command coralLeft() {
+        return move(config::getLeftCoral, "Twist.coralLeft");
+    }
+
+    public static Command l1Coral() {
+        return move(config::getL1Coral, "Twist.l1Coral");
+    }
+
+    public static Command algaeIntake() {
+        return move(config::getAlgaeIntake, "Twist.algaeIntake");
+    }
+
+    public static Command netAlgae() {
+        return move(config::getNet, "Twist.algaeNet");
+    }
+
     public static Command move(DoubleSupplier degrees, String name) {
         // return twist.move(degrees).withName(name);
         return moveAwayFromElevator(degrees, name);
