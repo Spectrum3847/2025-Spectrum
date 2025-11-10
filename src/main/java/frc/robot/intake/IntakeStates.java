@@ -128,8 +128,6 @@ public class IntakeStates {
         return intake.runTorqueFOC(config::getAlgaeScoreTorqueCurrent);
     }
 
-
-
     private static Command coastMode() {
         return intake.coastMode();
     }

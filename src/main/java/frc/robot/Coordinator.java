@@ -2,9 +2,9 @@ package frc.robot;
 
 import frc.robot.elbow.ElbowStates;
 import frc.robot.elevator.ElevatorStates;
+import frc.robot.intake.IntakeStates;
 import frc.robot.shoulder.ShoulderStates;
 import frc.robot.twist.TwistStates;
-import frc.robot.intake.IntakeStates;
 
 public class Coordinator {
 

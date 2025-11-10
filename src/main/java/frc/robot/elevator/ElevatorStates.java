@@ -122,59 +122,59 @@ public class ElevatorStates {
 
     // -------------------- State Commands --------------------
     public static Command home() {
-        return move(config::getHome, "Shoulder.home");
+        return move(config::getHome, "Elevator.home");
     }
 
     public static Command groundCoral() {
-        return move(config::getClawGroundCoralIntake, "Shoulder.groundAlgae");
+        return move(config::getClawGroundCoralIntake, "Elevator.groundAlgae");
     }
 
     public static Command humanCoral() {
-        return move(config::getStationIntake, "Shoulder.humanCoral");
+        return move(config::getStationIntake, "Elevator.humanCoral");
     }
 
     public static Command groundAlgae() {
-        return move(config::getClawGroundAlgaeIntake, "Shoulder.groundAlgae");
+        return move(config::getClawGroundAlgaeIntake, "Elevator.groundAlgae");
     }
 
     public static Command L1Coral() {
-        return move(config::getL1Coral, config::getExL1Coral, "Shoulder.stationIntake");
+        return move(config::getL1Coral, config::getExL1Coral, "Elevator.stationIntake");
     }
 
     public static Command L2CoralPrep() {
-        return move(config::getL2Coral, config::getExL2Coral, "Shoulder.L2CoralPrep");
+        return move(config::getL2Coral, config::getExL2Coral, "Elevator.L2CoralPrep");
     }
 
     public static Command L2CoralRelease() {
-        return move(config::getL2Score, config::getExL2Score, "Shoulder.L2CoralRelease");
+        return move(config::getL2Score, config::getExL2Score, "Elevator.L2CoralRelease");
     }
 
     public static Command L3CoralPrep() {
-        return move(config::getL3Coral, config::getExL3Coral, "Shoulder.L3CoralPrep");
+        return move(config::getL3Coral, config::getExL3Coral, "Elevator.L3CoralPrep");
     }
 
     public static Command L3CoralRelease() {
-        return move(config::getL3Score, config::getExL3Score, "Shoulder.L3CoralRelease");
+        return move(config::getL3Score, config::getExL3Score, "Elevator.L3CoralRelease");
     }
 
     public static Command L4CoralPrep() {
-        return move(config::getL4Coral, config::getExL4Coral, "Shoulder.L4CoralPrep");
+        return move(config::getL4Coral, config::getExL4Coral, "Elevator.L4CoralPrep");
     }
 
     public static Command L4CoralRelease() {
-        return move(config::getL4Score, config::getExL4Score, "Shoulder.L4CoralRelease");
+        return move(config::getL4Score, config::getExL4Score, "Elevator.L4CoralRelease");
     }
 
     public static Command L2Algae() {
-        return move(config::getL2Algae, "Shoulder.L2Algae");
+        return move(config::getL2Algae, "Elevator.L2Algae");
     }
 
     public static Command L3Algae() {
-        return move(config::getL3Algae, "Shoulder.L3Algae");
+        return move(config::getL3Algae, "Elevator.L3Algae");
     }
 
     public static Command netAlgae() {
-        return move(config::getNetAlgae, "Shoulder.netAlgae");
+        return move(config::getNetAlgae, "Elevator.netAlgae");
     }
 
     public static Command move(DoubleSupplier rotations, String name) {
