@@ -61,8 +61,19 @@ public class Coordinator {
                 TwistStates.groundAlgae();
                 IntakeStates.intakeAlgae();
             }
-            case ALGAE_INTAKE_L3, ALGAE_INTAKE_L2 -> {
-                // Implement algae intake level 3 logic
+            case ALGAE_INTAKE_L2 -> {
+                ElevatorStates.L2Algae();
+                ShoulderStates.L2Algae();
+                ElbowStates.L2Algae();
+                TwistStates.intakeAlgae();
+                IntakeStates.intakeAlgae();
+            }
+            case ALGAE_INTAKE_L3 -> {
+                ElevatorStates.L3Algae();
+                ShoulderStates.L3Algae();
+                ElbowStates.L3Algae();
+                TwistStates.intakeAlgae();
+                IntakeStates.intakeAlgae();
             }
             case ALGAE_NET_READY -> {
                 ElevatorStates.netAlgae();
@@ -164,6 +175,13 @@ public class Coordinator {
                     TwistStates.coralRight();
                 }
                 IntakeStates.scoreCoral();
+            }
+            case CLIMING_APPROACH -> {
+                ElevatorStates.home();
+                ShoulderStates.climbPrep();
+                ElbowStates.climbPrep();
+                TwistStates.climbPrep();
+                IntakeStates.neutral();
             }
 
             default -> {

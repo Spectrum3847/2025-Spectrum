@@ -172,7 +172,8 @@ public class ElbowStates {
     }
 
     public static void L2CoralRelease() {
-        scheduleIfNotRunning(move(config::getL2Score, config::getExL2Score, "Elbow.L2CoralRelease"));
+        scheduleIfNotRunning(
+                move(config::getL2Score, config::getExL2Score, "Elbow.L2CoralRelease"));
     }
 
     public static void L3CoralPrep() {
@@ -180,7 +181,8 @@ public class ElbowStates {
     }
 
     public static void L3CoralRelease() {
-        scheduleIfNotRunning(move(config::getL3Score, config::getExL3Score, "Elbow.L3CoralRelease"));
+        scheduleIfNotRunning(
+                move(config::getL3Score, config::getExL3Score, "Elbow.L3CoralRelease"));
     }
 
     public static void L4CoralPrep() {
@@ -188,7 +190,8 @@ public class ElbowStates {
     }
 
     public static void L4CoralRelease() {
-        scheduleIfNotRunning(move(config::getL4Score, config::getExL4Score, "Elbow.L4CoralRelease"));
+        scheduleIfNotRunning(
+                move(config::getL4Score, config::getExL4Score, "Elbow.L4CoralRelease"));
     }
 
     public static void L2Algae() {
@@ -205,6 +208,10 @@ public class ElbowStates {
 
     public static void slowHome() {
         scheduleIfNotRunning(slowMove(config::getHome, "Elbow.slowHome"));
+    }
+
+    public static void climbPrep() {
+        scheduleIfNotRunning(move(config::getClimbPrep, "Elbow.climbPrep"));
     }
 
     // missing auton Elbow commands, add when auton is added

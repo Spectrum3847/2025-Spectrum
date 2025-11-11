@@ -3,6 +3,7 @@ package frc.robot.intake;
 import static frc.robot.RobotStates.*;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
@@ -96,44 +97,44 @@ public class IntakeStates {
                                         //         config::getCoralScoreTorqueCurrent));
                                         intake.runTorqueFOC(config::getCoralScoreTorqueCurrent)));
 
-        coastMode.whileTrue(log(coastMode()));
-        coastMode.onFalse(log(ensureBrakeMode()));
+        // coastMode.whileTrue(log(coastMode()));
+        // coastMode.onFalse(log(ensureBrakeMode()));
     }
 
-    public static Command neutral() {
-        return intake.runVoltage(() -> 0);
+    public static void neutral() {
+        scheduleIfNotRunning(intake.runVoltage(() -> 0));
     }
 
-    public static Command intakeCoral() {
-        return intake.runTorqueFOC(config::getCoralGroundTorqueCurrent);
+    public static void intakeCoral() {
+        scheduleIfNotRunning(intake.runTorqueFOC(config::getCoralGroundTorqueCurrent));
     }
 
-    public static Command intakeAlgae() {
-        return intake.runTorqueFOC(config::getAlgaeIntakeTorqueCurrent);
+    public static void intakeAlgae() {
+        scheduleIfNotRunning(intake.runTorqueFOC(config::getAlgaeIntakeTorqueCurrent));
     }
 
-    public static Command holdCoral() {
-        return intake.runTorqueFOC(config::getCoralHoldTorqueCurrent);
+    public static void holdCoral() {
+        scheduleIfNotRunning(intake.runTorqueFOC(config::getCoralHoldTorqueCurrent));
     }
 
-    public static Command l1Score() {
-        return intake.runTorqueFOC(config::getCoralL1ScoreTorqueCurrent);
+    public static void l1Score() {
+        scheduleIfNotRunning(intake.runTorqueFOC(config::getCoralL1ScoreTorqueCurrent));
     }
 
-    public static Command scoreCoral() {
-        return intake.runTorqueFOC(config::getCoralScoreTorqueCurrent);
+    public static void scoreCoral() {
+        scheduleIfNotRunning(intake.runTorqueFOC(config::getCoralScoreTorqueCurrent));
     }
 
-    public static Command scoreAlgae() {
-        return intake.runTorqueFOC(config::getAlgaeScoreTorqueCurrent);
+    public static void scoreAlgae() {
+        scheduleIfNotRunning(intake.runTorqueFOC(config::getAlgaeScoreTorqueCurrent));
     }
 
-    private static Command coastMode() {
-        return intake.coastMode();
+    public static void coastMode() {
+        scheduleIfNotRunning(intake.coastMode());
     }
 
-    private static Command ensureBrakeMode() {
-        return intake.ensureBrakeMode();
+    public static void ensureBrakeMode() {
+        scheduleIfNotRunning(intake.ensureBrakeMode());
     }
 
     // private static Command runVoltageCurrentLimits(
@@ -144,5 +145,23 @@ public class IntakeStates {
     // Log Command
     protected static Command log(Command cmd) {
         return Telemetry.log(cmd);
+    }
+
+    /**
+     * Schedules a command for a subsystem only if it's not already the running command
+     *
+     * @param subsystem the subsystem the command requires
+     * @param command the command to schedule
+     */
+    public static void scheduleIfNotRunning(Command command) {
+        CommandScheduler commandScheduler = CommandScheduler.getInstance();
+
+        // Check what command is currently requiring this subsystem
+        Command current = commandScheduler.requiring(intake);
+
+        // Only schedule if it's not already the same same command
+        if (current != command) {
+            commandScheduler.schedule(command);
+        }
     }
 }

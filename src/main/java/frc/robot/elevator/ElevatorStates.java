@@ -3,11 +3,11 @@ package frc.robot.elevator;
 import static frc.robot.RobotStates.*;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.elevator.Elevator.ElevatorConfig;
 import frc.spectrumLib.Telemetry;
-import frc.spectrumLib.util.Util;
 import java.util.function.DoubleSupplier;
 
 public class ElevatorStates {
@@ -42,139 +42,85 @@ public class ElevatorStates {
     }
 
     public static void setStates() {
-        coastMode.onTrue(log(coastMode()));
-        coastMode.onFalse(log(ensureBrakeMode()));
-        homeAll.whileTrue(home());
-        homeAll.and(Util.autoMode).whileTrue(slowHome());
         Robot.getOperator()
                 .antiSecretClimb_LTRSup
                 .whileTrue(move(config::getFullExtend, "Elevator.fullExtend"));
-
-        stationIntaking.whileTrue(
-                move(
-                        config::getStationIntake,
-                        // config::getStationExtendedIntake,
-                        "Elevator.stationIntake"));
-        stationIntaking.onFalse(home());
-
-        groundAlgae.whileTrue(move(config::getClawGroundAlgaeIntake, "Ground Algae"));
-        groundCoral.whileTrue(home());
-
-        Robot.getPilot()
-                .photonRemoveL2Algae
-                .whileTrue(move(config::getL2Algae, "Elevator.L2Algae"));
-        Robot.getPilot()
-                .photonRemoveL3Algae
-                .whileTrue(move(config::getL3Algae, "Elevator.L3Algae"));
-        Robot.getPilot()
-                .photonRemoveL2Algae
-                .or(Robot.getPilot().photonRemoveL3Algae)
-                .onFalse(home());
-
-        stagedCoral
-                .or(stagedAlgae)
-                .and(
-                        actionState.not(),
-                        actionPrepState.not().debounce(getActionPrepToActionTime()),
-                        Util.autoMode.not())
-                .whileTrue(move(config::getHome, "Elevator.Stage"));
-
-        L1Coral.and(actionPrepState)
-                .whileTrue(move(config::getL1Coral, config::getExL1Coral, "Elevator.L1Coral"));
-        L2Coral.and(actionPrepState)
-                .whileTrue(move(config::getL2Coral, config::getExL2Coral, "Elevator.L2Coral"));
-        L2Coral.and(actionState)
-                .whileTrue(move(config::getL2Score, config::getExL2Score, "Elevator.L2CoralScore"));
-        L3Coral.and(actionPrepState)
-                .whileTrue(move(config::getL3Coral, config::getExL3Coral, "Elevator.L3Coral"));
-        L3Coral.and(actionState)
-                .whileTrue(move(config::getL3Score, config::getExL3Score, "Elevator.L3CoralScore"));
-        L4Coral.and(actionPrepState)
-                .whileTrue(move(config::getL4Coral, config::getExL4Coral, "Elevator.L4Coral"));
-        L4Coral.and(actionState)
-                .whileTrue(move(config::getL4Score, config::getExL4Score, "Elevator.L4CoralScore"));
-
-        L4Coral.and(actionPrepState, Util.autoMode)
-                .whileTrue(
-                        slowMove(config::getL4Coral, config::getExL4Coral, "Elevator.slowL4Coral"));
-        // L4Coral.and(actionState, Util.autoMode)
-        //         .whileTrue(
-        //                 slowMove(
-        //                         config::getL4Score, config::getExl4Score,
-        // "Elevator.L4CoralScore"));
-
-        processorAlgae
-                .and(actionPrepState)
-                .whileTrue(move(config::getProcessorAlgae, "Elevator.processorAlgae"));
-        processorAlgae
-                .and(actionState)
-                .whileTrue(move(config::getHome, "Elevator.processorAlgaeHome"));
-        L2Algae.and(actionPrepState).whileTrue(move(config::getL2Algae, "Elevator.L2Algae"));
-        L2Algae.and(actionState).whileTrue(move(config::getHome, "Elevator.L2AlgaeHome"));
-        L3Algae.and(actionPrepState).whileTrue(move(config::getL3Algae, "Elevator.L3Algae"));
-        L3Algae.and(actionState).whileTrue(move(config::getHome, "Elevator.L3AlgaeHome"));
-        netAlgae.and(actionPrepState).whileTrue(move(config::getNetAlgae, "Elevator.NetAlgae"));
-        // netAlgae.and(actionPrepState, Util.autoMode)
-        //         .whileTrue(slowMove(config::getNetAlgae, "Elevator.NetAlgae"));
-
-        Robot.getPilot().reZero_start.onTrue(elevator.resetToInitialPos());
     }
 
     // -------------------- State Commands --------------------
-    public static Command home() {
-        return move(config::getHome, "Elevator.home");
+    public static void home() {
+        scheduleIfNotRunning(move(config::getHome, "Elevator.home"));
     }
 
-    public static Command groundCoral() {
-        return move(config::getClawGroundCoralIntake, "Elevator.groundAlgae");
+    public static void groundCoral() {
+        scheduleIfNotRunning(move(config::getClawGroundCoralIntake, "Elevator.groundAlgae"));
     }
 
-    public static Command humanCoral() {
-        return move(config::getStationIntake, "Elevator.humanCoral");
+    public static void humanCoral() {
+        scheduleIfNotRunning(move(config::getStationIntake, "Elevator.humanCoral"));
     }
 
-    public static Command groundAlgae() {
-        return move(config::getClawGroundAlgaeIntake, "Elevator.groundAlgae");
+    public static void groundAlgae() {
+        scheduleIfNotRunning(move(config::getClawGroundAlgaeIntake, "Elevator.groundAlgae"));
     }
 
-    public static Command L1Coral() {
-        return move(config::getL1Coral, config::getExL1Coral, "Elevator.stationIntake");
+    public static void L1Coral() {
+        scheduleIfNotRunning(
+                move(config::getL1Coral, config::getExL1Coral, "Elevator.stationIntake"));
     }
 
-    public static Command L2CoralPrep() {
-        return move(config::getL2Coral, config::getExL2Coral, "Elevator.L2CoralPrep");
+    public static void L2CoralPrep() {
+        scheduleIfNotRunning(
+                move(config::getL2Coral, config::getExL2Coral, "Elevator.L2CoralPrep"));
     }
 
-    public static Command L2CoralRelease() {
-        return move(config::getL2Score, config::getExL2Score, "Elevator.L2CoralRelease");
+    public static void L2CoralRelease() {
+        scheduleIfNotRunning(
+                move(config::getL2Score, config::getExL2Score, "Elevator.L2CoralRelease"));
     }
 
-    public static Command L3CoralPrep() {
-        return move(config::getL3Coral, config::getExL3Coral, "Elevator.L3CoralPrep");
+    public static void L3CoralPrep() {
+        scheduleIfNotRunning(
+                move(config::getL3Coral, config::getExL3Coral, "Elevator.L3CoralPrep"));
     }
 
-    public static Command L3CoralRelease() {
-        return move(config::getL3Score, config::getExL3Score, "Elevator.L3CoralRelease");
+    public static void L3CoralRelease() {
+        scheduleIfNotRunning(
+                move(config::getL3Score, config::getExL3Score, "Elevator.L3CoralRelease"));
     }
 
-    public static Command L4CoralPrep() {
-        return move(config::getL4Coral, config::getExL4Coral, "Elevator.L4CoralPrep");
+    public static void L4CoralPrep() {
+        scheduleIfNotRunning(
+                move(config::getL4Coral, config::getExL4Coral, "Elevator.L4CoralPrep"));
     }
 
-    public static Command L4CoralRelease() {
-        return move(config::getL4Score, config::getExL4Score, "Elevator.L4CoralRelease");
+    public static void L4CoralRelease() {
+        scheduleIfNotRunning(
+                move(config::getL4Score, config::getExL4Score, "Elevator.L4CoralRelease"));
     }
 
-    public static Command L2Algae() {
-        return move(config::getL2Algae, "Elevator.L2Algae");
+    public static void L2Algae() {
+        scheduleIfNotRunning(move(config::getL2Algae, "Elevator.L2Algae"));
     }
 
-    public static Command L3Algae() {
-        return move(config::getL3Algae, "Elevator.L3Algae");
+    public static void L3Algae() {
+        scheduleIfNotRunning(move(config::getL3Algae, "Elevator.L3Algae"));
     }
 
-    public static Command netAlgae() {
-        return move(config::getNetAlgae, "Elevator.netAlgae");
+    public static void netAlgae() {
+        scheduleIfNotRunning(move(config::getNetAlgae, "Elevator.netAlgae"));
+    }
+
+    private static Command holdPosition() {
+        return elevator.holdPosition().withName("Elevator.holdPosition");
+    }
+
+    public static Command coastMode() {
+        return elevator.coastMode().withName("Elevator.CoastMode");
+    }
+
+    public static Command ensureBrakeMode() {
+        return elevator.ensureBrakeMode().withName("Elevator.BrakeMode");
     }
 
     public static Command move(DoubleSupplier rotations, String name) {
@@ -194,24 +140,26 @@ public class ElevatorStates {
         return elevator.slowMove(rotations, exRotaitons).withName(name);
     }
 
-    private static Command holdPosition() {
-        return elevator.holdPosition().withName("Elevator.holdPosition");
-    }
-
-    private static Command slowHome() {
-        return slowMove(config::getHome, "Elevator.slowHome");
-    }
-
-    private static Command coastMode() {
-        return elevator.coastMode().withName("Elevator.CoastMode");
-    }
-
-    private static Command ensureBrakeMode() {
-        return elevator.ensureBrakeMode().withName("Elevator.BrakeMode");
-    }
-
     // Log Command
     protected static Command log(Command cmd) {
         return Telemetry.log(cmd);
+    }
+
+    /**
+     * Schedules a command for a subsystem only if it's not already the running command
+     *
+     * @param subsystem the subsystem the command requires
+     * @param command the command to schedule
+     */
+    public static void scheduleIfNotRunning(Command command) {
+        CommandScheduler commandScheduler = CommandScheduler.getInstance();
+
+        // Check what command is currently requiring this subsystem
+        Command current = commandScheduler.requiring(elevator);
+
+        // Only schedule if it's not already the same same command
+        if (current != command) {
+            commandScheduler.schedule(command);
+        }
     }
 }

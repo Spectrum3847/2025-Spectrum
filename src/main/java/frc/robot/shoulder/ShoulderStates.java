@@ -3,6 +3,7 @@ package frc.robot.shoulder;
 import static frc.robot.RobotStates.*;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
@@ -65,8 +66,8 @@ public class ShoulderStates {
     }
 
     public static void setStates() {
-        homeAll.whileTrue(home());
-        homeAll.and(Util.autoMode).whileTrue(slowHome());
+        // homeAll.whileTrue(home());
+        // homeAll.and(Util.autoMode).whileTrue(slowHome());
         coastMode.onTrue(log(coastMode()).ignoringDisable(true));
         coastMode.onFalse(log(ensureBrakeMode()));
 
@@ -77,21 +78,21 @@ public class ShoulderStates {
                         config::getStationIntake,
                         // config::getStationExtendedIntake,
                         "Shoulder.stationIntake"));
-        stationIntaking.or(groundCoral, groundAlgae).onFalse(home());
+        // stationIntaking.or(groundCoral, groundAlgae).onFalse(home());
 
         groundCoral.whileTrue(move(config::getGroundCoralIntake, "Shoulder.groundCoral"));
         groundAlgae.whileTrue(move(config::getGroundAlgaeIntake, "Shoulder.groundAlgae"));
 
-        Robot.getPilot()
-                .photonRemoveL2Algae
-                .whileTrue(move(config::getL2Algae, "Shoulder.L2Algae"));
-        Robot.getPilot()
-                .photonRemoveL3Algae
-                .whileTrue(move(config::getL3Algae, "Shoulder.L3Algae"));
-        Robot.getPilot()
-                .photonRemoveL2Algae
-                .or(Robot.getPilot().photonRemoveL3Algae)
-                .onFalse(home());
+        // Robot.getPilot()
+        //         .photonRemoveL2Algae
+        //         .whileTrue(move(config::getL2Algae, "Shoulder.L2Algae"));
+        // Robot.getPilot()
+        //         .photonRemoveL3Algae
+        //         .whileTrue(move(config::getL3Algae, "Shoulder.L3Algae"));
+        // Robot.getPilot()
+        //         .photonRemoveL2Algae
+        //         .or(Robot.getPilot().photonRemoveL3Algae)
+        //         .onFalse(home());
 
         stagedCoral
                 .and(
@@ -195,76 +196,87 @@ public class ShoulderStates {
     }
 
     // -------------------- State Commands --------------------
-    public static Command home() {
-        return move(config::getHome, "Shoulder.home");
+    public static void home() {
+        scheduleIfNotRunning(move(config::getHome, "Shoulder.home"));
     }
 
-    public static Command groundCoral() {
-        return move(config::getGroundCoralIntake, "Shoulder.groundCoral");
+    public static void groundCoral() {
+        scheduleIfNotRunning(move(config::getGroundCoralIntake, "Shoulder.groundCoral"));
     }
 
-    public static Command humanCoral() {
-        return move(config::getStationIntake, "Shoulder.humanCoral");
+    public static void humanCoral() {
+        scheduleIfNotRunning(move(config::getStationIntake, "Shoulder.humanCoral"));
     }
 
-    public static Command groundAlgae() {
-        return move(config::getGroundAlgaeIntake, "Shoulder.groundAlgae");
+    public static void groundAlgae() {
+        scheduleIfNotRunning(move(config::getGroundAlgaeIntake, "Shoulder.groundAlgae"));
     }
 
-    public static Command L1Coral() {
-        return move(config::getL1Coral, config::getExL1Coral, "Shoulder.stationIntake");
+    public static void L1Coral() {
+        scheduleIfNotRunning(
+                move(config::getL1Coral, config::getExL1Coral, "Shoulder.stationIntake"));
     }
 
-    public static Command L2CoralPrep() {
-        return move(config::getL2Coral, config::getExL2Coral, "Shoulder.L2CoralPrep");
+    public static void L2CoralPrep() {
+        scheduleIfNotRunning(
+                move(config::getL2Coral, config::getExL2Coral, "Shoulder.L2CoralPrep"));
     }
 
-    public static Command L2CoralRelease() {
-        return move(
-                config::getL2Score,
-                config::getExL2Score,
-                config::getPrescoreDelay,
-                "Shoulder.L2CoralRelease");
+    public static void L2CoralRelease() {
+        scheduleIfNotRunning(
+                move(
+                        config::getL2Score,
+                        config::getExL2Score,
+                        config::getPrescoreDelay,
+                        "Shoulder.L2CoralRelease"));
     }
 
-    public static Command L3CoralPrep() {
-        return move(config::getL3Coral, config::getExL3Coral, "Shoulder.L3CoralPrep");
+    public static void L3CoralPrep() {
+        scheduleIfNotRunning(
+                move(config::getL3Coral, config::getExL3Coral, "Shoulder.L3CoralPrep"));
     }
 
-    public static Command L3CoralRelease() {
-        return move(
-                config::getL3Score,
-                config::getExL3Score,
-                config::getPrescoreDelay,
-                "Shoulder.L3CoralRelease");
+    public static void L3CoralRelease() {
+        scheduleIfNotRunning(
+                move(
+                        config::getL3Score,
+                        config::getExL3Score,
+                        config::getPrescoreDelay,
+                        "Shoulder.L3CoralRelease"));
     }
 
-    public static Command L4CoralPrep() {
-        return move(config::getL4Coral, config::getExL4Coral, "Shoulder.L4CoralPrep");
+    public static void L4CoralPrep() {
+        scheduleIfNotRunning(
+                move(config::getL4Coral, config::getExL4Coral, "Shoulder.L4CoralPrep"));
     }
 
-    public static Command L4CoralRelease() {
-        return move(
-                config::getL4CoralScore,
-                config::getExL4Score,
-                config::getPrescoreDelay,
-                "Shoulder.L4CoralRelease");
+    public static void L4CoralRelease() {
+        scheduleIfNotRunning(
+                move(
+                        config::getL4CoralScore,
+                        config::getExL4Score,
+                        config::getPrescoreDelay,
+                        "Shoulder.L4CoralRelease"));
     }
 
-    public static Command L2Algae() {
-        return move(config::getL2Algae, "Shoulder.L2Algae");
+    public static void L2Algae() {
+        scheduleIfNotRunning(move(config::getL2Algae, "Shoulder.L2Algae"));
     }
 
-    public static Command L3Algae() {
-        return move(config::getL3Algae, "Shoulder.L3Algae");
+    public static void L3Algae() {
+        scheduleIfNotRunning(move(config::getL3Algae, "Shoulder.L3Algae"));
     }
 
-    public static Command netAlgae() {
-        return move(config::getNetAlgae, "Shoulder.netAlgae");
+    public static void netAlgae() {
+        scheduleIfNotRunning(move(config::getNetAlgae, "Shoulder.netAlgae"));
     }
 
-    public static Command slowHome() {
-        return shoulder.slowMove(config::getHome).withName("Shoulder.slowHome");
+    public static void climbPrep() {
+        scheduleIfNotRunning(move(config::getClimbPrep, "Shoulder.climbPrep"));
+    }
+
+    public static void slowHome() {
+        scheduleIfNotRunning(shoulder.slowMove(config::getHome).withName("Shoulder.slowHome"));
     }
 
     public static Command move(DoubleSupplier degrees, String name) {
@@ -301,5 +313,23 @@ public class ShoulderStates {
     // Log Command
     protected static Command log(Command cmd) {
         return Telemetry.log(cmd);
+    }
+
+    /**
+     * Schedules a command for a subsystem only if it's not already the running command
+     *
+     * @param subsystem the subsystem the command requires
+     * @param command the command to schedule
+     */
+    public static void scheduleIfNotRunning(Command command) {
+        CommandScheduler commandScheduler = CommandScheduler.getInstance();
+
+        // Check what command is currently requiring this subsystem
+        Command current = commandScheduler.requiring(shoulder);
+
+        // Only schedule if it's not already the same same command
+        if (current != command) {
+            commandScheduler.schedule(command);
+        }
     }
 }
