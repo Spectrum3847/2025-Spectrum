@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.reefscape.FieldHelpers;
 import frc.reefscape.offsets.HomeOffsets;
 import frc.robot.Robot;
-import frc.robot.RobotStates;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.Telemetry.PrintPriority;
 import frc.spectrumLib.util.Util;
@@ -143,7 +142,7 @@ public class Vision implements NTSendable, Subsystem {
         setLimeLightOrientation();
         disabledLimelightUpdates();
         enabledLimelightUpdates();
-        autonLimelightUpdates();
+        // autonLimelightUpdates();
 
         Robot.getField2d().getObject(frontLL.getCameraName()).setPose(getFrontMegaTag2Pose());
         Robot.getField2d().getObject(backLL.getCameraName()).setPose(getBackMegaTag2Pose());
@@ -238,36 +237,36 @@ public class Vision implements NTSendable, Subsystem {
         }
     }
 
-    private void autonLimelightUpdates() {
-        if (Util.autoMode.getAsBoolean() && RobotStates.poseUpdate.getAsBoolean()) {
-            for (Limelight limelight : allLimelights) {
-                limelight.setIMUmode(1);
-            }
-            try {
-                addMegaTag2_VisionInputAuton(backLL);
-            } catch (Exception e) {
-                Telemetry.print("REAR MT2: Vision pose not present but tried to access it");
-            }
+    // private void autonLimelightUpdates() {
+    //     if (Util.autoMode.getAsBoolean() && RobotStates.poseUpdate.getAsBoolean()) {
+    //         for (Limelight limelight : allLimelights) {
+    //             limelight.setIMUmode(1);
+    //         }
+    //         try {
+    //             addMegaTag2_VisionInputAuton(backLL);
+    //         } catch (Exception e) {
+    //             Telemetry.print("REAR MT2: Vision pose not present but tried to access it");
+    //         }
 
-            try {
-                addMegaTag2_VisionInputAuton(frontLL);
-            } catch (Exception e) {
-                Telemetry.print("FRONT MT2: Vision pose not present but tried to access it");
-            }
+    //         try {
+    //             addMegaTag2_VisionInputAuton(frontLL);
+    //         } catch (Exception e) {
+    //             Telemetry.print("FRONT MT2: Vision pose not present but tried to access it");
+    //         }
 
-            try {
-                addMegaTag1_VisionInputAuton(backLL, false);
-            } catch (Exception e) {
-                Telemetry.print("REAR MT1: Vision pose not present but tried to access it");
-            }
+    //         try {
+    //             addMegaTag1_VisionInputAuton(backLL, false);
+    //         } catch (Exception e) {
+    //             Telemetry.print("REAR MT1: Vision pose not present but tried to access it");
+    //         }
 
-            try {
-                addMegaTag1_VisionInputAuton(frontLL, false);
-            } catch (Exception e) {
-                Telemetry.print("FRONT MT1: Vision pose not present but tried to access it");
-            }
-        }
-    }
+    //         try {
+    //             addMegaTag1_VisionInputAuton(frontLL, false);
+    //         } catch (Exception e) {
+    //             Telemetry.print("FRONT MT1: Vision pose not present but tried to access it");
+    //         }
+    //     }
+    // }
 
     @SuppressWarnings("all")
     private void addMegaTag1_VisionInput(Limelight ll, boolean integrateXY) {

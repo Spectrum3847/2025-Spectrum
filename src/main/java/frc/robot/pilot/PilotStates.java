@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Robot;
 import frc.robot.RobotStates;
 import frc.robot.intake.IntakeStates;
+import frc.robot.swerve.SwerveStates;
 import frc.robot.vision.VisionStates;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.util.Util;
@@ -29,7 +30,9 @@ public class PilotStates {
         // IntakeStates.hasCoral.onTrue(log(rumble(1, 0.5).withName("Pilot.hasCoralRumble")));
         IntakeStates.hasAlgae.onTrue(log(rumble(1, 0.5).withName("Pilot.hasAlgaeRumble")));
         RobotStates.staged.onTrue(log(rumble(1, 0.5).withName("Pilot.stagedRumble")));
-        RobotStates.aligned.onTrue(log(rumble(1, 0.5).withName("Pilot.alignRumble")));
+        SwerveStates.isAlignedToReef
+                .and(pilot.reefAlignScore_B.or(pilot.reefVision_A))
+                .onTrue(log(rumble(1, 0.5).withName("Pilot.alignRumble")));
     }
 
     /** Command that can be used to rumble the pilot controller */

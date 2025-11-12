@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.Robot;
 import frc.robot.RobotSim;
-import frc.robot.RobotStates;
 import frc.spectrumLib.Rio;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.mechanism.Mechanism;
@@ -127,23 +126,6 @@ public class Intake extends Mechanism {
     // Custom Commands
     // --------------------------------------------------------------------------------
 
-    public Command defaultHoldOrStop() {
-        return run(
-                () -> {
-                    if (RobotStates.coral.getAsBoolean()) {
-                        // setVoltageOutput(() -> config.getCoralHoldVoltage());
-                        // setCurrentLimits(
-                        //         () -> config.getCoralHoldSupplyCurrent(),
-                        //         () -> config.getCoralHoldTorqueCurrent());
-                        setTorqueCurrentFoc(config::getCoralHoldTorqueCurrent);
-                    } else if (RobotStates.algae.getAsBoolean()) {
-                        setTorqueCurrentFoc(config::getAlgaeIntakeTorqueCurrent);
-                    } else {
-                        stop();
-                    }
-                });
-    }
-
     public boolean hasIntakeGamePiece() {
         double motorOutput = getVelocityRPM();
         double motorCurrent = getStatorCurrent();
@@ -207,6 +189,10 @@ public class Intake extends Mechanism {
     public Command runTCcurrentLimits(DoubleSupplier torqueCurrent, DoubleSupplier supplyCurrent) {
         return runTorqueCurrentFoc(torqueCurrent)
                 .alongWith(runCurrentLimits(supplyCurrent, torqueCurrent));
+    }
+
+    public Command stopMotor() {
+        return run(() -> stop());
     }
 
     // --------------------------------------------------------------------------------

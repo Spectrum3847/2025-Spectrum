@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.reefscape.Zones;
 import frc.robot.Robot;
 import frc.robot.RobotStates;
-import frc.robot.vision.VisionStates;
 import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.leds.SpectrumLEDs;
 import frc.spectrumLib.util.Util;
@@ -32,13 +31,13 @@ public class LedStates {
         // homeFinishLED(RobotStates.isAtHome.and(Util.teleop, RobotStates.staged.not()), 8);
 
         // // Coral and Algae Led Commands
-        coralModeLED(RobotStates.coral.and(Util.teleop), 6);
-        algaeModeLED(RobotStates.algae.and(Util.teleop), 6);
+        // coralModeLED(RobotStates.coral.and(Util.teleop), 6);
+        // algaeModeLED(RobotStates.algae.and(Util.teleop), 6);
         // coralStagedLED(RobotStates.stagedCoral.and(Util.teleop), 7);
         // algaeStagedLED(RobotStates.stagedAlgae.and(Util.teleop), 7);
         // hasCoralLED(IntakeStates.hasCoral.and(Util.teleop), 7);
         // // hasAlgaeLED(IntakeStates.hasAlgae.and(Util.teleop), 7);
-        rightCoralLED(RobotStates.rightScore.and(Util.teleop), 8);
+        // rightCoralLED(RobotStates.rightScore.and(Util.teleop), 8);
         netAlgaeZoneLED(Zones.netAlgaeZone.and(RobotStates.netAlgae, Util.teleop), 8);
 
         // Elevator Led Commands
@@ -48,10 +47,11 @@ public class LedStates {
         // climbReadyLED(ClimbStates.isLatched.and(RobotStates.climbPrep, Util.teleop), 6);
 
         // Limelight Led Commands
-        seesTagDefaultLED(VisionStates.seeingTag.and(Util.teleop), 5);
-        seesTagAndCoralModeLED(VisionStates.seeingTag.and(RobotStates.coral, Util.teleop), 7);
-        seesTagAndAlgaeModeLED(VisionStates.seeingTag.and(RobotStates.algae, Util.teleop), 7);
-        seesTagAndRightCoralLED(VisionStates.seeingTag.and(RobotStates.rightScore, Util.teleop), 9);
+        // seesTagDefaultLED(VisionStates.seeingTag.and(Util.teleop), 5);
+        // seesTagAndCoralModeLED(VisionStates.seeingTag.and(RobotStates.coral, Util.teleop), 7);
+        // seesTagAndAlgaeModeLED(VisionStates.seeingTag.and(RobotStates.algae, Util.teleop), 7);
+        // seesTagAndRightCoralLED(VisionStates.seeingTag.and(RobotStates.rightScore, Util.teleop),
+        // 9);
     }
 
     /** Default LED commands for each mode */

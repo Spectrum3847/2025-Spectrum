@@ -1,7 +1,5 @@
 package frc.robot.auton;
 
-import static frc.robot.RobotStates.autonAutoScoreMode;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.events.EventTrigger;
@@ -18,8 +16,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
-import frc.robot.RobotStates;
-import frc.robot.swerve.SwerveStates;
 import frc.spectrumLib.Telemetry;
 import java.io.IOException;
 import org.json.simple.parser.ParseException;
@@ -73,12 +69,12 @@ public class Auton {
         // pathChooser.addOption("Left | 2 L4 Coral", houston2coral(false));
         // pathChooser.addOption("Right | 2 L4 Coral", houston2coral(true));
 
-        pathChooser.addOption(
-                "Left | 3 L4 Coral", worlds3coral(false).withName("Worlds 3 Coral - Left"));
-        pathChooser.addOption(
-                "Right | 3 L4 Coral", worlds3coral(true).withName("Worlds 3 Coral - Right"));
+        // pathChooser.addOption(
+        //         "Left | 3 L4 Coral", worlds3coral(false).withName("Worlds 3 Coral - Left"));
+        // pathChooser.addOption(
+        //         "Right | 3 L4 Coral", worlds3coral(true).withName("Worlds 3 Coral - Right"));
 
-        pathChooser.addOption("Center | 3 Net Algae", worlds3algae(false));
+        // pathChooser.addOption("Center | 3 Net Algae", worlds3algae(false));
 
         pathChooser.addOption("Drive Forward", SpectrumAuton("Drive Forward", false));
 
@@ -105,124 +101,127 @@ public class Auton {
         printAutoDuration();
     }
 
-    public Command houston2coral(boolean mirrored) {
-        return Commands.sequence(
-                        SpectrumAuton("H2C-Start", mirrored, 2),
-                        fullSequenceAimL4Score(1.5),
-                        SpectrumAuton("H2C-Leg1", mirrored),
-                        fullSequenceAimL4Score(1.5),
-                        SpectrumAuton("H2C-Leg2", mirrored))
-                .withName("Houston 2 Coral");
-    }
+    // public Command houston2coral(boolean mirrored) {
+    //     return Commands.sequence(
+    //                     SpectrumAuton("H2C-Start", mirrored, 2),
+    //                     fullSequenceAimL4Score(1.5),
+    //                     SpectrumAuton("H2C-Leg1", mirrored),
+    //                     fullSequenceAimL4Score(1.5),
+    //                     SpectrumAuton("H2C-Leg2", mirrored))
+    //             .withName("Houston 2 Coral");
+    // }
 
-    public Command worlds3coral(boolean mirrored) {
-        return Commands.sequence(
-                SpectrumAuton("W3C-Start", mirrored),
-                autoScore(),
-                SpectrumAuton("W3C-Leg1", mirrored),
-                autoScore(),
-                SpectrumAuton("W3C-Leg2", mirrored),
-                autoScore(),
-                RobotStates.homeAll.toggleToTrue(),
-                RobotStates.autonClearStates());
-    }
+    // public Command worlds3coral(boolean mirrored) {
+    //     return Commands.sequence(
+    //             SpectrumAuton("W3C-Start", mirrored),
+    //             autoScore(),
+    //             SpectrumAuton("W3C-Leg1", mirrored),
+    //             autoScore(),
+    //             SpectrumAuton("W3C-Leg2", mirrored),
+    //             autoScore(),
+    //             RobotStates.homeAll.toggleToTrue(),
+    //             RobotStates.autonClearStates());
+    // }
 
-    public Command worlds3algae(boolean mirrored) {
-        return Commands.sequence(
-                        SpectrumAuton("W3A-Start", mirrored),
-                        autoScoreThenAlgae(),
-                        SpectrumAuton("W3A-End", mirrored))
-                .withName("W3A-Full");
-    }
+    // public Command worlds3algae(boolean mirrored) {
+    //     return Commands.sequence(
+    //                     SpectrumAuton("W3A-Start", mirrored),
+    //                     autoScoreThenAlgae(),
+    //                     SpectrumAuton("W3A-End", mirrored))
+    //             .withName("W3A-Full");
+    // }
 
-    public Command aimScore(double alignTime) {
-        return SwerveStates.reefAimDriveVisionXY()
-                .withTimeout(alignTime)
-                .alongWith(autonScore())
-                .withName("Auton.aimL4Score");
-    }
+    // public Command aimScore(double alignTime) {
+    //     return SwerveStates.reefAimDriveVisionXY()
+    //             .withTimeout(alignTime)
+    //             .alongWith(autonScore())
+    //             .withName("Auton.aimL4Score");
+    // }
 
-    // vision aligns until autoScore scored or 5 seconds have passed without auto scoring
-    public Command autoScore() {
-        return Commands.race(SwerveStates.reefAimDriveVisionXY(), Commands.waitSeconds(5))
-                .until(autonAutoScoreMode.not())
-                .andThen(autoScoreFallback().onlyWhile(autonAutoScoreMode))
-                .withName("Auton.autoScore");
-    }
+    // // vision aligns until autoScore scored or 5 seconds have passed without auto scoring
+    // public Command autoScore() {
+    //     return Commands.race(SwerveStates.reefAimDriveVisionXY(), Commands.waitSeconds(5))
+    //             .until(autonAutoScoreMode.not())
+    //             .andThen(autoScoreFallback().onlyWhile(autonAutoScoreMode))
+    //             .withName("Auton.autoScore");
+    // }
 
-    public Command aimScoreThenAlgae(double alignTime) {
-        return Commands.sequence(
-                        aimScore(alignTime),
-                        Commands.waitSeconds(0.5),
-                        RobotStates.clearStates(),
-                        RobotStates.l2.setTrue(),
-                        RobotStates.algae.setTrue(),
-                        Commands.waitSeconds(0.05),
-                        SwerveStates.autonAlgaeReefAimDriveVisionXY().withTimeout(.25),
-                        RobotStates.actionPrepState.setTrue(),
-                        Commands.waitSeconds(0.2),
-                        SwerveStates.autonAlgaeDriveIntake(0.4))
-                .withName("Auton.aimL4ScoreThenAlgae");
-    }
+    // public Command aimScoreThenAlgae(double alignTime) {
+    //     return Commands.sequence(
+    //                     aimScore(alignTime),
+    //                     Commands.waitSeconds(0.5),
+    //                     RobotStates.clearStates(),
+    //                     RobotStates.l2.setTrue(),
+    //                     RobotStates.algae.setTrue(),
+    //                     Commands.waitSeconds(0.05),
+    //                     SwerveStates.autonAlgaeReefAimDriveVisionXY().withTimeout(.25),
+    //                     RobotStates.actionPrepState.setTrue(),
+    //                     Commands.waitSeconds(0.2),
+    //                     SwerveStates.autonAlgaeDriveIntake(0.4))
+    //             .withName("Auton.aimL4ScoreThenAlgae");
+    // }
 
-    public Command autoScoreThenAlgae() {
-        return Commands.sequence(
-                        autoScore(),
-                        RobotStates.clearStates(),
-                        RobotStates.l2.setTrue(),
-                        RobotStates.algae.setTrue(),
-                        Commands.waitSeconds(0.05),
-                        SwerveStates.autonAlgaeReefAimDriveVisionXY().withTimeout(.25),
-                        RobotStates.actionPrepState.setTrue(),
-                        Commands.waitSeconds(0.2),
-                        SwerveStates.autonAlgaeDriveIntake(0.5))
-                .withName("Auton.autoL4ScoreThenAlgae");
-    }
+    // public Command autoScoreThenAlgae() {
+    //     return Commands.sequence(
+    //                     autoScore(),
+    //                     RobotStates.clearStates(),
+    //                     RobotStates.l2.setTrue(),
+    //                     RobotStates.algae.setTrue(),
+    //                     Commands.waitSeconds(0.05),
+    //                     SwerveStates.autonAlgaeReefAimDriveVisionXY().withTimeout(.25),
+    //                     RobotStates.actionPrepState.setTrue(),
+    //                     Commands.waitSeconds(0.2),
+    //                     SwerveStates.autonAlgaeDriveIntake(0.5))
+    //             .withName("Auton.autoL4ScoreThenAlgae");
+    // }
 
-    public Command fullSequenceAimL4Score(double alignTime) {
-        return SwerveStates.reefAimDriveVisionXY()
-                .withTimeout(alignTime)
-                .alongWith(fullSequenceL4score())
-                .withName("Auton.oldAimL4Score");
-    }
+    // public Command fullSequenceAimL4Score(double alignTime) {
+    //     return SwerveStates.reefAimDriveVisionXY()
+    //             .withTimeout(alignTime)
+    //             .alongWith(fullSequenceL4score())
+    //             .withName("Auton.oldAimL4Score");
+    // }
 
-    public Command autonScore() {
-        return Commands.sequence(Commands.waitSeconds(.75), RobotStates.actionPrepState.setFalse())
-                .withName("Auton.L4Score");
-    }
+    // public Command autonScore() {
+    //     return Commands.sequence(Commands.waitSeconds(.75),
+    // RobotStates.actionPrepState.setFalse())
+    //             .withName("Auton.L4Score");
+    // }
 
-    public Command fullSequenceL4score() {
-        return Commands.waitSeconds(0.15)
-                .andThen(
-                        RobotStates.coral
-                                .setTrue()
-                                .alongWith(RobotStates.l4.setTrue(), RobotStates.homeAll.setFalse())
-                                .andThen(
-                                        Commands.waitSeconds(0.05),
-                                        RobotStates.actionPrepState.setTrue(),
-                                        Commands.waitSeconds(0.9),
-                                        RobotStates.actionPrepState.setFalse(),
-                                        Commands.waitSeconds(0.5),
-                                        RobotStates.homeAll.toggleToTrue(),
-                                        Commands.waitSeconds(0.5)));
-    }
+    // public Command fullSequenceL4score() {
+    //     return Commands.waitSeconds(0.15)
+    //             .andThen(
+    //                     RobotStates.coral
+    //                             .setTrue()
+    //                             .alongWith(RobotStates.l4.setTrue(),
+    // RobotStates.homeAll.setFalse())
+    //                             .andThen(
+    //                                     Commands.waitSeconds(0.05),
+    //                                     RobotStates.actionPrepState.setTrue(),
+    //                                     Commands.waitSeconds(0.9),
+    //                                     RobotStates.actionPrepState.setFalse(),
+    //                                     Commands.waitSeconds(0.5),
+    //                                     RobotStates.homeAll.toggleToTrue(),
+    //                                     Commands.waitSeconds(0.5)));
+    // }
 
-    public Command autoScoreFallback() {
-        return Commands.sequence(
-                        RobotStates.actionPrepState.setFalse(),
-                        RobotStates.actionState
-                                .setTrueForTimeWithCancel(
-                                        RobotStates::getAutonScoreTime, RobotStates.actionPrepState)
-                                .andThen(
-                                        autonAutoScoreMode
-                                                .setFalse()
-                                                .onlyIf(RobotStates.actionPrepState.not())))
-                .withName("Auton.autoScoreFallback");
-    }
+    // public Command autoScoreFallback() {
+    //     return Commands.sequence(
+    //                     RobotStates.actionPrepState.setFalse(),
+    //                     RobotStates.actionState
+    //                             .setTrueForTimeWithCancel(
+    //                                     RobotStates::getAutonScoreTime,
+    // RobotStates.actionPrepState)
+    //                             .andThen(
+    //                                     autonAutoScoreMode
+    //                                             .setFalse()
+    //                                             .onlyIf(RobotStates.actionPrepState.not())))
+    //             .withName("Auton.autoScoreFallback");
+    // }
 
-    public Command autonCoralL4Stage() {
-        return Commands.sequence(RobotStates.coral.setTrue(), RobotStates.l4.setTrue());
-    }
+    // public Command autonCoralL4Stage() {
+    //     return Commands.sequence(RobotStates.coral.setTrue(), RobotStates.l4.setTrue());
+    // }
 
     /**
      * Creates a SpectrumAuton command sequence.

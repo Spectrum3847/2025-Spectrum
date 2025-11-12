@@ -103,11 +103,36 @@ public class Coordinator {
                 TwistStates.humanIntake();
                 IntakeStates.intakeCoral();
             }
+            case CORAL_L1_READY -> {
+                ElevatorStates.home();
+                ShoulderStates.home();
+                ElbowStates.home();
+                TwistStates.L1Coral();
+                IntakeStates.holdCoral();
+            }
+            case CORAL_L1_PREP -> {
+                ElevatorStates.L1Coral();
+                ShoulderStates.L1Coral();
+                ElbowStates.L1Coral();
+                TwistStates.L1Coral();
+                IntakeStates.holdCoral();
+            }
+            case CORAL_L1_RELEASE -> {
+                ElevatorStates.L1Coral();
+                ShoulderStates.L1Coral();
+                ElbowStates.L1Coral();
+                TwistStates.L1Coral();
+                IntakeStates.scoreCoral();
+            }
             case CORAL_L2_READY, CORAL_L3_READY, CORAL_L4_READY -> {
                 ElevatorStates.home();
                 ShoulderStates.home();
                 ElbowStates.home();
-                TwistStates.home();
+                if (state.isLeft()) {
+                    TwistStates.coralLeft();
+                } else {
+                    TwistStates.coralRight();
+                }
                 IntakeStates.holdCoral();
             }
             case CORAL_L2_PREP -> {

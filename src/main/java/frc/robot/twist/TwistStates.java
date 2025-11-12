@@ -5,10 +5,8 @@ import static frc.robot.RobotStates.*;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
-import frc.robot.shoulder.ShoulderStates;
 import frc.robot.twist.Twist.TwistConfig;
 import frc.spectrumLib.Telemetry;
-import frc.spectrumLib.util.Util;
 import java.util.function.DoubleSupplier;
 
 public class TwistStates {
@@ -33,65 +31,7 @@ public class TwistStates {
         // twist.runStop());
     }
 
-    public static void setStates() {
-        coastMode.onTrue(log(coastMode()));
-        coastMode.onFalse(log(ensureBrakeMode()));
-
-        homeAll.onTrue(twist.twistHome());
-
-        // Robot.getPilot().reZero_start.onTrue(twist.resetToInitialPos());
-
-        stationIntaking.whileTrue(move(config::getStationIntake, "Twist.stationIntake"));
-
-        stagedAlgae.whileTrue(move(config::getAlgaeIntake, "Twist.Algae"));
-
-        Robot.getPilot()
-                .groundAlgae_RT
-                .whileTrue(move(config::getGroundAlgaeIntake, "Twist.AlgaeIntake"));
-
-        groundCoral.whileTrue(move(config::getGroundCoralIntake, "Twist.GroundCoralIntake"));
-
-        L1Coral.whileTrue(move(config::getL1Coral, "Twist.l1Coral"));
-
-        processorAlgae.whileTrue(move(config::getProcessorAlgae, "Twist.l1Algae"));
-
-        netAlgae.and(ShoulderStates.isNetPosition, Util.teleop)
-                .whileTrue(twist.netTurret().withName("Twist.NetAlgae"));
-        netAlgae.and(ShoulderStates.isAutonNetPosition, Util.autoMode)
-                .whileTrue(move(config::getNet, "Twist.NetAlgae"));
-
-        branch.and(
-                        rightScore.or(Robot.getOperator().rightScore),
-                        actionPrepState,
-                        twistAtReef.not())
-                .whileTrue(move(config::getRightCoral, config::getStageDelay, "Twist.rightCoral"));
-        branch.and(
-                        rightScore.or(Robot.getOperator().rightScore),
-                        actionPrepState,
-                        twistAtReef,
-                        toggleReverse.not())
-                .whileTrue(moveAwayFromBranch(config::getRightCoral, "Twist.rightCoralOverBranch"));
-
-        branch.and(
-                        rightScore.not().or(Robot.getOperator().leftScore),
-                        actionPrepState,
-                        twistAtReef.not())
-                .whileTrue(move(config::getLeftCoral, config::getStageDelay, "Twist.leftCoral"));
-        branch.and(
-                        rightScore.not().or(Robot.getOperator().leftScore),
-                        actionPrepState,
-                        twistAtReef,
-                        toggleReverse.not())
-                .whileTrue(moveAwayFromBranch(config::getLeftCoral, "Twist.leftCoralOverBranch"));
-
-        branch.and(rightScore, actionPrepState, twistAtReef.not(), Util.autoMode)
-                .whileTrue(moveAwayFromBranch(config::getRightCoral, "Twist.rightCoral"));
-
-        branch.and(rightScore.not(), actionPrepState, twistAtReef.not(), Util.autoMode)
-                .whileTrue(moveAwayFromBranch(config::getLeftCoral, "Twist.leftCoral"));
-
-        climbPrep.whileTrue(move(config::getClimbPrep, "Twist.climbPrep"));
-    }
+    public static void setStates() {}
 
     // -------------------- State Commands --------------------
     public static void home() {
@@ -111,14 +51,14 @@ public class TwistStates {
     }
 
     public static void coralRight() {
-        scheduleIfNotRunning(move(config::getRightCoral, "Twist.coralRight"));
+        scheduleIfNotRunning(moveAwayFromBranch(config::getRightCoral, "Twist.coralRight"));
     }
 
     public static void coralLeft() {
-        scheduleIfNotRunning(move(config::getLeftCoral, "Twist.coralLeft"));
+        scheduleIfNotRunning(moveAwayFromBranch(config::getLeftCoral, "Twist.coralLeft"));
     }
 
-    public static void l1Coral() {
+    public static void L1Coral() {
         scheduleIfNotRunning(move(config::getL1Coral, "Twist.l1Coral"));
     }
 

@@ -106,11 +106,6 @@
           "visible": true
         }
       },
-      "/SmartDashboard/States": {
-        "window": {
-          "visible": true
-        }
-      },
       "/SmartDashboard/VisionSystemSim-main/Sim Field": {
         "Robot": {
           "arrowColor": [

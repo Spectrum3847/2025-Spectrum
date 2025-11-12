@@ -97,6 +97,7 @@ public class Robot extends SpectrumRobot {
     @Getter private static Elbow elbow;
     @Getter private static Shoulder shoulder;
     @Getter private static Twist twist;
+    @Getter private static Coordinator coordinator;
     public static boolean commandInit = false;
 
     public Robot() {
@@ -143,6 +144,7 @@ public class Robot extends SpectrumRobot {
             Timer.delay(canInitDelay);
             twist = new Twist(config.twist);
             auton = new Auton();
+            coordinator = new Coordinator();
 
             // Setup Default Commands for all subsystems
             setupDefaultCommands();
@@ -172,7 +174,6 @@ public class Robot extends SpectrumRobot {
         // Bind Triggers for all subsystems
         setupStates();
         RobotStates.setupStates();
-        RobotStates.clearStates().schedule();
     }
 
     public void clearCommandsAndButtons() {
@@ -182,7 +183,6 @@ public class Robot extends SpectrumRobot {
         // Bind Triggers for all subsystems
         setupStates();
         RobotStates.setupStates();
-        RobotStates.clearStates().schedule();
     }
 
     public void setupSmartDashboardData() {
@@ -227,6 +227,7 @@ public class Robot extends SpectrumRobot {
         Telemetry.print("### Disabled Init Starting ### ");
         clearCommandsAndButtons();
         resetCommandsAndButtons();
+        coordinator.applyRobotState(State.IDLE_CORAL);
 
         if (!commandInit) {
             Command autonStartCommand =
@@ -289,7 +290,8 @@ public class Robot extends SpectrumRobot {
 
     @Override
     public void disabledExit() {
-        RobotStates.coastMode.setFalse(); // Ensure motors are in brake mode
+        // TODO: fix
+        // RobotStates.coastMode.setFalse(); // Ensure motors are in brake mode
         Telemetry.print("### Disabled Exit### ");
     }
 

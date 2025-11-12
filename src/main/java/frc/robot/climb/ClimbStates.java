@@ -20,8 +20,8 @@ public class ClimbStates {
     }
 
     public static void setStates() {
-        coastMode.onTrue(log(coastMode()));
-        coastMode.onFalse(log(ensureBrakeMode()));
+        // coastMode.onTrue(log(coastMode()));
+        // coastMode.onFalse(log(ensureBrakeMode()));
 
         Robot.getOperator().latchOpen_startUp.onTrue(openLatch());
         Robot.getOperator().latchCloser_startDown.onTrue(closeLatch());
@@ -46,7 +46,7 @@ public class ClimbStates {
                                 .withName("Climb.prepClimber"));
 
         // homeAll.and(climb.getLatched().not(), climbPrep.not()).whileTrue(log(home()));
-        homeAll.whileTrue(log(home().alongWith(openLatch())));
+        // homeAll.whileTrue(log(home().alongWith(openLatch())));
     }
 
     public static Command runClimb(DoubleSupplier speed) {
