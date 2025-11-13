@@ -2,7 +2,6 @@ package frc.robot;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
-import lombok.Getter;
 import lombok.Setter;
 
 public enum State {
@@ -46,8 +45,6 @@ public enum State {
 
     @Setter private static boolean isReversed = false;
     @Setter private static boolean isLeft = false;
-    @Getter @Setter private static State currentState = IDLE_EMPTY;
-    @Getter private static State previouState = IDLE_EMPTY;
 
     private State() {}
 
@@ -160,11 +157,11 @@ public enum State {
         return isIntakeState(this);
     }
 
-    private State getNextScoreState() {
+    public State getNextScoreState() {
         return scoreSequence.getOrDefault(this, this);
     }
 
-    private State getNextState(State currentState) {
+    public State getNextState(State currentState) {
         State nextState = this; // Default to the current state
 
         return switch (currentState) {

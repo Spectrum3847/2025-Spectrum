@@ -24,6 +24,8 @@ public class RobotStates {
     private static final Operator operator = Robot.getOperator();
     private static final Coordinator coordinator = Robot.getCoordinator();
 
+    @Getter private static State appliedState = State.CORAL_L4_READY;
+
     @Getter private static double scoreTime = 2.0;
     @Getter private static double autonScoreTime = 0.75;
     @Getter private static double twistAtReefDelay = 0.2;
@@ -168,17 +170,8 @@ public class RobotStates {
         L4Coral.and(operator.rightScore).onTrue(applyState(State.CORAL_L4_READY.right()));
 
         // CORAL SCORE STATES
-        L1Coral.and(pilot.actionReady_RB).onTrue(applyState(State.CORAL_L1_PREP));
-        L1Coral.and(pilot.actionReady_RB).onFalse(applyState(State.CORAL_L1_RELEASE));
-
-        L2Coral.and(pilot.actionReady_RB).onTrue(applyState(State.CORAL_L2_PREP));
-        L2Coral.and(pilot.actionReady_RB).onFalse(applyState(State.CORAL_L2_RELEASE));
-
-        L3Coral.and(pilot.actionReady_RB).onTrue(applyState(State.CORAL_L3_PREP));
-        L3Coral.and(pilot.actionReady_RB).onFalse(applyState(State.CORAL_L3_RELEASE));
-
-        L4Coral.and(pilot.actionReady_RB).onTrue(applyState(State.CORAL_L4_PREP));
-        L4Coral.and(pilot.actionReady_RB).onFalse(applyState(State.CORAL_L4_RELEASE));
+        pilot.actionReady_RB.onTrue(applyState(appliedState.getNextScoreState()));
+        pilot.actionReady_RB.onFalse(applyState(appliedState.getNextScoreState()));
 
         // ALGAE READY STATES
         netAlgae.onTrue(applyState(State.IDLE_ALGAE));
@@ -216,7 +209,10 @@ public class RobotStates {
     private static Command applyState(State state) {
         return new InstantCommand(
                         () -> {
+                            appliedState = state;
                             SmartDashboard.putString("Applied State", state.toString());
+                            SmartDashboard.putString(
+                                    "AppliedState Variable", appliedState.toString());
                             coordinator.applyRobotState(state);
                         })
                 .withName(state.toString());

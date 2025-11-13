@@ -74,7 +74,13 @@
         53,
         54
       ],
-      "povCount": 0
+      "povConfig": [
+        {
+          "key270": 91,
+          "key90": 93
+        }
+      ],
+      "povCount": 1
     },
     {
       "axisConfig": [
