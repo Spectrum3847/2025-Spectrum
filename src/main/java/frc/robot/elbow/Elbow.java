@@ -181,9 +181,7 @@ public class Elbow extends Mechanism {
     public void periodic() {}
 
     @Override
-    public void setupStates() {
-        ElbowStates.setStates();
-    }
+    public void setupStates() {}
 
     @Override
     public void setupDefaultCommand() {

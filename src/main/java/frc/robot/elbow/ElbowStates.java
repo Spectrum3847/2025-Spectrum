@@ -68,8 +68,6 @@ public class ElbowStates {
         elbow.setDefaultCommand(log(elbow.runHoldElbow().withName("Elbow.default")));
     }
 
-    public static void setStates() {}
-
     // -------------------- State Commands --------------------
     public static void home() {
         scheduleIfNotRunning(move(config::getHome, "Elbow.home"));

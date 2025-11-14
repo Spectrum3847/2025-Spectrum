@@ -2,6 +2,7 @@ package frc.reefscape.offsets;
 
 import frc.reefscape.TagProperties;
 import frc.robot.RobotStates;
+import frc.robot.State;
 import lombok.Getter;
 
 public class RobonautsOffsets {
@@ -88,12 +89,12 @@ public class RobonautsOffsets {
         }
 
         if (RobotStates.reverse.getAsBoolean()) {
-            if (RobotStates.rightScore.getAsBoolean()) {
+            if (State.isLeft()) {
                 return reefTagOffsets[offsetIndex].getRearOffset()[1];
             }
             return reefTagOffsets[offsetIndex].getRearOffset()[0];
         } else {
-            if (RobotStates.rightScore.getAsBoolean()) {
+            if (State.isLeft()) {
                 return reefTagOffsets[offsetIndex].getFrontOffset()[1];
             }
             return reefTagOffsets[offsetIndex].getFrontOffset()[0];
@@ -106,12 +107,12 @@ public class RobonautsOffsets {
             return 0.0;
         }
         if (RobotStates.reverse.getAsBoolean()) {
-            if (RobotStates.rightScore.getAsBoolean()) {
+            if (State.isLeft()) {
                 return reefTagOffsets[offsetIndex].getRearCenterOffset()[1];
             }
             return reefTagOffsets[offsetIndex].getRearCenterOffset()[0];
         } else {
-            if (RobotStates.rightScore.getAsBoolean()) {
+            if (State.isLeft()) {
                 return reefTagOffsets[offsetIndex].getFrontCenterOffset()[1];
             }
             return reefTagOffsets[offsetIndex].getFrontCenterOffset()[0];

@@ -31,8 +31,6 @@ public class TwistStates {
         // twist.runStop());
     }
 
-    public static void setStates() {}
-
     // -------------------- State Commands --------------------
     public static void home() {
         scheduleIfNotRunning(move(config::getHome, "Twist.home"));

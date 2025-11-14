@@ -139,7 +139,7 @@ public class Coordinator {
                 ElevatorStates.L2CoralPrep();
                 ShoulderStates.L2CoralPrep();
                 ElbowStates.L2CoralPrep();
-                if (state.isLeft()) {
+                if (State.isLeft()) {
                     TwistStates.coralLeft();
                 } else {
                     TwistStates.coralRight();
@@ -150,7 +150,7 @@ public class Coordinator {
                 ElevatorStates.L2CoralRelease();
                 ShoulderStates.L2CoralRelease();
                 ElbowStates.L2CoralRelease();
-                if (state.isLeft()) {
+                if (State.isLeft()) {
                     TwistStates.coralLeft();
                 } else {
                     TwistStates.coralRight();
@@ -161,7 +161,7 @@ public class Coordinator {
                 ElevatorStates.L3CoralPrep();
                 ShoulderStates.L3CoralPrep();
                 ElbowStates.L3CoralPrep();
-                if (state.isLeft()) {
+                if (State.isLeft()) {
                     TwistStates.coralLeft();
                 } else {
                     TwistStates.coralRight();
@@ -172,7 +172,7 @@ public class Coordinator {
                 ElevatorStates.L3CoralRelease();
                 ShoulderStates.L3CoralRelease();
                 ElbowStates.L3CoralRelease();
-                if (state.isLeft()) {
+                if (State.isLeft()) {
                     TwistStates.coralLeft();
                 } else {
                     TwistStates.coralRight();
@@ -183,7 +183,7 @@ public class Coordinator {
                 ElevatorStates.L4CoralPrep();
                 ShoulderStates.L4CoralPrep();
                 ElbowStates.L4CoralPrep();
-                if (state.isLeft()) {
+                if (State.isLeft()) {
                     TwistStates.coralLeft();
                 } else {
                     TwistStates.coralRight();
@@ -194,7 +194,7 @@ public class Coordinator {
                 ElevatorStates.L4CoralRelease();
                 ShoulderStates.L4CoralRelease();
                 ElbowStates.L4CoralRelease();
-                if (state.isLeft()) {
+                if (State.isLeft()) {
                     TwistStates.coralLeft();
                 } else {
                     TwistStates.coralRight();

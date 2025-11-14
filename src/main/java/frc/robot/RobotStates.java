@@ -15,8 +15,11 @@ import frc.robot.intake.IntakeStates;
 import frc.robot.operator.Operator;
 import frc.robot.pilot.Pilot;
 import frc.robot.shoulder.ShoulderStates;
+import frc.robot.swerve.SwerveStates;
 import frc.spectrumLib.Rio;
 import frc.spectrumLib.SpectrumState;
+import frc.spectrumLib.Telemetry;
+import frc.spectrumLib.util.Util;
 import lombok.Getter;
 
 public class RobotStates {
@@ -24,39 +27,18 @@ public class RobotStates {
     private static final Operator operator = Robot.getOperator();
     private static final Coordinator coordinator = Robot.getCoordinator();
 
-    @Getter private static State appliedState = State.CORAL_L4_READY;
+    @Getter private static State appliedState = State.IDLE_CORAL;
 
     @Getter private static double scoreTime = 2.0;
     @Getter private static double autonScoreTime = 0.75;
     @Getter private static double twistAtReefDelay = 0.2;
-    @Getter private static double scoreAfterAlignTime = 0.03;
-    @Getter private static double autonScoreAfterAlignTime = 0.05;
+    @Getter private static double scoreAfterAlignTime = 0.15;
     @Getter private static double actionPrepToActionTime = 0.05;
 
     // Robot States
     // These are states that aren't directly tied to hardware or buttons, etc.
     // If they should be set by multiple Triggers do that in SetupStates()
     public static final SpectrumState reverse = new SpectrumState("reverse");
-    public static final SpectrumState rightScore = new SpectrumState("rightScore");
-    //     public static final SpectrumState aligned = new SpectrumState("aligned");
-    //     public static final SpectrumState coastMode = new SpectrumState("coast");
-    //     public static final SpectrumState coral = new SpectrumState("coral");
-    //     public static final SpectrumState algae = new SpectrumState("algae");
-    //     public static final SpectrumState l1 = new SpectrumState("l1");
-    //     public static final SpectrumState l2 = new SpectrumState("l2");
-    //     public static final SpectrumState l3 = new SpectrumState("l3");
-    //     public static final SpectrumState l4 = new SpectrumState("l4");
-    //     public static final SpectrumState shrinkState = new SpectrumState("extendedStates");
-    //     public static final SpectrumState actionPrepState = new SpectrumState("actionPrepState");
-    //     public static final SpectrumState actionState = new SpectrumState("actionState");
-    //     public static final SpectrumState homeAll = new SpectrumState("homeAll");
-    //     public static final SpectrumState autonStationIntake = new
-    // SpectrumState("autonStationIntake");
-    //     public static final SpectrumState twistAtReef = new SpectrumState("twistCoralReef");
-    //     public static final SpectrumState autoScoreMode = new SpectrumState("autoScoreMode");
-    //     public static final SpectrumState autonAutoScoreMode = new
-    // SpectrumState("autonAutoScoreMode");
-    //     public static final SpectrumState coralScoring = new SpectrumState("coralScoring");
 
     /**
      * Define Robot States here and how they can be triggered States should be triggers that command
@@ -69,18 +51,21 @@ public class RobotStates {
     public static final Trigger photon = new Trigger(() -> Rio.id == Rio.PHOTON_2025);
     public static final Trigger sim = new Trigger(RobotBase::isSimulation);
 
+    public static final Trigger aligned =
+            SwerveStates.isAlignedToReef.and(
+                    pilot.reefAlignScore_B.or(pilot.reefVision_A, Util.autoMode));
+
     // Intake Triggers
     public static final Trigger stationIntaking = pilot.stationIntake_LT;
-    // public static final Trigger stationExtendedIntaking = pilot.stationIntakeExtended_LT_RB;
     public static final Trigger groundAlgae = pilot.groundAlgae_RT;
     public static final Trigger groundCoral = pilot.groundCoral_LB_LT;
     public static final Trigger intaking = stationIntaking.or(groundAlgae, groundCoral);
 
-    // climb Triggers
+    // Climb Triggers
     public static final Trigger climbPrep = operator.climbPrep_start;
     public static final Trigger climbFinish = pilot.climbRoutine_start;
 
-    // mechanism preset Triggers (Wrist, Elevator, etc.)
+    // Mechanism Preset Triggers (Wrist, Elevator, etc.)
     public static final Trigger shrink = pilot.fn;
     public static final Trigger processorAlgae = operator.L1.and(operator.algaeStage);
     public static final Trigger L2Algae = operator.L2.and(operator.algaeStage).or(autonLowAlgae);
@@ -88,7 +73,7 @@ public class RobotStates {
     public static final Trigger netAlgae = operator.L4.and(operator.algaeStage).or(autonNet);
     public static final Trigger stagedAlgae = processorAlgae.or(L2Algae, L3Algae, netAlgae);
 
-    public static final Trigger L1Coral = operator.L1.and(operator.coralStage).or(autonL1);
+    public static final Trigger L1Coral = operator.L1.and(operator.coralStage);
     public static final Trigger L2Coral = operator.L2.and(operator.coralStage);
     public static final Trigger L3Coral = operator.L3.and(operator.coralStage);
     public static final Trigger L4Coral = operator.L4.and(operator.coralStage);
@@ -136,15 +121,6 @@ public class RobotStates {
     // Setup any binding to set states
     public static void setupStates() {
 
-        // HOME STATES
-        pilot.home_select.or(operator.home_select).onTrue(applyState(State.REHOME));
-        pilot.home_select.or(operator.home_select).onFalse(applyState(State.IDLE_EMPTY));
-
-        // IDLE STATES
-        isAtHome.and(hasGamePiece.not()).onTrue(applyState(State.IDLE_EMPTY));
-        isAtHome.and(hasCoral).onTrue(applyState(State.IDLE_CORAL));
-        isAtHome.and(hasAlgae).onTrue(applyState(State.IDLE_ALGAE));
-
         // INTAKE STATES
         stationIntaking.onTrue(applyState(State.CORAL_INTAKE_HUMAN));
         stationIntaking.onFalse(applyState(State.IDLE_CORAL));
@@ -160,18 +136,38 @@ public class RobotStates {
         // CORAL READY STATES
         L1Coral.onTrue(applyState(State.CORAL_L1_READY));
 
-        L2Coral.and(operator.leftScore).onTrue(applyState(State.CORAL_L2_READY.left()));
-        L2Coral.and(operator.rightScore).onTrue(applyState(State.CORAL_L2_READY.right()));
+        L2Coral.and(operator.leftScore)
+                .onTrue(
+                        new InstantCommand(
+                                () -> applyState(State.CORAL_L2_READY.left()).schedule()));
+        L2Coral.and(operator.rightScore)
+                .onTrue(
+                        new InstantCommand(
+                                () -> applyState(State.CORAL_L2_READY.right()).schedule()));
 
-        L3Coral.and(operator.leftScore).onTrue(applyState(State.CORAL_L3_READY.left()));
-        L3Coral.and(operator.rightScore).onTrue(applyState(State.CORAL_L3_READY.right()));
+        L3Coral.and(operator.leftScore)
+                .onTrue(
+                        new InstantCommand(
+                                () -> applyState(State.CORAL_L3_READY.left()).schedule()));
+        L3Coral.and(operator.rightScore)
+                .onTrue(
+                        new InstantCommand(
+                                () -> applyState(State.CORAL_L3_READY.right()).schedule()));
 
-        L4Coral.and(operator.leftScore).onTrue(applyState(State.CORAL_L4_READY.left()));
-        L4Coral.and(operator.rightScore).onTrue(applyState(State.CORAL_L4_READY.right()));
+        L4Coral.and(operator.leftScore)
+                .onTrue(
+                        new InstantCommand(
+                                () -> applyState(State.CORAL_L4_READY.left()).schedule()));
+        L4Coral.and(operator.rightScore)
+                .onTrue(
+                        new InstantCommand(
+                                () -> applyState(State.CORAL_L4_READY.right()).schedule()));
 
         // CORAL SCORE STATES
-        pilot.actionReady_RB.onTrue(applyState(appliedState.getNextScoreState()));
-        pilot.actionReady_RB.onFalse(applyState(appliedState.getNextScoreState()));
+        pilot.actionReady_RB.onTrue(
+                new InstantCommand(() -> applyState(appliedState.getNextScoreState()).schedule()));
+        pilot.actionReady_RB.onFalse(
+                new InstantCommand(() -> applyState(appliedState.getNextScoreState()).schedule()));
 
         // ALGAE READY STATES
         netAlgae.onTrue(applyState(State.IDLE_ALGAE));
@@ -179,27 +175,49 @@ public class RobotStates {
         netAlgae.and(pilot.actionReady_RB).onFalse(applyState(State.ALGAE_NET_RELEASE));
 
         // AUTO SCORE
-        // aligned.debounce(scoreAfterAlignTime)
-        //         .and(
-        //                 autoScoreMode,
-        //                 actionPrepState,
-        //                 completeStagedCoral,
-        //                 pilot.actionReady_RB.not())
-        //         .onTrue(
-        //                 actionPrepState.setFalse(),
-        //                 actionState
-        //                         .setTrueForTimeWithCancel(
-        //                                 RobotStates::getScoreTime, actionPrepState)
-        //
-        // .andThen(autoScoreMode.setFalse().onlyIf(actionPrepState.not())));
+        Zones.isCloseToReef
+                .and(pilot.reefAlignScore_B)
+                .onTrue(
+                        new InstantCommand(
+                                () -> applyState(appliedState.getNextScoreState()).schedule()));
+        aligned.debounce(scoreAfterAlignTime)
+                .and(pilot.reefAlignScore_B, pilot.actionReady_RB.not())
+                .onTrue(
+                        new InstantCommand(
+                                () -> applyState(appliedState.getNextScoreState()).schedule()));
 
-        // aligned.debounce(autonScoreAfterAlignTime)
-        //         .and(autonAutoScoreMode, actionPrepState, completeStagedCoral)
-        //         .onTrue(
-        //                 actionPrepState.setFalse(),
-        //                 actionState
-        //                         .setTrueForTime(RobotStates::getAutonScoreTime)
-        //                         .andThen(autonAutoScoreMode.setFalse()));
+        toggleReverse.onTrue(reverse.toggle());
+
+        poseReversal.and(stagedCoral.or(L2Algae, L3Algae)).onTrue(reverse.setTrue());
+        poseReversal.not().and(stagedCoral.or(L2Algae, L3Algae)).onTrue(reverse.setFalse());
+        groundAlgae.or(groundCoral, processorAlgae).and(toggleReverse).onTrue(reverse.setTrue());
+        groundAlgae
+                .or(groundCoral, processorAlgae)
+                .and(toggleReverse.not())
+                .onTrue(reverse.setFalse());
+
+        // HOME STATES
+        pilot.home_select.or(operator.home_select).onTrue(applyState(State.REHOME));
+        pilot.home_select.or(operator.home_select).onFalse(applyState(State.IDLE_EMPTY));
+
+        stationIntaking
+                .and(Zones.bottomLeftZone, SwerveStates.isFrontClosestToLeftStation.not())
+                .onTrue(reverse.setTrue());
+        stationIntaking
+                .and(Zones.bottomLeftZone, SwerveStates.isFrontClosestToLeftStation)
+                .onTrue(reverse.setFalse());
+        stationIntaking
+                .and(Zones.bottomRightZone, SwerveStates.isFrontClosestToRightStation.not())
+                .onTrue(reverse.setTrue());
+        stationIntaking
+                .and(Zones.bottomRightZone, SwerveStates.isFrontClosestToRightStation)
+                .onTrue(reverse.setFalse());
+
+        // netAlgae.and(SwerveStates.isFrontClosestToNet.not()).onTrue(reverse.setTrue());
+        // netAlgae.and(SwerveStates.isFrontClosestToNet).onTrue(reverse.setFalse());
+        netAlgae.onTrue(reverse.setFalse());
+
+        climbPrep.onTrue(reverse.setFalse());
     }
 
     private RobotStates() {
@@ -210,57 +228,20 @@ public class RobotStates {
         return new InstantCommand(
                         () -> {
                             appliedState = state;
-                            SmartDashboard.putString("Applied State", state.toString());
-                            SmartDashboard.putString(
-                                    "AppliedState Variable", appliedState.toString());
+                            SmartDashboard.putString("APPLIED STATE", state.toString());
+                            Telemetry.print("Applied State: " + state.toString());
                             coordinator.applyRobotState(state);
                         })
-                .withName(state.toString());
+                .withName("APPLYING STATE: " + state.toString());
     }
 
-    //     public static Command clearStaged() {
-    //         return l1.setFalse()
-    //                 .alongWith(
-    //                         l2.setFalse(),
-    //                         l3.setFalse(),
-    //                         l4.setFalse(),
-    //                         rightScore.setFalse(),
-    //                         coral.setFalse(),
-    //                         algae.setFalse(),
-    //                         shrinkState.setFalse(),
-    //                         autonStationIntake.setFalse())
-    //                 .withName("Clear Staged");
-    //     }
-
-    //     public static Command clearStates() {
-    //         return clearStaged()
-    //                 .alongWith(
-    //                         reverse.setFalse(),
-    //                         actionPrepState.setFalse(),
-    //                         actionState.setFalse(),
-    //                         homeAll.setFalse(),
-    //                         coastMode.setFalse(),
-    //                         twistAtReef.setFalse(),
-    //                         aligned.setFalse(),
-    //                         autoScoreMode.setFalse(),
-    //                         autonAutoScoreMode.setFalse(),
-    //                         coralScoring.setFalse())
-    //                 .withName("Clear States");
-    //     }
-
-    //     // clears states without stopping homing sequence
-    //     public static Command autonClearStates() {
-    //         return clearStaged()
-    //                 .alongWith(
-    //                         reverse.setFalse(),
-    //                         actionPrepState.setFalse(),
-    //                         actionState.setFalse(),
-    //                         coastMode.setFalse(),
-    //                         twistAtReef.setFalse(),
-    //                         aligned.setFalse(),
-    //                         autoScoreMode.setFalse(),
-    //                         autonAutoScoreMode.setFalse(),
-    //                         coralScoring.setFalse())
-    //                 .withName("Auton Clear States");
-    //     }
+    public static Command clearState() {
+        return new InstantCommand(
+                        () -> {
+                            appliedState = State.IDLE_EMPTY;
+                            SmartDashboard.putString("APPLIED STATE", "CLEARED TO IDLE_EMPTY");
+                            coordinator.applyRobotState(State.IDLE_EMPTY);
+                        })
+                .withName("CLEARING STATE TO IDLE_EMPTY");
+    }
 }

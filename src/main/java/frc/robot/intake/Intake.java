@@ -97,9 +97,7 @@ public class Intake extends Mechanism {
     public void periodic() {}
 
     @Override
-    public void setupStates() {
-        IntakeStates.setStates();
-    }
+    public void setupStates() {}
 
     @Override
     public void setupDefaultCommand() {

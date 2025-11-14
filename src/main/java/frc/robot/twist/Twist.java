@@ -161,9 +161,7 @@ public class Twist extends Mechanism {
     public void periodic() {}
 
     @Override
-    public void setupStates() {
-        TwistStates.setStates();
-    }
+    public void setupStates() {}
 
     @Override
     public void setupDefaultCommand() {

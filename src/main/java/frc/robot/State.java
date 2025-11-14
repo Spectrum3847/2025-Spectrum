@@ -1,7 +1,9 @@
 package frc.robot;
 
 import com.google.common.collect.ImmutableMap;
+import frc.spectrumLib.Telemetry;
 import java.util.Map;
+import java.util.function.BooleanSupplier;
 import lombok.Setter;
 
 public enum State {
@@ -51,12 +53,19 @@ public enum State {
     // Define the scoring sequence map, the 2nd state is the next state after the current one
     private static final ImmutableMap<State, State> scoreSequence =
             ImmutableMap.ofEntries(
+                    Map.entry(CORAL_L1_READY, CORAL_L1_PREP),
                     Map.entry(CORAL_L2_READY, CORAL_L2_PREP),
                     Map.entry(CORAL_L3_READY, CORAL_L3_PREP),
                     Map.entry(CORAL_L4_READY, CORAL_L4_PREP),
+                    Map.entry(CORAL_L1_PREP, CORAL_L1_RELEASE),
                     Map.entry(CORAL_L2_PREP, CORAL_L2_RELEASE),
                     Map.entry(CORAL_L3_PREP, CORAL_L3_RELEASE),
-                    Map.entry(CORAL_L4_PREP, CORAL_L4_RELEASE));
+                    Map.entry(CORAL_L4_PREP, CORAL_L4_RELEASE),
+                    Map.entry(CORAL_L1_RELEASE, IDLE_CORAL),
+                    Map.entry(CORAL_L2_RELEASE, IDLE_CORAL),
+                    Map.entry(CORAL_L3_RELEASE, IDLE_CORAL),
+                    Map.entry(CORAL_L4_RELEASE, IDLE_CORAL),
+                    Map.entry(ALGAE_NET_RELEASE, IDLE_ALGAE));
 
     // ------ STATE ATTRIBUTES ------//
     public State reversed() {
@@ -71,30 +80,33 @@ public enum State {
 
     public State left() {
         setLeft(true);
+        Telemetry.print("Set scoring side to LEFT");
         return this;
     }
 
     public State right() {
         setLeft(false);
+        Telemetry.print("Set scoring side to RIGHT");
         return this;
     }
 
-    public boolean isReversed() {
+    public static boolean isReversed() {
         return isReversed;
     }
 
-    public boolean isLeft() {
+    public static boolean isLeft() {
         return isLeft;
     }
 
-    private static boolean isReadyState(State state) {
-        return switch (state) {
-            case CORAL_L4_READY, CORAL_L3_READY, CORAL_L2_READY -> true;
-            default -> false;
-        };
+    private static BooleanSupplier isReadyState(State state) {
+        return () ->
+                switch (state) {
+                    case CORAL_L4_READY, CORAL_L3_READY, CORAL_L2_READY, CORAL_L1_READY -> true;
+                    default -> false;
+                };
     }
 
-    public boolean isReady() {
+    public BooleanSupplier isReady() {
         return isReadyState(this);
     }
 

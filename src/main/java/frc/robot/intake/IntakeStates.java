@@ -27,8 +27,6 @@ public class IntakeStates {
                 intake.stopMotor().ignoringDisable(true).withName("Intake.default"));
     }
 
-    public static void setStates() {}
-
     public static void neutral() {
         scheduleIfNotRunning(intake.runVoltage(() -> 0).withName("Intake.neutral"));
     }

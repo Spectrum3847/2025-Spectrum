@@ -227,7 +227,6 @@ public class Robot extends SpectrumRobot {
         Telemetry.print("### Disabled Init Starting ### ");
         clearCommandsAndButtons();
         resetCommandsAndButtons();
-        coordinator.applyRobotState(State.IDLE_CORAL);
 
         if (!commandInit) {
             Command autonStartCommand =
