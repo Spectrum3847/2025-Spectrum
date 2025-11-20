@@ -45,6 +45,14 @@ deploy {
                     jvmArgs.add("-Dcom.sun.management.jmxremote.authenticate=false")
                     jvmArgs.add("-Djava.rmi.server.hostname=10.38.47.2")
 
+                    // Enable VisualVM connection
+                    jvmArgs.add("-Dcom.sun.management.jmxremote=true")
+                    jvmArgs.add("-Dcom.sun.management.jmxremote.port=1198")
+                    jvmArgs.add("-Dcom.sun.management.jmxremote.local.only=false")
+                    jvmArgs.add("-Dcom.sun.management.jmxremote.ssl=false")
+                    jvmArgs.add("-Dcom.sun.management.jmxremote.authenticate=false")
+                    jvmArgs.add("-Djava.rmi.server.hostname=10.38.47.2")
+
                     // The options below may improve performance, but should only be enabled on the RIO 2
                     //
                     // final MAX_JAVA_HEAP_SIZE_MB = 100;
