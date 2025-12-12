@@ -18,7 +18,6 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -39,7 +38,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.reefscape.Field;
 import frc.reefscape.FieldHelpers;
 import frc.robot.Robot;
 import frc.spectrumLib.SpectrumSubsystem;
@@ -48,6 +46,7 @@ import frc.spectrumLib.util.Util;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import lombok.Getter;
+import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.COTS;
 
 /**
@@ -135,10 +134,12 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
         DogLog.log("Drive/TargetStates", getState().ModuleTargets);
         DogLog.log("Drive/MeasuredStates", getState().ModuleStates);
         DogLog.log("Drive/MeasuredSpeeds", getState().Speeds);
-        if (mapleSimSwerveDrivetrain != null)
-            DogLog.log(
-                    "Drive/SimulationPose",
-                    mapleSimSwerveDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose());
+        DogLog.log(
+                "FieldSimulation/Algae",
+                SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
+        DogLog.log(
+                "FieldSimulation/Coral",
+                SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
     }
 
     public void setupStates() {
@@ -197,8 +198,11 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
      *     `seedCheckedPose` method with the current pose as an argument.
      */
     public Pose2d getRobotPose() {
-        Pose2d pose = getState().Pose;
-        return keepPoseOnField(pose);
+        // Simulates collision by with field obstacles and boundaries
+        if (this.mapleSimSwerveDrivetrain != null) {
+            return mapleSimSwerveDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose();
+        }
+        return getState().Pose;
     }
 
     @Override
@@ -207,22 +211,6 @@ public class Swerve extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder>
             mapleSimSwerveDrivetrain.mapleSimDrive.setSimulationWorldPose(pose);
         Timer.delay(0.05); // Wait for simulation to update
         super.resetPose(pose);
-    }
-
-    // Keep the robot on the field
-    private Pose2d keepPoseOnField(Pose2d pose) {
-        double halfRobot = config.getRobotLength() / 2;
-        double x = pose.getX();
-        double y = pose.getY();
-
-        double newX = Util.limit(x, halfRobot, Field.getFieldLength() - halfRobot);
-        double newY = Util.limit(y, halfRobot, Field.getFieldWidth() - halfRobot);
-
-        if (x != newX || y != newY) {
-            pose = new Pose2d(new Translation2d(newX, newY), pose.getRotation());
-            resetPose(pose);
-        }
-        return pose;
     }
 
     public Trigger inXzone(double minXmeter, double maxXmeter) {
