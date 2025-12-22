@@ -1,7 +1,7 @@
 {
   "Docking": {
     "Data": [
-      "DockNode  ID=0x00000001 Pos=7,704 Size=800,275 Selected=0x48913727"
+      "DockNode  ID=0x00000001 Pos=-1,610 Size=808,367 Selected=0x48913727"
     ]
   },
   "MainWindow": {
@@ -33,7 +33,7 @@
     },
     "###/SmartDashboard/Auto Chooser": {
       "Collapsed": "0",
-      "Pos": "255,217",
+      "Pos": "256,207",
       "Size": "254,54"
     },
     "###/SmartDashboard/Field2d": {
@@ -103,12 +103,12 @@
     },
     "###FMS": {
       "Collapsed": "0",
-      "Pos": "400,23",
-      "Size": "169,184"
+      "Pos": "392,23",
+      "Size": "175,184"
     },
     "###Joysticks": {
       "Collapsed": "0",
-      "Pos": "5,458",
+      "Pos": "3,363",
       "Size": "796,240"
     },
     "###Keyboard 0 Settings": {
@@ -124,14 +124,14 @@
     "###NetworkTables": {
       "Collapsed": "0",
       "DockId": "0x00000001,0",
-      "Pos": "7,704",
-      "Size": "800,275"
+      "Pos": "-1,610",
+      "Size": "808,367"
     },
     "###NetworkTables Info": {
       "Collapsed": "0",
       "DockId": "0x00000001,1",
-      "Pos": "7,704",
-      "Size": "800,275"
+      "Pos": "-1,610",
+      "Size": "808,367"
     },
     "###Other Devices": {
       "Collapsed": "0",
@@ -156,7 +156,7 @@
     },
     "###System Joysticks": {
       "Collapsed": "0",
-      "Pos": "605,230",
+      "Pos": "775,226",
       "Size": "192,218"
     },
     "###Timing": {

@@ -23,8 +23,6 @@ public class PilotStates {
     /** Set the states for the pilot controller */
     public static void setStates() {
         pilot.actionReady_RB.whileTrue(slowMode());
-        pilot.actionReady_RB.onTrue(new InstantCommand(() -> RobotSim.mapleSimScoreLeftL4Coral()));
-        pilot.fn.onTrue(new InstantCommand(() -> RobotSim.mapleSimScoreRightL4Coral()));
         pilot.visionPoseReset_LB_Select.onTrue(VisionStates.resetVisionPose());
         // Rumble whenever we reorient
         pilot.upReorient
@@ -34,6 +32,11 @@ public class PilotStates {
         IntakeStates.hasAlgae.onTrue(log(rumble(1, 0.5).withName("Pilot.hasAlgaeRumble")));
         RobotStates.staged.onTrue(log(rumble(1, 0.5).withName("Pilot.stagedRumble")));
         RobotStates.aligned.onTrue(log(rumble(1, 0.5).withName("Pilot.alignRumble")));
+
+        pilot.actionReady_RB.onTrue(new InstantCommand(() -> RobotSim.mapleSimScoreLeftL4Coral()));
+        pilot.fn.onTrue(new InstantCommand(() -> RobotSim.mapleSimScoreRightL4Coral()));
+        pilot.pilotY.onTrue(new InstantCommand(() -> RobotSim.mapleSimCoralStationFeedLeft()));
+        pilot.pilotX.onTrue(new InstantCommand(() -> RobotSim.mapleSimScoreNetAlgae()));
     }
 
     /** Command that can be used to rumble the pilot controller */

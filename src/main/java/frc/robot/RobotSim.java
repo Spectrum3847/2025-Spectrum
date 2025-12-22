@@ -4,7 +4,9 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
@@ -13,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeAlgaeOnFly;
 import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoralOnFly;
 
 // General Sim principles
@@ -115,5 +118,31 @@ public class RobotSim {
                                 Meters.of(2.4),
                                 MetersPerSecond.of(0.25),
                                 Degrees.of(-90)));
+    }
+
+    public static void mapleSimScoreNetAlgae() {
+        SimulatedArena.getInstance()
+                .addGamePieceProjectile(
+                        new ReefscapeAlgaeOnFly(
+                                Robot.getSwerve().getRobotPose().getTranslation(),
+                                new Translation2d(),
+                                Robot.getSwerve().getCurrentRobotChassisSpeeds(),
+                                new Rotation2d(),
+                                Meters.of(2.5),
+                                MetersPerSecond.of(3),
+                                Degrees.of(70)));
+    }
+
+    public static void mapleSimCoralStationFeedLeft() {
+        SimulatedArena.getInstance()
+                .addGamePieceProjectile(
+                        new ReefscapeCoralOnFly(
+                                new Translation2d(0.85, 7.35),
+                                new Translation2d(0, -1 + Math.random() * 2),
+                                new ChassisSpeeds(),
+                                new Rotation2d(Math.toRadians(-65 + Math.random() * 25)),
+                                Meters.of(1),
+                                MetersPerSecond.of(5),
+                                Degrees.of(-25)));
     }
 }

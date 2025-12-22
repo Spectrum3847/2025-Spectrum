@@ -190,13 +190,13 @@ public class RobotStates {
         groundAlgae.whileTrue(algae.toggleToTrue(), coral.setFalse());
         groundAlgae.onChangeToFalse(homeAll.toggleToTrue());
 
-        pilot.l2AlgaeRemoval.onTrue(
-                algae.setTrue(), coral.setFalse(), l2.setTrue(), actionPrepState.setTrue());
-        pilot.l2AlgaeRemoval.onFalse(l2.setFalse(), actionPrepState.setFalse());
+        // pilot.l2AlgaeRemoval.onTrue(
+        //         algae.setTrue(), coral.setFalse(), l2.setTrue(), actionPrepState.setTrue());
+        // pilot.l2AlgaeRemoval.onFalse(l2.setFalse(), actionPrepState.setFalse());
 
-        pilot.l3AlgaeRemoval.onTrue(
-                algae.setTrue(), coral.setFalse(), l3.setTrue(), actionPrepState.setTrue());
-        pilot.l3AlgaeRemoval.onFalse(l3.setFalse(), actionPrepState.setFalse());
+        // pilot.l3AlgaeRemoval.onTrue(
+        //         algae.setTrue(), coral.setFalse(), l3.setTrue(), actionPrepState.setTrue());
+        // pilot.l3AlgaeRemoval.onFalse(l3.setFalse(), actionPrepState.setFalse());
 
         // **********************************
         // Staging and Scoring
