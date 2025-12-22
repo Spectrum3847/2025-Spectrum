@@ -271,7 +271,7 @@ public class MapleSimSwerveDrivetrain {
                 // TODO: Adjust steer and drive motor PID gains for simulation
                 .withSteerMotorGains(
                         new Slot0Configs()
-                                .withKP(4000.0)
+                                .withKP(1000.0)
                                 .withKI(0)
                                 .withKD(60.0)
                                 .withKS(0.15)

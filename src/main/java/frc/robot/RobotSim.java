@@ -1,5 +1,9 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
@@ -8,6 +12,8 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoralOnFly;
 
 // General Sim principles
 // Always move the root/origin to change it's display position
@@ -81,5 +87,33 @@ public class RobotSim {
                         90,
                         3,
                         new Color8Bit(Color.kPurple)));
+    }
+
+    // Maple Sim Coral and Algae Scoring
+
+    public static void mapleSimScoreLeftL4Coral() {
+        SimulatedArena.getInstance()
+                .addGamePieceProjectile(
+                        new ReefscapeCoralOnFly(
+                                Robot.getSwerve().getRobotPose().getTranslation(),
+                                new Translation2d(0.7, 0.15),
+                                Robot.getSwerve().getCurrentRobotChassisSpeeds(),
+                                Robot.getSwerve().getRobotPose().getRotation(),
+                                Meters.of(2.4),
+                                MetersPerSecond.of(0.25),
+                                Degrees.of(-90)));
+    }
+
+    public static void mapleSimScoreRightL4Coral() {
+        SimulatedArena.getInstance()
+                .addGamePieceProjectile(
+                        new ReefscapeCoralOnFly(
+                                Robot.getSwerve().getRobotPose().getTranslation(),
+                                new Translation2d(0.7, -0.15),
+                                Robot.getSwerve().getCurrentRobotChassisSpeeds(),
+                                Robot.getSwerve().getRobotPose().getRotation(),
+                                Meters.of(2.4),
+                                MetersPerSecond.of(0.25),
+                                Degrees.of(-90)));
     }
 }
