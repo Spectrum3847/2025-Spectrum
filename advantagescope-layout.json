@@ -9,10 +9,7 @@
         "sidebar": {
           "width": 300,
           "expanded": [
-            "/SmartDashboard/Auto Chooser",
-            "/SmartDashboard/VisionSystemSim-main",
             "/SmartDashboard/VisionSystemSim-main/Sim Field",
-            "/SmartDashboard",
             "/PathPlanner"
           ]
         },
@@ -23,8 +20,8 @@
               "type": 0,
               "title": "",
               "controller": null,
-              "controllerUUID": "we5l3891un9wdqymsaw43vtw318pegcp",
-              "renderer": "#/",
+              "controllerUUID": "tf07vxibqkp9x4h2yonufd6oltcjdu9x",
+              "renderer": "",
               "controlsHeight": 0
             },
             {
@@ -37,77 +34,32 @@
                 "leftLockedRange": null,
                 "rightLockedRange": null,
                 "leftUnitConversion": {
-                  "type": null,
-                  "factor": 1
+                  "autoTarget": null,
+                  "preset": null
                 },
                 "rightUnitConversion": {
-                  "type": null,
-                  "factor": 1
+                  "autoTarget": null,
+                  "preset": null
                 },
                 "leftFilter": 0,
                 "rightFilter": 0
               },
-              "controllerUUID": "td8bc7ttaiet2nbpo74abk1ew4naz835",
+              "controllerUUID": "bmkzdi0knmtsh54kiyckox9hmjzbi5n9",
               "renderer": null,
               "controlsHeight": 200
             },
             {
               "type": 2,
-              "title": "Odometry",
+              "title": "2D Field",
               "controller": {
-                "sources": [
-                  {
-                    "type": "robotLegacy",
-                    "logKey": "NT:/SmartDashboard/VisionSystemSim-main/Sim Field/Robot",
-                    "logType": "NumberArray",
-                    "visible": true,
-                    "options": {
-                      "format": "Pose2d",
-                      "units": "degrees"
-                    }
-                  },
-                  {
-                    "type": "swerveStates",
-                    "logKey": "NT:SwerveStates",
-                    "logType": "SwerveModuleState[]",
-                    "visible": true,
-                    "options": {
-                      "color": "#ff0000",
-                      "arrangement": "0,1,2,3"
-                    }
-                  },
-                  {
-                    "type": "visionLegacy",
-                    "logKey": "NT:/SmartDashboard/VisionSystemSim-main/Sim Field/visibleTargetPoses",
-                    "logType": "NumberArray",
-                    "visible": true,
-                    "options": {
-                      "color": "#00ff00",
-                      "size": "normal",
-                      "format": "Pose2d"
-                    }
-                  },
-                  {
-                    "type": "arrowLegacy",
-                    "logKey": "NT:/SmartDashboard/VisionSystemSim-main/Sim Field/apriltag",
-                    "logType": "NumberArray",
-                    "visible": true,
-                    "options": {
-                      "position": "front",
-                      "format": "Pose2d",
-                      "units": "degrees"
-                    }
-                  }
-                ],
-                "game": "2025 Field (Welded)",
-                "bumpers": "blue",
-                "origin": "auto",
+                "sources": [],
+                "field": "FRC:2025 Field (Welded)",
                 "orientation": 0,
-                "size": 30
+                "size": "large"
               },
-              "controllerUUID": "79baj9tvirj8zj34n0ayp07n2oyfiujv",
+              "controllerUUID": "248jhh2z205prfeei1evbuoxbd0pzyjd",
               "renderer": null,
-              "controlsHeight": 194
+              "controlsHeight": 200
             },
             {
               "type": 3,
@@ -127,117 +79,60 @@
                   },
                   {
                     "type": "swerveStates",
-                    "logKey": "NT:SwerveStates",
+                    "logKey": "NT:/Robot/Drive/MeasuredStates",
                     "logType": "SwerveModuleState[]",
-                    "visible": true,
-                    "options": {
-                      "color": "#ff0000",
-                      "arrangement": "0,1,2,3"
-                    }
-                  },
-                  {
-                    "type": "mechanism",
-                    "logKey": "NT:/SmartDashboard/LeftView",
-                    "logType": "Mechanism2d",
-                    "visible": false,
-                    "options": {}
-                  },
-                  {
-                    "type": "visionLegacy",
-                    "logKey": "NT:/SmartDashboard/VisionSystemSim-main/Sim Field/visibleTargetPoses",
-                    "logType": "NumberArray",
                     "visible": true,
                     "options": {
                       "color": "#00ff00",
-                      "size": "normal",
-                      "format": "Pose2d"
+                      "arrangement": "0,1,2,3"
                     }
                   },
                   {
-                    "type": "aprilTagLegacy",
-                    "logKey": "NT:/SmartDashboard/VisionSystemSim-main/Sim Field/apriltag",
-                    "logType": "NumberArray",
-                    "visible": true,
-                    "options": {
-                      "family": "36h11"
-                    }
-                  }
-                ],
-                "game": "2025 Field (Welded)",
-                "origin": "red"
-              },
-              "controllerUUID": "5doh3nen1ru6zra5lfgswjzmviuetb2u",
-              "renderer": {
-                "cameraIndex": -2,
-                "orbitFov": 50,
-                "cameraPosition": [
-                  -1.0505929361849533,
-                  1.5150320979385863,
-                  -1.522342273997086
-                ],
-                "cameraTarget": [
-                  -0.12576531394218352,
-                  0.447414866857175,
-                  0.02199145851749889
-                ]
-              },
-              "controlsHeight": 197
-            },
-            {
-              "type": 9,
-              "title": "Swerve",
-              "controller": {
-                "sources": [
-                  {
-                    "type": "states",
-                    "logKey": "NT:SwerveStates",
+                    "type": "swerveStates",
+                    "logKey": "NT:/Robot/Drive/TargetStates",
                     "logType": "SwerveModuleState[]",
                     "visible": true,
                     "options": {
                       "color": "#ff0000",
                       "arrangement": "0,1,2,3"
                     }
+                  },
+                  {
+                    "type": "gamePiece",
+                    "logKey": "NT:/Robot/FieldSimulation/Coral",
+                    "logType": "Pose3d[]",
+                    "visible": true,
+                    "options": {
+                      "variant": "Coral"
+                    }
+                  },
+                  {
+                    "type": "gamePiece",
+                    "logKey": "NT:/Robot/FieldSimulation/Algae",
+                    "logType": "Pose3d[]",
+                    "visible": true,
+                    "options": {
+                      "variant": "Algae"
+                    }
                   }
                 ],
-                "maxSpeed": 5,
-                "sizeX": 0.65,
-                "sizeY": 0.65,
-                "orientation": 1
+                "game": "FRC:2025 Field (Welded)"
               },
-              "controllerUUID": "dzda48ieacn4dss72172bdt7zncomvjr",
-              "renderer": null,
-              "controlsHeight": 200
-            },
-            {
-              "type": 10,
-              "title": "LeftView",
-              "controller": [
-                {
-                  "type": "mechanism",
-                  "logKey": "NT:/SmartDashboard/LeftView",
-                  "logType": "Mechanism2d",
-                  "visible": true,
-                  "options": {}
-                }
-              ],
-              "controllerUUID": "pexukuzf1mtztxpin1gpbjiim6lc5osf",
-              "renderer": null,
-              "controlsHeight": 200
-            },
-            {
-              "type": 10,
-              "title": "FrontView",
-              "controller": [
-                {
-                  "type": "mechanism",
-                  "logKey": "NT:/SmartDashboard/frontView",
-                  "logType": "Mechanism2d",
-                  "visible": true,
-                  "options": {}
-                }
-              ],
-              "controllerUUID": "1dkegjgopenjxs3q4fablg5z4fudp9zw",
-              "renderer": null,
+              "controllerUUID": "vi7ee8ayrpudgyg5iyz3zsli2sfxgrdx",
+              "renderer": {
+                "cameraIndex": -1,
+                "orbitFov": 50,
+                "cameraPosition": [
+                  -9.527017470095284,
+                  8.166303536683046,
+                  -0.005088356573764552
+                ],
+                "cameraTarget": [
+                  -2.873084707048265,
+                  -1.4632106009322803,
+                  0.03761701343260516
+                ]
+              },
               "controlsHeight": 200
             }
           ]
@@ -246,5 +141,5 @@
     }
   ],
   "satellites": [],
-  "version": "4.1.2"
+  "version": "26.0.0"
 }

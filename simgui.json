@@ -161,6 +161,9 @@
       "CameraPublisher": {
         "open": true
       },
+      "PathPlanner": {
+        "open": true
+      },
       "Pose2d##v_SwervePose": {
         "Rotation2d##v_rotation": {
           "open": true
