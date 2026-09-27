@@ -40,6 +40,9 @@ final class SimScenario {
     private int failures = 0;
     private int scoresBefore;
     private double scoreStart;
+    private double tArm, tNear, tGate, tStage;
+    private double worstLoopMs, loopMsSum;
+    private int loops;
 
     SimScenario() {
         wait(2.0);
@@ -53,6 +56,30 @@ final class SimScenario {
 
     void periodic() {
         double now = Timer.getFPGATimestamp();
+        if (now > 3) {
+            worstLoopMs = Math.max(worstLoopMs, Robot.getLoopMs());
+            loopMsSum += Robot.getLoopMs();
+            loops++;
+        }
+        if (Double.isNaN(tStage) && ss().getElevator().getTargetRotations() > 1) {
+            tStage = now - scoreStart;
+        }
+        if (Double.isNaN(tArm)
+                && ss().isArmAtTarget()
+                && ss().getElevator().getTargetRotations() > 1) {
+            tArm = now - scoreStart;
+        }
+        if (Double.isNaN(tNear)
+                && Robot.getVision().getReefTagTracker().getPose().isPresent()
+                && ss().getCurrentSuperState().toString().equals("ALIGN_CORAL")
+                && Math.abs(Robot.getSwerve().getCurrentRobotChassisSpeeds().vxMetersPerSecond)
+                        < 0.05
+                && now - scoreStart > 0.3) {
+            tNear = now - scoreStart;
+        }
+        if (Double.isNaN(tGate) && ss().isScoreGateOpen()) {
+            tGate = now - scoreStart;
+        }
         if (index >= 0) {
             Step s = steps.get(index);
             if (!s.done().getAsBoolean() && now - stepStart < s.timeout()) {
@@ -106,6 +133,7 @@ final class SimScenario {
                     ss().setSelectedLevel(level);
                     ss().setSelectedBranch(branch);
                     scoreStart = Timer.getFPGATimestamp();
+                    tArm = tNear = tGate = tStage = Double.NaN;
                     ss().setWantedSuperState(WantedSuperState.AUTO_SCORE_CORAL);
                 },
                 () -> ss().getCoralScoreCount() > scoresBefore,
@@ -128,8 +156,13 @@ final class SimScenario {
                             name,
                             scored && onTarget,
                             String.format(
-                                    "scored=%b after %.2f s; true error along %.2f in,"
+                                    "stage %.2f, drive settled %.2f, arm %.2f, gate %.2f;"
+                                            + " scored=%b after %.2f s; true error along %.2f in,"
                                             + " lateral %.2f in, heading %.2f deg",
+                                    tStage,
+                                    tNear,
+                                    tArm,
+                                    tGate,
                                     scored,
                                     Timer.getFPGATimestamp() - scoreStart,
                                     Units.metersToInches(err.getX()),
@@ -204,6 +237,11 @@ final class SimScenario {
     }
 
     private void finish() {
+        Telemetry.print(
+                String.format(
+                        "SCENARIO LOOP: mean %.2f ms, worst %.2f ms",
+                        loopMsSum / loops, worstLoopMs),
+                PrintPriority.HIGH);
         Telemetry.print(
                 "SCENARIO DONE: " + (failures == 0 ? "all passed" : failures + " failed"),
                 PrintPriority.HIGH);

@@ -52,10 +52,10 @@ public class SwerveConfig {
     @Getter private final double rotationToleranceRadians = Units.degreesToRadians(0.5);
 
     /** Proportional gain from distance to goal (m) to commanded speed (m/s). */
-    @Getter private final double kPTranslationController = 3.0;
+    @Getter private final double kPTranslationController = 5.0;
 
     /** Deceleration the drive-to-pose speed profile plans for, m/s^2. */
-    @Getter private final double driveToPoseMaxAccel = 4.0;
+    @Getter private final double driveToPoseMaxAccel = 6.0;
 
     /** Speed floor that beats static friction until the robot is inside the deadband, m/s. */
     @Getter private final double driveToPoseMinSpeed = 0.05;

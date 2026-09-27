@@ -65,13 +65,16 @@ public class ReefTagTracker {
 
     private final Camera[] cameras;
     private final CameraEstimate[] estimates;
+    private final String[] edgeScaleKeys;
     private int targetTag = -1;
 
     public ReefTagTracker(Camera... cameras) {
         this.cameras = cameras;
         estimates = new CameraEstimate[cameras.length];
+        edgeScaleKeys = new String[cameras.length];
         for (int i = 0; i < cameras.length; i++) {
             estimates[i] = new CameraEstimate();
+            edgeScaleKeys[i] = "Vision/ReefTag/" + cameras[i].name() + "/EdgeScale";
         }
     }
 
@@ -113,7 +116,7 @@ public class ReefTagTracker {
             double scale = edgeScale(s.txDeg(), s.tyDeg());
             e.weight =
                     1.0 / Math.max(1e-3, s.distanceMeters() * s.distanceMeters() * scale * scale);
-            Telemetry.log("Vision/ReefTag/" + cameras[cameraIndex].name() + "/EdgeScale", scale);
+            Telemetry.log(edgeScaleKeys[cameraIndex], scale);
         }
     }
 

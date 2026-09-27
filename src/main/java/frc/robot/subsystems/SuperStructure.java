@@ -193,9 +193,9 @@ public class SuperStructure {
     private static final double GATE_HEADING_DEG = 1.5;
     private static final int GATE_DEBOUNCE_LOOPS = 3;
 
-    private static final double ALIGN_MAX_SPEED = 3.0;
+    private static final double ALIGN_MAX_SPEED = 3.5;
     /** Slower once the elevator is high, so the robot does not tip into the reef. */
-    private static final double ALIGN_MAX_SPEED_HIGH = 1.5;
+    private static final double ALIGN_MAX_SPEED_HIGH = 2.5;
 
     /** Per-event trim on the reef standoff, metres (+ further from the reef). */
     @Setter private double reefStandoffTrim = 0;

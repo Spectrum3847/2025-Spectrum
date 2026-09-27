@@ -248,8 +248,12 @@ public class Robot extends SpectrumRobot {
         WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
     }
 
+    /** Execution time of the last robotPeriodic, ms; the sim scenario reports the worst. */
+    @Getter private static double loopMs = 0;
+
     @Override
     public void robotPeriodic() {
+        long startNs = System.nanoTime();
         RobotLoop.next();
         try {
             vision.periodic();
@@ -261,6 +265,8 @@ public class Robot extends SpectrumRobot {
             batteryLogger.logPower();
             field2d.setRobotPose(swerve.getRobotPose());
             Telemetry.log("Match Data/MatchTime", DriverStation.getMatchTime(), "seconds");
+            loopMs = (System.nanoTime() - startNs) / 1e6;
+            Telemetry.log("Robot/LoopMs", loopMs);
         } catch (Throwable t) {
             CrashTracker.logThrowableCrash(t);
             throw t;
