@@ -88,6 +88,7 @@ public class Robot extends SpectrumRobot {
     @Getter private static BatteryLogger batteryLogger;
     private static Leds leds;
     private static RobotSim robotSim;
+    private static SimScenario scenario;
 
     private boolean autonWarmedUp = false;
 
@@ -95,7 +96,10 @@ public class Robot extends SpectrumRobot {
         super();
         // Nobody replays .hoot logs; SignalLogger.start() still works for a deliberate capture.
         SignalLogger.enableAutoLogging(false);
-        Telemetry.start(false, true, false, true, false, true, PrintPriority.NORMAL);
+        // Mirror logs to NetworkTables only in the simulator, for AdvantageScope's live view; on
+        // the robot the whole-log mirror costs field bandwidth (see Telemetry.start).
+        Telemetry.start(
+                RobotBase.isSimulation(), true, false, true, false, true, PrintPriority.NORMAL);
 
         try {
             Telemetry.print("--- Robot Init Starting ---");
@@ -313,7 +317,17 @@ public class Robot extends SpectrumRobot {
     }
 
     @Override
+    public void simulationInit() {
+        if (System.getenv("SIM_SCENARIO") != null) {
+            scenario = new SimScenario();
+        }
+    }
+
+    @Override
     public void simulationPeriodic() {
         robotSim.periodic();
+        if (scenario != null) {
+            scenario.periodic();
+        }
     }
 }

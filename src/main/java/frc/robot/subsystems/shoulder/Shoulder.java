@@ -111,20 +111,13 @@ public class Shoulder extends Mechanism {
                 setMotorPosition(
                         () -> degreesToRotations(() -> config.initPosition + config.offset));
             }
-            sim =
-                    new ArmSim(
-                            new ArmConfig(
-                                            0.8,
-                                            1.1,
-                                            config.sensorToMechanismRatio,
-                                            0.3,
-                                            -360,
-                                            270,
-                                            -90)
-                                    .setMount(Robot.getElevator().getSim(), true),
-                            RobotSim.leftView,
-                            motor,
-                            "2Shoulder");
+            ArmConfig simConfig =
+                    new ArmConfig(0.8, 1.1, config.sensorToMechanismRatio, 0.3, -360, 270, -90)
+                            .setMount(Robot.getElevator().getSim(), true);
+            // Sized so the sim's gravity torque matches what kG holds on the real arm.
+            simConfig.setSimMOI(0.7);
+            simConfig.setSimCGLength(0.4);
+            sim = new ArmSim(simConfig, RobotSim.leftView, motor, "2Shoulder");
         }
         Telemetry.print(getName() + " Subsystem Initialized");
     }

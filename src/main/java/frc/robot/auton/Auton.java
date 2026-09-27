@@ -129,8 +129,12 @@ public class Auton {
                                             .withTimeout(AUTO_SCORE_TIMEOUT),
                                     Commands.either(
                                             Commands.none(),
-                                            superStructure
-                                                    .setStateCommand(WantedSuperState.SCORE_CORAL)
+                                            Commands.print(
+                                                            "Auto score gate timed out; scoring"
+                                                                    + " where the robot is")
+                                                    .andThen(
+                                                            superStructure.setStateCommand(
+                                                                    WantedSuperState.SCORE_CORAL))
                                                     .andThen(
                                                             Commands.waitUntil(
                                                                     () ->

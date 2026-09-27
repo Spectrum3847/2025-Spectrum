@@ -86,21 +86,21 @@ public class Elbow extends Mechanism {
         this.config = config;
         if (isAttached()) {
             setMotorPosition(() -> toMotorRotations(config.initPosition));
-            sim =
-                    new ArmSim(
-                            new ArmConfig(
-                                            0.8,
-                                            0.8,
-                                            config.sensorToMechanismRatio,
-                                            0.4,
-                                            90.0 - 360.0,
-                                            360.0 - 90.0,
-                                            90)
-                                    .setColor(new Color8Bit(Color.kAqua))
-                                    .setMount(Robot.getShoulder().getSim(), true),
-                            RobotSim.leftView,
-                            motor,
-                            "3Elbow");
+            ArmConfig simConfig =
+                    new ArmConfig(
+                                    0.8,
+                                    0.8,
+                                    config.sensorToMechanismRatio,
+                                    0.4,
+                                    90.0 - 360.0,
+                                    360.0 - 90.0,
+                                    90)
+                            .setColor(new Color8Bit(Color.kAqua))
+                            .setMount(Robot.getShoulder().getSim(), true);
+            // Sized so the sim's gravity torque matches what kG holds on the real forearm.
+            simConfig.setSimMOI(1.0);
+            simConfig.setSimCGLength(0.6);
+            sim = new ArmSim(simConfig, RobotSim.leftView, motor, "3Elbow");
         }
         Telemetry.print(getName() + " Subsystem Initialized");
     }

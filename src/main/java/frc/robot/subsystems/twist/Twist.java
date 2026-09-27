@@ -1,10 +1,13 @@
 package frc.robot.subsystems.twist;
 
 import edu.wpi.first.wpilibj.RobotBase;
+import frc.robot.RobotSim;
 import frc.spectrumLib.hardware.Rio;
 import frc.spectrumLib.hardware.SpectrumCANcoder;
 import frc.spectrumLib.hardware.SpectrumCANcoderConfig;
 import frc.spectrumLib.mechanism.Mechanism;
+import frc.spectrumLib.sim.ArmConfig;
+import frc.spectrumLib.sim.ArmSim;
 import frc.spectrumLib.telemetry.Telemetry;
 import lombok.Getter;
 import lombok.Setter;
@@ -110,6 +113,12 @@ public class Twist extends Mechanism {
             } else {
                 setMotorPosition(() -> degreesToRotations(config::getInitPosition));
             }
+            // No gravity about the arm's own axis; the limits only need to allow a few turns.
+            ArmConfig simConfig =
+                    new ArmConfig(0.3, 0.3, config.sensorToMechanismRatio, 0.15, -1080, 1080, 0)
+                            .setSimulatedGravity(false);
+            simConfig.setSimMOI(0.02);
+            new ArmSim(simConfig, RobotSim.leftView, motor, "4Twist");
         }
         Telemetry.print(getName() + " Subsystem Initialized");
     }
