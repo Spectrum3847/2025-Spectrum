@@ -1,334 +1,219 @@
 package frc.robot.auton;
 
-import static frc.robot.RobotStates.autonAutoScoreMode;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.events.EventTrigger;
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.util.FileVersionException;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
-import frc.robot.RobotStates;
-import frc.robot.swerve.SwerveStates;
-import frc.spectrumLib.Telemetry;
-import java.io.IOException;
-import org.json.simple.parser.ParseException;
+import frc.reefscape.Field.ReefHeight;
+import frc.robot.subsystems.SuperStructure;
+import frc.robot.subsystems.SuperStructure.Branch;
+import frc.robot.subsystems.SuperStructure.Piece;
+import frc.robot.subsystems.SuperStructure.WantedSuperState;
+import frc.spectrumLib.telemetry.Telemetry;
+import java.util.Set;
 
+/**
+ * Autonomous routines. Paths come from PathPlanner; what the robot does along them comes from the
+ * event markers in the path files, which {@link #bindEventMarkers} maps onto superstructure
+ * requests. The marker names are the ones the 2025 paths already use.
+ */
 public class Auton {
 
-    // Setup EventTriggers
-    // Should all be public static final
-    public static final EventTrigger autonGroundIntake = new EventTrigger("groundIntake");
-    public static final EventTrigger autonSourceIntakeOn = new EventTrigger("sourceIntakeOn");
-    public static final EventTrigger autonSourceIntakeOff = new EventTrigger("sourceIntakeOff");
-    public static final EventTrigger autonLowAlgae = new EventTrigger("lowAlgae");
-    public static final EventTrigger autonHighAlgae = new EventTrigger("highAlgae");
-    public static final EventTrigger autonNet = new EventTrigger("net");
-    public static final EventTrigger autonClearStates = new EventTrigger("clearStates");
-    public static final EventTrigger autonHome = new EventTrigger("home");
-    public static final EventTrigger autonActionOn = new EventTrigger("actionOn");
-    public static final EventTrigger autonActionOff = new EventTrigger("actionOff");
-    public static final EventTrigger autonShoulderL4 = new EventTrigger("shoulderL4");
-    public static final EventTrigger autonTwistL4R = new EventTrigger("twistL4R");
-    public static final EventTrigger autonTwistL4L = new EventTrigger("twistL4L");
-    public static final EventTrigger autonLeft = new EventTrigger("left");
-    public static final EventTrigger autonRight = new EventTrigger("right");
-    public static final EventTrigger autonCoral = new EventTrigger("coral");
-    public static final EventTrigger autonAtL4Coral = new EventTrigger("atL4Coral");
-    public static final EventTrigger autonAlgae = new EventTrigger("algae");
-    public static final EventTrigger autonL1 = new EventTrigger("L1");
-    public static final EventTrigger autonL2 = new EventTrigger("L2");
-    public static final EventTrigger autonL3 = new EventTrigger("L3");
-    public static final EventTrigger autonL4 = new EventTrigger("L4");
-    public static final EventTrigger autonReverse = new EventTrigger("reverse");
+    // Zoned: true while the path is inside the zone. Vision fuses in auto only there.
     public static final EventTrigger autonPoseUpdate = new EventTrigger("poseUpdate");
-    public static final EventTrigger autonAutoScore = new EventTrigger("autoScore");
 
-    private final SendableChooser<Command> pathChooser = new SendableChooser<>();
-    private boolean autoMessagePrinted = true;
-    private double autonStart = 0;
+    private static final EventTrigger coral = new EventTrigger("coral");
+    private static final EventTrigger algae = new EventTrigger("algae");
+    private static final EventTrigger l1 = new EventTrigger("L1");
+    private static final EventTrigger l2 = new EventTrigger("L2");
+    private static final EventTrigger l3 = new EventTrigger("L3");
+    private static final EventTrigger l4 = new EventTrigger("L4");
+    private static final EventTrigger left = new EventTrigger("left");
+    private static final EventTrigger right = new EventTrigger("right");
+    private static final EventTrigger actionOn = new EventTrigger("actionOn");
+    private static final EventTrigger actionOff = new EventTrigger("actionOff");
+    private static final EventTrigger autoScoreMarker = new EventTrigger("autoScore");
+    private static final EventTrigger sourceIntakeOn = new EventTrigger("sourceIntakeOn");
+    private static final EventTrigger sourceIntakeOff = new EventTrigger("sourceIntakeOff");
+    private static final EventTrigger groundIntake = new EventTrigger("groundIntake");
+    private static final EventTrigger home = new EventTrigger("home");
+    private static final EventTrigger clearStates = new EventTrigger("clearStates");
+    private static final EventTrigger net = new EventTrigger("net");
+    private static final EventTrigger reverse = new EventTrigger("reverse");
+
+    /** Seconds auto waits for the score gate before scoring anyway. */
+    private static final double AUTO_SCORE_TIMEOUT = 3.0;
+
+    private final SuperStructure superStructure;
+    private final SendableChooser<Command> chooser = new SendableChooser<>();
+
+    /** Set by the "algae" marker, cleared by "coral": what "actionOn"/"actionOff" act on. */
+    private boolean algaeMode = false;
+
+    public Auton(SuperStructure superStructure) {
+        this.superStructure = superStructure;
+        chooser.setDefaultOption("Do Nothing", Commands.none().withName("Do Nothing"));
+        addAuto("Left | 3 L4 Coral", worlds3Coral(false));
+        addAuto("Right | 3 L4 Coral", worlds3Coral(true));
+        addAuto("Center | 3 Net Algae", worlds3Algae());
+        addAuto("Drive Forward", path("Drive Forward", false));
+        SmartDashboard.putData("Auto Chooser", chooser);
+        bindEventMarkers();
+        Telemetry.print("Auton Initialized");
+    }
+
+    private void addAuto(String name, Command command) {
+        chooser.addOption(name, command.withName(name));
+    }
+
+    public Command getAutonomousCommand() {
+        Command selected = chooser.getSelected();
+        return selected != null ? selected : Commands.none().withName("Do Nothing");
+    }
+
+    // ── Routines ───────────────────────────────────────────────────────────────
+
+    private Command worlds3Coral(boolean mirrored) {
+        return Commands.sequence(
+                preload(),
+                path("W3C-Start", mirrored),
+                autoScore(),
+                path("W3C-Leg1", mirrored),
+                autoScore(),
+                path("W3C-Leg2", mirrored),
+                autoScore(),
+                superStructure.setStateCommand(WantedSuperState.IDLE));
+    }
+
+    private Command worlds3Algae() {
+        return Commands.sequence(
+                preload(),
+                path("W3A-Start", false),
+                autoScore(),
+                superStructure.setStateCommand(WantedSuperState.REEF_ALGAE),
+                Commands.waitSeconds(1.0),
+                superStructure.setStateCommand(WantedSuperState.IDLE),
+                path("W3A-End", false));
+    }
+
+    /** The robot starts holding a coral, staged for L4. */
+    private Command preload() {
+        return Commands.runOnce(
+                () -> {
+                    superStructure.setHeldPiece(Piece.CORAL);
+                    superStructure.setSelectedLevel(ReefHeight.L4);
+                    algaeMode = false;
+                });
+    }
 
     /**
-     * This method configures the available autonomous routines that can be selected from the
-     * SmartDashboard.
+     * Aligns on the nearest reef face and scores when the gate opens; if it has not opened by the
+     * timeout, scores where it is (the 2025 fallback) rather than leaving the coral in the claw.
      */
-    public void setupSelectors() {
-
-        pathChooser.setDefaultOption("Do Nothing", Commands.print("Do Nothing Auto ran"));
-
-        // pathChooser.addOption("1 Meter", SpectrumAuton("1 Meter", false));
-        // pathChooser.addOption("3 Meter", SpectrumAuton("3 Meter", false));
-        // pathChooser.addOption("5 Meter", SpectrumAuton("5 Meter", false));
-
-        // pathChooser.addOption("Left | 2 L4 Coral", houston2coral(false));
-        // pathChooser.addOption("Right | 2 L4 Coral", houston2coral(true));
-
-        pathChooser.addOption(
-                "Left | 3 L4 Coral", worlds3coral(false).withName("Worlds 3 Coral - Left"));
-        pathChooser.addOption(
-                "Right | 3 L4 Coral", worlds3coral(true).withName("Worlds 3 Coral - Right"));
-
-        pathChooser.addOption("Center | 3 Net Algae", worlds3algae(false));
-
-        pathChooser.addOption("Drive Forward", SpectrumAuton("Drive Forward", false));
-
-        SmartDashboard.putData("Auto Chooser", pathChooser);
-    }
-
-    public Auton() {
-        setupSelectors(); // runs the command to start the chooser for auto on shuffleboard
-        Telemetry.print("Auton Subsystem Initialized: ");
-    }
-
-    public void init() {
-        Command autonCommand = getAutonomousCommand();
-
-        if (autonCommand != null) {
-            autonCommand.schedule();
-            startAutonTimer();
-        } else {
-            Telemetry.print("No Auton Command Found");
-        }
-    }
-
-    public void exit() {
-        printAutoDuration();
-    }
-
-    public Command houston2coral(boolean mirrored) {
-        return Commands.sequence(
-                        SpectrumAuton("H2C-Start", mirrored, 2),
-                        fullSequenceAimL4Score(1.5),
-                        SpectrumAuton("H2C-Leg1", mirrored),
-                        fullSequenceAimL4Score(1.5),
-                        SpectrumAuton("H2C-Leg2", mirrored))
-                .withName("Houston 2 Coral");
-    }
-
-    public Command worlds3coral(boolean mirrored) {
-        return Commands.sequence(
-                SpectrumAuton("W3C-Start", mirrored),
-                autoScore(),
-                SpectrumAuton("W3C-Leg1", mirrored),
-                autoScore(),
-                SpectrumAuton("W3C-Leg2", mirrored),
-                autoScore(),
-                RobotStates.homeAll.toggleToTrue(),
-                RobotStates.autonClearStates());
-    }
-
-    public Command worlds3algae(boolean mirrored) {
-        return Commands.sequence(
-                        SpectrumAuton("W3A-Start", mirrored),
-                        autoScoreThenAlgae(),
-                        SpectrumAuton("W3A-End", mirrored))
-                .withName("W3A-Full");
-    }
-
-    public Command aimScore(double alignTime) {
-        return SwerveStates.reefAimDriveVisionXY()
-                .withTimeout(alignTime)
-                .alongWith(autonScore())
-                .withName("Auton.aimL4Score");
-    }
-
-    // vision aligns until autoScore scored or 5 seconds have passed without auto scoring
     public Command autoScore() {
-        return (Commands.race(SwerveStates.reefAimDriveVisionXY(), Commands.waitSeconds(5))
-                        .until(autonAutoScoreMode.not())
-                        .andThen(autoScoreFallback().onlyWhile(autonAutoScoreMode)))
+        return Commands.defer(
+                        () -> {
+                            int before = superStructure.getCoralScoreCount();
+                            return Commands.sequence(
+                                    superStructure.setStateCommand(
+                                            WantedSuperState.AUTO_SCORE_CORAL),
+                                    Commands.waitUntil(
+                                                    () ->
+                                                            superStructure.getCoralScoreCount()
+                                                                    > before)
+                                            .withTimeout(AUTO_SCORE_TIMEOUT),
+                                    Commands.either(
+                                            Commands.none(),
+                                            superStructure
+                                                    .setStateCommand(WantedSuperState.SCORE_CORAL)
+                                                    .andThen(
+                                                            Commands.waitUntil(
+                                                                    () ->
+                                                                            superStructure
+                                                                                            .getCoralScoreCount()
+                                                                                    > before)),
+                                            () -> superStructure.getCoralScoreCount() > before));
+                        },
+                        Set.of())
                 .withName("Auton.autoScore");
     }
 
-    public Command aimScoreThenAlgae(double alignTime) {
-        return Commands.sequence(
-                        aimScore(alignTime),
-                        Commands.waitSeconds(0.5),
-                        RobotStates.clearStates(),
-                        RobotStates.l2.setTrue(),
-                        RobotStates.algae.setTrue(),
-                        Commands.waitSeconds(0.05),
-                        SwerveStates.autonAlgaeReefAimDriveVisionXY().withTimeout(.25),
-                        RobotStates.actionPrepState.setTrue(),
-                        Commands.waitSeconds(0.2),
-                        SwerveStates.autonAlgaeDriveIntake(0.4))
-                .withName("Auton.aimL4ScoreThenAlgae");
+    private Command path(String autoName, boolean mirrored) {
+        return new PathPlannerAuto(autoName, mirrored).withName(autoName);
     }
 
-    public Command autoScoreThenAlgae() {
-        return Commands.sequence(
-                        autoScore(),
-                        RobotStates.clearStates(),
-                        RobotStates.l2.setTrue(),
-                        RobotStates.algae.setTrue(),
-                        Commands.waitSeconds(0.05),
-                        SwerveStates.autonAlgaeReefAimDriveVisionXY().withTimeout(.25),
-                        RobotStates.actionPrepState.setTrue(),
-                        Commands.waitSeconds(0.2),
-                        SwerveStates.autonAlgaeDriveIntake(0.5))
-                .withName("Auton.autoL4ScoreThenAlgae");
+    // ── Event markers ──────────────────────────────────────────────────────────
+
+    private void bindEventMarkers() {
+        coral.onTrue(Commands.runOnce(() -> algaeMode = false));
+        algae.onTrue(Commands.runOnce(() -> algaeMode = true));
+        l1.onTrue(Commands.runOnce(() -> superStructure.setSelectedLevel(ReefHeight.L1)));
+        l2.onTrue(Commands.runOnce(() -> superStructure.setSelectedLevel(ReefHeight.L2)));
+        l3.onTrue(Commands.runOnce(() -> superStructure.setSelectedLevel(ReefHeight.L3)));
+        l4.onTrue(Commands.runOnce(() -> superStructure.setSelectedLevel(ReefHeight.L4)));
+        left.onTrue(Commands.runOnce(() -> superStructure.setSelectedBranch(Branch.LEFT)));
+        right.onTrue(Commands.runOnce(() -> superStructure.setSelectedBranch(Branch.RIGHT)));
+
+        actionOn.onTrue(
+                Commands.runOnce(() -> superStructure.setWantedSuperState(actionOnState())));
+        actionOff.onTrue(
+                Commands.runOnce(() -> superStructure.setWantedSuperState(actionOffState())));
+        autoScoreMarker.onTrue(superStructure.setStateCommand(WantedSuperState.AUTO_SCORE_CORAL));
+        sourceIntakeOn.onTrue(superStructure.setStateCommand(WantedSuperState.STATION_CORAL));
+        sourceIntakeOff.onTrue(superStructure.setStateCommand(WantedSuperState.IDLE));
+        groundIntake.onTrue(superStructure.setStateCommand(WantedSuperState.GROUND_CORAL));
+        home.onTrue(superStructure.setStateCommand(WantedSuperState.IDLE));
+        clearStates.onTrue(superStructure.setStateCommand(WantedSuperState.IDLE));
+        net.onTrue(superStructure.setStateCommand(WantedSuperState.STAGE_NET));
+        reverse.onTrue(Commands.runOnce(() -> superStructure.setForceMirroredIntake(true)));
+        reverse.onFalse(Commands.runOnce(() -> superStructure.setForceMirroredIntake(false)));
     }
 
-    public Command fullSequenceAimL4Score(double alignTime) {
-        return SwerveStates.reefAimDriveVisionXY()
-                .withTimeout(alignTime)
-                .alongWith(fullSequenceL4score())
-                .withName("Auton.oldAimL4Score");
-    }
-
-    public Command autonScore() {
-        return Commands.sequence(Commands.waitSeconds(.75), RobotStates.actionPrepState.setFalse())
-                .withName("Auton.L4Score");
-    }
-
-    public Command fullSequenceL4score() {
-        return Commands.waitSeconds(0.15)
-                .andThen(
-                        RobotStates.coral
-                                .setTrue()
-                                .alongWith(RobotStates.l4.setTrue(), RobotStates.homeAll.setFalse())
-                                .andThen(
-                                        Commands.waitSeconds(0.05),
-                                        RobotStates.actionPrepState.setTrue(),
-                                        Commands.waitSeconds(0.9),
-                                        RobotStates.actionPrepState.setFalse(),
-                                        Commands.waitSeconds(0.5),
-                                        RobotStates.homeAll.toggleToTrue(),
-                                        Commands.waitSeconds(0.5)));
-    }
-
-    public Command autoScoreFallback() {
-        return Commands.sequence(
-                        RobotStates.actionPrepState.setFalse(),
-                        RobotStates.actionState
-                                .setTrueForTimeWithCancel(
-                                        RobotStates::getAutonScoreTime, RobotStates.actionPrepState)
-                                .andThen(
-                                        autonAutoScoreMode
-                                                .setFalse()
-                                                .onlyIf(RobotStates.actionPrepState.not())))
-                .withName("Auton.autoScoreFallback");
-    }
-
-    public Command autonCoralL4Stage() {
-        return Commands.sequence(RobotStates.coral.setTrue(), RobotStates.l4.setTrue());
-    }
-
-    /**
-     * Creates a SpectrumAuton command sequence.
-     *
-     * <p>This method generates a command sequence that first waits for 0.01 seconds and then
-     * executes a PathPlannerAuto command with the specified autonomous routine name.
-     *
-     * @param autoName the name of the autonomous routine to execute
-     * @param mirrored whether the autonomous routine should be mirrored
-     * @return a Command that represents the SpectrumAuton sequence
-     */
-    public Command SpectrumAuton(String autoName, boolean mirrored) {
-        Command autoCommand = new PathPlannerAuto(autoName, mirrored);
-        return (Commands.waitSeconds(0.01).andThen(autoCommand)).withName(autoName);
-    }
-
-    public Command SpectrumAuton(String autoName, boolean mirrored, double duration) {
-        Command autoCommand = new PathPlannerAuto(autoName, mirrored);
-        return Commands.waitSeconds(0.01)
-                .andThen(autoCommand)
-                .withTimeout(duration)
-                .withName(autoName);
-    }
-
-    /**
-     * Retrieves the autonomous command selected on the shuffleboard.
-     *
-     * @return the selected autonomous command if one is chosen; otherwise, returns a PrintCommand
-     *     indicating that the autonomous command is null.
-     */
-    public Command getAutonomousCommand() {
-        Command auton = pathChooser.getSelected(); // sees what auto is chosen on shuffleboard
-        if (auton != null) {
-            return auton; // checks to make sure there is an auto and if there is it runs an auto
-        } else {
-            return new PrintCommand(
-                    "*** AUTON COMMAND IS NULL ***"); // runs if there is no auto chosen, which
-            // shouldn't happen because of the default
-            // auto set to nothing which still runs
-            // something
+    /** In the 2025 paths, algae at "L4" meant the net. */
+    private WantedSuperState actionOnState() {
+        if (!algaeMode) {
+            return WantedSuperState.STAGE_CORAL;
         }
+        return superStructure.getSelectedLevel() == ReefHeight.L4
+                ? WantedSuperState.STAGE_NET
+                : WantedSuperState.REEF_ALGAE;
     }
 
-    /** This method is called in AutonInit */
-    public void startAutonTimer() {
-        autonStart = Timer.getFPGATimestamp();
-        autoMessagePrinted = false;
+    private WantedSuperState actionOffState() {
+        if (!algaeMode) {
+            return WantedSuperState.SCORE_CORAL;
+        }
+        return superStructure.getSelectedLevel() == ReefHeight.L4
+                ? WantedSuperState.SCORE_NET
+                : WantedSuperState.IDLE;
     }
 
-    /** Called at AutonExit and displays the duration of the auton command Based on 6328 code */
-    public void printAutoDuration() {
-        Command autoCommand = getAutonomousCommand();
-        if (autoCommand != null) {
-            if (!autoCommand.isScheduled() && !autoMessagePrinted) {
-                if (DriverStation.isAutonomousEnabled()) {
-                    Telemetry.print(
-                            String.format(
-                                    "*** Auton finished in %.2f secs ***",
-                                    Timer.getFPGATimestamp() - autonStart));
-                } else {
-                    Telemetry.print(
-                            String.format(
-                                    "*** Auton CANCELLED in %.2f secs ***",
-                                    Timer.getFPGATimestamp() - autonStart));
-                }
-                autoMessagePrinted = true;
+    // ── Checks ─────────────────────────────────────────────────────────────────
+
+    private static final Alert missingAutoFiles =
+            new Alert("Auto files missing on the rio; see the console", AlertType.kError);
+
+    /**
+     * Every PathPlanner auto the routines load must exist, with the exact case: the rio's
+     * filesystem is case-sensitive and the Windows sim is not.
+     */
+    public static void verifyAutoFiles() {
+        var names = AutoBuilder.getAllAutoNames();
+        boolean missing = false;
+        for (String n :
+                new String[] {
+                    "W3C-Start", "W3C-Leg1", "W3C-Leg2", "W3A-Start", "W3A-End", "Drive Forward"
+                }) {
+            if (!names.contains(n)) {
+                Telemetry.print("Missing auto file: " + n + ".auto");
+                missing = true;
             }
         }
-    }
-
-    public static Command followSinglePath(String pathName) {
-        // Load the path you want to follow using its name in the GUI
-        PathPlannerPath path;
-        try {
-            path = PathPlannerPath.fromPathFile(pathName);
-
-            // Create a path following command using AutoBuilder. This will also trigger event
-            // markers.
-            return AutoBuilder.followPath(path);
-        } catch (FileVersionException | IOException | ParseException e) {
-            e.printStackTrace();
-        }
-        return new PrintCommand("ERROR LOADING PATH");
-    }
-
-    public static Command pathfindingCommandToPose(
-            double xPos, double yPos, double rotation, double vel, double accel) {
-        // Since we are using a holonomic drivetrain, the rotation component of this pose
-        // represents the goal holonomic rotation
-        Pose2d targetPose = new Pose2d(xPos, yPos, Rotation2d.fromDegrees(rotation));
-
-        // Create the constraints to use while pathfinding
-        PathConstraints constraints =
-                new PathConstraints(
-                        vel, accel, Units.degreesToRadians(540), Units.degreesToRadians(720));
-
-        // Since AutoBuilder is configured, we can use it to build pathfinding commands
-        Command pathfindingCommand =
-                AutoBuilder.pathfindToPoseFlipped(
-                        targetPose, constraints, 0.0 // Goal end velocity in meters/sec
-                        );
-
-        return pathfindingCommand;
-    }
-    // Log Command
-    protected static Command log(Command cmd) {
-        return Telemetry.log(cmd);
+        missingAutoFiles.set(missing);
     }
 }

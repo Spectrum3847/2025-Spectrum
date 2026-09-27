@@ -75,13 +75,19 @@ public abstract class Curve {
     }
 
     /**
-     * Returns a set of points of length <code>pointCount</code> on the curve.
+     * Returns a set of points of length <code>pointCount</code> on the curve. With <code>pointCount
+     * </code> of 1, the single point is the center of the input range.
      *
      * @param pointCount the amount of points on the curve
      * @return a 2D double array of points on the curve
      */
     public double[][] getCurvePoints(int pointCount) {
         double[][] points = new double[pointCount][2];
+        if (pointCount == 1) {
+            points[0][0] = 0.0;
+            points[0][1] = calculate(0.0);
+            return points;
+        }
         double dx = 2.0 / (pointCount - 1);
         for (int i = 0; i < pointCount; i++) {
             double x = -1.0 + (i * dx);

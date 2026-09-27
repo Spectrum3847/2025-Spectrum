@@ -1,10 +1,15 @@
 package frc.spectrumLib.util.exceptions;
 
+/**
+ * Unchecked exception thrown to signal that the robot code should stop executing immediately.
+ * Intended for unrecoverable error states where continued operation would be unsafe.
+ */
 public class KillRobotException extends RuntimeException {
 
-    /*
-     * Required when we want to add a custom message when throwing the exception
-     * as throw new CustomUncheckedException(" Custom Unchecked Exception ");
+    /**
+     * Creates a KillRobotException with a descriptive message.
+     *
+     * @param message explanation of the condition that triggered the kill
      */
     public KillRobotException(String message) {
         // calling super invokes the constructors of all super classes
@@ -12,21 +17,21 @@ public class KillRobotException extends RuntimeException {
         super(message);
     }
 
-    /*
-     * Required when we want to wrap the exception generated inside the catch block and rethrow it
-     * as catch(ArrayIndexOutOfBoundsException e) {
-     * throw new CustomUncheckedException(e);
-     * }
+    /**
+     * Creates a KillRobotException wrapping an underlying cause.
+     *
+     * @param cause the original exception that led to this kill condition
      */
     public KillRobotException(Throwable cause) {
         // call appropriate parent constructor
         super(cause);
     }
-    /*
-     * Required when we want both the above
-     * as catch(ArrayIndexOutOfBoundsException e) {
-     * throw new CustomUncheckedException(e, "File not found");
-     * }
+
+    /**
+     * Creates a KillRobotException with both a message and an underlying cause.
+     *
+     * @param message explanation of the condition that triggered the kill
+     * @param throwable the original exception that led to this kill condition
      */
     public KillRobotException(String message, Throwable throwable) {
         // call appropriate parent constructor

@@ -5,7 +5,7 @@ import java.net.*;
 
 /** Common Network Utilities */
 public class Network {
-    static final String unkown = "UNKNOWN";
+    static final String unknown = "UNKNOWN";
     /**
      * Gets the MAC address of the robot
      *
@@ -19,11 +19,11 @@ public class Network {
         for (int i = 0; i < 10; i++) {
             try {
                 localHost = InetAddress.getLocalHost();
-                if (localHost == null) return unkown;
+                if (localHost == null) return unknown;
                 ni = NetworkInterface.getByInetAddress(localHost);
-                if (ni == null) return unkown;
+                if (ni == null) return unknown;
                 hardwareAddress = ni.getHardwareAddress();
-                if (hardwareAddress == null) return unkown;
+                if (hardwareAddress == null) return unknown;
 
                 String[] hexadecimal = new String[hardwareAddress.length];
                 for (int j = 0; j < hardwareAddress.length; j++) {
@@ -37,7 +37,7 @@ public class Network {
         }
 
         DriverStation.reportWarning("Failed to get MAC", null);
-        return unkown;
+        return unknown;
     }
 
     /**
@@ -59,13 +59,15 @@ public class Network {
         }
 
         DriverStation.reportWarning("Failed to get IP", null);
-        return unkown;
+        return unknown;
     }
 
     /**
-     * Gets the IP Address of the device at the address such as "limelight.local"
+     * Resolves and returns the IP address of a device identified by its mDNS or hostname address
+     * (e.g. {@code "limelight.local"}).
      *
-     * @return the IP Address of the device
+     * @param deviceNameAddress the hostname or mDNS name to resolve
+     * @return the resolved IP address string, or {@code "UNKNOWN"} if resolution fails
      */
     public static String getIPaddress(String deviceNameAddress) {
         InetAddress localHost;
@@ -80,6 +82,6 @@ public class Network {
             }
         }
         DriverStation.reportWarning("Failed to get IP", null);
-        return unkown;
+        return unknown;
     }
 }

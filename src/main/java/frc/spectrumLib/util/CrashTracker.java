@@ -1,7 +1,7 @@
 package frc.spectrumLib.util;
 
 import edu.wpi.first.wpilibj.RobotBase;
-import frc.spectrumLib.Telemetry;
+import frc.spectrumLib.telemetry.Telemetry;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -32,11 +32,12 @@ public class CrashTracker {
     }
 
     // used to just log a message to the file
+    /** Logs the marker. */
     @SuppressWarnings("unused")
     private static void logMarker(String mark) {
         logMarker(mark, null);
     }
-
+    /** Logs the marker. */
     private static void logMarker(String mark, Throwable nullableException) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(filePath, true))) {
             writer.print(RUN_INSTANCE_UUID.toString());

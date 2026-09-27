@@ -29,12 +29,12 @@
     <Class name="frc.spectrumLib.vision.LimelightHelpers" />
   </Match>
   <Match>
-    <Class name="frc.robot.RobotLogger" />
-  </Match>
-  <Match>
     <Class name="frc.spectrumLib.SpectrumRobot" />
     <And>
       <Bug pattern="MS_MUTABLE_COLLECTION" />
     </And>
+  </Match>
+  <Match>
+    <Class name="frc.robot.RobotSim" />
   </Match>
 </FindBugsFilter>

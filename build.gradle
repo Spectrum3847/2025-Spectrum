@@ -1,10 +1,10 @@
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2025.3.1"
-    id 'com.diffplug.spotless' version "6.12.0"
-    id "com.peterabeles.gversion" version "1.10"
-    id "io.freefair.lombok" version "6.6.2"
-    id("com.github.spotbugs") version "6.0.24"
+    id "edu.wpi.first.GradleRIO" version "2026.2.1"
+    id 'com.diffplug.spotless' version '8.10.1'
+    id "com.peterabeles.gversion" version "1.11.0"
+    id "io.freefair.lombok" version "9.5.0"
+    id "com.github.spotbugs" version "6.5.11"
 }
 
 java {
@@ -30,33 +30,49 @@ deploy {
                 // First part is artifact name, 2nd is artifact type
                 // getTargetTypeClass is a shortcut to get the class type using a string
 
-                //Below GC settings are added AdvatagedKit Templates
                 frcJava(getArtifactTypeClass('FRCJavaArtifact')) {
-                    jvmArgs.add("-XX:+UnlockExperimentalVMOptions")
-                    jvmArgs.add("-XX:GCTimeRatio=5")
+                    /*
+                     * Serial is the right collector for a two-core roboRIO: no concurrent GC
+                     * threads competing with the robot loop. It ignores the pause-time and
+                     * time-ratio hints (-XX:MaxGCPauseMillis, -XX:GCTimeRatio), which used to be
+                     * set here and read like protection that was not there. What actually bounds
+                     * the pauses is Robot.disabledInit()/disabledPeriodic() running a full
+                     * collection while the robot is disabled, so old gen is empty at enable.
+                     */
                     jvmArgs.add("-XX:+UseSerialGC")
-                    jvmArgs.add("-XX:MaxGCPauseMillis=50")
 
-                    jvmArgs.add("-Dcom.sun.management.jmxremote=true")
-                    jvmArgs.add("-Dcom.sun.management.jmxremote.port=1198")
-                    jvmArgs.add("-Dcom.sun.management.jmxremote.local.only=false")
-                    jvmArgs.add("-Dcom.sun.management.jmxremote.ssl=false")
-                    jvmArgs.add("-Dcom.sun.management.jmxremote.authenticate=false")
-                    jvmArgs.add("-Djava.rmi.server.hostname=10.38.47.2")
+                    final MAX_JAVA_HEAP_SIZE_MB = 100;
+                    jvmArgs.add("-Xmx" + MAX_JAVA_HEAP_SIZE_MB + "M")
+                    jvmArgs.add("-Xms" + MAX_JAVA_HEAP_SIZE_MB + "M")
+                    jvmArgs.add("-XX:+AlwaysPreTouch")
 
-                    // The options below may improve performance, but should only be enabled on the RIO 2
-                    //
-                    // final MAX_JAVA_HEAP_SIZE_MB = 100;
-                    // jvmArgs.add("-Xmx" + MAX_JAVA_HEAP_SIZE_MB + "M")
-                    // jvmArgs.add("-Xms" + MAX_JAVA_HEAP_SIZE_MB + "M")
-                    // jvmArgs.add("-XX:+AlwaysPreTouch")
+                    jvmArgs.add("-XX:+HeapDumpOnOutOfMemoryError")
+                    jvmArgs.add("-XX:HeapDumpPath=/u/frc-usercode.hprof")
+
+                    /*
+                     * GC log, to settle where the long loop stalls come from.
+                     *
+                     * Every 2026-09-05 log has at least one loop over 500 ms and three have one
+                     * over 900 ms, topping out at 1302 ms. The Driver Station calls comms lost
+                     * after about a second of silence, which is how the robot ends up disabled
+                     * with nobody touching anything. A serial full GC of a 100 MB heap on this CPU
+                     * lands in exactly that range, and it stops every Java thread including the
+                     * one answering the DS -- but that is inference from timing, not something any
+                     * log actually recorded. This records it.
+                     *
+                     * Rotated and capped at five 2 MB files, so it cannot become the disk problem
+                     * it is here to help diagnose.
+                     */
+                    jvmArgs.add("-Xlog:gc*,safepoint:file=/home/lvuser/logs/gc.log" +
+                            ":time,uptime,level:filecount=5,filesize=2M")
                 }
-
 
                 // Static files artifact
                 frcStaticFileDeploy(getArtifactTypeClass('FileTreeArtifact')) {
                     files = project.fileTree('src/main/deploy')
                     directory = '/home/lvuser/deploy'
+                    deleteOldFiles = true // Change to true to delete files on roboRIO that no
+                    // longer exist in deploy directory of this project
                 }
             }
         }
@@ -69,7 +85,11 @@ def deployArtifact = deploy.targets.roborio.artifacts.frcJava
 wpi.java.debugJni = false
 
 // Set this to true to enable desktop support.
-def includeDesktopSupport = true
+def includeDesktopSupport = false
+
+repositories {
+    mavenCentral()
+}
 
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
 // Also defines JUnit 5.
@@ -92,7 +112,7 @@ dependencies {
     nativeRelease wpi.java.vendor.jniRelease(wpi.platforms.desktop)
     simulationRelease wpi.sim.enableRelease()
 
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter:6.1.3'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
@@ -109,10 +129,14 @@ wpi.sim.addDriverstation()
 // in order to make them all available at runtime. Also adding the manifest so WPILib
 // knows where to look for our Robot Class.
 jar {
-    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    from {
+        configurations.runtimeClasspath.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
     from sourceSets.main.allSource
     manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE //Edited to allow overloading WPILib Triggers
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 // Configure jar and deploy tasks
@@ -123,64 +147,6 @@ wpi.java.configureTestTasks(test)
 // Configure string concat to always inline compile
 tasks.withType(JavaCompile) {
     options.compilerArgs.add '-XDstringConcat=inline'
-}
-
-// Create version file
-project.compileJava.dependsOn(createVersionFile)
-gversion {
-    srcDir       = "src/main/java/"
-    classPackage = "frc.robot"
-    className    = "BuildConstants"
-    dateFormat   = "yyyy-MM-dd HH:mm:ss z"
-    timeZone     = "America/Chicago"
-    indent       = "  "
-}
-
-//Configure Spotless to use google aosp standards
-//Style Guide: https://source.android.com/docs/setup/contribute/code-style#java-style-rules
-//Configure Spotless to apply on every build
-compileJava.dependsOn spotlessApply
-spotless {
-    java {
-        target fileTree('.') {
-            include '**/*.java'
-            exclude '**/build/**', '**/build-*/**'
-        }
-        toggleOffOn()
-        googleJavaFormat("1.15.0").aosp()
-        removeUnusedImports()
-        trimTrailingWhitespace()
-        endWithNewline()
-    }
-    groovyGradle {
-        target fileTree('.') {
-            include '**/*.gradle'
-            exclude '**/build/**', '**/build-*/**'
-        }
-        greclipse()
-        indentWithSpaces(4)
-        trimTrailingWhitespace()
-        endWithNewline()
-    }
-    format 'xml', {
-        target fileTree('.') {
-            include '**/*.xml'
-            exclude '**/build/**', '**/build-*/**'
-        }
-        eclipseWtp('xml')
-        trimTrailingWhitespace()
-        indentWithSpaces(2)
-        endWithNewline()
-    }
-    format 'misc', {
-        target fileTree('.') {
-            include '**/*.md', '**/.gitignore'
-            exclude '**/build/**', '**/build-*/**'
-        }
-        trimTrailingWhitespace()
-        indentWithSpaces(2)
-        endWithNewline()
-    }
 }
 
 spotbugs {
@@ -202,9 +168,87 @@ tasks.spotbugsMain {
     }
 }
 
-//Javadoc Gradle task configuation
+//Javadoc Gradle task configuration
 javadoc {
     options.addStringOption('Xdoclint:none', '-quiet')
     failOnError = false
     exclude '**/*.md'
+    options.setLinks([
+        "https://github.wpilib.org/allwpilib/docs/release/java",
+        "https://codedocs.revrobotics.com/java",
+        "https://api.ctr-electronics.com/phoenix/latest/java",
+        "https://api.ctr-electronics.com/phoenix6/latest/java",
+        "https://pathplanner.dev/api/java",
+        "https://javadoc.doglog.dev",
+        "https://shenzhen-robotics-alliance.github.io/maple-sim/javadocs",
+        "https://docs.oracle.com/en/java/javase/17/docs/api"
+    ])
+}
+
+// Create version file
+project.compileJava.dependsOn(createVersionFile)
+gversion {
+    srcDir       = "src/main/java/"
+    classPackage = "frc.robot"
+    className    = "BuildConstants"
+    dateFormat   = "yyyy-MM-dd HH:mm:ss z"
+    timeZone     = "America/New_York"
+    indent       = "  "
+}
+
+// Configure Spotless to use google aosp standards
+// Style Guide: https://source.android.com/docs/setup/contribute/code-style#java-style-rules
+// Configure Spotless to apply on every build
+compileJava.dependsOn spotlessApply
+spotless {
+    java {
+        target fileTree('.') {
+            include '**/*.java'
+            exclude '**/build/**', '**/build-*/**'
+        }
+        toggleOffOn()
+        googleJavaFormat("1.15.0").aosp()
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    groovyGradle {
+        target fileTree('.') {
+            include '**/*.gradle'
+            exclude '**/build/**', '**/build-*/**'
+        }
+        greclipse()
+        leadingTabsToSpaces(4)
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    format 'xml', {
+        target fileTree('.') {
+            include '**/*.xml'
+            exclude '**/build/**', '**/build-*/**'
+        }
+        eclipseWtp('xml')
+        trimTrailingWhitespace()
+        leadingTabsToSpaces(2)
+        endWithNewline()
+    }
+    flexmark {
+        target fileTree('.') {
+            include '**/*.md'
+            exclude '**/build/**', '**/build-*/**'
+            exclude '.agents/skills/**/SKILL.md'
+        }
+        flexmark()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    format 'misc', {
+        target fileTree('.') {
+            include '**/.gitignore'
+            exclude '**/build/**', '**/build-*/**'
+        }
+        trimTrailingWhitespace()
+        leadingTabsToSpaces(2)
+        endWithNewline()
+    }
 }

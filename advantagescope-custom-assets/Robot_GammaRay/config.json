@@ -1,0 +1,29 @@
+{
+  "name": "Gamma Ray",
+  "isFTC": false,
+  "disableSimplification": false,
+  "rotations": [],
+  "position": [0, 0, 0],
+  "cameras": [
+    {
+      "name": "limelight-front",
+      "rotations": [{ "axis": "y", "degrees": -28 }],
+      "position": [0.215, 0, 0.188],
+      "resolution": [1280, 800],
+      "fov": 82
+    },
+    {
+      "name": "limelight-back",
+      "rotations": [{ "axis": "z", "degrees": 180 }, { "axis": "y", "degrees": -28 }],
+      "position": [-0.215, 0, 0.188],
+      "resolution": [1280, 800],
+      "fov": 82
+    }
+  ],
+  "components": [
+    { "zeroedRotations": [], "zeroedPosition": [0, 0, 0] },
+    { "zeroedRotations": [], "zeroedPosition": [0, 0, 0] },
+    { "zeroedRotations": [], "zeroedPosition": [0, 0, 0] },
+    { "zeroedRotations": [], "zeroedPosition": [0, 0, 0] }
+  ]
+}

@@ -44,7 +44,10 @@ public class ExpCurve extends Curve {
     }
 
     /**
-     * @param input value to be mapped
+     * Applies the full exponential curve pipeline: deadzone, exponent, scalar, then offset.
+     *
+     * @param input the raw input value to be mapped (typically in [-1, 1])
+     * @return the mapped output value
      */
     @Override
     public double calculate(double input) {

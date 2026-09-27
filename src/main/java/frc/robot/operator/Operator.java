@@ -1,84 +1,55 @@
 package frc.robot.operator;
 
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Robot;
-import frc.spectrumLib.Telemetry;
 import frc.spectrumLib.gamepads.Gamepad;
+import frc.spectrumLib.telemetry.Telemetry;
 
+/**
+ * The operator picks what the pilot scores and runs the climb.
+ *
+ * <pre>
+ *   A / B / X / Y       select L1 / L2 / L3 / L4 (latched, shown on the dashboard)
+ *   D-pad left/right    select the left / right branch (latched)
+ *   LT hold             eject whatever is in the claw
+ *   Start hold          climb prep; while held, RT winds the climb in and LT lets it out
+ *   Select              home everything
+ *   Disabled: A coast, B brake
+ * </pre>
+ */
 public class Operator extends Gamepad {
+    private static final double CLIMB_UP_SCALE = 0.35;
+    private static final double CLIMB_DOWN_SCALE = 0.15;
 
-    private static double climberScalerDown = 0.15;
-    private static double climberScalerUp = 0.35;
+    public final Trigger climbHeld = start.and(teleop);
+    public final Trigger notClimbing = climbHeld.negate();
 
-    // Triggers, these would be robot states such as intake, visionAim, etc.
-    // If triggers need any of the config values set them in the constructor
-    /*  A, B, X, Y, Left Bumper, Right Bumper = Buttons 1 to 6 in simulation */
+    public final Trigger l1_A = A.and(teleop).and(notClimbing);
+    public final Trigger l2_B = B.and(teleop).and(notClimbing);
+    public final Trigger l3_X = X.and(teleop).and(notClimbing);
+    public final Trigger l4_Y = Y.and(teleop).and(notClimbing);
+    public final Trigger leftBranch = leftDpad.and(teleop);
+    public final Trigger rightBranch = rightDpad.and(teleop);
+    public final Trigger eject_LT = leftTrigger.and(teleop).and(notClimbing);
+    public final Trigger climbDrive = climbHeld.and(leftTrigger.or(rightTrigger));
+    public final Trigger home_select = select.and(teleop);
 
-    public final Trigger enabled = teleop.or(testMode); // works for both teleop and testMode
-    public final Trigger fn = leftBumper;
-    public final Trigger noFn = fn.not();
-    public final Trigger home_select = select.or(leftStickClick);
-
-    public final Trigger climbPrep_start = start.and(noFn, enabled);
-
-    public final Trigger coralStage = leftBumper.and(enabled);
-    public final Trigger algaeStage = rightBumper.and(enabled);
-    public final Trigger staged = coralStage.or(algaeStage);
-    public final Trigger nothingStaged = coralStage.not().and(algaeStage.not());
-
-    public final Trigger L1 = A.and(staged);
-    public final Trigger L2 = B.and(staged);
-    public final Trigger L3 = X.and(staged);
-    public final Trigger L4 = Y.and(staged);
-
-    public final Trigger leftScore = leftDpad.and(staged);
-    public final Trigger rightScore = rightDpad.and(staged);
-
-    public final Trigger latchOpen_startUp = climbPrep_start.and(upDpad);
-    public final Trigger latchCloser_startDown = climbPrep_start.and(downDpad);
-
-    public final Trigger homeElevator_A = A.and(nothingStaged, teleop);
-
-    public final Trigger toggleReverse = upDpad.and(climbPrep_start.not(), teleop);
-
-    public final Trigger antiSecretClimb_LTRSup =
-            leftTriggerOnly.and(rightYTrigger(Threshold.LESS, -0.5));
-
-    public final Trigger processorScore_LT = leftTriggerOnly;
-
-    // DISABLED TRIGGERS
-    public final Trigger coastOn_dB = disabled.and(B);
-    public final Trigger coastOff_dA = disabled.and(A);
+    public final Trigger coast_A = A.and(disabled);
+    public final Trigger brake_B = B.and(disabled);
 
     public static class OperatorConfig extends Config {
-
         public OperatorConfig() {
             super("Operator", 1);
             setTriggersDeadzone(0.0);
         }
     }
 
-    @SuppressWarnings("unused")
-    private OperatorConfig config;
-
     public Operator(OperatorConfig config) {
         super(config);
-        this.config = config;
-        Robot.add(this);
-        Telemetry.print("Operator Subsystem Initialized: ");
+        Telemetry.print("Operator Subsystem Initialized");
     }
 
-    public void setupStates() {
-        // Left Blank so we can bind when the controller is connected
-        OperatorStates.setStates();
-    }
-
-    public void setupDefaultCommand() {
-        OperatorStates.setupDefaultCommand();
-    }
-
-    public double getClimberTriggerAxis() {
-        return ((getRightTriggerAxis() * climberScalerUp)
-                - (getLeftTriggerAxis() * climberScalerDown));
+    /** Climb output: RT winds in, LT lets out. */
+    public double getClimbPercent() {
+        return getRightTriggerAxis() * CLIMB_UP_SCALE - getLeftTriggerAxis() * CLIMB_DOWN_SCALE;
     }
 }
